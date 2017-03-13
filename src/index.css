@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #E13527;
+}
+
+.jumbo {
+	position: absolute;
+	bottom: 1rem;
+	left: 2rem;
+	color: #FFFFFF;
+	line-height: 1rem;
+	opacity: .6666;
+}
+
+.jumbo h1 {
+	font-size: 4rem;
+}
+
+.jumbo p {
+	font-size: .8rem;
+	font-weight: lighter;
+}
+

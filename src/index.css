@@ -1,24 +1,61 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
-  background-color: #E13527;
+  background-color: #feffff;
+  color: #838890;
+  font-family: 'Lato', sans-serif;
 }
 
-.jumbo {
-	position: absolute;
-	bottom: 1rem;
-	left: 2rem;
-	color: #FFFFFF;
-	line-height: 1rem;
+.logo{
+	min-width: 80px;
 }
-
-.jumbo h1 {
-	font-size: 4rem;
+.aday-container{
+	padding: 30px;
+	align-items: center !important;
+	max-width: 960px;
+	margin-left: auto;
+	margin-right: auto;
 }
-
-.jumbo p {
-	font-size: .8rem;
+.aday-banner{
+	margin-top: 40px;
+	z-index: 0;
+}
+.aday-banner .header{
 	font-weight: lighter;
+	color: #7D7D7D;
+}
+.app-download{
+	margin: 20px 0;
+}
+.aday-footer-menu .menu .item{
+	font-size: .7em;
+}
+.aday-terms .menu .item{
+	font-size: .6em !important;
+	color: #bbb !important;
+}
+.aday-brands{
+	background-color: #FAFAFA;
+	padding: 2em;
+	align-items: center;
+}
+.aday-brands .header {
+	color: #7D7D7D;
+	font-weight: lighter;
+}
+.aday-features{
+	border-top: 1px solid #F2F2F2;
+	padding: 40px 0;
+	z-index: 10;
+}
+.aday-features .header{
+	color: #0A2DA0;
+	font-weight: normal;
+	text-align: left;
+}
+.aday-features p{
+	font-size: .8em;
+	color: #838890;
+	text-align: left;
 }
 

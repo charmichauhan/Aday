@@ -10,9 +10,9 @@ import Footer from './Footer'
 export default class Home extends Component {
 	render() {
 		return (
-			<div 
-				className="aday-container" >
-			<Container  
+			<div>
+			<Container 
+			fluid 
 				textAlign="center">
 				<Menu/>
 				<Banner/>

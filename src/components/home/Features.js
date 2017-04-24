@@ -5,6 +5,7 @@ export default class Features extends Component {
 	render() {
 		return (
 			<div  className="aday-features">
+			<div className="aday-container">
 			<Grid columns={3}>
 				<Grid.Row>
 					<Grid.Column>
@@ -27,6 +28,7 @@ export default class Features extends Component {
 					</Grid.Column>
 				</Grid.Row>
 			</Grid>
+			</div>
 			</div>
 		);
 	}

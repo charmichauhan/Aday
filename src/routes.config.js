@@ -1,6 +1,6 @@
 import Root from './components/Root';
 import Home from './components/Home';
-import Calendar from './components/Calendar';
+import Calendar from './components/scheduling';
 
 const routes = [
 	{

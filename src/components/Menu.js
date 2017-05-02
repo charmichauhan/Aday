@@ -7,15 +7,15 @@ export default class MainMenu extends Component {
 		return (
 			<div className="aday-container">
 				<Menu secondary fluid  size='mini'>
-					<Menu.Item>
+					<Menu.Item as={NavLink} to="/">
 						<img 
 							className="logo"
 							src="/images/logos_aday.png" 
 							alt="aday logo"/>
 					</Menu.Item>
 					<Menu.Menu position="right">
-						<Menu.Item name="HOME"/>
-						<Menu.Item name="BLOG"/>
+						<Menu.Item as={NavLink} to="/" name="HOME"/>
+						<Menu.Item as={NavLink} to="/blog"name="BLOG"/>
 						<Menu.Item as={NavLink} to="/contacts" name="CONTACTS"/>
 						<Menu.Item as={NavLink} to="/calendar">
 							<Button primary>LOGIN</Button>

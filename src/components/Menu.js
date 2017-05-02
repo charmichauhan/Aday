@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Menu, Button } from 'semantic-ui-react'
+import { NavLink } from 'react-router-dom'
 
 export default class MainMenu extends Component {
 	render() {
 		return (
-			<div>
+			<div className="aday-container">
 				<Menu secondary fluid  size='mini'>
 					<Menu.Item>
 						<img 
@@ -15,8 +16,8 @@ export default class MainMenu extends Component {
 					<Menu.Menu position="right">
 						<Menu.Item name="HOME"/>
 						<Menu.Item name="BLOG"/>
-						<Menu.Item name="CONTACTS"/>
-						<Menu.Item>
+						<Menu.Item as={NavLink} to="/contacts" name="CONTACTS"/>
+						<Menu.Item as={NavLink} to="/calendar">
 							<Button primary>LOGIN</Button>
 						</Menu.Item>
 					</Menu.Menu>

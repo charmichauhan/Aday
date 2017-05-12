@@ -1,16 +1,20 @@
 {
-  "name": "adaywebsite",
+  "name": "g",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
+    "cldr": "^4.3.0",
+    "formsy-react": "^0.19.2",
+    "fullcalendar": "^3.4.0",
+    "globalize": "^1.2.3",
+    "jquery": "^3.2.1",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
     "react-router-config": "^1.0.0-beta.3",
     "semantic-ui-css": "^2.2.10",
-    "semantic-ui-react": "^0.68.1"
+    "semantic-ui-react": "^0.68.3"
   },
   "devDependencies": {
-    "node-sass": "^4.5.2",
     "react-scripts": "0.9.5"
   },
   "scripts": {

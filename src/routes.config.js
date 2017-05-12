@@ -1,20 +1,43 @@
+import PublicSiteRoot from './components/PublicSiteRoot';
+import App from './components/App';
 import Root from './components/Root';
 import Home from './components/Home';
-import Calendar from './components/scheduling';
+import Schedule from './components/Scheduling';
+import Login from './components/auth/Login'
 
 const routes = [
 	{
 		component: Root,
-    	routes: [
+		routes: [
 			{
-				path: '/',
-		        exact: true,
-				component: Home
-			},
+				component: PublicSiteRoot,
+				routes: [
+					{
+						path: '/',
+						exact: true,
+						component: Home
+					},
+					{
+						path: '/login',
+						exact: true,
+						component: Login
+					},
 			{
-				path: '/calendar',
-		        exact: true,
-				component: Calendar
+				component: App,
+				routes: [
+					{
+						path: '/schedule/team',
+						exact: true,
+						component: Schedule
+					},
+					{
+						path: '/schedule/manager',
+						exact: true,
+						component: Schedule
+					}
+				]
+			}
+				]
 			}
 		]
 	}

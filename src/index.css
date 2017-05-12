@@ -60,4 +60,19 @@ body {
 	color: #838890;
 	text-align: left;
 }
+.todo{
+	text-align: center;
+	background-color: #F2F2F2;
+	min-height: calc(100vh - 60px);
+	padding-top: calc(50vh - 120px);
+}
+.todo h1{
+	opacity: .1;
+	font-size: 5rem;
+}
+.todo small {
+	text-transform: uppercase;
+	letter-spacing: 3;
+	font-weight: bolder;
+}
 

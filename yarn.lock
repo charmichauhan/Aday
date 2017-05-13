@@ -2244,7 +2244,15 @@ fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.2:
     mkdirp ">=0.5 0"
     rimraf "2"
 
-fullcalendar@^3.4.0:
+fullcalendar-scheduler@^1.6.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/fullcalendar-scheduler/-/fullcalendar-scheduler-1.6.2.tgz#e4e9a3b887304d4783e6bcb4f24e429263a558db"
+  dependencies:
+    fullcalendar "~3.4.0"
+    jquery "2 - 3"
+    moment "^2.9.0"
+
+fullcalendar@^3.4.0, fullcalendar@~3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/fullcalendar/-/fullcalendar-3.4.0.tgz#34dabff2abe5e85f70025c789a5b9dc3ea4c4762"
   dependencies:

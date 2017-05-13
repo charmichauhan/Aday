@@ -6,6 +6,7 @@
     "cldr": "^4.3.0",
     "formsy-react": "^0.19.2",
     "fullcalendar": "^3.4.0",
+    "fullcalendar-scheduler": "^1.6.2",
     "globalize": "^1.2.3",
     "jquery": "^3.2.1",
     "react": "^15.5.4",

@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
+import moment from 'moment'
+
 import $ from 'jquery'
+
+$('#calendar').fullCalendar({
+	schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives'
+});
 
 import 'fullcalendar/dist/fullcalendar.css';
 import 'fullcalendar/dist/fullcalendar.js';
+import 'fullcalendar-scheduler/dist/scheduler.css';
+import 'fullcalendar-scheduler/dist/scheduler.js';
 
 
 class Calendar extends Component {
@@ -10,7 +18,14 @@ class Calendar extends Component {
   componentDidMount(){
     const { calendar } = this.refs;
 
-    $(calendar).fullCalendar({events: this.props.events, header: this.props.header});
+    $(calendar).fullCalendar({
+    	editable: true,
+		aspectRatio: 1.5,
+		scrollTime: '00:00',
+    	defaultView: 'timelineDay',
+    	events: this.props.events, 
+    	header: this.props.header
+    });
   }
 
   render() {
@@ -24,24 +39,21 @@ class Calendar extends Component {
 
 export default class Schedule extends Component {
 	render(){
+		var todayDate = moment().startOf('day');
+		var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
+		var TODAY = todayDate.format('YYYY-MM-DD');
+		var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
 		let events = [
-			{
-				start: '2017-05-12',
-				end: '2017-01-17',
-				rendering: 'background',
-				color: '#00FF00'
-			},
-			{
-				start: '2017-05-12',
-				end: '2017-01-24',
-				rendering: 'background',
-				color: '#FF0000'
-			},
+			{ id: '1', resourceId: 'b', start: TODAY + 'T02:00:00', end: TODAY + 'T07:00:00', title: 'event 1' },
+			{ id: '2', resourceId: 'c', start: TODAY + 'T05:00:00', end: TODAY + 'T22:00:00', title: 'event 2' },
+			{ id: '3', resourceId: 'd', start: YESTERDAY, end: TOMORROW, title: 'event 3' },
+			{ id: '4', resourceId: 'e', start: TODAY + 'T03:00:00', end: TODAY + 'T08:00:00', title: 'event 4' },
+			{ id: '5', resourceId: 'f', start: TODAY + 'T00:30:00', end: TODAY + 'T02:30:00', title: 'event 5' }
 		]
 		let header = {
 			left:   'prev,next',
 			center: 'title',
-			right:  'today, basicDay, basicWeek, month'
+			right:  'today, timelineDay, timelineWeek, timelineMonth'
 		}
 
 		return (

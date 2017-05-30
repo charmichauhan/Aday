@@ -38,6 +38,7 @@ export default class Nav extends Component {
 							<Menu.Item as={NavLink} to="/certifications/traning" name="training" disabled/>
 						</Menu.Menu>
 					</Menu.Item>
+							<Menu.Item as={NavLink} to="/certifications/certificates" name="certificates"/>
 					<Menu.Item>
 						<Menu.Header><Icon name="clock"/> TIME & ATTENDANCE</Menu.Header>
 						<Menu.Menu>

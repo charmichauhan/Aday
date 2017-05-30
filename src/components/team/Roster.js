@@ -40,7 +40,7 @@ export default class Roster extends Component {
 					</Menu.Item>
 				</Menu>
 				{
-					this.state.team_members.map((m, i)=> <TeamMemberCard member={m}/>)
+					this.state.team_members.map((m, i)=> <TeamMemberCard key={i} member={m}/>)
 				}
 			</div>
 		);

@@ -38,10 +38,10 @@ export default class SharedWorkplace extends Component {
 	}
 	render() {
 		return (
-			<Card.Group fluid>
+			<Card.Group>
 			{
 				this.state.workspaces.map((workspace, i)=>(
-					<Card>
+					<Card key={i}>
 						<Card.Content>
 							<Card.Header>{workspace.title}</Card.Header>
 						</Card.Content>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { NavLink } from 'react-router-dom'
 import { Container, Menu, Divider } from 'semantic-ui-react'
 
 export default class Footer extends Component {
@@ -7,6 +8,7 @@ export default class Footer extends Component {
 			<Container>
 				<div className="aday-footer-menu">
 					<Menu secondary text fluid>
+						<Menu.Item  as={NavLink} to="/" name="HOME"/>
 						<Menu.Item name="BLOG"/>
 						<Menu.Item name="ABOUT"/>
 						<Menu.Item icon="facebook"/>

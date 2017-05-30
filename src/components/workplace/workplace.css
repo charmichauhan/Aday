@@ -1,0 +1,19 @@
+.workplace{
+	padding: 15px;
+}
+.workplace-review{
+	border: 1px solid #eee;
+	padding: 10px;
+	border-radius: 3px;
+}
+.workplace-details{
+	margin-top: -15px;
+	font-size: 10px;
+}
+.working-hours{
+	font-size: 12px;
+}
+.workplace  h4 {
+	color: #0D30A1 !important;
+	font-size: 12px !important;
+}

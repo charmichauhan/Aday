@@ -17,7 +17,7 @@ export default class MainMenu extends Component {
 						<Menu.Item as={NavLink} to="/" name="HOME"/>
 						<Menu.Item as={NavLink} to="/blog"name="BLOG"/>
 						<Menu.Item as={NavLink} to="/contacts" name="CONTACTS"/>
-						<Menu.Item as={NavLink} to="/calendar">
+						<Menu.Item as={NavLink} to="/schedule/team">
 							<Button primary>LOGIN</Button>
 						</Menu.Item>
 					</Menu.Menu>

@@ -1,0 +1,14 @@
+.avatar-name{
+	font-size: 11px;
+	line-height: 10px;
+	text-transform: capitalize;
+}
+.avatar-inline .avatar-title{
+	float: left;
+	margin-top: -25px;
+	margin-left: 40px;
+}
+.avatar-verticle{
+	text-align: center;
+	max-width: 80px;
+}

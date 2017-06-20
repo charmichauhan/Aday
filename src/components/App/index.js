@@ -5,7 +5,6 @@ import { Divider, Grid, Container } from 'semantic-ui-react'
 
 import Nav from './Nav'
 
-
 const App = ({route}) => (
 	<Container>
 		<Grid>

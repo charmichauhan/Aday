@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { Menu, Icon, Button } from 'semantic-ui-react';
-
-import { NavLink } from 'react-router-dom'
-
+import { Menu, Icon } from 'semantic-ui-react';
+import { NavLink } from 'react-router-dom';
+import EmergencyShiftButton from './KendallLearning/EmergencyShiftButton';
 
 export default class Nav extends Component {
 	render() {
 		return (
 			<div>
-				<Button basic fluid><Icon name="attention"/>Emergency Shift</Button>
+				<EmergencyShiftButton/>
 				<Menu vertical fluid>
 					<Menu.Item>
 						<Menu.Header><Icon name="calendar"/> SCHEDULE</Menu.Header>
@@ -38,7 +37,6 @@ export default class Nav extends Component {
 							<Menu.Item as={NavLink} to="/certifications/traning" name="training" disabled/>
 						</Menu.Menu>
 					</Menu.Item>
-							<Menu.Item as={NavLink} to="/certifications/certificates" name="certificates"/>
 					<Menu.Item>
 						<Menu.Header><Icon name="clock"/> TIME & ATTENDANCE</Menu.Header>
 						<Menu.Menu>

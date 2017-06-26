@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/bin/yarn add fullcalendar
+  /usr/local/bin/node /usr/local/bin/yarn add react-apollo
 
 PATH: 
   /Users/ekirutimothy/google-cloud-sdk/bin:/usr/local/scala/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/ekirutimothy/Library/Python/2.7/bin:/Users/ekirutimothy/Code/env/boxfuse:/Users/ekirutimothy/Library/Android/sdk/tools:/Users/ekirutimothy/Library/Android/sdk/platform-tools

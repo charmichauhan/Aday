@@ -1,64 +1,66 @@
 import React, { Component } from 'react';
-import moment from 'moment'
-
-import $ from 'jquery'
-
-$('#calendar').fullCalendar({
-	schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives'
-});
-
-import 'fullcalendar/dist/fullcalendar.min.css';
-import 'fullcalendar/dist/fullcalendar.min.js';
-import 'fullcalendar-scheduler/dist/scheduler.css';
-import 'fullcalendar-scheduler/dist/scheduler.js';
-
-
-class Calendar extends Component {
-
-  componentDidMount(){
-    const { calendar } = this.refs;
-
-    $(calendar).fullCalendar({
-    	editable: true,
-		aspectRatio: 1.5,
-		scrollTime: '00:00',
-    	defaultView: 'timelineDay',
-    	events: this.props.events, 
-    	header: this.props.header
-    });
-  }
-
-  render() {
-    return (
-      <div ref='calendar'></div>
-    );
-  }
-
-}
-
+import moment from 'moment';
+import BigCalendar from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import Toolbar from 'react-big-calendar/lib/Toolbar';
+import CreateCertificate from '../../../public/assets/Buttons/create-certificate.png';
+import AutomateSchedule from '../../../public/assets/Buttons/automate-schedule.png';
+import TemplateList from '../../../public/assets/Buttons/template-list-button.png';
+import ShiftWeekTable from './ShiftWeekTable';
+import './style.css';
 
 export default class Schedule extends Component {
 	render(){
-		var todayDate = moment().startOf('day');
-		var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
-		var TODAY = todayDate.format('YYYY-MM-DD');
-		var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
-		let events = [
-			{ id: '1', resourceId: 'b', start: TODAY + 'T02:00:00', end: TODAY + 'T07:00:00', title: 'event 1', color: '#E03A2C' },
-			{ id: '2', resourceId: 'c', start: TODAY + 'T05:00:00', end: TODAY + 'T22:00:00', title: 'event 2', color: '#0F7F12' },
-			{ id: '3', resourceId: 'd', start: YESTERDAY, end: TOMORROW, title: 'event 3', color: '#0F7F12' },
-			{ id: '4', resourceId: 'e', start: TODAY + 'T03:00:00', end: TODAY + 'T08:00:00', title: 'event 4', color: '#E03A2C' },
-			{ id: '5', resourceId: 'f', start: TODAY + 'T00:30:00', end: TODAY + 'T02:30:00', title: 'event 5', color: '#FDAC43' }
-		]
-		let header = {
-			left:   'prev,next',
-			center: 'title',
-			right:  'today, timelineDay, timelineWeek, timelineMonth'
-		}
-
+        BigCalendar.momentLocalizer(moment);
 		return (
 			<div className="App">
-				<Calendar events={events} header={header} />
+				<div>
+					<img src={CreateCertificate}/>
+					<img src={TemplateList} />
+					<img src={AutomateSchedule} />
+				</div>
+				<div>
+					<BigCalendar events={[]}
+								 startAccessor='startDate'
+								 endAccessor='endDate'
+								 defaultView='week'
+								 views={{today:true,week:ShiftWeekTable,day:true}}
+								 components={{
+                                     event: Event,
+                                     toolbar: CustomToolbar
+                                 }}
+					/>
+				</div>
+			</div>
+		);
+	}
+}
+
+class CustomToolbar extends Toolbar{
+	render(){
+		let month = moment(this.props.date).format("MMMM YYYY");
+		return(
+			<div>
+				<nav className="navbar">
+					<div className="container-fluid">
+						<div className="wrapper-div">
+						<div className="navbar-header">
+							<button type="button " className="btn btn-default navbar-btn btnnav glyphicon glyphicon-arrow-left" onClick={()=>this.navigate("PREV")}/>
+							<button type="button" className="btn btn-default navbar-btn btnnav glyphicon glyphicon-arrow-right" onClick={()=>this.navigate("NEXT")}/>
+						</div>
+
+						<ul className="nav navbar-nav">
+							<button type="button" className="btn btnnav btn-default btnnav navbar-btn m8"> Employee view</button>
+						</ul>
+							<div className="maintitle">{month}</div>
+						<ul className="nav navbar-nav navbar-right">
+							<li><button type="button" className="btn btn-default btnnav navbar-btn m8 "> <strong>Today</strong></button></li>
+							<li><button type="button" className="btn btn-default btnnav navbar-btn m8 " onClick={()=>this.view("day")}> <strong>DAY</strong></button></li>
+							<li><button type="button" className="btn btn-default btnnav navbar-btn m8 " onClick={()=>this.view("week")}><strong>WEEK</strong></button></li>
+						</ul>
+						</div>
+					</div>
+				</nav>
 			</div>
 		);
 	}

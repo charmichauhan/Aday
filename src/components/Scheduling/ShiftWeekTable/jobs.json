@@ -1,5 +1,3 @@
-//These are sample data for jobs and events
-//When we pass starting date and ending date of week it will return these data for particular week.
 [
   {
     "title":"Cashier",

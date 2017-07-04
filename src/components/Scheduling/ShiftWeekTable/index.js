@@ -3,16 +3,15 @@ import moment from 'moment';
 import Week from 'react-big-calendar/lib/Week';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
-import Bartender from '../../../../public/assets/Positions/bartender.png';
-import Breakfast from '../../../../public/assets/Positions/breakfast.png';
-import Cashier from '../../../../public/assets/Positions/cashier.png';
-import Cleaning from '../../../../public/assets/Positions/cleaning.png';
-import Door from '../../../../public/assets/Positions/door.png';
-import Sandwich from '../../../../public/assets/Positions/sandwich.png';
+import JobsRow from './JobsRow';
+import SpecialDay from "./SpecialDay";
+import jobsData from "./jobs.json";
 import '../style.css';
 
 export default class ShiftWeekTable extends Week {
     render() {
+
+    	let jobData = jobsData;
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
         let days = [];
@@ -27,138 +26,20 @@ export default class ShiftWeekTable extends Week {
 					<tbody>
 					<tr>
 						<th className="long"></th>
-						<th>{days[1]}</th>
-						<th>{days[2]}</th>
-						<th>{days[3]}</th>
-						<th>{days[4]}</th>
-						<th>{days[5]}</th>
-						<th>{days[6]}</th>
-						<th>{days[7]}</th>
+                        <th>{days[1]}</th>
+                        <th>{days[2]}</th>
+                        <th>{days[3]}</th>
+                        <th>{days[4]}</th>
+                        <th>{days[5]}</th>
+                        <th>{days[6]}</th>
+                        <th>{days[7]}</th>
 					</tr>
-					<tr className="spday">
-						<td></td>
-						<td></td>
-						<td>Labor Day</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr className="tableh">
-						<td width="100%">
-							<table className="" width="100%">
-								<tbody>
-								<tr>
-									<td width="30%"><img src={Cashier} alt="img"/> </td>
-									<td width="70%" className="penalheading">Cashier<p>0 hours</p></td>
-								</tr>
-								</tbody>
-							</table>
-						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr className="tableh">
-						<td width="100%">
-							<table className="" width="100%">
-								<tbody>
-								<tr>
-									<td width="30%"><img src={Cleaning} alt="img"/> </td>
-									<td width="70%" className="penalheading">Deep Clean<p>0 hours</p></td>
-								</tr>
-								</tbody>
-							</table>
-						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr className="tableh">
-						<td width="100%">
-							<table className="" width="100%">
-								<tbody>
-								<tr>
-									<td width="30%"><img src={Door} alt="img"/> </td>
-									<td width="70%" className="penalheading">Front Door<p>0 hours</p></td>
-								</tr>
-								</tbody>
-							</table>
-						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr className="tableh">
-						<td width="100%">
-							<table className="" width="100%">
-								<tbody>
-								<tr>
-									<td width="30%"><img src={Bartender} alt="img"/> </td>
-									<td width="70%" className="penalheading">Bartender<p>0 hours</p></td>
-								</tr>
-								</tbody>
-							</table>
-						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr className="tableh">
-						<td width="100%">
-							<table className="" width="100%">
-								<tbody>
-								<tr>
-									<td width="30%"><img src={Sandwich} alt="img"/> </td>
-									<td width="70%" className="penalheading">Sandwich<p>0 hours</p></td>
-								</tr>
-								</tbody>
-							</table>
-						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr className="tableh">
-						<td width="100%">
-							<table className="" width="100%">
-								<tbody>
-								<tr>
-									<td width="30%"><img src={Breakfast} alt="img"/> </td>
-									<td width="70%" className="penalheading">Breakfast<p>0 hours</p></td>
-								</tr>
-								</tbody>
-							</table>
-						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
+                    <SpecialDay dateStart={start}/>
+					{jobData.map((value,index)=>(
+						<JobsRow data={jobData[index]}/>
+						)
+					)
+					}
 					</tbody>
 				</table>
 			</div>

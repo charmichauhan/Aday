@@ -21,6 +21,7 @@ export default class Schedule extends Component {
 				</div>
 				<div>
 					<BigCalendar events={[]}
+								 culture='en-us'
 								 startAccessor='startDate'
 								 endAccessor='endDate'
 								 defaultView='week'

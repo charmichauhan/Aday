@@ -71,3 +71,99 @@
     line-height: 30px;
     text-align: center;
 }
+.day-item-title{
+    margin-bottom: 6px;
+}
+span.fa.fa-clock-o {
+    margin-top: 3px;
+    margin-right: 3px;
+}
+.day-item-title span{
+    margin-right: 1px;
+}
+.day-item-title p{
+    float: right;
+    margin-top: 3px;
+    float: right;
+    width: 23px;
+    font-size: 8px;
+}
+
+a.glyphicon.glyphicon-plus{
+    color: #4A4A4A;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.day-item{
+    box-sizing: border-box;
+    height: 105px;
+    width: 100px;
+    border: 1px solid #999999;
+    border-radius: 4px;
+    background-color: rgba(153, 153, 153, 0.1);
+    box-shadow: 0 4px 4px 0 #999999;
+    padding: 4px;
+    margin-bottom: 6px;
+    margin-left: -2px;
+}
+.start-time {
+    display: flex;
+    color: #4A4A4A;
+    font-family: Lato;
+    font-size: 16px;
+    line-height: 0px;
+    margin-bottom: 6px;
+}
+.start-time p{
+    display: inline;
+}
+.start-time p small{
+    font-size: 70%;
+}
+.location {
+    display: flex;
+    height: 16px;
+    width: 106px;
+    color: #4A4A4A;
+    font-family: "Roboto Condensed";
+    font-size: 11px;
+    font-weight: 300;
+    line-height: 16px;
+}
+.location a{
+    font-size: 14px;
+    color: #4A4A4A;
+}
+.location p {
+    padding-left: 4px;
+    text-transform: uppercase;
+    color:#4A4A4A;
+    font-family: "Roboto Condensed";
+}
+.box-title {
+    display: inline-block;
+    background: #E33821;
+    border-radius: 50%;
+    height: 16px;
+    width: 16px;
+    color: #FFFFFF;
+    font-family: Lato;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+.duration {
+    display: inline-block;
+    height: 22px;
+    width: 52px;
+    color: #4A4A4A;
+    font-family: "Avenir Next Condensed";
+    font-size: 11px;
+    line-height: 11px;
+    float: right;
+    margin: 0;
+    padding: 0;
+}

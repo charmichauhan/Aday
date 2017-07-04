@@ -1,0 +1,12 @@
+//These are sample data for special days.
+//When we pass starting date and ending date of week it will return these data for special days of week.
+[
+  {
+    "day": "Labor Day",
+    "specialDayDate":"Mon Jul 03 2017"
+  },
+  {
+    "day": "Labor Day",
+    "specialDayDate":"Wed Jul 05 2017"
+  }
+]

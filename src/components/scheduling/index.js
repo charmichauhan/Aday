@@ -3,9 +3,11 @@ import moment from 'moment';
 import BigCalendar from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
-import CreateCertificate from '../../../public/assets/Buttons/create-certificate.png';
-import AutomateSchedule from '../../../public/assets/Buttons/automate-schedule.png';
+import CreateShift from '../../../public/assets/Buttons/create-shift-button.png';
+import AddAsTemplate from '../../../public/assets/Buttons/add-as-template.png';
 import TemplateList from '../../../public/assets/Buttons/template-list-button.png';
+import Automate from '../../../public/assets/Buttons/automate-schedule.png';
+import Publish from '../../../public/assets/Buttons/publish.png';
 import ShiftWeekTable from './ShiftWeekTable';
 import './style.css';
 
@@ -14,10 +16,12 @@ export default class Schedule extends Component {
         BigCalendar.momentLocalizer(moment);
 		return (
 			<div className="App">
-				<div>
-					<img src={CreateCertificate}/>
-					<img src={TemplateList} />
-					<img src={AutomateSchedule} />
+				<div style={{ display:"inline"}}>
+					<img className="" src={CreateShift} alt="Create Shift"/>
+					<img className="pull-right" src={Publish} alt="Publish"/>
+					<img className="pull-right" src={Automate} alt="Automate"/>
+					<img className="pull-right" src={AddAsTemplate} alt="Add As Template"/>
+					<img className="pull-right" src={TemplateList} alt="Template List"/>
 				</div>
 				<div>
 					<BigCalendar events={[]}

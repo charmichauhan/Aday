@@ -72,7 +72,7 @@ body {
 }
 .todo small {
 	text-transform: uppercase;
-	letter-spacing: 3;
+	letter-spacing: normal;
 	font-weight: bolder;
 }
 

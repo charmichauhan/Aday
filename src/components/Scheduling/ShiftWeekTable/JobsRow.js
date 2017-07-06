@@ -18,7 +18,7 @@ export default class JobsRow extends Component{
                     let h = endTime.diff(startTime,'hours');
                     let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
                     finalHours += h;
-                    finalMinutes += m;
+                    finalMinutes += parseInt(m);
                 }
             }
         });
@@ -31,18 +31,18 @@ export default class JobsRow extends Component{
                     <table className="" width="100%">
                         <tbody>
                         <tr>
-                            <td width="30%"><img src={data.icon} alt="img"/></td>
-                            <td width="70%" className="penalheading">{data.title}<p>{finalHours} hours<br/>{finalMinutes} Minutes</p></td>
+                            <td width="24%"><img src={data.icon} alt="img"/></td>
+                            <td width="76%" className="penalheading">{data.title}<p>{finalHours} hours<br/>{finalMinutes} Minutes</p></td>
                         </tr>
                         </tbody>
                     </table>
                 </td>
                 {
                     Object.values(shifts).map((value,index)=> ((
-                            <td>
+                            <td key={index}>
                                 {
                                     Object.values(value).map((value,index)=>(
-                                        <EventPopup data={value}/>
+                                        <EventPopup data={value} key={index}/>
                                     ))
                                 }
                             </td>

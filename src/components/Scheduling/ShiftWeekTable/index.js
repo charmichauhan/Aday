@@ -26,17 +26,17 @@ export default class ShiftWeekTable extends Week {
 					<tbody>
 					<tr>
 						<th className="long"></th>
-                        <th>{days[1]}</th>
-                        <th>{days[2]}</th>
-                        <th>{days[3]}</th>
-                        <th>{days[4]}</th>
-                        <th>{days[5]}</th>
-                        <th>{days[6]}</th>
-                        <th>{days[7]}</th>
+                        <th className="dayname" >{days[1]}</th>
+                        <th className="dayname">{days[2]}</th>
+                        <th className="dayname">{days[3]}</th>
+                        <th className="dayname">{days[4]}</th>
+                        <th className="dayname">{days[5]}</th>
+                        <th className="dayname">{days[6]}</th>
+                        <th className="dayname">{days[7]}</th>
 					</tr>
                     <SpecialDay dateStart={start}/>
 					{jobData.map((value,index)=>(
-						<JobsRow data={jobData[index]}/>
+						<JobsRow data={jobData[index]} key={index}/>
 						)
 					)
 					}

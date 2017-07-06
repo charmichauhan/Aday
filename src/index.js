@@ -17,10 +17,10 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 ReactDOM.render(
-  <MuiThemeProvider>
-	  <Router>
-	    {renderRoutes(routes)}
-	  </Router>
-  </MuiThemeProvider>,
-  document.getElementById('root')
+	<MuiThemeProvider>
+		<Router>
+            {renderRoutes(routes)}
+		</Router>
+	</MuiThemeProvider>,
+    document.getElementById('root')
 );

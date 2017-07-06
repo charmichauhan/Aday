@@ -4,34 +4,39 @@
 .p1{
     padding: 10px !important;
 }
-
 .atable th
-{
+{   text-transform: uppercase;
     height: 18px;
-    width: 114px;
+    width: 135px;
     color: #4A4A4A;
-    font-size: 13px;
-    padding: 30px 0 !important;
-    font-weight: 400;
     font-family: "Roboto Condensed";
+    font-size: 15px;
     letter-spacing: 1px;
     line-height: 18px;
     text-align: center;
+    font-weight: normal;
+}
+.atable .dayname{
+    height: 90px;
+    text-align: center;
+    margin: auto;
+    vertical-align: middle;
+    font-size: inherit;
+}
+.atable .long{
+    width: 190px !important;
+}
+.atable .penalheading{
     text-transform: uppercase;
-}
-
-.long{
-    width: 170px !important;
-}
-.penalheading{
+    height: 21px;
+    width: 97px;
     color: #4A4A4A;
     font-family: "Roboto Condensed";
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     line-height: 21px;
-    text-transform: uppercase;
 }
-.penalheading p{
+.atable .penalheading p{
     color: #4A4A4A;
     font-family: "Roboto Condensed";
     font-size: 14px;
@@ -42,7 +47,7 @@
     vertical-align: top;
     height: 105px !important;
 }
-.spday td{
+.atable .spday td{
     height: 30px !important;
     font-weight: 600;
     text-transform: capitalize;
@@ -55,85 +60,96 @@
     letter-spacing: 1px;
     line-height: 16px;
     text-align: center;
-
+    text-transform: uppercase;
 }
 .m8{
     margin: 8px;
+}
+.mr5{
+    margin-right: 5px;
 }
 .maintitle{
     display: inline-block;
     text-transform: uppercase;
     margin: 10px auto;
-    width: 41%;
+    height: 30px;
+    width: 55%;
     color: #666666;
     font-family: "Roboto Condensed";
     font-size: 30px;
     line-height: 30px;
     text-align: center;
 }
-.day-item-title{
-    margin-bottom: 6px;
-}
-span.fa.fa-clock-o {
-    margin-top: 3px;
-    margin-right: 3px;
-}
-.day-item-title span{
-    margin-right: 1px;
-}
-.day-item-title p{
-    float: right;
-    margin-top: 3px;
-    float: right;
-    width: 23px;
-    font-size: 8px;
-}
-
-a.glyphicon.glyphicon-plus{
-    color: #4A4A4A;
-    -webkit-transform: rotate(45deg);
-    -moz-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
-    transform: rotate(45deg);
-}
 .day-item{
     box-sizing: border-box;
-    height: 105px;
-    width: 100px;
+    width: 132px;
     border: 1px solid #999999;
     border-radius: 4px;
-    background-color: rgba(153, 153, 153, 0.1);
+    background-color: rgba(153,153,153,0.1);
     box-shadow: 0 4px 4px 0 #999999;
-    padding: 4px;
+    padding: 2px 2px;
     margin-bottom: 6px;
-    margin-left: -2px;
+    margin-left: -6px;
 }
-.start-time {
-    display: flex;
+.day-item-title a.glyphicon.glyphicon-plus{
+    height: 21.21px;
+    width: 21.21px;
+    color: #5f5f5a;
+    transform: rotate(405deg);
+}
+
+.day-item .day-item-title{
+    margin-bottom: 6px;
+}
+.day-item .day-item-title span{
+    margin-right: 1px;
+}
+.day-item .day-item-title p{
+    float: right;
+    height: 22px;
+    width: 33px;
+    color: #4A4A4A;
+    font-family: "Avenir Next Condensed";
+    font-size: 10px;
+    line-height: 011px;
+    margin-top: 4px;
+}
+.day-item .start-time {
+    display: inline-flex;
     color: #4A4A4A;
     font-family: Lato;
     font-size: 16px;
     line-height: 0px;
     margin-bottom: 6px;
+    height:35px;
 }
-.start-time p{
-    display: inline;
+.start-time p {
+    height: 18px;
+    width: 97px;
+    color: #4A4A4A;
+    font-family: Lato;
+    font-size: 20px;
+    line-height: 18px;
 }
-.start-time p small{
+
+.start-time p small {
     font-size: 70%;
 }
-.location {
+.start-time span.fa.fa-clock-o {
+    margin-top: 3px;
+    margin-right: 3px;
+}
+.day-item .location {
+    text-transform: uppercase;
     display: flex;
-    height: 16px;
-    width: 106px;
     color: #4A4A4A;
     font-family: "Roboto Condensed";
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 300;
     line-height: 16px;
+    margin-top: 2px;
 }
-.location a{
+.day-item .location a{
     font-size: 14px;
     color: #4A4A4A;
 }
@@ -143,22 +159,29 @@ a.glyphicon.glyphicon-plus{
     color:#4A4A4A;
     font-family: "Roboto Condensed";
 }
-.box-title {
-    display: inline-block;
-    background: #E33821;
-    border-radius: 50%;
-    height: 16px;
-    width: 16px;
-    color: #FFFFFF;
-    font-family: Lato;
-    font-size: 10px;
-    font-weight: bold;
-    text-align: center;
-}
-.duration {
+.day-item-title .box-title {
     display: inline-block;
     height: 22px;
-    width: 52px;
+    width: 22px;
+    border-radius: 50%;
+    color: #FFFFFF;
+    font-family: Lato;
+    font-weight: 500;
+    text-align: center;
+}
+.day-item-title .openshift{
+    background-color: #E33821;
+}
+.day-item-title .pendingshift{
+    background-color: #FFAD33;
+}
+.day-item-title .filledshift{
+    background-color: #00A863;
+}
+.day-item-title .duration {
+    display: inline-block;
+    height: 22px;
+    width: 30px;
     color: #4A4A4A;
     font-family: "Avenir Next Condensed";
     font-size: 11px;

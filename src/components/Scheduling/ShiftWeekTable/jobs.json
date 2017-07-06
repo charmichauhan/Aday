@@ -9,7 +9,10 @@
             "shiftDate":"Sun Jul 02 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":"15"
           }
         ],
         "Monday":[
@@ -17,7 +20,10 @@
             "shiftDate":"Mon Jul 03 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ],
         "Tuesday":[
@@ -25,7 +31,10 @@
             "shiftDate":"Tue Jul 04 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ],
         "Wednesday":[
@@ -33,7 +42,10 @@
             "shiftDate":"Wed Jul 05 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"1",
+            "pendingShift":"2",
+            "filledShift":"1"
           }
         ],
         "Thursday":[
@@ -62,7 +74,10 @@
             "shiftDate": "Tue Jul 04 2017",
             "timeFrom": "10:00 A",
             "timeTo": "05:00 P",
-            "location": "Chao Center"
+            "location": "Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ],
         "Wednesday": [
@@ -74,7 +89,10 @@
             "shiftDate": "Fri Jul 07 2017",
             "timeFrom": "10:00 A",
             "timeTo": "05:00 P",
-            "location": "Chao Center"
+            "location": "Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ],
         "Saturday": [
@@ -92,7 +110,10 @@
             "shiftDate": "Sun Jul 02 2017",
             "timeFrom": "10:00 A",
             "timeTo": "05:00 P",
-            "location": "Chao Center"
+            "location": "Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":""
           }
         ],
         "Monday":[
@@ -100,7 +121,10 @@
             "shiftDate":"Mon Jul 03 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ],
         "Tuesday":[
@@ -108,7 +132,10 @@
             "shiftDate":"Tue Jul 04 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"1",
+            "pendingShift":"2",
+            "filledShift":"1"
           }
         ],
         "Wednesday":[
@@ -116,7 +143,10 @@
             "shiftDate":"Wed Jul 05 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"1",
+            "pendingShift":"2",
+            "filledShift":"1"
           }
         ],
         "Thursday":[
@@ -124,7 +154,10 @@
             "shiftDate":"Thu Jul 06 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ],
         "Friday":[
@@ -146,7 +179,10 @@
             "shiftDate":"Sun Jul 02 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":""
           }
         ],
         "Monday":[
@@ -154,7 +190,10 @@
             "shiftDate":"Mon Jul 03 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ],
         "Tuesday":[
@@ -162,7 +201,10 @@
             "shiftDate":"Tue Jul 04 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"2"
           }
         ],
         "Wednesday":[
@@ -170,7 +212,10 @@
             "shiftDate":"Wed Jul 05 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"2"
           }
         ],
         "Thursday":[
@@ -181,7 +226,10 @@
             "shiftDate":"Fri Jul 07 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ],
         "Saturday":[
@@ -189,7 +237,10 @@
             "shiftDate":"Sat Jul 08 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ]
       }
@@ -205,7 +256,10 @@
             "shiftDate":"Sun Jul 02 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":""
           }
         ],
         "Monday":[
@@ -213,7 +267,10 @@
             "shiftDate":"Mon Jul 03 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":"1"
           }
         ],
         "Tuesday":[
@@ -221,7 +278,10 @@
             "shiftDate":"Tue Jul 04 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":"1"
           }
         ],
         "Wednesday":[
@@ -229,7 +289,10 @@
             "shiftDate":"Wed Jul 05 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"2"
           }
         ],
         "Thursday":[
@@ -237,7 +300,10 @@
             "shiftDate":"Thu Jul 06 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"2"
           }
         ],
         "Friday":[
@@ -259,13 +325,19 @@
             "shiftDate":"Sun Jul 02 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           },
           {
             "shiftDate":"Sun Jul 02 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":""
           }
         ],
         "Monday":[
@@ -273,13 +345,19 @@
             "shiftDate":"Mon Jul 03 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"1",
+            "pendingShift":"2",
+            "filledShift":"1"
           },
           {
             "shiftDate":"Mon Jul 03 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"",
+            "filledShift":"1"
           }
         ],
         "Tuesday":[
@@ -287,13 +365,19 @@
             "shiftDate":"Tue Jul 04 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":"15"
           },
           {
             "shiftDate":"Tue Jul 04 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":""
           }
         ],
         "Wednesday":[
@@ -301,13 +385,19 @@
             "shiftDate":"Wed Jul 05 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":""
           },
           {
             "shiftDate":"Wed Jul 05 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":""
           }
         ],
         "Thursday":[
@@ -315,13 +405,19 @@
             "shiftDate":"Thu Jul 06 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"2",
+            "filledShift":""
           },
           {
             "shiftDate":"Thu Jul 06 2017",
             "timeFrom":"10:00 A",
             "timeTo":"05:00 P",
-            "location":"Chao Center"
+            "location":"Chao Center",
+            "openShift":"",
+            "pendingShift":"1",
+            "filledShift":"15"
           }
         ],
         "Friday":[

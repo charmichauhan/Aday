@@ -19,16 +19,20 @@ export default class EventPopup extends Component{
             <div className="day-item">
                 <div className="day-item-title">
                     <a className="glyphicon glyphicon-plus" onClick={(e)=>this.onPopupClose(e)}/>
-                    <span className="box-title">1</span>
+                    {data["openShift"]===""?"":<span className="box-title openshift">{data["openShift"]}</span>}
+                    {data["pendingShift"]===""?"":<span className="box-title pendingshift">{data["pendingShift"]}</span>}
+                    {data["filledShift"]===""?<span className="box-title filledshift">\</span>:<span className="box-title filledshift">{data["filledShift"]}</span>}
                     <p className="duration">{h} HR&thinsp; {m}MIN </p>
                 </div>
                 <div className="start-time">
                     <span className="fa fa-clock-o"/>
-                    <p className=""> {data['timeFrom']} <small>TO</small>  {data['timeTo']} </p>
+                    <p className=""> {data['timeFrom']} <small>TO</small> {data['timeTo']} </p>
                 </div>
                 <div className="location">
-                    <a className="fa fa-map-marker fa-5" aria-hidden="true" onClick={()=>this.onLocationClick()}/>
-                    <p>{data['location']}</p>
+                    <span className="fa fa-map-marker mr5" aria-hidden="true">
+                        <a onClick={()=>this.onLocationClick()}/>
+                    </span>
+                    <span>{data['location']}</span>
                 </div>
             </div>
         )

@@ -6,7 +6,7 @@ import _ from 'lodash';
 export default class NumberOfEmployeeSelector extends Component {
   constructor(props){
     super(props);
-     this.selectValue=this.selectValue.bind(this);
+     
   }
   render(){
     return(

@@ -12,7 +12,6 @@ const App = ({route}) => (
 				<Grid.Column width={4}><Nav/></Grid.Column>
 
 				<Grid.Column width={12}>
-					<Divider/>
 					{renderRoutes(route.routes)}
 				</Grid.Column>
 			</Grid.Row>

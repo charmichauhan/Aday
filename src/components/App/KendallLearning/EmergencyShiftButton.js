@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Icon, Button } from 'semantic-ui-react';
+import { Icon, Button,Modal,Header,Image} from 'semantic-ui-react';
 import 'react-date-picker/index.css';
 import EmergencyShiftForm from './EmergencyShiftFormContainer';
 import { Provider } from 'react-redux';
@@ -29,6 +29,7 @@ function shiftReducer(state={}, action) {
 }
 
 export default class EmergencyShiftButton extends Component {
+
 	constructor(props) {
     super(props);
     this.onButtonClick = this.onButtonClick.bind(this);
@@ -66,37 +67,33 @@ export default class EmergencyShiftButton extends Component {
 			this.setState({ confirmPop: true});
     }
   }
-	render() {
+
+
+	  render(){
+
 		const reducer = combineReducers ({ form: formReducer, shifts: shiftReducer});
 		// there should be 1 more layer of component so store isn't being remade
 		const store = createStore(reducer, {shifts: []});
 		let unsubscribe = store.subscribe(() =>
 		  console.log(store.getState())
 		)
-		return (
-			<Provider store={store}>
-			<div>
-				<Button basic fluid onClick={this.onButtonClick}><Icon name="attention" />Emergency Shift</Button>
-				{this.state.poppedOut &&
-					<ModalContainer onClose={this.onFormClose}>
-					<ModalDialog onClose={this.onFormClose} dismissOnBackgroundClick={false}>
-								<EmergencyShiftForm onSubmit={this.onSubmit}/>
-						{this.state.confirmPop &&
-							<ModalContainer onClose={this.onFormClose}>
-							<ModalDialog onClose={this.onConfirmClick}>
-								<div style={{textAlign: 'center'}}>
-									A new open shift has been created. <br/>
-								  Go to the schedule to edit or publish shifts. <br/>
-									<Button type="Ok" onClick={this.onConfirmClick}>Ok</Button>
-								</div>
-							</ModalDialog>
-							</ModalContainer>
-						}
-          </ModalDialog>
-					</ModalContainer>
-			  }
-			</div>
-			</Provider>
-		);
-	}
+
+
+	return(
+		 <Provider store = {store} >
+		  <Modal
+			   trigger ={<Image
+					            src = "/images/Assets/Icons/Buttons/emergency-shfit-button.png"
+											onClick={this.onButtonClick}
+											style={{cursor:'pointer'}}
+									 />}
+				 open = {this.state.poppedOut}
+				 style ={{marginTop:'0px',top:'5%',bottom:'5%',padding:'1.5%'}}
+				 size="large"
+			 >
+			  <EmergencyShiftForm />
+			</Modal>
+		 </Provider>
+		 );
+	 }
 }

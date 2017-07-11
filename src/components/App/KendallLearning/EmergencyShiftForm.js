@@ -1,9 +1,6 @@
 import { DatePickerForm, TimePickerForm } from './datePickerForm';
 import React, { Component } from 'react';
-import { Field } from 'redux-form';
-import { Slider, SelectField } from 'redux-form-material-ui';
 import { Icon, Button,Image,Modal,Header,Segment,Input,TextArea,Form} from 'semantic-ui-react';
-import MenuItem from 'material-ui/MenuItem';
 import './EmergencyShiftForm.css';
 import moment from 'moment';
 import {Scrollbars} from 'react-custom-scrollbars';
@@ -26,12 +23,13 @@ class EmergencyShiftForm extends Component {
             floated="right"
             src="/images/Assets/Icons/Buttons/delete-round-small.png"
             shape="circular"
-          style={{marginTop:'0px',right:'-11%',width:'50px'}}
+            style={{marginTop:'0px',right:'-11%',width:'50px'}}
+            onClick={this.props.closeFunc}
           />
         </Header>
          <Segment raised style ={{marginTop:'2%'}}>
           <Scrollbars
-             style = {{height:'550px',marginBottom:'20px',paddingBottom:'20px'}} >
+             style = {{height:'72.4vh',marginBottom:'20px',paddingBottom:'20px'}} >
           <Form>
            <div>
              <p style = {{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>WORKPLACE</p>
@@ -77,7 +75,6 @@ class EmergencyShiftForm extends Component {
       </div>
      );
   }
-
-
 }
+
 export default EmergencyShiftForm;

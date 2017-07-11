@@ -28,7 +28,6 @@ function TimeSelectorNumberButton({
 }
 
 TimeSelectorNumberButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
   display: React.PropTypes.oneOfType([
     React.PropTypes.string,
     React.PropTypes.number,

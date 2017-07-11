@@ -91,7 +91,7 @@ export default class EmergencyShiftButton extends Component {
 				 style ={{marginTop:'0px',top:'5%',bottom:'5%',padding:'1.5%'}}
 				 size="large"
 			 >
-			  <EmergencyShiftForm />
+			  <EmergencyShiftForm closeFunc={this.onFormClose}/>
 			</Modal>
 		 </Provider>
 		 );

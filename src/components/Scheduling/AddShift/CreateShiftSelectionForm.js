@@ -13,7 +13,8 @@ export default class CreateShiftSelectionForm extends Component{
     this.onStandard = this.onStandard.bind(this);
     this.state = {
       employeeCount : false,
-      standard:false
+      standard:false,
+      template:false
     }
   }
   onEmployeeCount(){
@@ -22,11 +23,17 @@ export default class CreateShiftSelectionForm extends Component{
   onStandard(){
     this.setState({standard:true})
   }
+  onTemplate(){
+    this.setState({template:true})
+  }
+ onStandardFormClose(){
+   this.setState({standard:false})
+ }
   render(){
     return(
       <div>
         <Header as = 'h2' style={{textAlign: 'center'   , color: '#0022A1'}} >
-         ADD SHIFT
+         ADD HOURS
             <Image
             height="90%"
             width="90%"
@@ -40,8 +47,10 @@ export default class CreateShiftSelectionForm extends Component{
             trigger = {<Image
                         src="/images/Assets/Icons/Buttons/employee-count.png"
                         shape="rounded"
-                        style={{float: 'left',left: '5.8%',marginTop: '3%' , cursor: 'pointer'}}
+                        style={{float: 'left',left: '2.4%',marginTop: '3%' , cursor: 'pointer'}}
                         onClick={this.onEmployeeCount}
+                        height='90%'
+                        width='30%'
                        />}
             open={this.state.employeeCount}
             style={{marginTop:'0px'}}
@@ -52,15 +61,33 @@ export default class CreateShiftSelectionForm extends Component{
              trigger={<Image
                         src="/images/Assets/Icons/Buttons/standard-add.png"
                         shape="rounded"
-                        style={{float: 'right',right: '5.8%',marginTop: '3%',cursor: 'pointer'}}
+                        style={{float: 'left',left: '5.0%',marginTop: '3%',cursor: 'pointer'}}
                         onClick={this.onStandard}
+                        height='90%'
+                        width='30%'
+
                      />}
              open={this.state.standard}
-             style={{marginTop:'0px',top:'16%',padding:'1.5%'}}
-             size="small"
+             style={{marginTop:'0px',top:'5%',padding:'1.5%',bottom:'5%'}}
+             size="large"
              >
-               <AddShiftForm />
+               <AddShiftForm  func={this.onStandardFormClose}/>
              </Modal>
+             <Modal
+              trigger={<Image
+                         src="/images/Assets/Icons/Buttons/add-template.png"
+                         shape="rounded"
+                         style={{float: 'left',right: '1.8%',marginTop: '3%',cursor: 'pointer',left:'7.5%'}}
+                         onClick={this.onTemplate}
+                         height='90%'
+                         width='30%'
+
+                      />}
+              open={this.state.template}
+              style={{marginTop:'0px',top:'16%',padding:'1.5%'}}
+              size="small"
+              >
+              </Modal>
       </div>
     );
 

@@ -5,6 +5,9 @@ import {Icon,Image,Label,Input,List} from 'semantic-ui-react';
 import TimeSelectorNumberButton from './NumberButton/TimeSelectorButton';
 import _ from 'lodash';
 
+function getHoursFromMeridiem(meridiem) {
+  return (meridiem.toLowerCase() === 'pm') ? 12 : 0;
+}
 
 export default class TimePicker extends Component {
   constructor(props){
@@ -23,8 +26,8 @@ export default class TimePicker extends Component {
 
     this.state = {
       activeField: 'start',
-      startFieldText: '00:00 am',
-      stopFieldText: '00:00 pm',
+      startFieldText: '12:00 am',
+        stopFieldText: '12:00 pm',
       startHour: '',
       startMinute: '',
       startMeridiem: '',
@@ -38,34 +41,29 @@ export default class TimePicker extends Component {
      this.timeButtonOnClick = this.timeButtonOnClick.bind(this);
      this.attemptToUpdateTime = this.attemptToUpdateTime.bind(this);
      this.getMomentState = this.getMomentState.bind(this);
-     this.getHoursFromMeridiem = this.getHoursFromMeridiem.bind(this);
-   }
+
+  }
 
    componentDidMount() {
      const { startFieldText, stopFieldText } = this.state;
      this.attemptToUpdateTime('start', startFieldText);
      this.attemptToUpdateTime('stop', stopFieldText);
    }
-   getHoursFromMeridiem(meridiem) {
-     return (meridiem.toLowerCase() === 'pm') ? 12 : 0;
-   }
+
    getMomentState(field) {
      const stateHour = this.state[`${field}Hour`];
      const stateMinute = this.state[`${field}Minute`];
      const stateMeridiem = this.state[`${field}Meridiem`] || 'am';
-     const momentState = moment(this.props.date || '2017-07-06');
-
+     const momentState = moment(this.props.date || '2017-07-10');
      if (stateHour !== '') {
        momentState.hour(
          parseInt(stateHour, 10) +
-         this.getHoursFromMeridiem(stateMeridiem)
+         getHoursFromMeridiem(stateMeridiem)
        );
      }
-
      if (stateMinute !== '') {
        momentState.minute(parseInt(stateMinute, 10));
      }
-
      return momentState;
    }
 
@@ -89,7 +87,7 @@ export default class TimePicker extends Component {
        momentState.add(adjustment, 'hours');
      } else if (timeSpec === 'Hour') {
        momentState.hour(
-         parseInt(value, 10) + this.getHoursFromMeridiem(stateMeridiem)
+         parseInt(value, 10)
        );
      } else if (timeSpec === 'Minute') {
        momentState.minute(value);
@@ -103,31 +101,28 @@ export default class TimePicker extends Component {
        [`${activeField}Minute`]: momentState.format('mm'),
        [`${activeField}Meridiem`]: momentState.format('a'),
        [`${activeField}FieldText`]: momentState.format('h:mm a'),
-     };
-
+      };
      this.setState(updatedState);
-
-   }
+    }
 
    textFieldOnFocus(event) {
-     console.log("xzczxc");
-     const field = $(event.target).data('field-name');
+     const $target = $(event.target)
+     const field = $target[0]['id'];
      const { activeField } = this.state;
 
-     if (field !== activeField) {
-       this.setState({ activeField: field });
-     }
+     this.setState({activeField:field});
    }
 
    textFieldOnChange(event) {
-     const field = $(event.target).data('field-name');
+
+     const field = $(event.target)[0]['id'];
      const value = event.target.value;
      this.setState({ [`${field}FieldText`]: value });
    }
 
    textFieldOnBlur(event) {
-     const $target = $(event.target);
-     const field = $target.data('field-name');
+     const $target = $(event.target)
+     const field = $target[0]['id'];
      const text = $target.val();
      this.attemptToUpdateTime(field, text);
    }
@@ -182,9 +177,13 @@ export default class TimePicker extends Component {
                        style = {{padding:'0px',height:"38px"}}
                />}
                labelPosition="left"
-               placeholder="00:00 AM"
                style={{marginTop:'-3%',width:'100%',backgroundColor:'lightgrey'}}
-           />
+               id="start"
+               onChange={this.textFieldOnChange}
+               onFocus={this.textFieldOnFocus}
+               onBlur={this.textFieldOnBlur}
+               value={this.state.startFieldText}
+             />
        </div>
        <div style ={{float:'right',width:'30%',marginRight:"20%"}}>
        <p style={{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>END TIME</p>
@@ -196,8 +195,13 @@ export default class TimePicker extends Component {
                        style = {{padding:'0px',height:"38px"}}
                />}
                labelPosition="left"
-               placeholder="00:00 AM"
                style={{marginTop:'-3%',width:'100%',backgroundColor:'lightgrey'}}
+               id="stop"
+               onChange={this.textFieldOnChange}
+               onFocus={this.textFieldOnFocus}
+               onBlur={this.textFieldOnBlur}
+               value={this.state.stopFieldText}
+
            />
        </div>
     </div>
@@ -216,7 +220,7 @@ export default class TimePicker extends Component {
                   display={value}
                   dataValue={inputValue}
                   currentValue={hour}
-                   onClick={this.timeButtonOnClick}
+                  onClick={this.timeButtonOnClick}
                   data-time-spec="Hour"
                  />
                </List.Item>

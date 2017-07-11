@@ -41,7 +41,7 @@ export default class CreateShiftButton extends Component {
 			   trigger = {<Image src = "/images/Assets/Icons/Buttons/create-shift-button.png" style={{cursor: 'pointer'}} onClick={this.onButtonClick} />}
 				 open={this.state.poppedOut}
 				 size="small"
-				 style={{ marginTop: '0px',width:'45%', height: '53%' }}
+				 style={{ marginTop: '0px',width:'57%', height: '53%',left:'45%' }}
 				 className="_arc"
          onClose = {this.onFormClose}
 				>

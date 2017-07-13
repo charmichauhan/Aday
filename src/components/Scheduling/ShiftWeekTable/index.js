@@ -1,4 +1,10 @@
 import React, { Component } from 'react';
+
+import { Provider } from 'react-redux';
+import { createStore, combineReducers } from 'redux';
+import { reducer as formReducer } from 'redux-form';
+
+
 import moment from 'moment';
 import Week from 'react-big-calendar/lib/Week';
 import dates from 'react-big-calendar/lib/utils/dates';
@@ -7,6 +13,36 @@ import JobsRow from './JobsRow';
 import SpecialDay from "./SpecialDay";
 import jobsData from "./jobs.json";
 import '../style.css';
+
+
+/*import EditShift from './ShiftEdit/Edit';
+import DeleteShift from './ShiftEdit/DeleteShift';
+*/
+import AddNewShift from './ShiftEdit/AddNewShift';
+
+
+function shiftReducer(state={}, action) {
+    switch (action.type) {
+        case 'SUBMIT_NEW_SHIFT':
+            return Object.assign({}, state, {
+                shifts: [
+                    ...(state.shifts || []),
+                    {
+                        //date: action.date,
+                        workplace: action.workplace,
+                        /*template: action.template,
+                        certification: action.certification,
+                        start: action.start,
+                        end: action.end*/
+                    }
+                ]
+            })
+        default:
+            return state
+    }
+}
+
+
 
 export default class ShiftWeekTable extends Week {
     render() {
@@ -20,8 +56,23 @@ export default class ShiftWeekTable extends Week {
             days[d]=moment(today["_d"]).format('dddd, D');
             today=moment(today).add(1,'days');
         }
+
+
+        const reducer = combineReducers ({ form: formReducer, shifts: shiftReducer});
+        const store = createStore(reducer, {shifts: []});
+        let unsubscribe = store.subscribe(() =>
+          console.log(store.getState())
+        )
+
         return (
+            <Provider store={store}>
 			<div className="col-md-12">
+
+                {/*<DeleteShift/>*/}
+                {/* <EditShift/>*/}
+
+                <AddNewShift/>
+
 				<table className="table table-bordered atable">
 					<tbody>
 					<tr>
@@ -43,6 +94,7 @@ export default class ShiftWeekTable extends Week {
 					</tbody>
 				</table>
 			</div>
+            </Provider>
         );
     }
 }

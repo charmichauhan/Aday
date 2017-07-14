@@ -1,4 +1,10 @@
 import React, { Component } from 'react';
+
+import { Provider } from 'react-redux';
+import { createStore, combineReducers } from 'redux';
+import { reducer as formReducer } from 'redux-form';
+
+
 import moment from 'moment';
 import Week from 'react-big-calendar/lib/Week';
 import dates from 'react-big-calendar/lib/utils/dates';
@@ -8,15 +14,52 @@ import SpecialDay from "./SpecialDay";
 import jobsData from "./jobs.json";
 import '../style.css';
 
+
+/*import EditShift from './ShiftEdit/Edit';
+import DeleteShift from './ShiftEdit/DeleteShift';
+*/
+import AddNewShift from './ShiftEdit/AddNewShift';
+
+
+function shiftReducer(state={}, action) {
+    switch (action.type) {
+        case 'SUBMIT_NEW_SHIFT':
+            return Object.assign({}, state, {
+                shifts: [
+                    ...(state.shifts || []),
+                    {
+                        //date: action.date,
+                        workplace: action.workplace,
+                        /*template: action.template,
+                        certification: action.certification,
+                        start: action.start,
+                        end: action.end*/
+                    }
+                ]
+            });
+        default:
+            return state
+    }
+}
+
+
+
 export default class ShiftWeekTable extends Week {
     render() {
-
+        debugger;
         let jobData = jobsData;
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
         let is_publish = true;
+        const reducer = combineReducers ({ form: formReducer, shifts: shiftReducer});
+        const store = createStore(reducer, {shifts: []});
+        let unsubscribe = store.subscribe(() =>
+            console.log(store.getState())
+        )
         return (
-            <div className="table-responsive">
+            <Provider store={store}>
+            <div className="table-responsive col-md-12">
+                <AddNewShift/>
                 <table className="table atable">
                     <thead className="thead_scroll">
                     <tr>
@@ -44,8 +87,6 @@ export default class ShiftWeekTable extends Week {
                         </th>
                     </tr>
                     </thead>
-
-
                      <tbody className="tbody_scroll">
                     <SpecialDay dateStart={start}/>
                     {jobData.map((value,index)=>(
@@ -54,9 +95,6 @@ export default class ShiftWeekTable extends Week {
                     )
                     }
                     </tbody>
-
-
-
                 </table>
                 <div className="bottomtext">
                 <table>
@@ -86,6 +124,7 @@ export default class ShiftWeekTable extends Week {
                 </table>
                 </div>
             </div>
+            </Provider>
         );
     }
 }

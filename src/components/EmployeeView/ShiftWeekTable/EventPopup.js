@@ -7,8 +7,26 @@ import create from '../../../../public/assets/Icons/create-shift.png';
 import cashier from "../../../../public/assets/Icons/cashier.png"
 
 export default class EventPopup extends Component{
-    onPopupClose = () => {
+    constructor(props){
+        super(props)
+        this.state = {
+            deleteModalPopped: false,
+            editModalPopped: false,
+            newShiftModalPopped: false
+        }
+    }
+    onPopupOpen = (modal) => {
+        //console.log(modal)
+        /*this.setState({
+         deleteModalPopped : true
+         })*/
+    };
+    onPopupClose = (modal) => {
         console.log("Close");
+        console.log([modal])
+        this.setState({
+            deleteModalPopped: false
+        })
     };
     onLocationClick = () => {
         console.log("onLocationClick");
@@ -38,9 +56,9 @@ export default class EventPopup extends Component{
                 </div>
                 <div className="overlay">
                     <div className="hoimg">
-                        <a href="#"><img src={close} alt="close"/></a>
-                        <a href="#"><img src={edit} alt="edit"/></a>
-                        <a href="#"><img src={create} alt="create"/></a>
+                        <a href="#" onClick={()=>this.onPopupOpen("deleteModalPopped")}><img src={close} alt="close"/></a>
+                        <a href="#" onClick={()=>this.onPopupOpen("editModalPopped")}><img src={edit} alt="edit"/></a>
+                        <a href="#" onClick={()=>this.onPopupOpen("newShiftModalPopped")}><img src={create} alt="create"/></a>
                     </div>
                 </div>
             </div>

@@ -65,7 +65,7 @@ table.table.emp_view_table {
     text-transform: uppercase;
     height: 21px;
     width: 110px;
-    padding: 5px;
+    padding: 12px;
     color: #4A4A4A;
     font-family: "Roboto Condensed";
     font-size: 18px;
@@ -192,6 +192,9 @@ td.shiftbox {
     margin: 0px auto 6px;
     background: #fff;
 }
+/*.day-item:hover .overlay {*/
+    /*opacity: 1;*/
+/*}*/
 .day-item-title a.glyphicon.glyphicon-plus{
     height: 21.21px;
     width: 21.21px;

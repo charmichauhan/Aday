@@ -9,10 +9,10 @@ import AddAsTemplate from '../../../public/assets/Buttons/add-as-template.png';
 import TemplateList from '../../../public/assets/Buttons/template-list-button.png';
 import Automate from '../../../public/assets/Buttons/automate-schedule.png';
 import Publish from '../../../public/assets/Buttons/publish.png';
-
 import ShiftWeekTable from './ShiftWeekTable';
 import './style.css';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
+
 
 export default class Schedule extends Component {
 

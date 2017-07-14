@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import EventPopup from './EventPopup';
 import moment from 'moment';
-import '../style.css';
+import '../../Scheduling/style.css';
 
 export default class JobsRow extends Component{
     render(){
@@ -29,15 +29,25 @@ export default class JobsRow extends Component{
 
             <tr className="tableh">
                 <td className="headcol" width="100%">
-                    <table className="" width="100%">
-                        <tbody height={"50%"}>
-                        <tr>
-                            <td width="24%"><img src={data.icon} alt="img"/></td>
-                            <td width="76%" className="penalheading">{data.title}<p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
-                                <p className="scheduled_tag">SCHEDULED</p></td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    {/*<table className="" width="100%">*/}
+                        {/*<tbody height={"50%"}>*/}
+                        {/*<tr>*/}
+                            {/*<td width="24%"><img src={data.image} alt="img"/></td>*/}
+                            {/*<td width="76%" className="penalheading">{data.firstName}*/}
+                            {/*<p className="lastName">{data.lastName}</p>*/}
+                                {/*<p className="finalHours employeeFinalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p></td>*/}
+                        {/*</tr>*/}
+                        {/*</tbody>*/}
+                    {/*</table>*/}
+                    <div className="user_profile">
+                        <div className="user_img">
+                            <img src={data.image} alt="img"/>
+                        </div>
+                        <div className="user_desc penalheading">{data.firstName}
+                            <p className="lastName">{data.lastName}</p>
+                            <p className="finalHours employeeFinalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                        </div>
+                    </div>
                 </td>
                 {
                     Object.values(shifts).map((value,index)=> ((

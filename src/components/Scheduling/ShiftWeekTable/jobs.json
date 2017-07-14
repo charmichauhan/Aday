@@ -1,7 +1,7 @@
 [
   {
     "title":"Cashier",
-    "icon":"../assets/Positions/cashier.png",
+    "icon":"/assets/Positions/cashier.png",
     "shifts":[
       {
         "Sunday":[
@@ -62,7 +62,7 @@
   },
   {
     "title":"Deep Clean",
-    "icon":"../assets/Positions/cleaning.png",
+    "icon":"/assets/Positions/cleaning.png",
     "shifts":[
       {
         "Sunday": [
@@ -102,7 +102,7 @@
   },
   {
     "title":"Front Door",
-    "icon":"../assets/Positions/door.png",
+    "icon":"/assets/Positions/door.png",
     "shifts":[
       {
         "Sunday":[
@@ -171,7 +171,7 @@
   },
   {
     "title":"Bartender",
-    "icon":"../assets/Positions/bartender.png",
+    "icon":"/assets/Positions/bartender.png",
     "shifts":[
       {
         "Sunday":[
@@ -248,7 +248,7 @@
   },
   {
     "title":"Sandwich",
-    "icon":"../assets/Positions/sandwich.png",
+    "icon":"/assets/Positions/sandwich.png",
     "shifts":[
       {
         "Sunday":[
@@ -317,7 +317,7 @@
   },
   {
     "title":"Breakfast",
-    "icon":"../assets/Positions/breakfast.png",
+    "icon":"/assets/Positions/breakfast.png",
     "shifts":[
       {
         "Sunday":[

@@ -11,38 +11,81 @@ import '../style.css';
 export default class ShiftWeekTable extends Week {
     render() {
 
-    	let jobData = jobsData;
+        let jobData = jobsData;
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
-        let days = [];
-        let today = moment(start);
-        for (let d = 1; d <= 7; d++) {
-            days[d]=moment(today["_d"]).format('dddd, D');
-            today=moment(today).add(1,'days');
-        }
+        let is_publish = true;
         return (
-			<div className="col-md-12">
-				<table className="table table-bordered atable">
-					<tbody>
-					<tr>
-						<th className="long"></th>
-                        <th className="dayname" >{days[1]}</th>
-                        <th className="dayname">{days[2]}</th>
-                        <th className="dayname">{days[3]}</th>
-                        <th className="dayname">{days[4]}</th>
-                        <th className="dayname">{days[5]}</th>
-                        <th className="dayname">{days[6]}</th>
-                        <th className="dayname">{days[7]}</th>
-					</tr>
+            <div className="table-responsive">
+                <table className="table atable">
+                    <thead className="thead_scroll">
+                    <tr>
+                        <th className="long dayname"> <p className="">Hours Booked</p><p className="hoursWorked">78%</p></th>
+                        <th className="dayname"> <p className="weekDay"> {moment().day(0).format('dddd')}</p>
+                            <p className="weekDate">{moment().day(0).format('D')}</p>
+                        </th>
+                        <th className="dayname"> <p className="weekDay"> {moment().day(1).format('dddd')} </p>
+                            <p className="weekDate">{moment().day(1).format('D')}</p>
+                        </th>
+                        <th className="dayname"> <p className="weekDay"> {moment().day(2).format('dddd')} </p>
+                            <p className="weekDate">  {moment().day(2).format('D')} </p>
+                        </th>
+                        <th className="dayname"> <p className="weekDay"> {moment().day(3).format('dddd')} </p>
+                            <p className="weekDate"> {moment().day(3).format('D')} </p>
+                        </th>
+                        <th className="dayname"> <p className="weekDay"> {moment().day(4).format('dddd')} </p>
+                            <p className="weekDate"> {moment().day(4).format('D')} </p>
+                        </th>
+                        <th className="dayname"> <p className="weekDay"> {moment().day(5).format('dddd')} </p>
+                            <p className="weekDate"> {moment().day(5).format('D')} </p>
+                        </th>
+                        <th className="dayname"> <p className="weekDay"> {moment().day(6).format('dddd')} </p>
+                            <p className="weekDate"> {moment().day(6).format('D')} </p>
+                        </th>
+                    </tr>
+                    </thead>
+
+
+                     <tbody className="tbody_scroll">
                     <SpecialDay dateStart={start}/>
-					{jobData.map((value,index)=>(
-						<JobsRow data={jobData[index]} key={index}/>
-						)
-					)
-					}
-					</tbody>
-				</table>
-			</div>
+                    {jobData.map((value,index)=>(
+                            <JobsRow data={jobData[index]} key={index}/>
+                        )
+                    )
+                    }
+                    </tbody>
+
+
+
+                </table>
+                <div className="bottomtext">
+                <table>
+                    <tfoot className="textlist">
+                    <tr>
+                        <td ><div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly hours booked:</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle computed-weekly-scheduled-hour"><p  className="bfont">hours booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle computed-weekly-scheduled-hour"><p  className="bfont">hours booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle computed-weekly-scheduled-hour"><p  className="bfont">hours booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle computed-weekly-scheduled-hour"><p  className="bfont">hours booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle computed-weekly-scheduled-hour"><p  className="bfont">hours booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle computed-weekly-scheduled-hour"><p  className="bfont">hours booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle computed-weekly-scheduled-hour"><p  className="bfont">hours booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+
+                    </tr>
+                    <tr>
+                        <td ><div className="mtitle"><p className="bfont">weekly spend booked:</p><p className="sfont">$12038 of $18293 | 66%</p></div></td>
+                        <td ><div className="stitle"><p  className="bfont">spend booked</p><p className="sfont">$1293 of $2019 | 64%</p></div></td>
+                        <td ><div className="stitle"><p  className="bfont">spend booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle"><p  className="bfont">spend booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle"><p  className="bfont">spend booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle"><p  className="bfont">spend booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle"><p  className="bfont">spend booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                        <td ><div className="stitle"><p  className="bfont">spend booked</p><p className="sfont">185 of 236 | 78%</p></div></td>
+                    </tr>
+                    </tfoot>
+                </table>
+                </div>
+            </div>
         );
     }
 }

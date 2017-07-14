@@ -3,8 +3,7 @@ import App from './components/App';
 import Root from './components/Root';
 import Home from './components/Home';
 import Schedule from './components/Scheduling';
-
-
+import EmployeeView from './components/EmployeeView';
 import MyWorkplace from './components/workplace/MyWorkplace'
 import SharedWorkplace from './components/workplace/SharedWorkplace'
 
@@ -41,6 +40,11 @@ const routes = [
 						path: '/schedule/team',
 						exact: true,
 						component: Schedule
+					},
+					{
+                        path: '/schedule/team/employeeview',
+                        exact: true,
+                        component: EmployeeView
 					},
 					{
 						path: '/schedule/manager',

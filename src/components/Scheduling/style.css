@@ -1,8 +1,42 @@
+body{
+    background-color: #FAFAFA;
+}
 .rbc-calendar *, .rbc-calendar *:before, .rbc-calendar *:after {
     box-sizing: inherit;
-    table-layout: fixed;}
+    table-layout: fixed;
+}
+.rbc-calendar {
+    width: 100%;
+}
 .p1{
     padding: 10px !important;
+}
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+::-webkit-scrollbar
+{
+    width: 7px;
+    height: 5px;
+}
+::-webkit-scrollbar-thumb
+{
+    border-radius: 12px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color:#d3d3d3;
+}
+table.table.atable {
+    border-collapse: separate;
+    border-spacing: 5px 14px;
+    height: 1300px;
+}
+table.table.emp_view_table {
+    border-collapse: separate;
+    border-spacing: 5px 14px;
+    height: 1100px;
 }
 .atable th
 {   text-transform: uppercase;
@@ -22,6 +56,7 @@
     margin: auto;
     vertical-align: middle;
     font-size: inherit;
+    border-bottom: 7px solid #f5f5f5;
 }
 .atable .long{
     width: 190px !important;
@@ -29,7 +64,8 @@
 .atable .penalheading{
     text-transform: uppercase;
     height: 21px;
-    width: 97px;
+    width: 110px;
+    padding: 5px;
     color: #4A4A4A;
     font-family: "Roboto Condensed";
     font-size: 18px;
@@ -38,19 +74,41 @@
 }
 .atable .penalheading p{
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: "lato";
     font-size: 14px;
     font-weight: 200;
     line-height: 21px;
 }
-.atable td{
+.user_img, .user_desc {
+    display: table-cell;
+}
+.user_img img {
+    border-radius: 50%;
+}
+.table-responsive table.atable td, .table-responsive table.atable th {
     vertical-align: top;
-    height: 105px !important;
+    border-top: 0 none;
+    padding-top: 0;
+    /*height: 105px !important;*/
 }
 .atable .spday td{
     height: 30px !important;
     font-weight: 600;
     text-transform: capitalize;
+}
+td.shiftbox {
+    background: #F5F5F5;
+}
+.addshift{
+    border: none;
+    background-color:#F5F5F5;
+    width: 100%;
+    color: rgba(153,153,153,0.5);
+    padding: 6px 0px 0px 0px;
+    height: 16px;
+    font-family: Roboto;
+    font-size: 14px;
+    line-height: 16px;
 }
 .btnnav{
     padding: 10px;
@@ -62,11 +120,55 @@
     text-align: center;
     text-transform: uppercase;
 }
+.btnnav a{
+    padding: 10px;
+    color: #4A4A4A;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 16px;
+    text-align: center;
+    text-transform: uppercase;
+}
+.weekDate {
+    height: 35px;
+    width: 120px;
+    color: #0022A1;
+    font-family: "Roboto Condensed";
+    font-size: 30px;
+    letter-spacing: 3px;
+    line-height: 35px;
+    text-align: center;
+}
+.hoursWorked {
+    height: 35px;
+    width: 170px;
+    color: #4A4A4A;
+    font-family: "Roboto Condensed";
+    font-size: 30px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    line-height: 35px;
+    text-align: center;
+}
 .m8{
     margin: 8px;
 }
 .mr5{
     margin-right: 5px;
+}
+.spclDay {
+    height: 20px;
+    border: 1px solid;
+    border-radius: 5px;
+    width: 125px;
+    color: #4A4A4A;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 20px;
+    text-align: center;
+    text-transform: uppercase;
 }
 .maintitle{
     display: inline-block;
@@ -74,7 +176,7 @@
     margin: 10px auto;
     height: 30px;
     width: 55%;
-    color: #666666;
+    color: #0022a1;
     font-family: "Roboto Condensed";
     font-size: 30px;
     line-height: 30px;
@@ -82,14 +184,13 @@
 }
 .day-item{
     box-sizing: border-box;
-    width: 132px;
-    border: 1px solid #999999;
+    width: 133px;
+    border: 1px solid #b3b3b3;
     border-radius: 4px;
-    background-color: rgba(153,153,153,0.1);
     box-shadow: 0 4px 4px 0 #999999;
-    padding: 2px 2px;
-    margin-bottom: 6px;
-    margin-left: -6px;
+    padding: 5px 5px;
+    margin: 0px auto 6px;
+    background: #fff;
 }
 .day-item-title a.glyphicon.glyphicon-plus{
     height: 21.21px;
@@ -99,10 +200,11 @@
 }
 
 .day-item .day-item-title{
-    margin-bottom: 6px;
+    margin-bottom: 0px;
+    margin-top: 5px;
 }
 .day-item .day-item-title span{
-    margin-right: 1px;
+    margin-right: 4px;
 }
 .day-item .day-item-title p{
     float: right;
@@ -123,12 +225,11 @@
     margin-bottom: 6px;
     height:35px;
 }
-.start-time p {
-    height: 18px;
-    width: 97px;
+.start-time .date-time {
+    width: 60%;
     color: #4A4A4A;
     font-family: Lato;
-    font-size: 20px;
+    font-size: 19px;
     line-height: 18px;
 }
 
@@ -178,15 +279,226 @@
 .day-item-title .filledshift{
     background-color: #00A863;
 }
-.day-item-title .duration {
-    display: inline-block;
-    height: 22px;
-    width: 30px;
-    color: #4A4A4A;
-    font-family: "Avenir Next Condensed";
-    font-size: 11px;
-    line-height: 11px;
+.start-time .duration {
+    width: 30%;
+    font-size: 10px;
     float: right;
-    margin: 0;
-    padding: 0;
+}
+.flr{
+    float: right;
+}
+img.btn-image {
+    margin: 10px 0;
+    display: inline-block;
+    width: auto;
+}
+.rbc-calendar {
+    background-color: #FFFFFF;
+    border: 1px solid #dfdfdf;
+    border-radius: 6px;
+    box-shadow: 0 4px 4px 0 #999999;
+}
+/* .headcol {
+    position:absolute;
+    width:13em;
+    left:0;
+    top:auto;
+    background: #fafafa;
+    height: 214px;
+
+ }*/
+
+.textlist  div.mtitle{
+    width: 196px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    text-align: center;
+}
+.textlist  div.stitle {
+    float: left;
+    width: 139px;
+    text-transform: uppercase;
+    margin-bottom: 11px;
+    text-align: center;
+    text-decoration: none;
+}
+.bfont{
+    color: #4A4A4A;
+    font-family: "Roboto Condensed";
+    font-size: 13px;
+    line-height: 15px;
+    text-align: center;
+}
+.sfont{
+    color: #999999;
+    font-family: Lato;
+    font-size: 11.5px;
+    line-height: 13px;
+    text-align: center;
+}
+.rectangle {
+    height: 45px;
+    width: 500px;
+    border: 1px solid rgba(151,151,151,0.3);
+    border-radius: 10px;
+    background-color: rgba(255,255,255,0.4);
+    margin: 0 auto;
+    float: none;
+    line-height: 42px;
+    text-align: center;
+}
+
+.rectangle p {
+    display: inline-block;
+    margin: inherit;
+    color: #4A4A4A;
+    padding: 8px 0;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 28px;
+    text-align: center;
+
+}
+.rectangle img {
+    float: left;
+    padding: 6px 0;
+}
+.jobType{
+    padding: 0 4px;
+}
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: .5s ease;
+    border: 1px solid #999999;
+    border-radius: 4px;
+    background-color: rgba(74,74,74,0.7);
+    box-shadow: 0 4px 4px 0 #999999
+}
+.day-item.hov {
+    position: relative;
+}
+.hov:hover .overlay {
+    opacity: 1;
+}
+.overlay .hoimg {
+    width: 100%;
+    color: white;
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+}
+.hoimg img{
+     padding: 0 4px;
+}
+.textlist table{
+    border-collapse: separate;
+    border-spacing: 2px 14px;
+}
+.computed-weekly-scheduled-hour{
+    vertical-align: middle;
+    font-size: inherit;
+    border-top: 7px solid #f5f5f5;
+    padding-top: 16px;
+}
+.finalHours {
+    margin-bottom: 0;
+}
+.employeeFinalHours{
+    margin-top: -8px;
+}
+.atable p.scheduled_tag {
+    color: #999;
+    font-size: 13px;
+}
+
+.atable tbody.tbody_scroll {
+    position: absolute;
+    height: 1060px;
+    overflow-x: hidden;
+}
+.emp_view_table tbody.tbody_scroll {
+    position: absolute;
+    height: 960px;
+    overflow-x: hidden;
+}
+.bottomtext table {
+    position: absolute;
+    bottom: 0;
+    top: auto;
+}
+table.atable, .bottomtext {
+    position: relative;
+}
+
+table.atable td.shiftbox {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+
+@media screen and (max-width: 1452px) and (min-width: 1351px) {
+    .wrapper-div .maintitle{
+        width: 36%;
+    }
+}
+@media screen and (max-width: 1350px) {
+
+    .rbc-calendar{
+        display: block;
+    }
+    .wrapper-div .maintitle{
+        width: 36%;
+    }
+    .btntitle img {
+        width: 18%;
+    }
+}
+@media screen and (max-width: 1400px) and (min-width: 1280px) {
+    img.btn-image {
+        width: 19%;
+    }
+}
+
+@media screen and (max-width: 1279px) and (min-width: 1024px) {
+    img.btn-image {
+        width: 20%;
+    }
+
+}
+@media screen and (max-width: 1024px) {
+    img.btn-image {
+        width: 20%;
+    }
+}
+@media screen and (max-width: 1024px) and (min-width: 768px) {
+    ul.nav.navbar-nav button.btn {
+        margin: 8px 3px;
+    }
+    .wrapper-div .maintitle {
+        width: 36%;
+    }
+    ul.nav.navbar-nav.navbar-right li button {
+        margin: 3px;
+    }
+
+}
+@media screen and (max-width: 931px) and (min-width: 832px){
+    .wrapper-div .maintitle {
+        width: 34%;
+    }
+}
+@media screen and (max-width: 831px) and (min-width: 768px) {
+    .wrapper-div .maintitle {
+        width: 24%;
+    }
 }

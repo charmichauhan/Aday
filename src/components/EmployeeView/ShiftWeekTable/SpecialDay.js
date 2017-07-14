@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import specialday from './specialday.json';
-import '../style.css';
+import '../../Scheduling/style.css';
 
 export default class SpecialDay extends Component{
     render(){

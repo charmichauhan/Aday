@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import '../style.css';
+import '../../Scheduling/style.css';
+import close from '../../../../public/assets/Icons/close-shift.png';
+import edit from '../../../../public/assets/Icons/edit-shift.png';
+import create from '../../../../public/assets/Icons/create-shift.png';
+import cashier from "../../../../public/assets/Icons/cashier.png"
 
 export default class EventPopup extends Component{
     onPopupClose = () => {
@@ -16,22 +20,28 @@ export default class EventPopup extends Component{
         let h = endTime.diff(startTime,'hours');
         let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
         return(
-            <div className="day-item">
+            <div className="day-item hov">
                 <div className="start-time">
                     <span className="fa fa-clock-o"/>
                     <p className="date-time"> {data['timeFrom']} {data['timeTo']} </p>
                     <p className="duration">{h} HR&thinsp; {m}MIN </p>
                 </div>
                 <div className="location">
+                    <span><img src={cashier} alt="jobtype"/></span>
+                    <span className="jobType">{data["job"]}</span>
+                </div>
+                <div className="location">
                     <span className="fa fa-map-marker mr5" aria-hidden="true">
                         <a onClick={()=>this.onLocationClick()}/>
                     </span>
-                    <span>{data['location']}</span>
+                    <span className="jobType">{data['location']}</span>
                 </div>
-                <div className="day-item-title">
-                    {data["openShift"]===""?"":<span className="box-title openshift">{data["openShift"]}</span>}
-                    {data["pendingShift"]===""?"":<span className="box-title pendingshift">{data["pendingShift"]}</span>}
-                    {data["filledShift"]===""?<span className="box-title filledshift">\</span>:<span className="box-title filledshift">{data["filledShift"]}</span>}
+                <div className="overlay">
+                    <div className="hoimg">
+                        <a href="#"><img src={close} alt="close"/></a>
+                        <a href="#"><img src={edit} alt="edit"/></a>
+                        <a href="#"><img src={create} alt="create"/></a>
+                    </div>
                 </div>
             </div>
         )

@@ -1,8 +1,25 @@
-.square-button {
-  border-radius: 2px !important;
-  background-color: #fff !important;
-  margin: 0 2px !important;
+.shift-modal-day-cell-direction {
+  display: inline-block;
 }
-.square-button .material-icons {
+.shift-modal-day-cell-direction .shift-modal-day-cell-direction-button {
+  margin: 0 9px;
+  width: 35px;
+  height: 80px;
+  background-color: #fff;
+  border: 1px solid #f7f7f7;
   color: #423a3f;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 1px 1px 6px #4a4a4a;
+  border-radius: 5px;
+
+}
+.shift-modal-day-cell-direction .shift-modal-day-cell-direction-button:hover, .shift-modal-day-cell-direction .shift-modal-day-cell-direction-button:active, .shift-modal-day-cell-direction .shift-modal-day-cell-direction-button.selected {
+  background-color: #9a9699;
+  border-color: #9a9699;
+  color: #fff;
+}
+.shift-modal-day-cell-direction .shift-modal-day-cell-direction-button:focus {
+  outline: none;
 }

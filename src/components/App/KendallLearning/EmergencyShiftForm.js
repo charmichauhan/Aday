@@ -1,11 +1,11 @@
-import { DatePickerForm, TimePickerForm } from './datePickerForm';
 import React, { Component } from 'react';
-import { Icon, Button,Image,Modal,Header,Segment,Input,TextArea,Form} from 'semantic-ui-react';
-import './EmergencyShiftForm.css';
 import moment from 'moment';
+import { Icon, Button,Image,Modal,Header,Segment,Input,TextArea,Form} from 'semantic-ui-react';
 import {Scrollbars} from 'react-custom-scrollbars';
-import TimePicker from './TimePicker/TimePicker';
-import NumberOfEmployeeSelector from './NumberOfEmployeeSelector';
+import TimePicker from '../../TimePicker/TimePicker';
+import NumberOfMemberSelector from '../../NumberOfMemberSelector/NumberOfMemberSelector';
+import ShiftDaySelector from '../../DaySelector/ShiftDaySelector';
+import './EmergencyShiftForm.css';
 
 class EmergencyShiftForm extends Component {
   render() {
@@ -31,24 +31,29 @@ class EmergencyShiftForm extends Component {
           <Scrollbars
              style = {{height:'72.4vh',marginBottom:'20px',paddingBottom:'20px'}} >
           <Form>
-           <div>
+            <div>
              <p style = {{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>WORKPLACE</p>
              <Input placeholder="CHAO CENTER" icon = {<Icon name = "sort" />} style={{marginTop:'-2%',width:'95%',backgroundColor:'lightgrey'}} />
-           </div>
-           <div>
+            </div>
+            <div>
              <p style = {{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>SELECT TEMPLATE</p>
              <Input placeholder="SELECT TEMPLATE" icon = {<Icon name = "sort" />} style={{marginTop:'-2%',width:'95%',backgroundColor:'lightgrey'}} />
-           </div>
-           <div>
+            </div>
+            <div>
              <p style = {{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>POSITION</p>
              <Input placeholder="POSITION" icon = {<Icon name = "sort" />} style={{marginTop:'-2%',width:'95%',backgroundColor:'lightgrey'}} />
-           </div>
-           <div>
-             <p style={{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>SHIFT DATE</p>
-             <Input placeholder={moment().format('MM-DD-YYYY')} icon = {<Icon name = "calendar" />} style={{marginTop:'-2%',width:'95%',backgroundColor:'lightgrey'}} />
-           </div>
-            <TimePicker />
-            <NumberOfEmployeeSelector />
+            </div>
+            <div>
+             <p style={{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>SHIFT DATE(S)</p>
+             <ShiftDaySelector />
+            </div>
+            <div>
+              <TimePicker />
+            </div>
+            <div style={{marginTop:'32%'}}>
+               <p style={{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>NUMBER OF TEAM MEMBERS</p>
+              <NumberOfMemberSelector />
+            </div>
            <div style={{marginTop:'2%'}}>
              <p style = {{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>UNPAID-BREAK</p>
              <Input placeholder="30 MINUTES (SET BY POLICY)" icon = {<Icon name = "chevron down" />} style={{marginTop:'-2%',width:'95%',backgroundColor:'lightgrey'}} />
@@ -60,12 +65,11 @@ class EmergencyShiftForm extends Component {
            <div>
              <p style = {{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>INSTRUCTIONS - <span style={{color:'RED'}}>OPTIONAL</span></p>
              <TextArea rows={3} style={{width:'95%'}} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' />
-
            </div>
            <div>
               <Image
                 centered
-                src="/images/Assets/Icons/Buttons/confirm-button.png"
+                src="/images/Assets/Icons/Buttons/emergency-shift.png"
                 shape="circular"
               />
            </div>

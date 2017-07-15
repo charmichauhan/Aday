@@ -11,6 +11,8 @@ export default class CreateShiftSelectionForm extends Component{
     super(props);
     this.onEmployeeCount = this.onEmployeeCount.bind(this);
     this.onStandard = this.onStandard.bind(this);
+    this.onStandardFormClose=this.onStandardFormClose.bind(this);
+    
     this.state = {
       employeeCount : false,
       standard:false,
@@ -71,7 +73,7 @@ export default class CreateShiftSelectionForm extends Component{
              style={{marginTop:'0px',top:'5%',padding:'1.5%',bottom:'5%'}}
              size="large"
              >
-               <AddShiftForm  func={this.onStandardFormClose}/>
+               <AddShiftForm  closeFunc={this.onStandardFormClose}/>
              </Modal>
              <Modal
               trigger={<Image

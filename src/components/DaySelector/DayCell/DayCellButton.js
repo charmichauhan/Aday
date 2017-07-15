@@ -6,6 +6,7 @@ import './DayCellButton.css';
 function DayCellButton({
   daySubString,
   cellId,
+  displayMonth,
   displayDate,
   selected,
   onClick,
@@ -17,9 +18,9 @@ function DayCellButton({
 
   return (
     <div className="shift-modal-day-cell">
-      <button className={buttonClasses} onClick={onClick} data-cellId={cellId}>
+      <button type="button" className={buttonClasses} onClick={onClick} data-cellId={cellId}>
         {daySubString}
-        <div className="display-date">{displayDate}</div>
+        <div className="display-date">{displayMonth} {displayDate}</div>
       </button>
     </div>
   );

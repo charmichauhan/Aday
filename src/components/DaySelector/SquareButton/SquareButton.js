@@ -1,16 +1,19 @@
 import React, { PropTypes } from 'react';
-import { IconButton } from 'react-mdl';
-
+import {Icon} from 'semantic-ui-react';
 import './SquareButton.css';
 
-function SquareButton({ name, onClick, ...otherProps }) {
+function SquareButton({ name, onClick,dataDirection,...otherProps }) {
   return (
-    <IconButton
-      name={name}
-      className="square-button"
-      onClick={onClick}
-      {...otherProps}
-    />
+    <div className="shift-modal-day-cell-direction">
+      <button
+           type="button"
+           className="shift-modal-day-cell-direction-button"
+           onClick={onClick}
+           id={dataDirection}
+       >
+         <Icon name={name} size="huge" onClick={onClick} id={dataDirection} fitted/>
+      </button>
+    </div>
   );
 }
 

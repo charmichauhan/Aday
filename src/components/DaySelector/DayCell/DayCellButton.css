@@ -2,16 +2,18 @@
   display: inline-block;
 }
 .shift-modal-day-cell .shift-modal-day-cell-button {
-  margin: 0 6px;
+  margin: 0 9px;
   width: 80px;
   height: 80px;
   background-color: #fff;
   border: 1px solid #f7f7f7;
   color: #423a3f;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 20px;
   cursor: pointer;
   box-shadow: 1px 1px 6px #4a4a4a;
+  border-radius: 5px;
+
 }
 .shift-modal-day-cell .shift-modal-day-cell-button:hover, .shift-modal-day-cell .shift-modal-day-cell-button:active, .shift-modal-day-cell .shift-modal-day-cell-button.selected {
   background-color: #9a9699;
@@ -22,6 +24,8 @@
   outline: none;
 }
 .shift-modal-day-cell .display-date {
-  font-size: 9px;
+  font-size: 18px;
   color: #4a4a4a;
+  margin-top: 12%;
+  font-weight: 500;
 }

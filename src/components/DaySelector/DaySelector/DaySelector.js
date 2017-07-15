@@ -3,42 +3,24 @@ import $ from 'webpack-zepto';
 import moment from 'moment';
 import React, { PropTypes } from 'react';
 import DayCellButton from '../DayCell/DayCellButton';
-import './DaySelector.css';
+import SquareButton from '../SquareButton/SquareButton';
+import{getSubStringFromDayName,getCapitalMonthName} from './utility';
 
-const DAY_NAME_LETTER_MAP = {
-  monday: 'MON',
-  tuesday: 'TUE',
-  wednesday: 'WED',
-  thursday: 'THU',
-  friday: 'FRI',
-  saturday: 'SAT',
-  sunday: 'SUN',
-};
-
-function getLetterFromDayName(dayName) {
-  return _.get(DAY_NAME_LETTER_MAP, dayName.toLowerCase(), '');
-}
-  export default class DaySelector extends React.Component {
+export default class DaySelector extends React.Component {
 
   constructor(props) {
     super(props);
 
-    const { tableSize, startDate } = this.props;
-    const startMoment = moment(startDate);
-    const cells = _.map(_.range(tableSize), (i) => {
-      const calDate = startMoment.clone().add(i, 'days');
-      return {
-        daySubString: getLetterFromDayName(calDate.format('dddd')),
-        displayDate: calDate.format('M/D'),
-        cellId: calDate.format('YYYY-MM-DD'),
-      };
-    });
+
 
     this.selectedDay = this.selectedDay.bind(this);
+    this.stepDateRange=this.stepDateRange.bind(this);
     this.state = {
       selected: {},
+      startdate:moment().format('MM-DD-YYYY'),
+      tableSize:'7'
     };
-    this.cells = cells;
+
   }
 
   componentWillMount() {
@@ -66,14 +48,47 @@ function getLetterFromDayName(dayName) {
     this.setState({ selected: selectedDays });
     //formCallback({ selectedDays });
   }
+  stepDateRange(event){
+    const {startdate} = this.state;
+    console.log(startdate);
+    const $target = $(event.target)
+    console.log($target);
+    const dataDirection = $target[0]['id'];
+    console.log(dataDirection);
+    if(dataDirection === 'left'){
+        const newStartDate = moment(startdate).subtract(1,'days').format('MM-DD-YYYY');
+        this.setState({startdate: newStartDate});
+    }else {
+        const newStartDate=moment(startdate).add(1,'days').format('MM-DD-YYYY');
+        this.setState({startdate:newStartDate});
+    }
+  }
 
   render() {
     const { selected } = this.state;
-
+    const { tableSize, startdate }=this.state;
+    const startMoment = moment(startdate);
+    const cells = _.map(_.range(tableSize), (i) => {
+      const calDate = startMoment.clone().add(i, 'days');
+      return {
+        daySubString: getSubStringFromDayName(calDate.format('dddd')),
+        displayMonth: getCapitalMonthName(calDate.format('MMM')),
+        displayDate: calDate.format('D'),
+        cellId: calDate.format('YYYY-MM-DD'),
+      };
+    });
     return (
-      <div className="shift-modal-day-selector">
-        {
-          _.map(this.cells, (cell) => {
+      <div>
+        <div style={{float:'left'}}>
+          <SquareButton
+            name="angle left"
+            onClick={this.stepDateRange}
+            dataDirection="left"
+          />
+        </div>
+        <div style={{float:'left'}}>
+         {
+          _.map(cells, (cell) => {
             const cellKey = `${cell.cellId}-modal-day-cell`;
             return (
               <DayCellButton
@@ -84,8 +99,16 @@ function getLetterFromDayName(dayName) {
               />
             );
           })
-        }
-      </div>
+         }
+         </div>
+        <div style={{float:'left'}}>
+        <SquareButton
+          name="angle right"
+          onClick={this.stepDateRange}
+          dataDirection="right"
+        />
+     </div>
+    </div>
     );
   }
 }

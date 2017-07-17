@@ -70,6 +70,12 @@ export default class Nav extends Component {
 					</Menu.Item>
 					<Menu.Item>
 						<Menu.Header><Icon name="settings"/> SETTINGS</Menu.Header>
+						<Menu.Menu>
+							<Menu.Item as={NavLink} to="/settings/personal" name="personal"/>
+							<Menu.Item as={NavLink} to="/settings/workplace" name="workplace"/>
+							<Menu.Item as={NavLink} to="/settings/brand" name="brand"/>
+							<Menu.Item as={NavLink} to="/settings/company" name="company"/>
+						</Menu.Menu>
 					</Menu.Item>
 				</Menu>
 			</div>

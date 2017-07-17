@@ -3,6 +3,7 @@ import App from './components/App';
 import Root from './components/Root';
 import Home from './components/Home';
 import Schedule from './components/Scheduling';
+import Settings from './components/Settings';
 
 
 import MyWorkplace from './components/workplace/MyWorkplace'
@@ -76,6 +77,10 @@ const routes = [
 						path: '/attendance/requests',
 						exact: true,
 						component: AttendanceRequests
+					},
+					{
+						path: '/settings/:tab',
+						component: Settings
 					}
 				]
 			}

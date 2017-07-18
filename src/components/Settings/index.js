@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
+
+import Personal from './Personal';
+import Workplace from './Workplace';
+import Brand from './Brand';
 import Company from './Company';
+import './settings.css';
 
 const styles = {
 	headline: {
@@ -12,10 +17,33 @@ const styles = {
 };
 
 const initState = {
-	value: 'company',
+	user: {
+		id: 101,
+		firstName: 'Billy',
+		lastName: 'Buchanan',
+		email: 'billy.buchanan@gmail.com',
+		phoneNumber: '0123465789'
+	},
+	value: 'personal',
 	companies: [{
 		id: 1,
 		name: 'Compass Group, USA',
+	}],
+	brands: [{
+		id: 1,
+		name: 'Restaurant Associates',
+	}, {
+		id: 2,
+		name: 'Flik’s Hospitality Group'
+	}],
+	workplaces: [{
+		id: 1,
+		name: 'Chao Center',
+		type: 'Restaurant Associates'
+	}, {
+		id: 2,
+		name: 'Spangler Center',
+		type: 'Restaurant Associates'
 	}]
 };
 
@@ -39,22 +67,16 @@ export default class Settings extends Component {
 
 	render() {
 		return (
-			<section>
+			<section className="settings">
 				<Tabs value={this.state.value} onChange={this.handleChange}>
 					<Tab label="Personal" value="personal">
-						<div>
-							<h2 style={styles.headline}>Personal</h2>
-						</div>
+						<Personal user={this.state.user} />
 					</Tab>
 					<Tab label="Workplace" value="workplace">
-						<div>
-							<h2 style={styles.headline}>Workplace</h2>
-						</div>
+						<Workplace brands={this.state.brands} workplaces={this.state.workplaces} />
 					</Tab>
 					<Tab label="Brand" value="brand">
-						<div>
-							<h2 style={styles.headline}>Brand</h2>
-						</div>
+						<Brand brands={this.state.brands} />
 					</Tab>
 					<Tab label="Company" value="company">
 						<Company companies={this.state.companies} />

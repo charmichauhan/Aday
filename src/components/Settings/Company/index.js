@@ -2,20 +2,9 @@ import React, { Component } from 'react'
 import { List, ListItem } from 'material-ui/List';
 import Edit from 'material-ui/svg-icons/image/edit';
 import IconButton from 'material-ui/IconButton';
-import Drawer from '../components/Drawer';
+import EditCompanyDrawer from './EditCompanyDrawer';
 
 const styles = {
-	icons: {
-		mediumIcon: {
-			width: 48,
-			height: 48,
-		},
-		medium: {
-			width: 96,
-			height: 96,
-			padding: 24,
-		}
-	},
 	drawer: {
 		width: 400
 	}
@@ -45,7 +34,7 @@ export default class Company extends Component {
 
 	render() {
 		return (
-			<div className="App-content">
+			<div className="content company-content">
 				<List>
 					{this.props.companies &&
 					this.props.companies.map((company) =>
@@ -53,18 +42,12 @@ export default class Company extends Component {
 							key={company.id}
 							primaryText={company.name}
 							rightIconButton={
-								<IconButton
-									iconStyle={styles.mediumIcon}
-									style={styles.medium}
-									onClick={this.handleClick}
-								>
-									<Edit />
-								</IconButton>
+								<IconButton	onClick={this.handleClick} ><Edit /></IconButton>
 							}
 						/>
 					)}
 				</List>
-				<Drawer
+				<EditCompanyDrawer
 					width={styles.drawer.width}
 					open={this.state.open}
 					handleSubmit={this.handleSubmit}

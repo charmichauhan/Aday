@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
-import './TimeNumberButton.css';
+import './NumberButton.css';
 
-function TimeSelectorNumberButton({
+function NumberButton({
   display,
   dataValue,
   currentValue,
@@ -17,6 +17,7 @@ function TimeSelectorNumberButton({
 
   return (
     <button
+      type="button"
       className={classes}
       data-time-value={dataValue}
       onClick={onClick}
@@ -27,7 +28,7 @@ function TimeSelectorNumberButton({
   );
 }
 
-TimeSelectorNumberButton.propTypes = {
+NumberButton.propTypes = {
   display: React.PropTypes.oneOfType([
     React.PropTypes.string,
     React.PropTypes.number,
@@ -42,4 +43,4 @@ TimeSelectorNumberButton.propTypes = {
   ]),
 };
 
-export default TimeSelectorNumberButton;
+export default NumberButton;

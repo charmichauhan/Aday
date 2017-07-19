@@ -20,7 +20,7 @@ const buttonStyle = {
 	color: '#333',
 	fontSize: 22,
 	whiteSpace: 'normal',
-	boxShadow: '0 -4px 10px 0 rgba(0,0,0,0.5), 0 4px 10px 0 rgba(1,1,1,0.5)',
+	boxShadow: '`0 -4px 10px 0 rgba(0,0,0,0.5), 0 4px 10px 0 rgba(1,1,1,0.5)',
 	marginRight: 10
 };
 

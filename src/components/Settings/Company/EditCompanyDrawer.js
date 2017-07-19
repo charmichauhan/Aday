@@ -12,7 +12,11 @@ const DrawerHelper = (props) => {
 		props.handleSubmit(event);
 	};
 	return (
-		<Drawer width={props.width} openSecondary={true} open={props.open} >
+		<Drawer
+			width={props.width}
+			openSecondary={true}
+			docked={false}
+			onRequestChange={props.closeDrawer} open={props.open} >
 			<div className="drawer-section edit-drawer-section">
 				<div className="drawer-heading col-md-12">
 					<IconButton onClick={props.closeDrawer} >

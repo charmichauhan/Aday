@@ -1,6 +1,5 @@
-import React, { Component } from 'react'
-import camericon from '../../../../public/images/camer-icon.png'
-import PayPal from '../../../../public/images/paypal-icon.png'
+import React, { Component } from 'react';
+
 const initialState = {
 	paymentOptions: [{
 		id: 1,
@@ -14,6 +13,11 @@ export default class Workplace extends Component {
 		super(props);
 		this.state = initialState;
 	}
+
+	handleImageUploadClick = (event) => {
+		// Image uploading code to be done here
+		console.log('Image upload button clicked');
+	};
 
 	render() {
 		return (
@@ -37,11 +41,12 @@ export default class Workplace extends Component {
 								</li>
 								<li>
 									<label htmlFor="">Email address</label>
-									<input className="form-control" type="email" placeholder="billy.buchanan@gmail.com" />
+									<input className="form-control" type="email"
+									       placeholder="billy.buchanan@gmail.com" />
 								</li>
 								<li>
 									<label htmlFor="">Current Password</label>
-									<input className="form-control" type="password"/>
+									<input className="form-control" type="password" />
 								</li>
 								<li>
 									<label htmlFor="">New Password</label>
@@ -49,17 +54,17 @@ export default class Workplace extends Component {
 								</li>
 							</ul>
 						</form>
-					</div>10px 40px 20px
+					</div>
 					<div className="personal-img">
-						<div className="personal-img-icon">
-							<i><img src={camericon} alt="" /></i>
+						<div className="personal-img-icon" onClick={this.handleImageUploadClick}>
+							<i><img src="/images/camera-icon.png" alt="Upload Image" /></i>
 						</div>
 					</div>
 				</div>
 				<div className="payment-option">
 					<h2 className="heading">PAYMENT OPTIONS</h2>
 					<div className="paypal-ment">
-						<i><img src={PayPal} alt="" /></i>
+						<i><img src="/images/paypal-icon.png" alt="PayPal" /></i>
 						<span>Send Payment</span>
 					</div>
 				</div>

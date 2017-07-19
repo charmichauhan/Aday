@@ -3,6 +3,7 @@ import { List, ListItem } from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 import Edit from 'material-ui/svg-icons/image/edit';
 import Delete from 'material-ui/svg-icons/action/delete';
+import { Grid, GridColumn } from 'semantic-ui-react';
 import AddBrandDrawer from './AddBrandDrawer';
 import CircleButton from '../../helpers/CircleButton/index';
 
@@ -55,17 +56,24 @@ export default class Brand extends Component {
 				<List>
 					{this.props.brands &&
 					this.props.brands.map((brand) =>
-						<ListItem
-							key={brand.id}
-							primaryText={brand.name}
-						>
-							<IconButton style={styles.actionButtons} onClick={this.handleEditClick} >
-								<Edit />
-							</IconButton>
-							<IconButton style={styles.actionButtons} onClick={this.handleDeleteClick} >
-								<Delete />
-							</IconButton>
-						</ListItem>
+						<Grid key={brand.id}>
+							<GridColumn width={2}>
+								<img className="brand-image" src={brand.image} alt={brand.name} />
+							</GridColumn>
+							<GridColumn width={14}>
+								<ListItem
+									key={brand.id}
+									primaryText={brand.name}
+								>
+									<IconButton style={styles.actionButtons} onClick={this.handleEditClick}>
+										<Edit />
+									</IconButton>
+									<IconButton style={styles.actionButtons} onClick={this.handleDeleteClick}>
+										<Delete />
+									</IconButton>
+								</ListItem>
+							</GridColumn>
+						</Grid>
 					)}
 				</List>
 				<AddBrandDrawer

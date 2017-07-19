@@ -1,6 +1,6 @@
 /* Content */
 .settings .content {
-    padding-bottom: 15px;
+    padding-top: 40px;
 }
 
 /* Drawers */
@@ -144,3 +144,16 @@
     width: 100px;
     margin-top: -24px;
 }
+
+/* Brand Section */
+
+.ui.grid .two.wide.column {
+    height: 80px;
+    padding: 0 1rem;
+}
+.two.wide.column img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+

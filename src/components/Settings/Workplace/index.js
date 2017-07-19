@@ -3,6 +3,7 @@ import { List, ListItem } from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 import Edit from 'material-ui/svg-icons/image/edit';
 import Delete from 'material-ui/svg-icons/action/delete';
+import { Grid, GridColumn } from 'semantic-ui-react';
 import AddWorkplaceDrawer from './AddWorkplaceDrawer';
 import CircleButton from '../../helpers/CircleButton/index';
 
@@ -13,6 +14,9 @@ const styles = {
 	actionButtons: {
 		margin: '-15px -10px 0 0',
 		float: 'right'
+	},
+	listItem: {
+		padding: '10px 5px',
 	},
 	circleButton: {
 		fontSize: 18,
@@ -55,23 +59,34 @@ export default class Workplace extends Component {
 		return (
 			<div className="content workplaces-content">
 				<div className="workplace-add-button">
-					<CircleButton style={styles.circleButton} type="blue" title="Add Workplace" handleClick={this.openAddWorkplaceDrawer} />
+					<CircleButton style={styles.circleButton} type="blue" title="Add Workplace"
+					              handleClick={this.openAddWorkplaceDrawer} />
 				</div>
 				<List>
 					{this.props.workplaces &&
 					this.props.workplaces.map((workplace) =>
-						<ListItem
-							key={workplace.id}
-							primaryText={workplace.name}
-							secondaryText={workplace.type}
-						>
-							<IconButton style={styles.actionButtons} onClick={this.handleEditClick} >
-								<Edit />
-							</IconButton>
-							<IconButton style={styles.actionButtons} onClick={this.handleDeleteClick} >
-								<Delete />
-							</IconButton>
-						</ListItem>
+						<Grid key={workplace.id}>
+							<GridColumn width={2}>
+								<img className="brand-image" src={workplace.image} alt={workplace.name} />
+							</GridColumn>
+							<GridColumn width={14}>
+								<ListItem
+									innerDivStyle={styles.listItem}
+									key={workplace.id}
+									primaryText={workplace.name}
+									secondaryText={workplace.type}
+								>
+
+									<IconButton style={styles.actionButtons} onClick={this.handleEditClick}>
+										<Edit />
+									</IconButton>
+									<IconButton style={styles.actionButtons} onClick={this.handleDeleteClick}>
+										<Delete />
+									</IconButton>
+								</ListItem>
+							</GridColumn>
+
+						</Grid>
 					)}
 				</List>
 				<AddWorkplaceDrawer

@@ -8,12 +8,18 @@ import Company from './Company';
 import './settings.css';
 
 const styles = {
-	headline: {
-		fontSize: 24,
-		paddingTop: 16,
-		marginBottom: 12,
-		fontWeight: 400,
-	},
+	tabDesign: {
+		tabItemContainerStyle: {
+			backgroundColor: 'transparent',
+		},
+		buttonStyle: {
+			color: '#0022A1',
+			fontSize: 20
+		},
+		inkBarStyle: {
+			backgroundColor: '#E33821'
+		}
+	}
 };
 
 const initState = {
@@ -32,18 +38,22 @@ const initState = {
 	brands: [{
 		id: 1,
 		name: 'Restaurant Associates',
+		image: '/images/brands/ra.png'
 	}, {
 		id: 2,
-		name: 'Flik’s Hospitality Group'
+		name: 'Flik’s Hospitality Group',
+		image: '/images/brands/compass.png'
 	}],
 	workplaces: [{
 		id: 1,
 		name: 'Chao Center',
-		type: 'Restaurant Associates'
+		type: 'Restaurant Associates',
+		image: '/images/workplaces/chao-center.jpg'
 	}, {
 		id: 2,
 		name: 'Spangler Center',
-		type: 'Restaurant Associates'
+		type: 'Restaurant Associates',
+		image: '/images/workplaces/chao-center.jpg'
 	}]
 };
 
@@ -56,29 +66,48 @@ export default class Settings extends Component {
 	componentWillMount() {
 		const { props: {match}} = this;
 		const tab = match && match.params && match.params.tab;
-		this.setState({ value: tab});
+		this.setState({ value: tab });
 	}
 
 	handleChange = (value) => {
-		this.setState({
-			value: value,
-		});
+		this.setState({	value: value });
 	};
+
+	getButtonStyle = (value) => ({
+		...styles.tabDesign.buttonStyle,
+		fontWeight: (this.state.value === value && 600) || 500
+	});
 
 	render() {
 		return (
 			<section className="settings">
-				<Tabs value={this.state.value} onChange={this.handleChange}>
-					<Tab label="Personal" value="personal">
+				<Tabs
+					value={this.state.value}
+					onChange={this.handleChange}
+					inkBarStyle={styles.tabDesign.inkBarStyle}
+					tabItemContainerStyle={styles.tabDesign.tabItemContainerStyle}>
+					<Tab
+						buttonStyle={this.getButtonStyle('personal')}
+						label="Personal"
+						value="personal">
 						<Personal user={this.state.user} />
 					</Tab>
-					<Tab label="Workplace" value="workplace">
+					<Tab
+						buttonStyle={this.getButtonStyle('workplace')}
+						label="Workplace"
+						value="workplace">
 						<Workplace brands={this.state.brands} workplaces={this.state.workplaces} />
 					</Tab>
-					<Tab label="Brand" value="brand">
+					<Tab
+						buttonStyle={this.getButtonStyle('brand')}
+						label="Brand"
+						value="brand">
 						<Brand brands={this.state.brands} />
 					</Tab>
-					<Tab label="Company" value="company">
+					<Tab
+						buttonStyle={this.getButtonStyle('company')}
+						label="Company"
+						value="company">
 						<Company companies={this.state.companies} />
 					</Tab>
 				</Tabs>

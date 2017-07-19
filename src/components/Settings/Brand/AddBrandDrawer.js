@@ -12,7 +12,7 @@ const DrawerHelper = (props) => {
 		width = 500,
 		open = true,
 		openSecondary = true,
-		anchor = 'right'
+		docked = false
 	} = props;
 	const handleSubmitEvent = (event) => {
 		// Resetting the field values.
@@ -20,7 +20,7 @@ const DrawerHelper = (props) => {
 		handleSubmit(event);
 	};
 	return (
-		<Drawer anchor={anchor} width={width} openSecondary={openSecondary} open={open} >
+		<Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={closeDrawer} open={open} >
 			<div className="drawer-section add-brand-drawer-section">
 				<div className="drawer-heading col-md-12">
 					<IconButton onClick={closeDrawer} >

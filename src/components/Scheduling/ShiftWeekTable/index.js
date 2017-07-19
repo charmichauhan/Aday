@@ -44,24 +44,17 @@ function shiftReducer(state={}, action) {
 }
 
 
-export default class ShiftWeekTable extends Week {
-   /*
-    static propTypes = {
-        data: React.PropTypes.shape({
-          loading: React.PropTypes.bool,
-          error: React.PropTypes.object,
-        }).isRequired,
-    }
-    */
-    render() {
-            if (this.props.data.loading) {
-                return (<div>Loading</div>)
-            }
+class ShiftWeekTableComponent extends Week {
 
-            if (this.props.data.error) {
-                console.log(this.props.data.error)
-                return (<div>An unexpected error occurred</div>)
-            }
+    render() {
+        if (this.props.data.loading) {
+            return (<div>Loading</div>)
+        }
+
+        if (this.props.data.error) {
+            console.log(this.props.data.error)
+            return (<div>An unexpected error occurred</div>)
+        }
 
         let jobData = jobsData;
         let { date } = this.props;
@@ -145,18 +138,19 @@ export default class ShiftWeekTable extends Week {
     }
 }
 
+/*
 ShiftWeekTable.range = (date, { culture }) => {
     let firstOfWeek = localizer.startOfWeek(culture);
     let start = dates.startOf(date, 'week', firstOfWeek);
     let end = dates.endOf(date, 'week', firstOfWeek);
     return { start, end };
 };
+*///
 
-
-const allShifts = gql
-  'query allShifts($brandid: Uuid!, $daystart: Datetime!, $dayend: Datetime!){
-    brandShiftByDate(brandid: $brandid, daystart: $daystart, dayend: $dayend){
-        edges{
+const allShifts = gql`
+  query allShifts($brandid: Uuid!, $daystart: Datetime!, $dayend: Datetime!)
+    { brandShiftByDate(brandid: $brandid, daystart: $daystart, dayend: $dayend){
+        edges {
           node {
             id
             startTime
@@ -165,9 +159,10 @@ const allShifts = gql
             workersInvited
             workersRequestedNum
             positionByPositionId{
-            positionName
-            brandByBrandId {
+                positionName
+                brandByBrandId {
                   brandName
+                }
              }
           }
         }
@@ -175,6 +170,14 @@ const allShifts = gql
   }
 `
 
-const ShiftWeekTable = graphql(allShifts)(ShiftWeekTableComponent)
+const ShiftWeekTable = graphql(allShifts, {
+  options: (ownProps) => ({ 
+    variables: {
+      brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+      daystart: "2017-07-07",
+      dayend: "2017-07-24"
+    }
+  }),
+})(ShiftWeekTableComponent)
 
 export default ShiftWeekTable

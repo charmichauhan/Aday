@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
@@ -17,8 +17,8 @@ import '../style.css';
 
 /*import EditShift from './ShiftEdit/Edit';
 import DeleteShift from './ShiftEdit/DeleteShift';
-*/
 import AddNewShift from './ShiftEdit/AddNewShift';
+*/
 
 
 function shiftReducer(state={}, action) {
@@ -59,7 +59,6 @@ export default class ShiftWeekTable extends Week {
         return (
             <Provider store={store}>
             <div className="table-responsive col-md-12">
-                <AddNewShift/>
                 <table className="table atable">
                     <thead className="thead_scroll">
                     <tr>

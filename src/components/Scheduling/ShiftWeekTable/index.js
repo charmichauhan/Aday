@@ -3,7 +3,9 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
-
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
+import ApolloClient, { createNetworkInterface } from 'apollo-client'
 
 import moment from 'moment';
 import Week from 'react-big-calendar/lib/Week';
@@ -19,7 +21,6 @@ import '../style.css';
 import DeleteShift from './ShiftEdit/DeleteShift';
 import AddNewShift from './ShiftEdit/AddNewShift';
 */
-
 
 function shiftReducer(state={}, action) {
     switch (action.type) {
@@ -43,10 +44,18 @@ function shiftReducer(state={}, action) {
 }
 
 
+class ShiftWeekTableComponent extends Week {
 
-export default class ShiftWeekTable extends Week {
     render() {
-        debugger;
+        if (this.props.data.loading) {
+            return (<div>Loading</div>)
+        }
+
+        if (this.props.data.error) {
+            console.log(this.props.data.error)
+            return (<div>An unexpected error occurred</div>)
+        }
+
         let jobData = jobsData;
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
@@ -128,9 +137,46 @@ export default class ShiftWeekTable extends Week {
     }
 }
 
+/*
 ShiftWeekTable.range = (date, { culture }) => {
     let firstOfWeek = localizer.startOfWeek(culture);
     let start = dates.startOf(date, 'week', firstOfWeek);
     let end = dates.endOf(date, 'week', firstOfWeek);
     return { start, end };
 };
+*///
+
+const allShifts = gql`
+  query allShifts($brandid: Uuid!, $daystart: Datetime!, $dayend: Datetime!)
+    { brandShiftByDate(brandid: $brandid, daystart: $daystart, dayend: $dayend){
+        edges {
+          node {
+            id
+            startTime
+            endTime
+            workersAssigned
+            workersInvited
+            workersRequestedNum
+            positionByPositionId{
+                positionName
+                brandByBrandId {
+                  brandName
+                }
+             }
+          }
+        }
+    }
+  }
+`
+
+const ShiftWeekTable = graphql(allShifts, {
+  options: (ownProps) => ({ 
+    variables: {
+      brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+      daystart: "2017-07-07",
+      dayend: "2017-07-24"
+    }
+  }),
+})(ShiftWeekTableComponent)
+
+export default ShiftWeekTable

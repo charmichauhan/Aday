@@ -80,15 +80,15 @@ export default class EmergencyShiftButton extends Component {
 
 
 	return(
-		 <Provider store={store} >
+		 <Provider store = {store} >
 		  <Modal
-			   trigger={<Image
-					            src="/images/Assets/Icons/Buttons/emergency-shfit-button.png"
+			   trigger ={<Image
+					            src = "/images/Assets/Icons/Buttons/emergency-shfit-button.png"
 											onClick={this.onButtonClick}
 											style={{cursor:'pointer'}}
 									 />}
-				 open={this.state.poppedOut}
-				 style={{marginTop:'0px', left:'53%',top: '5%',padding: '1.0%',bottom: '5%'}}
+				 open = {this.state.poppedOut}
+				 style ={{marginTop:'0px',top:'5%',bottom:'5%',padding:'1.5%'}}
 				 size="large"
 			 >
 			  <EmergencyShiftForm closeFunc={this.onFormClose}/>

@@ -2,25 +2,30 @@
   display: inline-block;
 }
 .shift-modal-day-cell .shift-modal-day-cell-button {
-    margin: 0 11px;
-    width: 70px;
-    height: 70px;
-    background-color: #fff;
-    border: 1px solid #f7f7f7;
-    color: #423a3f;
-    font-weight: bold;
-    font-size: 19px;
-    cursor: pointer;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
-    letter-spacing: -1px;
-    padding-top:10px; 
+  margin: 0 9px;
+  width: 80px;
+  height: 80px;
+  background-color: #fff;
+  border: 1px solid #f7f7f7;
+  color: #423a3f;
+  font-weight: 600;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 1px 1px 6px #4a4a4a;
+  border-radius: 5px;
+
 }
 .shift-modal-day-cell .shift-modal-day-cell-button:hover, .shift-modal-day-cell .shift-modal-day-cell-button:active, .shift-modal-day-cell .shift-modal-day-cell-button.selected {
-  background-color: #0022A1;
-  border-color: #0022A1;
+  background-color: #9a9699;
+  border-color: #9a9699;
   color: #fff;
 }
 .shift-modal-day-cell .shift-modal-day-cell-button:focus {
   outline: none;
+}
+.shift-modal-day-cell .display-date {
+  font-size: 18px;
+  color: #4a4a4a;
+  margin-top: 12%;
+  font-weight: 500;
 }

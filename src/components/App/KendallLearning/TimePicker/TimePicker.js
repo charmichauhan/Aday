@@ -2,7 +2,7 @@ import React , {Component,PropTypes} from 'react';
 import moment from 'moment';
 import $ from 'webpack-zepto';
 import {Icon,Image,Label,Input,List} from 'semantic-ui-react';
-import NumberButton from '../NumberButton/NumberButton';
+import TimeSelectorNumberButton from './NumberButton/TimeSelectorButton';
 import _ from 'lodash';
 
 function getHoursFromMeridiem(meridiem) {
@@ -165,8 +165,8 @@ export default class TimePicker extends Component {
     const minute = (startFocused) ? startMinute : stopMinute;
 
     return(
-    <div style={{marginTop:'2%'}}>
-     <div>
+    <div>
+    <div>
        <div style ={{float:'left',width:'30%'}}>
            <p style={{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>START TIME</p>
            <Input
@@ -215,7 +215,7 @@ export default class TimePicker extends Component {
             const buttonKey = `time-button-${inputValue}`;
             return (
               <List.Item key={liKey}>
-                <NumberButton
+                <TimeSelectorNumberButton
                   key={buttonKey}
                   display={value}
                   dataValue={inputValue}
@@ -238,7 +238,7 @@ export default class TimePicker extends Component {
             const buttonKey = `time-button-${inputValue}`;
             return (
               <List.Item key={liKey}>
-                <NumberButton
+                <TimeSelectorNumberButton
                   key={buttonKey}
                   display={value}
                   dataValue={inputValue}
@@ -256,7 +256,7 @@ export default class TimePicker extends Component {
        <div style={{float:'left',marginTop:'3%',marginLeft:'6%'}}>
        <List horizontal>
          <List.Item>
-           <NumberButton
+           <TimeSelectorNumberButton
              display=":00"
              dataValue="00"
              currentValue={minute}
@@ -265,7 +265,7 @@ export default class TimePicker extends Component {
            />
          </List.Item>
          <List.Item>
-           <NumberButton
+           <TimeSelectorNumberButton
              display=":15"
              dataValue="15"
              currentValue={minute}
@@ -277,7 +277,7 @@ export default class TimePicker extends Component {
        <div>
         <List horizontal>
          <List.Item>
-           <NumberButton
+           <TimeSelectorNumberButton
              display=":30"
              dataValue="30"
              currentValue={minute}
@@ -286,7 +286,7 @@ export default class TimePicker extends Component {
            />
          </List.Item>
          <List.Item>
-           <NumberButton
+           <TimeSelectorNumberButton
              display=":45"
              dataValue="45"
              currentValue={minute}

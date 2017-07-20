@@ -22,9 +22,9 @@ export default class NumberOfTeamMenmbers extends Component {
   render(){
     const {selectedValue} = this.state;
     return(
-      <div>
-         <p style={{fontSize:'18px',fontStyle:'normal',color:'#666666'}}>NUMBER OF TEAM MEMBERS</p>
-         <List horizontal style={{marginTop: '-1%'}}>
+      <div style={{marginTop:'35%'}}>
+         <p style={{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>NUMBER OF TEAM MEMBERS</p>
+         <List horizontal>
          {
            _.map(_.range(1, 12), (value) => {
            const displayValue = value === 11 ? '+' : value;

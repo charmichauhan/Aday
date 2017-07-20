@@ -4,18 +4,14 @@ import moment from 'moment';
 import DaySelector from './DaySelector/DaySelector';
 
 export default class ShiftDaySelector extends Component {
-  constructor(props){
-    super(props);
-  }
   render(){
     const tableSize=7;
-    //const { startdate }=this.props;
-  //  const startDate=this.props.startDate;
+    const startDate=moment().format('MM-DD-YYYY');
     const selectedDate=moment().format('MM-DD-YYYY');
     return(
        <DaySelector
           tableSize={tableSize}
-          startDate={this.props.startDate}
+          startDate={startDate}
           selectedDate={selectedDate}
       />
     );

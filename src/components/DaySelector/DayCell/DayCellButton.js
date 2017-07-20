@@ -20,7 +20,8 @@ function DayCellButton({
     <div className="shift-modal-day-cell">
       <button type="button" className={buttonClasses} onClick={onClick} data-cellId={cellId}>
         {daySubString}
-        <div className="display-date">{displayMonth} {displayDate}</div>
+        <p style={{  marginTop: '-13%',fontWeight: '500'}}>{displayMonth} {displayDate}</p>
+        <div className="display-date"></div>
       </button>
     </div>
   );

@@ -11,6 +11,22 @@
     padding-right: 0;
 }
 
+.settings .add-workplace-drawer-section .state-drop-down.ui.selection.dropdown {
+    height: 45px;
+    width: 100%;
+    min-width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+}
+
+.settings .add-workplace-drawer-section .state-drop-down.ui.selection.active.dropdown {
+    border-color: #96c8da;
+    box-shadow: 0 2px 3px 0 rgba(34,36,38,.15);
+}
+
 .settings .add-workplace-drawer-section .form-div .form-group label {
                        display: block;
 }
@@ -27,6 +43,10 @@
     padding: 0 20px 20px 20px;
     margin-top: 30px;
     margin-bottom: 30px;
+}
+
+.settings .upload-btn input[type="file"] {
+    display: none;
 }
 
 .settings .upload-img {

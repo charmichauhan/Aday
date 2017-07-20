@@ -35,10 +35,6 @@ export default class Workplace extends Component {
 		this.state = initialState;
 	}
 
-	handleEditClick = (event) => {
-		console.log('Edit button clicked');
-	};
-
 	handleDeleteClick = (event) => {
 		console.log('Delete button clicked');
 	};
@@ -76,8 +72,7 @@ export default class Workplace extends Component {
 									primaryText={workplace.name}
 									secondaryText={workplace.type}
 								>
-
-									<IconButton style={styles.actionButtons} onClick={this.handleEditClick}>
+									<IconButton style={styles.actionButtons} onClick={this.openEditBrandDrawer}>
 										<Edit />
 									</IconButton>
 									<IconButton style={styles.actionButtons} onClick={this.handleDeleteClick}>

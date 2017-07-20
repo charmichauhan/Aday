@@ -1,10 +1,13 @@
 import React from 'react'
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
-import { Image } from 'semantic-ui-react';
+import { Image, Dropdown } from 'semantic-ui-react';
 import RaisedButton from 'material-ui/RaisedButton';
+import Dropzone from 'react-dropzone';
 
 import CircleButton from '../../helpers/CircleButton/index';
+import { stateOptions } from '../../helpers/common/states';
+
 import './add-workplace-drawer.css';
 
 const styles = {
@@ -37,20 +40,6 @@ const DrawerHelper = (props) => {
 		}, ...brands];
 	}
 
-	const states = [{
-		id: -1,
-		name: 'SELECT STATE',
-		value: -1
-	}, {
-		id: 1,
-		name: 'California',
-		value: 'ca'
-	}, {
-		id: 2,
-		name: 'Texas',
-		value: 'tx'
-	}];
-
 	const handleSubmitEvent = (event) => {
 		// Resetting the field values.
 		document.getElementById('workplace-name').value = '';
@@ -58,9 +47,8 @@ const DrawerHelper = (props) => {
 		handleSubmit(event);
 	};
 
-	const handleImageUploadClick = (event) => {
-		// handle image upload code here.
-		console.log('Image upload button clicked');
+	const handleImageUpload = (files) => {
+		debugger;
 	};
 
 	return (
@@ -73,17 +61,23 @@ const DrawerHelper = (props) => {
 					<h2 className="text-center text-uppercase">Add Workplace</h2>
 				</div>
 				<div className="upload-wrapper col-md-8 col-md-offset-2 text-center">
-					<Image onClick={handleImageUploadClick} src='/images/cloudshare.png' size="small" className="upload-img"/>
-					<RaisedButton
-						className="upload-btn"
-						label="Upload Workplace Image"
-						backgroundColor="#0022A1"
-						labelColor="#fff"
-						onClick={handleImageUploadClick}
-					/>
-					<p className="text-uppercase upload-desc">
-						Or Drag and Drop File
-					</p>
+					<Dropzone
+						multiple={false}
+						accept="image/*"
+						onDrop={handleImageUpload}
+						style={{}}>
+						<Image src='/images/cloudshare.png' size="small" className="upload-img"/>
+						<RaisedButton
+							containerElement='label'
+							className="upload-btn"
+							label="Upload Workplace Image"
+							backgroundColor="#0022A1"
+							labelColor="#fff"
+						/>
+						<p className="text-uppercase upload-desc">
+							Or Drag and Drop File
+						</p>
+					</Dropzone>
 				</div>
 				<div className="col-md-12 form-div">
 					<div className="form-group">
@@ -113,24 +107,21 @@ const DrawerHelper = (props) => {
 						</div>
 						<div className="form-group">
 							<label className="text-uppercase">State</label>
-							<select className="form-control">
-								{states && states.map(state =>
-									<option key={state.id} value={state.id}>{state.name}</option>
-								)}
-							</select>
+							<Dropdown className="form-control state-drop-down" placeholder="State" search selection options={stateOptions} />
 						</div>
 						<div className="form-group">
 							<label htmlFor="zip" className="text-uppercase">Zip Code:</label>
 							<input type="password" className="form-control" id="zip" />
 						</div>
 					</div>
-					<div className="buttons text-center">
-						<CircleButton style={styles.circleButton} handleClick={closeDrawer} type="white"
-						              title="Cancel" />
-						<CircleButton style={styles.circleButton} handleClick={handleSubmitEvent} type="blue"
-						              title="Add Workplace" />
-					</div>
-
+				</div>
+			</div>
+			<div className="wrapper-div">
+				<div className="buttons text-center">
+					<CircleButton style={styles.circleButton} handleClick={closeDrawer} type="white"
+					              title="Cancel" />
+					<CircleButton style={styles.circleButton} handleClick={handleSubmitEvent} type="blue"
+					              title="Add Workplace" />
 				</div>
 			</div>
 		</Drawer>

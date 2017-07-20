@@ -64,69 +64,82 @@
     width: 100%;
     float: left;
 }
+
 .settings .personal-content .personal-info-img .personal-info {
     width: 50%;
     float: left;
 }
+
 .settings .personal-content .personal-info-img .personal-img {
     width: 50%;
     float: left;
 }
+
 .settings .personal-content .personal-info-img .personal-info ul {
     padding: 0;
     margin: 0 auto;
 }
-.settings .personal-content .personal-info-img .personal-info li{
+
+.settings .personal-content .personal-info-img .personal-info li {
     list-style: none;
     margin-bottom: 25px;
 }
+
 .settings .personal-content .personal-info-img .personal-info li label {
     color: #666666;
     font-size: 18px;
     line-height: 21px;
     font-weight: normal;
-    text-transform:uppercase;
+    text-transform: uppercase;
 
 }
+
 .settings .personal-content .personal-info-img .personal-info li input {
-    border: 2px solid rgba(74,74,74,0.5);
+    border: 2px solid rgba(74, 74, 74, 0.5);
     border-radius: 4px;
     background-color: #FFFFFF;
     height: 50px;
     text-transform: uppercase;
 }
+
 .settings .personal-content .personal-info-img .personal-info li input::placeholder {
     color: #999999;
     font-size: 18px;
     font-weight: 500;
     line-height: 21px;
 }
+
 .settings .personal-content .personal-info-img .personal-img .personal-img-icon {
     box-sizing: border-box;
     height: 254px;
     width: 254px;
-    border: 4px solid rgba(0,0,0,0.1);
+    border: 4px solid rgba(0, 0, 0, 0.1);
     background-color: #FFFFFF;
-    box-shadow: 0 9px 7px 0 rgba(1,1,1,0.09);
+    box-shadow: 0 9px 7px 0 rgba(1, 1, 1, 0.09);
     border-radius: 100%;
     margin: 0 auto;
     text-align: center;
     line-height: 250px;
 }
+
 .settings .personal-content .payment-option {
     float: left;
     width: 100%;
     margin-top: 40px;
 }
-.settings .personal-content .payment-option .paypal-ment {
+
+.settings .personal-content .payment-option .payment-service {
     border: 1px solid #D9D9D9;
     background-color: #FFFFFF;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
     width: 220px;
     text-align: center;
     padding: 10px 40px 20px;
+    display: inline-block;
+    margin: 0 10px;
 }
-.settings .personal-content .payment-option .paypal-ment span {
+
+.settings .personal-content .payment-option .payment-service span {
     color: #31363D;
     font-family: Lato;
     font-size: 14px;
@@ -135,12 +148,14 @@
     text-transform: uppercase;
     display: block;
 }
-.settings .personal-content .payment-option .paypal-ment i {
-    width:100px;
-    height:50px;
+
+.settings .personal-content .payment-option .payment-service i {
+    width: 100px;
+    height: 50px;
     display: inline-block;
 }
-.settings .personal-content .payment-option .paypal-ment i img {
+
+.settings .personal-content .payment-option .payment-service i img {
     width: 100px;
     margin-top: -24px;
 }
@@ -151,9 +166,39 @@
     height: 80px;
     padding: 0 1rem;
 }
+
 .two.wide.column img {
     height: 100%;
     width: 100%;
     object-fit: contain;
 }
 
+/*Uploaded Image CSS*/
+
+.uploaded-image {
+    border: 1px dashed #ccc;
+    margin: 0 auto;
+}
+.drawer-footer {
+    position: fixed;
+    left: 50%;
+    bottom: 10px;
+    transform: translate(-50%);
+}
+.drawer-section.add-brand-drawer-section {
+    height: 530px;
+    overflow-y: scroll;
+}
+.wrapper-div {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%);
+    width: 100%;
+}
+.drawer-section.add-workplace-drawer-section {
+    display: block;
+    overflow: hidden;
+    height: 600px;
+    overflow-y: scroll;
+}

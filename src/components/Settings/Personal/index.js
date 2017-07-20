@@ -4,14 +4,18 @@ const initialState = {
 	paymentOptions: [{
 		id: 1,
 		name: 'paypal',
-		logo: 'logo'
+		logo: '/images/paypal-icon.png',
+		text: 'Send Payment'
 	}]
 };
 
 export default class Workplace extends Component {
 	constructor(props) {
 		super(props);
-		this.state = initialState;
+		this.state = {
+			...initialState,
+			user: props.user
+		};
 	}
 
 	handleImageUploadClick = (event) => {
@@ -19,7 +23,14 @@ export default class Workplace extends Component {
 		console.log('Image upload button clicked');
 	};
 
+	handleInputChange = (event) => {
+		const { name, value } = event.target;
+		const user = Object.assign(this.state.user, { [name]: value });
+		return this.setState({ user });
+	};
+
 	render() {
+		const { user, paymentOptions } = this.state;
 		return (
 			<div className="content personal-content">
 				<h2 className="heading">Personal Information</h2>
@@ -28,29 +39,56 @@ export default class Workplace extends Component {
 						<form>
 							<ul>
 								<li>
-									<label htmlFor="">First Name</label>
-									<input className="form-control" type="text" placeholder="Billy" />
+									<label htmlFor="firstName">First Name</label>
+									<input
+										className="form-control"
+										type="text"
+										name="firstName"
+										onChange={this.handleInputChange}
+										value={user.firstName} />
 								</li>
 								<li>
-									<label htmlFor="">Last Name</label>
-									<input className="form-control" type="text" placeholder="Buchanan" />
+									<label htmlFor="lastName">Last Name</label>
+									<input
+										className="form-control"
+										type="text"
+										name="lastName"
+										onChange={this.handleInputChange}
+										value={user.lastName} />
 								</li>
 								<li>
-									<label htmlFor="">Phone Number</label>
-									<input className="form-control" type="text" placeholder="+1-(###) ###-####" />
+									<label htmlFor="phoneNumber">Phone Number</label>
+									<input
+										className="form-control"
+										type="text"
+										name="phoneNumber"
+										onChange={this.handleInputChange}
+										value={user.phoneNumber} />
 								</li>
 								<li>
-									<label htmlFor="">Email address</label>
-									<input className="form-control" type="email"
-									       placeholder="billy.buchanan@gmail.com" />
+									<label htmlFor="email">Email address</label>
+									<input
+										className="form-control"
+										type="email"
+										name="email"
+										onChange={this.handleInputChange}
+										value={user.email} />
 								</li>
 								<li>
-									<label htmlFor="">Current Password</label>
-									<input className="form-control" type="password" />
+									<label htmlFor="currentPassword">Current Password</label>
+									<input
+										className="form-control"
+										name="currentPassword"
+										onChange={this.handleInputChange}
+										type="password" />
 								</li>
 								<li>
-									<label htmlFor="">New Password</label>
-									<input className="form-control" type="password" />
+									<label htmlFor="newPassword">New Password</label>
+									<input
+										className="form-control"
+										name="newPassword"
+										onChange={this.handleInputChange}
+										type="password" />
 								</li>
 							</ul>
 						</form>
@@ -63,10 +101,12 @@ export default class Workplace extends Component {
 				</div>
 				<div className="payment-option">
 					<h2 className="heading">PAYMENT OPTIONS</h2>
-					<div className="paypal-ment">
-						<i><img src="/images/paypal-icon.png" alt="PayPal" /></i>
-						<span>Send Payment</span>
-					</div>
+					{paymentOptions && paymentOptions.map(payment => (
+						<div key={payment.id} className="payment-service">
+							<i><img src={payment.logo} alt={payment.name} /></i>
+							<span>{payment.name || 'Send Payment'}</span>
+						</div>
+					))}
 				</div>
 			</div>
 		)

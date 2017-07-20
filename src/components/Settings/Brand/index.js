@@ -4,7 +4,8 @@ import IconButton from 'material-ui/IconButton';
 import Edit from 'material-ui/svg-icons/image/edit';
 import Delete from 'material-ui/svg-icons/action/delete';
 import { Grid, GridColumn } from 'semantic-ui-react';
-import AddBrandDrawer from './AddBrandDrawer';
+
+import BrandDrawer from './BrandDrawer';
 import CircleButton from '../../helpers/CircleButton/index';
 
 const styles = {
@@ -27,15 +28,11 @@ export default class Brand extends Component {
 		this.state = initialState;
 	}
 
-	handleEditClick = (event) => {
-		console.log('Edit button clicked');
-	};
-
 	handleDeleteClick = (event) => {
 		console.log('Delete button clicked');
 	};
 
-	handleSubmit = (event) => {
+	handleDrawerSubmit = (event) => {
 		this.setState({ open: false });
 	};
 
@@ -43,15 +40,15 @@ export default class Brand extends Component {
 		this.setState({ open: false });
 	};
 
-	openAddBrandDrawer = (event) => {
-		this.setState({ open: true });
+	openBrandDrawer = (brand) => {
+		this.setState({ open: true, drawerBrand: brand });
 	};
 
 	render() {
 		return (
 			<div className="content brands-content">
 				<div className="brand-add-button">
-					<CircleButton type="blue" title="Add Brand" handleClick={this.openAddBrandDrawer} />
+					<CircleButton type="blue" title="Add Brand" handleClick={() => this.openBrandDrawer()} />
 				</div>
 				<List>
 					{this.props.brands &&
@@ -65,7 +62,7 @@ export default class Brand extends Component {
 									key={brand.id}
 									primaryText={brand.name}
 								>
-									<IconButton style={styles.actionButtons} onClick={this.handleEditClick}>
+									<IconButton style={styles.actionButtons} onClick={() => this.openBrandDrawer(brand)}>
 										<Edit />
 									</IconButton>
 									<IconButton style={styles.actionButtons} onClick={this.handleDeleteClick}>
@@ -76,10 +73,11 @@ export default class Brand extends Component {
 						</Grid>
 					)}
 				</List>
-				<AddBrandDrawer
+				<BrandDrawer
 					width={styles.drawer.width}
 					open={this.state.open}
-					handleSubmit={this.handleSubmit}
+					brand={this.state.drawerBrand}
+					handleSubmit={this.handleDrawerSubmit}
 					closeDrawer={this.closeDrawer} />
 			</div>
 		)

@@ -3,15 +3,16 @@
 }
 .shift-modal-day-cell-direction .shift-modal-day-cell-direction-button {
   margin: 0 9px;
+
   width: 35px;
-  height: 80px;
+  height: 70px;
   background-color: #fff;
   border: 1px solid #f7f7f7;
   color: #423a3f;
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  box-shadow: 1px 1px 6px #4a4a4a;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5);
   border-radius: 5px;
 
 }

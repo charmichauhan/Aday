@@ -4,6 +4,7 @@ import $ from 'webpack-zepto';
 import {Icon,Image,Label,Input,List} from 'semantic-ui-react';
 import NumberButton from '../NumberButton/NumberButton';
 import _ from 'lodash';
+import './TimePicker.css';
 
 function getHoursFromMeridiem(meridiem) {
   return (meridiem.toLowerCase() === 'pm') ? 12 : 0;
@@ -27,7 +28,7 @@ export default class TimePicker extends Component {
     this.state = {
       activeField: 'start',
       startFieldText: '12:00 am',
-        stopFieldText: '12:00 pm',
+      stopFieldText: '12:00 pm',
       startHour: '',
       startMinute: '',
       startMeridiem: '',
@@ -41,7 +42,8 @@ export default class TimePicker extends Component {
      this.timeButtonOnClick = this.timeButtonOnClick.bind(this);
      this.attemptToUpdateTime = this.attemptToUpdateTime.bind(this);
      this.getMomentState = this.getMomentState.bind(this);
-
+     this.increaseTime=this.increaseTime.bind(this);
+     this.decreaseTime=this.decreaseTime.bind(this)
   }
 
    componentDidMount() {
@@ -54,10 +56,10 @@ export default class TimePicker extends Component {
      const stateHour = this.state[`${field}Hour`];
      const stateMinute = this.state[`${field}Minute`];
      const stateMeridiem = this.state[`${field}Meridiem`] || 'am';
-     const momentState = moment(this.props.date || '2017-07-10');
+     const momentState = moment();
      if (stateHour !== '') {
        momentState.hour(
-         parseInt(stateHour, 10) +
+         parseInt(stateHour, 10)+
          getHoursFromMeridiem(stateMeridiem)
        );
      }
@@ -104,6 +106,42 @@ export default class TimePicker extends Component {
       };
      this.setState(updatedState);
     }
+   increaseTime(event){
+     const $target = $(event.target)
+     const field = $target[0]['id'];
+     const { activeField } = this.state;
+     this.setState({activeField:field});
+     const momentState = this.getMomentState(activeField);
+     console.log(momentState.format('h'));
+     const minuteValue=momentState.add(15,'m').format('mm');
+     const hourValue= (momentState.format('h') === '12') ?
+       '0' : momentState.format('h')
+     console.log(hourValue);
+       const updatedState = {
+           [`${activeField}Hour`]: hourValue,
+           [`${activeField}Minute`]: minuteValue,
+           [`${activeField}FieldText`]: momentState.format('h:mm a'),
+          };
+         this.setState(updatedState);
+   }
+   decreaseTime(event){
+     const $target = $(event.target)
+     const field = $target[0]['id'];
+     const { activeField } = this.state;
+     this.setState({activeField:field});
+     const momentState = this.getMomentState(activeField);
+
+     const minuteValue=momentState.subtract(15,'m').format('mm');
+     const hourValue= (momentState.format('h') === '12') ?
+       '0' : momentState.format('h');
+
+    const updatedState = {
+        [`${activeField}Hour`]: hourValue,
+        [`${activeField}Minute`]: minuteValue,
+        [`${activeField}FieldText`]: momentState.format('h:mm a'),
+       };
+      this.setState(updatedState);
+   }
 
    textFieldOnFocus(event) {
      const $target = $(event.target)
@@ -165,54 +203,64 @@ export default class TimePicker extends Component {
     const minute = (startFocused) ? startMinute : stopMinute;
 
     return(
-    <div style={{marginTop:'2%'}}>
+    <div style={{ marginTop:'4%' }}>
      <div>
-       <div style ={{float:'left',width:'30%'}}>
-           <p style={{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>START TIME</p>
+       <div style={{ float:'left',width:'30%',marginTop:'2%' }}>
+           <p style={{ fontSize:'18px',fontStyle:'normal',color:'#666666' }}>START TIME</p>
            <Input
              label={<Image
                        size="tiny"
                        src="/images/Assets/Icons/Icons/start-time.png"
                        floated="left"
-                       style = {{padding:'0px',height:"38px"}}
+                       style={{ padding:'0px',height:"38px" }}
                />}
                labelPosition="left"
-               style={{marginTop:'-3%',width:'100%',backgroundColor:'lightgrey'}}
+               style={{ marginTop:'-4%',width:'100%',backgroundColor:'lightgrey' }}
                id="start"
-               onChange={this.textFieldOnChange}
-               onFocus={this.textFieldOnFocus}
-               onBlur={this.textFieldOnBlur}
-               value={this.state.startFieldText}
+               onChange={ this.textFieldOnChange }
+               onFocus={ this.textFieldOnFocus }
+               onBlur={ this.textFieldOnBlur }
+               value={ this.state.startFieldText }
+               icon={<Icon.Group size="large" style={{marginLeft: '-6%',marginTop:'1%'}}  >
+                   <Icon fitted name="toggle up" style={{marginTop:'-3%',marginRight:'0%'}} id="start" onClick={ this.increaseTime }/>
+                   <Icon fitted name="toggle down" style={{marginTop:'38%'}}  id="start" onClick={ this.decreaseTime }/>
+                   </Icon.Group>
+               }
+
              />
        </div>
-       <div style ={{float:'right',width:'30%',marginRight:"20%"}}>
-       <p style={{fontSize:'20px',fontStyle:'normal',color:'rgba(0, 0, 0, 0.87)'}}>END TIME</p>
+       <div style={{ float:'right',width:'30%',marginRight:"20%",marginTop:'2%' }}>
+       <p style={{ fontSize:'18px',fontStyle:'normal',color:'#666666' }}>END TIME</p>
            <Input
              label={<Image
                        size="tiny"
                        src="/images/Assets/Icons/Icons/end-time.png"
                        floated="left"
-                       style = {{padding:'0px',height:"38px"}}
+                       style={{ padding:'0px',height:"38px" }}
                />}
                labelPosition="left"
-               style={{marginTop:'-3%',width:'100%',backgroundColor:'lightgrey'}}
+               style={{ marginTop:'-4%',width:'100%',backgroundColor:'lightgrey' }}
                id="stop"
-               onChange={this.textFieldOnChange}
-               onFocus={this.textFieldOnFocus}
-               onBlur={this.textFieldOnBlur}
-               value={this.state.stopFieldText}
-
+               onChange={ this.textFieldOnChange }
+               onFocus={ this.textFieldOnFocus }
+               onBlur={ this.textFieldOnBlur }
+               value={ this.state.stopFieldText }
+               icon={<Icon.Group size="large" style={{marginLeft: '-6%',marginTop:'1%'}}  >
+                   <Icon name="toggle up" style={{marginTop:'-3%',marginRight:'0%'}} id="stop" onClick={ this.increaseTime } />
+                   <Icon name="toggle down" style={{marginTop:'38%'}}  id="stop" onClick={ this.decreaseTime} />
+                   </Icon.Group>
+               }
            />
        </div>
     </div>
-      <div style={{float:'left',marginTop:'3%',marginLeft:'0.7%'}} >
+      <div className="_arc_horizontal_list_hour"  >
        <div>
          <List horizontal>
           {
             _.map(_.range(1, 7), (value) => {
-            const inputValue =  String(value);
-            const liKey = `time-button-li-${inputValue}`;
-            const buttonKey = `time-button-${inputValue}`;
+            const inputValue=String(value);
+            const liKey=`time-button-li-${inputValue}`;
+            const buttonKey=`time-button-${inputValue}`;
             return (
               <List.Item key={liKey}>
                 <NumberButton
@@ -233,9 +281,9 @@ export default class TimePicker extends Component {
          <List horizontal>
          {
             _.map(_.range(7, 13), (value) => {
-            const inputValue = (value === 12) ? '0' : String(value);
-            const liKey = `time-button-li-${inputValue}`;
-            const buttonKey = `time-button-${inputValue}`;
+            const inputValue=(value === 12) ? '0' : String(value);
+            const liKey=`time-button-li-${inputValue}`;
+            const buttonKey=`time-button-${inputValue}`;
             return (
               <List.Item key={liKey}>
                 <NumberButton
@@ -253,7 +301,7 @@ export default class TimePicker extends Component {
        </List>
        </div>
       </div>
-       <div style={{float:'left',marginTop:'3%',marginLeft:'6%'}}>
+       <div className="_arc_horizontal_list_minute" >
        <List horizontal>
          <List.Item>
            <NumberButton
@@ -297,24 +345,26 @@ export default class TimePicker extends Component {
        </List>
       </div>
      </div>
-     <div style ={{float:'left',marginLeft:'4%',marginTop:'4%'}}>
+     <div style={{ float:'left',marginLeft:'5%',marginTop:'4%' }}>
         <List horizontal>
             <List.Item>
                <Image
                   src="/images/Assets/Icons/Buttons/am-button.png"
                   size="tiny"
-                  onClick={this.timeButtonOnClick}
+                  onClick={ this.timeButtonOnClick }
                   data-time-spec="Meridiem"
                   data-time-value="am"
+                  style={{ height:'52%',width:'80%' }}
                 />
             </List.Item>
             <List.Item>
                <Image
                   src="/images/Assets/Icons/Buttons/pm-button.png"
                   size="tiny"
-                  onClick={this.timeButtonOnClick}
+                  onClick={ this.timeButtonOnClick }
                   data-time-spec="Meridiem"
                   data-time-value="pm"
+                  style={{ height:'52%',width:'80%',marginLeft: '-30%' }}
                 />
             </List.Item>
         </List>

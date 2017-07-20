@@ -12,15 +12,14 @@ export default class DaySelector extends React.Component {
     super(props);
 
 
-
-    this.selectedDay = this.selectedDay.bind(this);
+    console.log("asdasd",this.props.startDate);
+    const date = moment(this.props.startDate).format('MM-DD-YYYY');
+    this.selectedDay=this.selectedDay.bind(this);
     this.stepDateRange=this.stepDateRange.bind(this);
     this.state = {
       selected: {},
-      startdate:moment().format('MM-DD-YYYY'),
-      tableSize:'7'
+      startdate:this.props.startDate
     };
-
   }
 
   componentWillMount() {
@@ -49,24 +48,24 @@ export default class DaySelector extends React.Component {
     //formCallback({ selectedDays });
   }
   stepDateRange(event){
-    const {startdate} = this.state;
-    console.log(startdate);
-    const $target = $(event.target)
-    console.log($target);
-    const dataDirection = $target[0]['id'];
-    console.log(dataDirection);
+    const {startdate}=this.state;
+    const $target=$(event.target);
+    const {tableSize}=this.props;
+    const dataDirection=$target[0]['id'];
     if(dataDirection === 'left'){
-        const newStartDate = moment(startdate).subtract(1,'days').format('MM-DD-YYYY');
+        const newStartDate=moment(startdate).subtract(7,'days').format('MM-DD-YYYY');
         this.setState({startdate: newStartDate});
     }else {
-        const newStartDate=moment(startdate).add(1,'days').format('MM-DD-YYYY');
+        const newStartDate=moment(startdate).add(7,'days').format('MM-DD-YYYY');
         this.setState({startdate:newStartDate});
     }
   }
 
   render() {
     const { selected } = this.state;
-    const { tableSize, startdate }=this.state;
+    const { startdate }=this.state;
+    const {tableSize}=this.props;
+    console.log(startdate);
     const startMoment = moment(startdate);
     const cells = _.map(_.range(tableSize), (i) => {
       const calDate = startMoment.clone().add(i, 'days');

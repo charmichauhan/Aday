@@ -44,6 +44,8 @@ export default class EventPopup extends Component{
     };
     render(){
         let data=this.props.data;
+        console.log("THIS EVENT POPUP")
+        console.log(data)
         let startTime = moment(data['timeFrom'],"hh:mm a");
         let endTime = moment(data['timeTo'],"hh:mm a");
         let h = endTime.diff(startTime,'hours');

@@ -11,7 +11,6 @@ const PublicSiteRoot = ({ route }) => (
 		{
 			renderRoutes(route.routes)
 		}
-		<Footer/>
 	</div>
 )
 

@@ -5,6 +5,7 @@ import close from '../../../../public/assets/Icons/close-shift.png';
 import edit from '../../../../public/assets/Icons/edit-shift.png';
 import create from '../../../../public/assets/Icons/create-shift.png';
 import cashier from "../../../../public/assets/Icons/cashier.png"
+import Modal from '../../helpers/Modal';
 
 export default class EventPopup extends Component{
     constructor(props){
@@ -15,18 +16,28 @@ export default class EventPopup extends Component{
             newShiftModalPopped: false
         }
     }
-    onPopupOpen = (modal) => {
-        //console.log(modal)
-        /*this.setState({
-         deleteModalPopped : true
-         })*/
-    };
-    onPopupClose = (modal) => {
-        console.log("Close");
-        console.log([modal])
+    handleClose = () => {
         this.setState({
-            deleteModalPopped: false
+            deleteModalPopped:false
         })
+    };
+
+    modalClose = () => {
+        this.setState({
+            deleteModalPopped:false
+        });
+    };
+
+    deleteShift = () => {
+
+    };
+
+    onPopupOpen = (modal) => {
+        switch(modal){
+            case "deleteModalPopped" : this.setState({deleteModalPopped:true});
+            case "editModalPopped" : this.setState({editModalPopped:true});
+            case "newShiftModalPopped" : this.setState({newShiftModalPopped:true});
+        }
     };
     onLocationClick = () => {
         console.log("onLocationClick");
@@ -37,6 +48,8 @@ export default class EventPopup extends Component{
         let endTime = moment(data['timeTo'],"hh:mm a");
         let h = endTime.diff(startTime,'hours');
         let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
+        let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
+            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
         return(
             <div className="day-item hov">
                 <div className="start-time">
@@ -54,11 +67,15 @@ export default class EventPopup extends Component{
                     </span>
                     <span className="jobType">{data['location']}</span>
                 </div>
+                {this.state.deleteModalPopped?<Modal title="Confirm" isOpen={this.state.deleteModalPopped}
+                                                     message = "Are you sure that you want to delete this shift?"
+                                                     action = {deleteShiftAction} closeAction={this.modalClose}/>
+                    :""}
                 <div className="overlay">
                     <div className="hoimg">
-                        <a href="#" onClick={()=>this.onPopupOpen("deleteModalPopped")}><img src={close} alt="close"/></a>
-                        <a href="#" onClick={()=>this.onPopupOpen("editModalPopped")}><img src={edit} alt="edit"/></a>
-                        <a href="#" onClick={()=>this.onPopupOpen("newShiftModalPopped")}><img src={create} alt="create"/></a>
+                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><img src={close} alt="close"/></a>
+                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><img src={edit} alt="edit"/></a>
+                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><img src={create} alt="create"/></a>
                     </div>
                 </div>
             </div>

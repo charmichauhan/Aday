@@ -6,9 +6,8 @@ const App = ({route}) => (
 	<Container fluid>
 		<Grid>
 			<Grid.Row>
-				<Grid.Column width={3} style={{marginLeft:"20px"}}><Nav/></Grid.Column>
-				<Grid.Column width={12}>
-					<Divider/>
+				<Grid.Column width={3} className="left-content"><Nav/></Grid.Column>
+				<Grid.Column width={12} className="main-content">
 					{renderRoutes(route.routes)}
 				</Grid.Column>
 			</Grid.Row>

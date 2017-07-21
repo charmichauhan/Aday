@@ -1,32 +1,87 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import BigCalendar from 'react-big-calendar';
+import { NavLink } from 'react-router-dom'
+import { Button } from 'semantic-ui-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
 import AddHours from '../../../public/assets/Buttons/add-hours.png';
 import AddAsTemplate from '../../../public/assets/Buttons/add-as-template.png';
 import TemplateList from '../../../public/assets/Buttons/template-list-button.png';
 import Automate from '../../../public/assets/Buttons/automate-schedule.png';
-import Published from '../../../public/assets/Icons/published.png';
-import Unpublished from '../../../public/assets/Icons/unpublished.png';
+import Modal from '../helpers/Modal';
 import Publish from '../../../public/assets/Buttons/publish.png';
 import ShiftWeekTable from './ShiftWeekTable';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
 import '../Scheduling/style.css';
 
+const styles = {
+    bodyStyle: {
+        maxHeight: 400
+    },
+    wrapperStyle: {
+        width: 1188
+    },
+    root: {
+        borderCollapse: 'separate',
+        borderSpacing: '8px 8px'
+    },
+    tableFooter: {
+        paddingLeft:'0px',
+        paddingRight:'0px'
+    },
+    tableFooterHeading: {
+        paddingLeft:'0px',
+        paddingRight:'0px',
+        width: 178
+    }
+};
+
 export default class EmployeeView extends Component {
+	constructor(props){
+		super(props);
+        this.state = {
+            publishModalPopped: false,
+        }
+	}
+
+   modalClose = () => {
+        this.setState({
+            publishModalPopped:false
+        })
+    };
+
+    goBack = () => {
+        this.setState({
+            publishModalPopped:false
+        });
+    };
+
+    onConfirm = () => {
+
+    };
+	onPublish = () => {
+		this.setState({publishModalPopped:true})
+	};
+
     render() {
         let is_publish = true;
         BigCalendar.momentLocalizer(moment);
+        let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
+            {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
         return (
 			<div className="App row">
 				<ShiftPublish ispublish={is_publish}/>
-				<div>
-					<img className="btn-image" src={AddHours} alt="Create Shift"/>
-                    {!is_publish?<img className="btn-image flr" src={Publish} alt="Publish"/>:<span></span>}
-                    {!is_publish?<img className="btn-image flr" src={Automate} alt="Automate"/>:<span></span>}
-					<img className="btn-image flr" src={AddAsTemplate} alt="Add As Template"/>
-                    {!is_publish?<img className="btn-image flr" src={TemplateList} alt="Template List"/>:<span></span>}
+                {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
+													 message = "Are you sure that you want to delete this shift?"
+													 action = {publishModalOptions} closeAction={this.modalClose}/>
+                    :""}
+				<div className="btn-action">
+					<Button className="btn-image" as={NavLink} to="/schedule/template"><img className="btn-image" src={AddHours} alt="Create Shift"/></Button>
+					<Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src={Publish} alt="Publish"/></Button>
+                    {!is_publish?<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={Automate} alt="Automate"/></Button>:<span></span>}
+					<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={AddAsTemplate} alt="Add As Template"/></Button>
+                    {!is_publish?<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={TemplateList} alt="Template List"/></Button>:<span></span>}
 				</div>
 				<div>
 					<BigCalendar events={[]}
@@ -47,11 +102,8 @@ export default class EmployeeView extends Component {
 }
 
 class CustomToolbar extends Toolbar {
-    jobView = () => {
-        window.location = '/schedule/team';
-    };
 
-    render() {
+	render() {
         let month = moment(this.props.date).format("MMMM YYYY");
         return (
 			<div>
@@ -68,9 +120,7 @@ class CustomToolbar extends Toolbar {
 							</div>
 
 							<ul className="nav navbar-nav">
-								<button className="btn btnnav btn-default btnnav navbar-btn m8"
-										onClick={() => this.jobView()}> Job view
-								</button>
+								<Button className="" as={NavLink} to="/schedule/team" >Job view</Button>
 							</ul>
 							<div className="maintitle">{month}</div>
 							<ul className="nav navbar-nav navbar-right">

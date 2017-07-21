@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import EventPopup from './EventPopup';
 import moment from 'moment';
 import '../style.css';
+import {
+    TableRow,
+    TableRowColumn,
+} from 'material-ui/Table';
 
 export default class JobsRow extends Component{
     render(){
-
         let data = this.props.data;
         let shifts = data.shifts[0];
         let finalHours = 0;
@@ -26,36 +29,34 @@ export default class JobsRow extends Component{
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
         return(
-
-            <tr className="tableh">
-                <td className="headcol" width="100%">
-                    <table className="" width="100%">
-                        <tbody height={"50%"}>
-                        <tr>
-                            <td width="24%"><img src={data.icon} alt="img"/></td>
-                            <td width="76%" className="penalheading">{data.title}<p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
-                                <p className="scheduled_tag">SCHEDULED</p></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </td>
+            <TableRow className="tableh" displayBorder={false}>
+                <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
+                    <div className="user_profile" width="80%">
+                        <div className="user_img">
+                            <img src={data.icon} alt="img"/>
+                        </div>
+                        <div className="user_desc penalheading">{data.title}
+                            <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                            <p className="scheduled_tag">SCHEDULED</p>
+                        </div>
+                    </div>
+                </TableRowColumn>
                 {
                     Object.values(shifts).map((value,index)=> ((
-                            <td key={index} className="shiftbox">
+                            <TableRowColumn key={index} className="shiftbox" style={{paddingLeft:'0px',paddingRight:'0px',backgroundColor:'#F5F5F5'}}>
                                 {
                                     Object.values(value).map((value,index)=>(
                                         <EventPopup data={value} key={index}/>
-
                                     ))
                                 }
                                 <button type="button" className="addshift">
                                     + ADD HOURS
                                 </button>
-                            </td>
+                            </TableRowColumn>
                         )
                     ))
                 }
-            </tr>
+            </TableRow>
         )
     }
 }

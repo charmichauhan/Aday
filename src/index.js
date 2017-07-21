@@ -19,7 +19,7 @@ injectTapEventPlugin();
 
 const client = new ApolloClient({
   networkInterface: createNetworkInterface({ uri: 'https://forward-chess-157313.appspot.com/graphql'}),
-})
+});
 
 
 ReactDOM.render(

@@ -56,7 +56,22 @@ class ShiftWeekTableComponent extends Week {
             return (<div>An unexpected error occurred</div>)
         }
 
-        let jobData = jobsData;
+        let calendarHash = {};
+        this.props.data.brandShiftByDate.edges.map((value,index) => {
+            const positionName = value.node.positionByPositionId.positionName;
+            const dayOfWeek = moment(value.node.startTime).format("dddd");
+
+            const rowHash = {};
+            rowHash["weekday"] = dayOfWeek;
+            if (calendarHash[positionName]){
+                calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node) ]
+            } else {
+                calendarHash[positionName] = [Object.assign(rowHash, value.node)];
+            }
+
+        })
+
+        let jobData = calendarHash;
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
         let is_publish = true;
@@ -98,10 +113,10 @@ class ShiftWeekTableComponent extends Week {
                     </thead>
                      <tbody className="tbody_scroll">
                     <SpecialDay dateStart={start}/>
-                    {jobData.map((value,index)=>(
-                            <JobsRow data={jobData[index]} key={index}/>
-                        )
-                    )
+                    { 
+                        (Object.keys(jobData)).map((value, index)=>(
+                            <JobsRow data={jobData[value]} key={value}/> 
+                        ))
                     }
                     </tbody>
                 </table>
@@ -160,6 +175,7 @@ const allShifts = gql`
             workersRequestedNum
             positionByPositionId{
                 positionName
+                positionIconUrl
                 brandByBrandId {
                   brandName
                 }

@@ -7,7 +7,24 @@ export default class JobsRow extends Component{
     render(){
 
         let data = this.props.data;
-        let shifts = data.shifts[0];
+        console.log("DATA")
+        console.log(this.props.data)
+
+        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const hashByDay = {"Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": [], "Sunday": []};
+        this.props.data.map((value,index) => {
+            const day = value.weekday
+            if (hashByDay[day]){
+                hashByDay[day] = [...hashByDay[day], value];
+            } else {
+                hashByDay[day] =  [value];
+            }
+            console.log(hashByDay)
+        })
+
+
+
+        /*
         let finalHours = 0;
         let finalMinutes = 0;
         Object.values(shifts).map((value,index) => {
@@ -25,6 +42,7 @@ export default class JobsRow extends Component{
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
+        */
         return(
 
             <tr className="tableh">
@@ -32,21 +50,21 @@ export default class JobsRow extends Component{
                     <table className="" width="100%">
                         <tbody height={"50%"}>
                         <tr>
-                            <td width="24%"><img src={data.icon} alt="img"/></td>
-                            <td width="76%" className="penalheading">{data.title}<p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                            <td width="24%"><img src={data.url} alt="img"/></td>
+                            <td width="76%" className="penalheading">{data[0].positionByPositionId.positionName}<p className="finalHours">{7} hours<br/>{3} Minutes</p>
                                 <p className="scheduled_tag">SCHEDULED</p></td>
                         </tr>
                         </tbody>
                     </table>
                 </td>
                 {
-                    Object.values(shifts).map((value,index)=> ((
+                    daysOfWeek.map((value,index)=> ((
                             <td key={index} className="shiftbox">
                                 {
-                                    Object.values(value).map((value,index)=>(
-                                        <EventPopup data={value} key={index}/>
-
-                                    ))
+                                    Object.values(hashByDay[value]).map((y, index)=>(
+                                                <EventPopup data={y} key={index}/>
+                                            ))
+                                    
                                 }
                                 <button type="button" className="addshift">
                                     + ADD HOURS

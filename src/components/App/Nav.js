@@ -44,7 +44,7 @@ export default class Nav extends Component {
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/schedule/team"><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span><i>12</i></div></Menu.Item>
-							<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
+							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance/requests"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/team-member.png"/></i><div className="menu_item_left"><span>TEAM MEMBERS</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/hiring/opportunities"><i><Image src="/images/Sidebar/hiring.png"/></i><div className="menu_item_left"><span>HIRING</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/positions.png"/></i><div className="menu_item_left"><span>POSITIONS</span></div></Menu.Item>

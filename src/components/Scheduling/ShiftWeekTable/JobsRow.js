@@ -10,7 +10,18 @@ import {
 export default class JobsRow extends Component{
     render(){
         let data = this.props.data;
-        let shifts = data.shifts[0];
+        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const hashByDay = {"Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": [], "Sunday": []};
+         this.props.data.map((value,index) => {
+             const day = value.weekday
+             if (hashByDay[day]){
+                 hashByDay[day] = [...hashByDay[day], value];
+             } else {
+                 hashByDay[day] =  [value];
+             }
+         })
+
+/*
         let finalHours = 0;
         let finalMinutes = 0;
         Object.values(shifts).map((value,index) => {
@@ -25,9 +36,11 @@ export default class JobsRow extends Component{
                 }
             }
         });
+
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
+    */
         return(
             <TableRow className="tableh" displayBorder={false}>
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
@@ -35,18 +48,18 @@ export default class JobsRow extends Component{
                         <div className="user_img">
                             <img src={data.icon} alt="img"/>
                         </div>
-                        <div className="user_desc penalheading">{data.title}
-                            <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                        <div className="user_desc penalheading">{data[0].positionByPositionId.positionName}
+                            <p className="finalHours">{10} hours<br/>{10} Minutes</p>
                             <p className="scheduled_tag">SCHEDULED</p>
                         </div>
                     </div>
                 </TableRowColumn>
                 {
-                    Object.values(shifts).map((value,index)=> ((
+                    daysOfWeek.map((value,index)=> ((
                             <TableRowColumn key={index} className="shiftbox" style={{paddingLeft:'0px',paddingRight:'0px',backgroundColor:'#F5F5F5'}}>
                                 {
-                                    Object.values(value).map((value,index)=>(
-                                        <EventPopup data={value} key={index}/>
+                                    Object.values(hashByDay[value]).map((y, index)=>(
+                                        <EventPopup data={y} key={index}/>
                                     ))
                                 }
                                 <button type="button" className="addshift">

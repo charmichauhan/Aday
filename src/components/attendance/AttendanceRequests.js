@@ -11,32 +11,15 @@ class AttendanceRequests extends Component {
 		const {
 			activeItem
 		} = this.state
-		let data =  [
-				{
-					node: {
-            userByRequestorId: {
-              firstName: "Maddie",
-              lastName: "Test"
-            },
-            startDate: "2017-07-26T04:00:00+00:00",
-            endDate: "2017-07-27T04:00:00+00:00",
-            submissionDate: "2017-07-21T14:56:55+00:00",
-            requestType: "VACATION",
-            minutesPaid: 0,
-            payDate: null,
-            notes: "test test test test test test test test test test test test test test test test",
-            decisionStatus: "DENIED"
-          }
-				}
-			];
+		let data = [];
+		let filtered_data = [];
     if (this.props.data.error) {
         return <div>Error! {this.props.data.error.message}</div>;
     }
-    if (this.props.data.loading) {
-        return (<div> Loading... </div>);
-    }
-		data = this.props.data.allTimeOffRequests.edges;
-		let filtered_data = data.filter((item) => item.node.decisionStatus == activeItem);
+		if (this.props.data.allTimeOffRequests){
+			data = this.props.data.allTimeOffRequests.edges;
+			filtered_data = data.filter((item) => item.node.decisionStatus == activeItem);
+		}
 		return (
 			<div>
 				<Menu attached='top' tabular>
@@ -57,7 +40,9 @@ class AttendanceRequests extends Component {
 						onClick={this.handleItemClick}/>
 				</Menu>
 				<Segment attached="bottom">
-					<TimeAttendanceTable requests={filtered_data} filter={activeItem}/>
+					{!this.props.data.allTimeOffRequests ?
+					 (<div> Loading... </div>) :
+					 (<TimeAttendanceTable requests={filtered_data} filter={activeItem}/>)}
 				</Segment>
 			</div>
 		);

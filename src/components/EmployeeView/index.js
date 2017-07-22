@@ -14,6 +14,7 @@ import Publish from '../../../public/assets/Buttons/publish.png';
 import ShiftWeekTable from './ShiftWeekTable';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
 import '../Scheduling/style.css';
+import CreateShiftButton from '../Scheduling/AddShift/CreateShiftButton';
 
 const styles = {
     bodyStyle: {
@@ -77,7 +78,7 @@ export default class EmployeeView extends Component {
 													 action = {publishModalOptions} closeAction={this.modalClose}/>
                     :""}
 				<div className="btn-action">
-					<Button className="btn-image" as={NavLink} to="/schedule/template"><img className="btn-image" src={AddHours} alt="Create Shift"/></Button>
+					<Button className="btn-image"><CreateShiftButton/></Button>
 					<Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src={Publish} alt="Publish"/></Button>
                     {!is_publish?<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={Automate} alt="Automate"/></Button>:<span></span>}
 					<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={AddAsTemplate} alt="Add As Template"/></Button>

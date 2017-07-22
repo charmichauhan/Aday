@@ -15,7 +15,7 @@ import Publish from '../../../public/assets/Buttons/publish.png';
 import ShiftWeekTable from './ShiftWeekTable';
 import './style.css';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
-
+import CreateShiftButton from './AddShift/CreateShiftButton';
 
 export default class Schedule extends Component {
     constructor(props){
@@ -30,6 +30,7 @@ export default class Schedule extends Component {
             publishModalPopped:false
         })
     };
+
 
     goBack = () => {
         this.setState({
@@ -56,7 +57,7 @@ export default class Schedule extends Component {
 													  action = {publishModalOptions} closeAction={this.modalClose}/>
                     :""}
 				<div className="btn-action">
-					<Button className="btn-image" as={NavLink} to="/schedule/template"><img className="btn-image" src={AddHours} alt="Create Shift"/></Button>
+					<Button className="btn-image"> <CreateShiftButton /> </Button>
 					<Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src={Publish} alt="Publish"/></Button>
                     {!is_publish?<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={Automate} alt="Automate"/></Button>:<span></span>}
 					<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={AddAsTemplate} alt="Add As Template"/></Button>
@@ -84,7 +85,6 @@ class CustomToolbar extends Toolbar {
     employeeView = (e) => {
         window.location = '/schedule/team/employeeview';
     };
-
     render() {
         let month = moment(this.props.date).format("MMMM YYYY");
         return (
@@ -127,3 +127,4 @@ class CustomToolbar extends Toolbar {
         );
     }
 }
+

@@ -21,35 +21,31 @@ export default class JobsRow extends Component{
              }
          })
 
-/*
+
         let finalHours = 0;
         let finalMinutes = 0;
-        Object.values(shifts).map((value,index) => {
-            if(value.length){
-                for(let i=0;i<value.length;i++){
-                    let startTime = moment(value[i]['timeFrom'],"hh:mm a");
-                    let endTime = moment(value[i]['timeTo'],"hh:mm a");
-                    let h = endTime.diff(startTime,'hours');
-                    let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
-                    finalHours += h;
-                    finalMinutes += parseInt(m);
-                }
-            }
+        Object.values(this.props.data).map((value,index) => {
+            let startTime = moment(value.startTime);
+            let endTime = moment(value.endTime);
+            let h = endTime.diff(startTime,'hours');
+            let m = moment.utc(moment(endTime).diff(moment(startTime))).format("mm");
+            finalHours += h;
+            finalMinutes += parseInt(m);
         });
 
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
-    */
+
         return(
             <TableRow className="tableh" displayBorder={false}>
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
                     <div className="user_profile" width="80%">
                         <div className="user_img">
-                            <img src={data.icon} alt="img"/>
+                            <img width="65px" src={ data[0].positionByPositionId.positionIconUrl } alt="img"/>
                         </div>
                         <div className="user_desc penalheading">{data[0].positionByPositionId.positionName}
-                            <p className="finalHours">{10} hours<br/>{10} Minutes</p>
+                            <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
                             <p className="scheduled_tag">SCHEDULED</p>
                         </div>
                     </div>

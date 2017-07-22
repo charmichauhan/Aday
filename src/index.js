@@ -18,8 +18,8 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 const client = new ApolloClient({
-  networkInterface: createNetworkInterface({ uri: 'http://localhost:5000/graphql'}),
-})
+  networkInterface: createNetworkInterface({ uri: 'https://forward-chess-157313.appspot.com/graphql'}),
+});
 
 
 ReactDOM.render(

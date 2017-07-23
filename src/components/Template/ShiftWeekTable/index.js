@@ -9,6 +9,7 @@ import jobsData from "./jobs.json";
 import Modal from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton';
 import "../../Scheduling/style.css";
+import { gql, graphql } from 'react-apollo';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
 
 const styles = {
@@ -32,7 +33,8 @@ const styles = {
         width: 178
     }
 };
-export default class ShiftWeekTable extends Week {
+
+class ShiftWeekTableComponent extends Week {
     constructor(props){
         super(props);
         this.state={
@@ -49,7 +51,35 @@ export default class ShiftWeekTable extends Week {
         that.setState({deleteTemplateModal:true})
     };
     render() {
-        let jobData = jobsData;
+         if (this.props.data.loading) {
+             return (<div>Loading</div>)
+         }
+        
+         if (this.props.data.error) {
+             console.log(this.props.data.error)
+             return (<div>An unexpected error occurred</div>)
+        }
+
+        
+        console.log(this.props.data)
+///
+        let calendarHash = {};
+        let userHash={};
+        this.props.data.allTemplates.edges.map((value,index) => {
+            value.node.templateShiftsByTemplateId.edges.map((value2,index2) => {
+                value2.node.templateShiftAssigneesByTemplateShiftId.edges.map((value3,index3) => {
+                    const user = [value3.node.userByUserId.firstName, value3.node.userByUserId.lastName] 
+                     if (calendarHash[user]){
+                        calendarHash[user] = [...calendarHash[user],  value.node ]
+                    } else {
+                        calendarHash[user] = value.node
+                    }
+                })
+            })
+        });
+        
+        console.log(calendarHash)
+        let jobData = calendarHash;
         let {date} = this.props;
         let {start} = ShiftWeekTable.range(date,this.props);
         let deleteTemplateAction =[{type:"white",title:"Cancel",handleClick:this.modalClose,image:false},
@@ -181,9 +211,55 @@ export default class ShiftWeekTable extends Week {
     }
 }
 
-ShiftWeekTable.range = (date, {culture}) => {
+ShiftWeekTableComponent.range = (date, {culture}) => {
     let firstOfWeek = localizer.startOfWeek(culture);
     let start = dates.startOf(date, 'week', firstOfWeek);
     let end = dates.endOf(date, 'week', firstOfWeek);
     return {start, end};
 };
+///
+
+const allTemplateShifts = gql`
+  query allTemplateShifts($brandid: Uuid!, $first: Int!){
+    allTemplates(condition:{brandId: $brandid}, first: $first) {
+        edges{
+            node{
+              id
+              workplaceByWorkplaceId{
+                workplaceName
+              }
+                templateShiftsByTemplateId{
+                    edges{
+                      node{
+                        id
+                        positionByPositionId{
+                            positionName
+                        }
+                        templateShiftAssigneesByTemplateShiftId{
+                            edges{
+                              node{
+                                userByUserId {
+                                  firstName
+                                  lastName
+                                }
+                              }
+                            }
+                        } 
+                      }          
+                    }
+            }   }
+        }
+    }
+}`
+
+const ShiftWeekTable = graphql(allTemplateShifts, {
+   options: (ownProps) => ({ 
+     variables: {
+       brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+       first: 1
+     }
+   }),
+ })(ShiftWeekTableComponent)
+
+
+export default ShiftWeekTable

@@ -172,7 +172,7 @@ td.shiftbox {
     font-family: "Roboto Condensed";
     font-size: 30px;
     letter-spacing: 3px;
-    line-height: 35px;
+    line-height: 3px;
     text-align: center;
 }
 
@@ -184,7 +184,7 @@ td.shiftbox {
     font-size: 30px;
     font-weight: 300;
     letter-spacing: 3px;
-    line-height: 35px;
+    line-height: 3px;
     text-align: center;
 }
 
@@ -281,6 +281,7 @@ td.shiftbox {
     font-family: Lato;
     font-size: 19px;
     line-height: 18px;
+    margin-top: -15px;
 }
 
 .start-time p small {
@@ -342,6 +343,7 @@ td.shiftbox {
     width: 30%;
     font-size: 10px;
     float: right;
+    margin-top: -10px;
 }
 
 .flr {

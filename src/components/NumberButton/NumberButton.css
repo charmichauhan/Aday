@@ -1,0 +1,21 @@
+.time-selector-number-button {
+    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: solid 1px #f7f7f7;
+    float: left;
+    box-shadow: 0 2px 4px 0px rgba(0,0,0,0.5);
+    font-size: 18px;
+    text-align: center;
+    background-color: white;
+}
+.time-selector-number-button:focus {
+  outline: none;
+  border-style: none;
+}
+.time-selector-number-button:hover, .time-selector-number-button:active, .time-selector-number-button.selected {
+    background-color: #0022A1;
+    border-color: #0022A1;
+    color: #fff;
+}

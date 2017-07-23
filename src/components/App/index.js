@@ -1,23 +1,19 @@
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 
-import { Divider, Grid, Container } from 'semantic-ui-react'
+import {Grid, Container } from 'semantic-ui-react'
 
 import Nav from './Nav'
-
 const App = ({route}) => (
-	<Container>
+	<Container fluid>
 		<Grid>
 			<Grid.Row>
-				<Grid.Column width={4}><Nav/></Grid.Column>
-
-				<Grid.Column width={12}>
-					<Divider/>
+				<Grid.Column width={3} className="left-content"><Nav/></Grid.Column>
+				<Grid.Column width={12} className="main-content">
 					{renderRoutes(route.routes)}
 				</Grid.Column>
 			</Grid.Row>
 		</Grid>
 	</Container>
 )
-
 export default App

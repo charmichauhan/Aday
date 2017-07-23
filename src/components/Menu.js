@@ -8,9 +8,9 @@ export default class MainMenu extends Component {
 			<div className="aday-container">
 				<Menu secondary fluid  size='mini'>
 					<Menu.Item as={NavLink} to="/">
-						<img 
+						<img
 							className="logo"
-							src="/images/logos_aday.png" 
+							src="/images/logos_aday.png"
 							alt="aday logo"/>
 					</Menu.Item>
 					<Menu.Menu position="right">
@@ -22,7 +22,7 @@ export default class MainMenu extends Component {
 						</Menu.Item>
 					</Menu.Menu>
 				</Menu>
-				
+
 			</div>
 		);
 	}

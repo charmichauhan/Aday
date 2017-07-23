@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment'
-
 import $ from 'jquery'
+import CreateShiftButton from './AddShift/CreateShiftButton';
 
 $('#calendar').fullCalendar({
 	schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives'
@@ -23,7 +23,7 @@ class Calendar extends Component {
 		aspectRatio: 1.5,
 		scrollTime: '00:00',
     	defaultView: 'timelineDay',
-    	events: this.props.events, 
+    	events: this.props.events,
     	header: this.props.header
     });
   }
@@ -57,9 +57,12 @@ export default class Schedule extends Component {
 		}
 
 		return (
+		<div>
+		<CreateShiftButton />
 			<div className="App">
 				<Calendar events={events} header={header} />
 			</div>
+		</div>
 		);
 	}
 }

@@ -4,6 +4,7 @@ import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
 import $ from 'webpack-zepto';
 import ChipSelector from './ChipSelector';
+import './select.css';
 
 const Managers = [
 	{ key:0,label: 'Rahkeem Morris', value: 'Rahkeem Morris' },
@@ -12,9 +13,17 @@ const Managers = [
 ];
 const styles ={
 	chip :{
-		margin:4
-	}
-}
+		margin:4,
+		width:'90%'
+	},
+      wrapper: {
+        display: 'flex',
+        flexWrap: 'wrap',
+				width:'100%'
+  },
+};
+
+
 export default class ManagerSelectOption extends Component{
   constructor(props){
     super(props);
@@ -22,38 +31,51 @@ export default class ManagerSelectOption extends Component{
 		this.handleRequestDelete=this.handleRequestDelete.bind(this);
     this.state = {
       options:Managers,
-      value:[],
+      managerValue:[],
     }
   }
 	onChange(value){
-		this.setState({value:value});
+		const {formCallBack}=this.props;
+		const updatedState = {
+			managerValue:value
+		}
+		this.setState(updatedState);
+		formCallBack(updatedState);
 	}
 	handleRequestDelete(key){
-		console.log(key);
-		this.valueData=this.state.value;
+		const { formCallBack }=this.props;
+		this.valueData=this.state.managerValue;
 		const valueToBeDeleted=this.valueData.map((value) =>value.key).indexOf(key);
 		this.valueData.splice(valueToBeDeleted,1);
-		this.setState({value:this.valueData});
+		const updatedState = {
+			managerValue:this.valueData
+		}
+		this.setState(updatedState);
+		formCallBack(updatedState);
 	}
   render(){
     return(
       <Select
-         placeholder="Select Manager"
+			   className='sectionTest'
+			   name="managers"
          multi
+   	 		 autosize="false"
+				 value={this.state.managerValue}
 
-         value={this.state.value}
          onChange={this.onChange}
          options={this.state.options}
   			 valueComponent={(value) => {
 					return(
-						<Chip
-
+					  <div style={styles.wrapper}>
+						   <Chip
 											 onRequestDelete={()=> this.handleRequestDelete(value.value.key)}
 											 style={styles.chip}
 									 >
 									 <Avatar src="images/uxceo-128.jpg" />
 										{value.value.label}
-						</Chip>
+
+						  </Chip>
+						</div>
 				   );
 			   }
 			 }

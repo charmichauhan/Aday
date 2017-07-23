@@ -16,6 +16,11 @@ import ShiftWeekTable from './ShiftWeekTable';
 import './style.css';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
 import CreateShiftButton from './AddShift/CreateShiftButton';
+import 'fullcalendar/dist/fullcalendar.min.css';
+import 'fullcalendar/dist/fullcalendar.min.js';
+import 'fullcalendar-scheduler/dist/scheduler.css';
+import 'fullcalendar-scheduler/dist/scheduler.js';
+
 
 export default class Schedule extends Component {
     constructor(props){
@@ -30,7 +35,6 @@ export default class Schedule extends Component {
             publishModalPopped:false
         })
     };
-
 
     goBack = () => {
         this.setState({

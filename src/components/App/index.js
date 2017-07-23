@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 
-import { Divider, Grid, Container } from 'semantic-ui-react'
+import {Grid, Container } from 'semantic-ui-react'
 
 import Nav from './Nav'
 const App = ({route}) => (

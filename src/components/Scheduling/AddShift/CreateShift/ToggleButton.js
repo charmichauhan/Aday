@@ -10,10 +10,19 @@ export default class ToggleButton extends Component {
       positive:false,
       negative:true,
       label:'NO',
-      labelPosition:'left'
+      labelPosition:'left',
+      jobShadowingOppurtunity: false
     }
   }
+  componentWillMount(){
+    const {formCallBack}=this.props;
+    const newState={
+      jobShadowingOppurtunity:this.state.jobShadowingOppurtunity
+    }
+    formCallBack(newState);
+  }
   handleToggleButton(){
+    const {formCallBack}=this.props;
     const {handleToggle,positive,negative,label,labelPosition}=this.state;
     if(handleToggle){
       this.setState({
@@ -21,7 +30,8 @@ export default class ToggleButton extends Component {
         positive:true,
         negative:false,
         label:'YES',
-        labelPosition:'right'
+        labelPosition:'right',
+        jobShadowingOppurtunity: true,
       });
     }else{
       this.setState({
@@ -29,9 +39,14 @@ export default class ToggleButton extends Component {
         positive:false,
         negative:true,
         label:'NO',
-        labelPosition:'left'
+        labelPosition:'left',
+        jobShadowingOppurtunity: false
       });
     }
+    const newState={
+      jobShadowingOppurtunity:this.state.jobShadowingOppurtunity
+    }
+    formCallBack(newState);
   }
   render(){
     const {positive,negative,label,labelPosition}=this.state;

@@ -12,7 +12,6 @@ export default class DaySelector extends React.Component {
     super(props);
 
 
-    console.log("asdasd",this.props.startDate);
     const date = moment(this.props.startDate).format('MM-DD-YYYY');
     this.selectedDay=this.selectedDay.bind(this);
     this.stepDateRange=this.stepDateRange.bind(this);
@@ -38,14 +37,19 @@ export default class DaySelector extends React.Component {
   }
 
   selectedDay(event) {
+    const {callBack}=this.props;
+    console.log($(event.target));
     const cellId = $(event.target).data('cellid');
+    console.log(cellId);
     const { selected } = this.state;
-    //const { formCallback } = this.props;
     const currentValue = selected[cellId];
     const selectedDays = _.extend({}, selected, { [cellId]: !currentValue });
-
+    console.log(selectedDays);
     this.setState({ selected: selectedDays });
-    //formCallback({ selectedDays });
+    const shiftDaysSelected={
+      shiftDaysSelected:selectedDays
+    }
+    callBack(shiftDaysSelected);
   }
   stepDateRange(event){
     const {startdate}=this.state;

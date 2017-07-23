@@ -12,10 +12,22 @@ export default class NumberOfEmployeeSelector extends Component {
       selectedValue:'1'
     }
   }
+  componentWillMount(){
+    const {formCallBack}=this.props;
+    const dataValue={
+      numberOfTeamMembers:this.state.selectedValue
+    }
+    formCallBack(dataValue);
+  }
   selectValue(event){
+    const {formCallBack}=this.props;
     const $target=$(event.target);
     const numberValue=$target.data('time-value');
     this.setState({selectedValue: numberValue });
+    const dataValue={
+      numberOfTeamMembers:numberValue
+    }
+    formCallBack(dataValue);
   }
   render(){
     const {selectedValue} = this.state;

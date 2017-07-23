@@ -72,6 +72,7 @@ export default class TimePicker extends Component {
 
 
    timeButtonOnClick(event) {
+     const {formCallBack}=this.props;
      const { activeField } = this.state;
      const $target = $(event.target);
      const timeSpec = $target.data('time-spec');
@@ -105,8 +106,14 @@ export default class TimePicker extends Component {
        [`${activeField}FieldText`]: momentState.format('h:mm a'),
       };
      this.setState(updatedState);
+     const timeData={
+       [`${activeField}Time`]: momentState.format('h:mm a')
+     }
+     formCallBack(timeData);
     }
+
    increaseTime(event){
+     const {formCallBack}=this.props;
      const $target = $(event.target)
      const field = $target[0]['id'];
      const { activeField } = this.state;
@@ -123,8 +130,13 @@ export default class TimePicker extends Component {
            [`${activeField}FieldText`]: momentState.format('h:mm a'),
           };
          this.setState(updatedState);
+         const timeData={
+           [`${activeField}Time`]: momentState.format('h:mm a')
+         }
+         formCallBack(timeData);
    }
    decreaseTime(event){
+     const {formCallBack}=this.props;
      const $target = $(event.target)
      const field = $target[0]['id'];
      const { activeField } = this.state;
@@ -141,6 +153,10 @@ export default class TimePicker extends Component {
         [`${activeField}FieldText`]: momentState.format('h:mm a'),
        };
       this.setState(updatedState);
+      const timeData={
+        [`${activeField}Time`]: momentState.format('h:mm a')
+      }
+      formCallBack(timeData);
    }
 
    textFieldOnFocus(event) {
@@ -166,6 +182,7 @@ export default class TimePicker extends Component {
    }
 
    attemptToUpdateTime(field, text) {
+     const {formCallBack}=this.props;
      const newState = {};
      const textMoment = moment(text, 'h:mm a');
      const momentState = this.getMomentState(field);
@@ -191,6 +208,10 @@ export default class TimePicker extends Component {
      newState[`${field}FieldText`] = fieldText;
 
      this.setState(newState);
+     const timeData={
+       [`${field}Time`]: fieldText
+     }
+     formCallBack(timeData);
    }
   render(){
     const { activeField, startFieldText, stopFieldText, startMeridiem,

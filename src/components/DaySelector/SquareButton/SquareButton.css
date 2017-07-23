@@ -17,8 +17,8 @@
 
 }
 .shift-modal-day-cell-direction .shift-modal-day-cell-direction-button:hover, .shift-modal-day-cell-direction .shift-modal-day-cell-direction-button:active, .shift-modal-day-cell-direction .shift-modal-day-cell-direction-button.selected {
-  background-color: #9a9699;
-  border-color: #9a9699;
+  background-color: #0022A1;
+  border-color: #0022A1;
   color: #fff;
 }
 .shift-modal-day-cell-direction .shift-modal-day-cell-direction-button:focus {

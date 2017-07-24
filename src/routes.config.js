@@ -4,6 +4,7 @@ import Root from './components/Root';
 import Home from './components/Home';
 import Schedule from './components/Scheduling';
 import Settings from './components/Settings';
+import Positions from './components/Positions';
 
 
 import MyWorkplace from './components/workplace/MyWorkplace'
@@ -81,6 +82,10 @@ const routes = [
 					{
 						path: '/settings/:tab',
 						component: Settings
+					},
+					{
+						path: '/positions/:tab',
+						component: Positions
 					}
 				]
 			}

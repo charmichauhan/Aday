@@ -16,6 +16,7 @@
     "react-date-picker": "^5.3.28",
     "react-dom": "^15.5.4",
     "react-dropzone": "^3.13.3",
+    "react-input-mask": "^1.0.6",
     "react-modal-dialog": "^4.0.7",
     "react-redux": "^5.0.5",
     "react-router": "^4.1.1",

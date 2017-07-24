@@ -6,7 +6,7 @@ import EditCompanyDrawer from './EditCompanyDrawer';
 
 const styles = {
 	drawer: {
-		width: 400
+		width: 600
 	}
 };
 

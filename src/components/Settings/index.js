@@ -5,21 +5,11 @@ import Personal from './Personal';
 import Workplace from './Workplace';
 import Brand from './Brand';
 import Company from './Company';
+import { tabDesign } from '../styles';
 import './settings.css';
 
 const styles = {
-	tabDesign: {
-		tabItemContainerStyle: {
-			backgroundColor: 'transparent',
-		},
-		buttonStyle: {
-			color: '#0022A1',
-			fontSize: 20
-		},
-		inkBarStyle: {
-			backgroundColor: '#E33821'
-		}
-	}
+	tabDesign
 };
 
 const initState = {
@@ -28,7 +18,7 @@ const initState = {
 		firstName: 'Billy',
 		lastName: 'Buchanan',
 		email: 'billy.buchanan@gmail.com',
-		phoneNumber: '0123465789'
+		phoneNumber: '+10123465789'
 	},
 	value: 'personal',
 	companies: [{
@@ -48,11 +38,13 @@ const initState = {
 		id: 1,
 		name: 'Chao Center',
 		type: 'Restaurant Associates',
+		claimed: true,
 		image: '/images/workplaces/chao-center.jpg'
 	}, {
 		id: 2,
 		name: 'Spangler Center',
 		type: 'Restaurant Associates',
+		claimed: false,
 		image: '/images/workplaces/chao-center.jpg'
 	}]
 };
@@ -75,7 +67,7 @@ export default class Settings extends Component {
 
 	getButtonStyle = (value) => ({
 		...styles.tabDesign.buttonStyle,
-		fontWeight: (this.state.value === value && 600) || 500
+		fontWeight: (this.state.value === value && 700) || 500
 	});
 
 	render() {

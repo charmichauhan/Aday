@@ -5,21 +5,23 @@
 
 /* Drawers */
 .settings .drawer-heading {
-    margin: 10px 0;
+    margin: 0 0 10px 0;
     padding-bottom: 10px;
     border-bottom: 2px solid #f5f5f5;
+    background-color: #2200a1;
 }
 
 .settings .drawer-heading button {
     box-shadow: 1px 2px 3px #000;
     border-radius: 50%;
+    background-color: #FFFFFF;
 }
 
 .settings .drawer-heading h2 {
     display: inline-block;
     width: 85%;
     margin-top: 0;
-    color: #2200a1;
+    color: #FFFFFF;
 }
 
 .settings .drawer-section label {
@@ -73,6 +75,8 @@
 .settings .personal-content .personal-info-img .personal-img {
     width: 50%;
     float: left;
+    cursor: pointer;
+    padding: 50px;
 }
 
 .settings .personal-content .personal-info-img .personal-info ul {
@@ -167,7 +171,11 @@
     padding: 0 1rem;
 }
 
-.two.wide.column img {
+div.list-left-image-wrapper {
+    margin: auto 0;
+}
+
+img.list-left-image {
     height: 100%;
     width: 100%;
     object-fit: contain;
@@ -179,26 +187,44 @@
     border: 1px dashed #ccc;
     margin: 0 auto;
 }
+
 .drawer-footer {
     position: fixed;
     left: 50%;
     bottom: 10px;
     transform: translate(-50%);
-}
-.drawer-section.add-brand-drawer-section {
-    height: 530px;
-    overflow-y: scroll;
-}
-.wrapper-div {
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translate(-50%);
     width: 100%;
 }
-.drawer-section.add-workplace-drawer-section {
+
+.drawer-section.brand-drawer-section {
+    height: 75vh;
+    overflow-y: scroll;
+}
+
+.drawer-section.workplace-drawer-section {
     display: block;
     overflow: hidden;
-    height: 600px;
+    height: 75vh;
     overflow-y: scroll;
+}
+
+.field-password-view {
+    position: relative;
+}
+
+.field-password-view button {
+    position: absolute !important;
+    right: 0;
+    top: 0;
+}
+
+.input-inline-icon {
+    width: 100%;
+}
+
+.workplace-progress-bar {
+    text-align: center;
+    font-size: larger;
+    font-weight: bold;
+    color: #333333;
 }

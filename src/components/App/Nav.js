@@ -69,6 +69,12 @@ export default class Nav extends Component {
 						<Menu.Header><Icon name="comment"/> NOTIFICATIONS</Menu.Header>
 					</Menu.Item>
 					<Menu.Item>
+						<Menu.Header><Icon name="settings"/>POSITIONS</Menu.Header>
+						<Menu.Menu>
+							<Menu.Item as={NavLink} to="/positions/positions" name="positions"/>
+						</Menu.Menu>
+					</Menu.Item>
+					<Menu.Item>
 						<Menu.Header><Icon name="settings"/> SETTINGS</Menu.Header>
 						<Menu.Menu>
 							<Menu.Item as={NavLink} to="/settings/personal" name="personal"/>

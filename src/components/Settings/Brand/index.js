@@ -54,13 +54,14 @@ export default class Brand extends Component {
 					{this.props.brands &&
 					this.props.brands.map((brand) =>
 						<Grid key={brand.id}>
-							<GridColumn width={2}>
-								<img className="brand-image" src={brand.image} alt={brand.name} />
+							<GridColumn className="list-left-image-wrapper" width={2}>
+								<img className="list-left-image" src={brand.image} alt={brand.name} />
 							</GridColumn>
 							<GridColumn width={14}>
 								<ListItem
 									key={brand.id}
-									primaryText={brand.name}
+
+					open={this.state.open}primaryText={brand.name}
 								>
 									<IconButton style={styles.actionButtons} onClick={() => this.openBrandDrawer(brand)}>
 										<Edit />

@@ -3,8 +3,10 @@ import { List, ListItem } from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 import Edit from 'material-ui/svg-icons/image/edit';
 import Delete from 'material-ui/svg-icons/action/delete';
-import { Grid, GridColumn } from 'semantic-ui-react';
-import AddWorkplaceDrawer from './AddWorkplaceDrawer';
+import filter from 'lodash/filter';
+import { Grid, GridColumn, Progress } from 'semantic-ui-react';
+
+import WorkplaceDrawer from './WorkplaceDrawer';
 import CircleButton from '../../helpers/CircleButton/index';
 
 const styles = {
@@ -12,11 +14,14 @@ const styles = {
 		width: 600
 	},
 	actionButtons: {
-		margin: '-15px -10px 0 0',
+		margin: '0',
 		float: 'right'
 	},
 	listItem: {
 		padding: '10px 5px',
+	},
+	listSecondaryText: {
+		height: 'auto'
 	},
 	circleButton: {
 		fontSize: 18,
@@ -39,7 +44,7 @@ export default class Workplace extends Component {
 		console.log('Delete button clicked');
 	};
 
-	handleSubmit = (event) => {
+	handleDrawerSubmit = (workplace) => {
 		this.setState({ open: false });
 	};
 
@@ -47,32 +52,45 @@ export default class Workplace extends Component {
 		this.setState({ open: false });
 	};
 
-	openAddWorkplaceDrawer = (event) => {
-		this.setState({ open: true });
+	openWorkplaceDrawer = (workplace) => {
+		this.setState({ open: true, drawerWorkplace: workplace });
 	};
 
 	render() {
+		const { workplaces } = this.props;
+		const claimedWorkplaces = filter(workplaces, { 'claimed': true });
+		const progressLabel = `${claimedWorkplaces.length * 100/workplaces.length}% WORKPLACES`;
 		return (
 			<div className="content workplaces-content">
 				<div className="workplace-add-button">
 					<CircleButton style={styles.circleButton} type="blue" title="Add Workplace"
-					              handleClick={this.openAddWorkplaceDrawer} />
+					              handleClick={() => this.openWorkplaceDrawer()} />
+				</div>
+				<div className="workplace-progress-bar">
+					<p>{progressLabel}</p>
+					<Progress value={claimedWorkplaces.length} total={workplaces.length} progress='ratio'/>
 				</div>
 				<List>
-					{this.props.workplaces &&
-					this.props.workplaces.map((workplace) =>
+					{workplaces && workplaces.map((workplace) =>
 						<Grid key={workplace.id}>
-							<GridColumn width={2}>
-								<img className="brand-image" src={workplace.image} alt={workplace.name} />
+							<GridColumn className="list-left-image-wrapper" width={2}>
+								<img className="list-left-image" src={workplace.image} alt={workplace.name} />
 							</GridColumn>
 							<GridColumn width={14}>
 								<ListItem
 									innerDivStyle={styles.listItem}
 									key={workplace.id}
 									primaryText={workplace.name}
-									secondaryText={workplace.type}
+									secondaryText={
+										<p style={styles.listSecondaryText} className="workplace-list secondary">
+											<span htmlFor="type">{workplace.type}</span>
+											<span className={(workplace.claimed && 'claimed') || 'unclaimed'}>
+												{(workplace.claimed && 'claimed') || 'unclaimed'}
+											</span>
+										</p>
+									}
 								>
-									<IconButton style={styles.actionButtons} onClick={this.openEditBrandDrawer}>
+									<IconButton style={styles.actionButtons} onClick={() => this.openWorkplaceDrawer(workplace)}>
 										<Edit />
 									</IconButton>
 									<IconButton style={styles.actionButtons} onClick={this.handleDeleteClick}>
@@ -84,11 +102,12 @@ export default class Workplace extends Component {
 						</Grid>
 					)}
 				</List>
-				<AddWorkplaceDrawer
+				<WorkplaceDrawer
 					brands={this.props.brands}
+					workplace={this.state.drawerWorkplace}
 					width={styles.drawer.width}
 					open={this.state.open}
-					handleSubmit={this.handleSubmit}
+					handleSubmit={this.handleDrawerSubmit}
 					closeDrawer={this.closeDrawer} />
 			</div>
 		)

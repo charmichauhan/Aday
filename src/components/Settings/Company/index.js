@@ -21,14 +21,17 @@ export default class Company extends Component {
 	}
 
 	handleClick = (event) => {
+		event.preventDefault();
 		this.setState({ open: true });
 	};
 
 	handleSubmit = (event) => {
+		event.preventDefault();
 		this.setState({ open: false });
 	};
 
 	closeDrawer = (event) => {
+		event.preventDefault();
 		this.setState({ open: false });
 	};
 

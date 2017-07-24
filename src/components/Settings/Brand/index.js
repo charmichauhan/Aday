@@ -29,14 +29,17 @@ export default class Brand extends Component {
 	}
 
 	handleDeleteClick = (event) => {
+		event.preventDefault();
 		console.log('Delete button clicked');
 	};
 
 	handleDrawerSubmit = (event) => {
+		event.preventDefault();
 		this.setState({ open: false });
 	};
 
 	closeDrawer = (event) => {
+		event.preventDefault();
 		this.setState({ open: false });
 	};
 

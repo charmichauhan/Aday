@@ -19,6 +19,7 @@
     "rc-time-picker": "^2.4.1",
     "react": "^15.5.4",
     "react-apollo": "^1.4.6",
+    "react-avatar-editor": "^10.0.3",
     "react-big-calendar": "^0.14.4",
     "react-custom-scrollbars": "^4.1.2",
     "react-date-picker": "^5.3.28",
@@ -42,6 +43,7 @@
     "semantic-ui-react": "^0.68.3",
     "utility": "^1.12.0",
     "uuid": "^3.1.0",
+    "validator": "^8.0.0",
     "webpack-zepto": "0.0.1"
   },
   "devDependencies": {

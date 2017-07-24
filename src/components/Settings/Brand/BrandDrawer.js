@@ -31,6 +31,7 @@ class DrawerHelper extends Component {
 	}
 
 	handleSubmitEvent = (event) => {
+		event.preventDefault();
 		// Resetting the field values.
 		document.getElementById('brand-name').value = '';
 		this.setState({ ...initialState });
@@ -45,6 +46,7 @@ class DrawerHelper extends Component {
 	};
 
 	handleChange = (event) => {
+		event.preventDefault();
 		const { name, value } = event.target;
 		const brand = Object.assign(this.state.brand, { [name]: value });
 		this.setState({ brand });

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
+import { Image } from 'semantic-ui-react';
 import { Table,	TableBody, TableRow, TableRowColumn } from 'material-ui/Table';
-import IconButton from 'material-ui/IconButton';
 import Edit from 'material-ui/svg-icons/image/edit';
 import Delete from 'material-ui/svg-icons/action/delete';
 import Watch from 'material-ui/svg-icons/action/watch-later';
@@ -54,6 +54,7 @@ export default class Position extends Component {
 					<TableBody displayRowCheckbox={false}>
 						{positions && positions.map((position) => (
 							<TableRow key={position.id}>
+								<TableRowColumn><Image src="/images/Sidebar/positions.png" size="small"/></TableRowColumn>
 								<TableRowColumn><p>{position.type}</p><p>{position.teamMembers.length} Team Members</p></TableRowColumn>
 								<TableRowColumn><p>{position.workplaces.length}</p><p>WORKPLACES</p></TableRowColumn>
 								<TableRowColumn><p>{position.trainingHours}</p><p>TRAINING HOURS</p></TableRowColumn>

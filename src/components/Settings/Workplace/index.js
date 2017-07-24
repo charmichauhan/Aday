@@ -41,6 +41,7 @@ export default class Workplace extends Component {
 	}
 
 	handleDeleteClick = (event) => {
+		event.preventDefault();
 		console.log('Delete button clicked');
 	};
 
@@ -49,6 +50,7 @@ export default class Workplace extends Component {
 	};
 
 	closeDrawer = (event) => {
+		event.preventDefault();
 		this.setState({ open: false });
 	};
 

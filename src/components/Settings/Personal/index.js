@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import InputMask from 'react-input-mask';
-import FontIcon from 'material-ui/FontIcon';
+import validator from 'validator';
 import IconButton from 'material-ui/IconButton';
 
-import Avatar from '../../helpers/Avatar/index';
+import AvatarEditor from '../../helpers/AvatarEditor';
+
 const initialState = {
 	paymentOptions: [{
 		id: 1,
@@ -15,8 +16,24 @@ const initialState = {
 	showPassword: {
 		currentPassword: false,
 		newPassword: false
-	}
+	},
+	errorFields: {}
 };
+
+let personalFields = {};
+const fields = ['firstName', 'lastName', 'phoneNumber', 'email', 'currentPassword', 'newPassword'];
+fields.forEach(field => personalFields[field] = field);
+
+function hasError(field, value) {
+	switch (field) {
+		case personalFields.newPassword:
+		case personalFields.currentPassword:
+			return !validator.isAlphanumeric(value);
+		default:
+			return true;
+	}
+
+}
 
 export default class Personal extends Component {
 	constructor(props) {
@@ -48,14 +65,30 @@ export default class Personal extends Component {
 			.replace(/\)/g, '')
 			.replace(/ /g, '');
 		}
+		event.preventDefault();
 		const { name, value } = event.target;
-		let phoneNumber = name === 'phoneNumber' && escapeHtml(value);
+		let phoneNumber = name === personalFields.phoneNumber && escapeHtml(value);
+		const isValid = hasError(name, value);
 		const user = Object.assign(this.state.user, { [name]: phoneNumber || value });
-		return this.setState({ user });
+		const errorFields = Object.assign(this.state.errorFields, { [name]: isValid });
+		return this.setState({ user, errorFields });
+	};
+
+	checkPasswords = () => {
+		const { errorFields, user } = this.state;
+		const isEqual = user[personalFields.currentPassword] === user[personalFields.newPassword];
+		if (user[personalFields.currentPassword] && !isEqual) {
+			errorFields[personalFields.currentPassword] = errorFields[personalFields.newPassword] = true;
+			return this.setState({ errorFields });
+		}
+	};
+
+	handleImageSave = (img) => {
+		debugger;
 	};
 
 	render() {
-		const { user, paymentOptions, showPassword } = this.state;
+		const { user, paymentOptions, showPassword, errorFields } = this.state;
 		return (
 			<div className="content personal-content">
 				<h2 className="heading">Personal Information</h2>
@@ -64,49 +97,49 @@ export default class Personal extends Component {
 						<form>
 							<ul>
 								<li>
-									<label htmlFor="firstName">First Name</label>
+									<label htmlFor={personalFields.firstName}>First Name</label>
 									<input
 										className="form-control"
 										type="text"
-										name="firstName"
+										name={personalFields.firstName}
 										onChange={this.handleInputChange}
 										value={user.firstName} />
 								</li>
 								<li>
-									<label htmlFor="lastName">Last Name</label>
+									<label htmlFor={personalFields.lastName}>Last Name</label>
 									<input
 										className="form-control"
 										type="text"
-										name="lastName"
+										name={personalFields.lastName}
 										onChange={this.handleInputChange}
 										value={user.lastName} />
 								</li>
 								<li>
-									<label htmlFor="phoneNumber">Phone Number</label>
+									<label htmlFor={personalFields.phoneNumber}>Phone Number</label>
 									<InputMask
 										onChange={this.handleInputChange}
 										className="form-control"
-										name="phoneNumber"
+										name={personalFields.phoneNumber}
 										value={user.phoneNumber}
 										mask="+1-(999) 999 9999" maskChar=" " />
 								</li>
 								<li>
-									<label htmlFor="email">Email address</label>
+									<label htmlFor={personalFields.email}>Email address</label>
 									<input
 										className="form-control"
 										type="email"
-										name="email"
+										name={personalFields.email}
 										onChange={this.handleInputChange}
 										value={user.email} />
 								</li>
-								<li>
-									<label htmlFor="currentPassword">Current Password</label>
+								<li className={(errorFields.currentPassword && 'has-error') || ''}>
+									<label htmlFor={personalFields.currentPassword}>Current Password</label>
 									<div className="field-password-view">
 										<input
-										className="form-control"
-										name="currentPassword"
-										onChange={this.handleInputChange}
-										type={(showPassword.currentPassword && 'text') || 'password'} />
+											className="form-control"
+											name={personalFields.currentPassword}
+											onChange={this.handleInputChange}
+											type={(showPassword.currentPassword && 'text') || 'password'} />
 										<IconButton	onClick={() => this.handleShowPassword('currentPassword')} >
 											<img
 												className="input-inline-icon"
@@ -115,13 +148,14 @@ export default class Personal extends Component {
 										</IconButton>
 									</div>
 								</li>
-								<li>
-									<label htmlFor="newPassword">New Password</label>
+								<li className={(errorFields.newPassword && 'has-error') || ''}>
+									<label htmlFor={personalFields.newPassword}>New Password</label>
 									<div className="field-password-view">
 										<input
 											className="form-control"
-											name="newPassword"
+											name={personalFields.newPassword}
 											onChange={this.handleInputChange}
+											onBlur={this.checkPasswords}
 											type={(showPassword.newPassword && 'text') || 'password'} />
 										<IconButton	onClick={() => this.handleShowPassword('newPassword')} >
 											<img
@@ -147,7 +181,13 @@ export default class Personal extends Component {
 						</Dropzone>
 					</div>}
 					{this.state.blob && <div className="personal-img">
-						<Avatar src={this.state.blob.preview} size='large'/>
+						<AvatarEditor
+							width={250}
+							height={250}
+							border={10}
+							color={[74, 74, 74, 0.5]}
+							onSave={this.handleImageSave}
+							image={this.state.blob} />
 					</div>}
 				</div>
 				{/*<div className="payment-option">

@@ -48,6 +48,7 @@ class DrawerHelper extends Component {
 	}
 
 	handleSubmitEvent = (event) => {
+		event.preventDefault();
 		// Resetting the field values.
 		this.setState({ ...initialState });
 		this.props.handleSubmit(event);
@@ -62,6 +63,7 @@ class DrawerHelper extends Component {
 	};
 
 	handleChange = (event) => {
+		event.preventDefault();
 		const { name, value } = event.target;
 		const workplace = Object.assign(this.state.workplace, { [name]: value });
 		this.setState({ workplace });

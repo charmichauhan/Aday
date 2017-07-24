@@ -76,7 +76,7 @@
     width: 50%;
     float: left;
     cursor: pointer;
-    padding: 50px;
+    padding: 20px 50px;
 }
 
 .settings .personal-content .personal-info-img .personal-info ul {
@@ -104,6 +104,17 @@
     background-color: #FFFFFF;
     height: 50px;
     text-transform: uppercase;
+}
+.settings .personal-content .personal-info-img .personal-info li .field-password-view input {
+    text-transform: none;
+}
+
+.settings .personal-content .personal-info-img .personal-info li.has-error input {
+    border: 1px solid #ee3622;
+}
+
+.settings .personal-content .personal-info-img .personal-info li.has-error label {
+    color: #ee3622;
 }
 
 .settings .personal-content .personal-info-img .personal-info li input::placeholder {

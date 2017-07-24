@@ -60,7 +60,21 @@ class ShiftWeekTableComponent extends Week {
             const rowHash = {}
             const dayOfWeek = moment(value.node.startTime).format("dddd");
             rowHash["weekday"] = dayOfWeek;
-            if (value.node.workersAssigned.length) {
+            let assigned = value.node.workersAssigned
+            if (value.node.workersAssigned == null){
+                assigned  = [];
+            }
+            if (value.node.workersRequestedNum > assigned.length){           
+                        rowHash["userFirstName"] = "Open" 
+                        rowHash["userLastName"] = "Shifts"
+                        rowHash["userAvatar"] = ""
+                        if (calendarHash["Open Shifts"]){
+                            calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"],  Object.assign(rowHash, value.node)]
+                        } else {
+                            calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
+                        }
+            }
+            if (assigned.length) {
                 value.node.workersAssigned.map((v) => {
                     const userName = userHash[v];
                     rowHash["userFirstName"] = userHash[v][0]
@@ -207,6 +221,7 @@ const allShifts = gql`
             startTime
             endTime
             workersAssigned
+            workersRequestedNum
             positionByPositionId{
                 positionName  
                 positionIconUrl       
@@ -240,8 +255,8 @@ graphql(allShifts, {
    options: (ownProps) => ({ 
      variables: {
        brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
-       daystart: "2017-07-07",
-       dayend: "2017-07-24"
+       daystart: moment(ownProps.date).subtract(1, 'day').startOf('day').format(),
+       dayend: moment(ownProps.date).add(6, 'day').endOf('day').format() 
      }
    }),
  }),

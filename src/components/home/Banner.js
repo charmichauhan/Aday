@@ -6,7 +6,7 @@ export default class Banner extends Component {
 	render() {
 		return (
 			<div className="aday-banner">
-				<Header as='h1'>Yeap, someone called in for their shift again</Header>
+				<Header as='h1'>Yep, someone called in for their shift again</Header>
 				<small>Instantly text message all qualified staff at multiple store locations for same-day backfills</small>
 				
 				<div className="app-download">

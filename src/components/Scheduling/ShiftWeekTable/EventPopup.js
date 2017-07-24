@@ -66,6 +66,12 @@ export default class EventPopup extends Component{
         let m = moment.utc(moment(endTime).diff(moment(startTime))).format("mm");
         let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
             {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
+        if (data.workersAssigned == null){
+            data.workersAssigned = [];
+        }
+        if (data.workersInvited == null){
+            data.workersInvited= [];
+        }
         this.openShift = data.workersRequestedNum - (data.workersAssigned.length + data.workersInvited.length );
         return(
             <div className="day-item hov">

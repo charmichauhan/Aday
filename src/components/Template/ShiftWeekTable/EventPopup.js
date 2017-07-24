@@ -49,28 +49,28 @@ export default class EventPopup extends Component{
     };
     render(){
         let data=this.props.data;
-        let startTime = moment(data['timeFrom'],"hh:mm a");
-        let endTime = moment(data['timeTo'],"hh:mm a");
+        let startTime = moment(data.startTime, "HH:mm:ss");
+        let endTime = moment(data.endTime, "HH:mm:ss");
         let h = endTime.diff(startTime,'hours');
-        let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
+        let m = moment.utc(moment(endTime).diff(moment(startTime))).format("mm");
         let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
                                 {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
         return(
             <div className="day-item hov">
                 <div className="start-time">
                     <span className="fa fa-clock-o"/>
-                    <p className="date-time"> {data['timeFrom']} {data['timeTo']} </p>
+                    <p className="date-time"> {startTime.format("HH:mm")} {endTime.format("HH:mm")} </p>
                     <p className="duration">{h} HR&thinsp; {m}MIN </p>
                 </div>
                 <div className="location">
                     <span><img src={cashier} alt="jobtype"/></span>
-                    <span className="jobType">{data["job"]}</span>
+                    <span className="jobType">{data.workplace}</span>
                 </div>
                  <div className="location">
                     <span className="fa fa-map-marker mr5" aria-hidden="true">
                         <a onClick={()=>this.onLocationClick()}/>
                     </span>
-                    <span className="jobType">{data['location']}</span>
+                    <span className="jobType">{data.positionByPositionId.positionName}</span>
                 </div>
                 {this.state.deleteModalPopped?<Modal title="Confirm" isOpen={this.state.deleteModalPopped}
                                                      message = "Are you sure that you want to delete this shift?"

@@ -10,8 +10,8 @@ import {
 export default class JobsRow extends Component{
     render(){
         let data = this.props.data;
-        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        const hashByDay = {"Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": [], "Sunday": []};
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
          this.props.data.map((value,index) => {
              const day = value.weekday
              if (hashByDay[day]){
@@ -44,7 +44,8 @@ export default class JobsRow extends Component{
                         <div className="user_img">
                             <img width="65px" src={ data[0].positionByPositionId.positionIconUrl } alt="img"/>
                         </div>
-                        <div className="user_desc penalheading">{data[0].positionByPositionId.positionName}
+                        <div className="user_desc penalheading">{data[0].positionByPositionId.positionName.split(" ")[0]} 
+                            <p  className="lastName"> { data[0].positionByPositionId.positionName.split(" ")[1] }</p>
                             <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
                             <p className="scheduled_tag">SCHEDULED</p>
                         </div>

@@ -37,9 +37,19 @@ const routes = [
 				component: App,
 				routes: [
 					{
-						path: '/schedule/team',
+						path: '/schedule/team/:workplaceId',
 						exact: true,
 						component: Schedule
+					},
+					{
+						path: '/schedule/team/',
+						exact: true,
+						component: Schedule
+					},
+					{
+                        path: '/schedule/employeeview/:workplaceId',
+                        exact: true,
+                        component: EmployeeView
 					},
 					{
                         path: '/schedule/employeeview',
@@ -47,7 +57,7 @@ const routes = [
                         component: EmployeeView
 					},
 					{
-                        path: '/schedule/template',
+                        path: '/schedule/template/',
                         exact: true,
                         component: Template
 					},

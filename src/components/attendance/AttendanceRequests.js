@@ -1,59 +1,54 @@
 import React, { Component } from 'react'
-import { Menu, Segment, Accordion } from 'semantic-ui-react'
-
+import { Menu, Segment } from 'semantic-ui-react'
 import TimeAttendanceTable from './TimeAttendanceTable'
+import { corporationTimeOffRequestQuery } from './TimeOffQueries'
+import { graphql } from 'react-apollo';
 
-export default class AttendanceRequests extends Component {
-	state = { activeItem: 'openRequests' }
+class AttendanceRequests extends Component {
+	state = { activeItem: 'PENDING' }
 	handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 	render() {
 		const {
 			activeItem
 		} = this.state
-
-		const panels = [
-			{
-				title: "PERSONAL DAYS",
-				content: <TimeAttendanceTable/>
-			},
-			{
-				title: "VACATION",
-				content: <TimeAttendanceTable/>
-			},
-			{
-				title: "DROP SHIFTS",
-				content: <TimeAttendanceTable/>
-			},
-			{
-				title: "SWAP SHIFTS",
-				content: <TimeAttendanceTable/>
-			},
-			{
-				title: "TRAINING REQUESTS",
-				content: <TimeAttendanceTable/>
-			}
-		]
+		let data = [];
+		let filtered_data = [];
+    if (this.props.data.error) {
+        return <div>Error! {this.props.data.error.message}</div>;
+    }
+		if (this.props.data.allTimeOffRequests){
+			data = this.props.data.allTimeOffRequests.edges;
+			filtered_data = data.filter((item) => item.node.decisionStatus == activeItem);
+		}
 		return (
 			<div>
 				<Menu attached='top' tabular>
-					<Menu.Item 
-						name="openRequests" 
-						active={activeItem === 'openRequests'}
+					<Menu.Item
+						content="Open Requests"
+						name="PENDING"
+						active={activeItem === 'PENDING'}
 						onClick={this.handleItemClick}/>
-					<Menu.Item 
-						name="approvedRequests" 
-						active={activeItem === 'approvedRequests'}
+					<Menu.Item
+					  content="Approved Requests"
+						name="APPROVED"
+						active={activeItem === 'APPROVED'}
 						onClick={this.handleItemClick}/>
-					<Menu.Item 
-						name="deniedRequests" 
-						active={activeItem === 'deniedRequests'}
+					<Menu.Item
+						content="Denied Requests"
+						name="DENIED"
+						active={activeItem === 'DENIED'}
 						onClick={this.handleItemClick}/>
 				</Menu>
 				<Segment attached="bottom">
-					{activeItem}
-					<Accordion panels={panels} styled />
+					{!this.props.data.allTimeOffRequests ?
+					 (<div> Loading... </div>) :
+					 (<TimeAttendanceTable requests={filtered_data} filter={activeItem}/>)}
 				</Segment>
 			</div>
 		);
 	}
 }
+
+export default graphql(corporationTimeOffRequestQuery,
+											 {options: {variables: {"corporationId": "3b14782b-c220-4927-b059-f4f22d01c230"}}})
+											 (AttendanceRequests);

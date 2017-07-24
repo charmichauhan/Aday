@@ -1,0 +1,18 @@
+._arc_horizontal_list_hour{
+    float: left;
+    margin-top: 2.3%;
+    letter-spacing: normal;
+    font-family: Lato;
+    line-height: 10px;
+    font-weight: 600;
+
+}
+._arc_horizontal_list_minute{
+    float: left;
+    margin-top: 2.3%;
+    margin-left: 6%;
+    letter-spacing: normal;
+    font-family: Lato;
+    line-height: 10px;
+    font-weight: 600;
+}

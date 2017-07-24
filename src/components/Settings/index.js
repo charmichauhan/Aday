@@ -55,12 +55,6 @@ export default class Settings extends Component {
 		this.state = initState;
 	}
 
-	componentWillMount() {
-		const { props: {match}} = this;
-		const tab = match && match.params && match.params.tab;
-		this.setState({ value: tab });
-	}
-
 	handleChange = (value) => {
 		this.setState({	value: value });
 	};

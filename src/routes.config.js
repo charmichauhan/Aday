@@ -3,13 +3,12 @@ import App from './components/App';
 import Root from './components/Root';
 import Home from './components/Home';
 import Schedule from './components/Scheduling';
+import EmployeeView from './components/EmployeeView';
 import Settings from './components/Settings';
 import Positions from './components/Positions';
-
-
 import MyWorkplace from './components/workplace/MyWorkplace'
 import SharedWorkplace from './components/workplace/SharedWorkplace'
-
+import Template from './components/Template';
 import Roster from './components/team/Roster'
 import Policies from './components/team/Policies'
 
@@ -43,6 +42,16 @@ const routes = [
 						path: '/schedule/team',
 						exact: true,
 						component: Schedule
+					},
+					{
+                        path: '/schedule/employeeview',
+                        exact: true,
+                        component: EmployeeView
+					},
+					{
+                        path: '/schedule/template',
+                        exact: true,
+                        component: Template
 					},
 					{
 						path: '/schedule/manager',
@@ -80,11 +89,11 @@ const routes = [
 						component: AttendanceRequests
 					},
 					{
-						path: '/settings/:tab',
+						path: '/settings',
 						component: Settings
 					},
 					{
-						path: '/positions/:tab',
+						path: '/positions',
 						component: Positions
 					}
 				]

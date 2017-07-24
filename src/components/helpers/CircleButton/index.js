@@ -9,6 +9,10 @@ const buttonColors = {
 	blue: {
 		backgroundColor: '#0022A1',
 		color: '#ffffff'
+	},
+	red: {
+		backgroundColor: '#e33821',
+		color:"#ffffff"
 	}
 };
 
@@ -27,7 +31,7 @@ const buttonStyle = {
 
 export default class CircleButton extends Component {
 	render() {
-		const { type = 'white', title = 'Title', handleClick = () => {}, style = {} } = this.props;
+		const { type = 'white', title = 'Title', handleClick = () => {}, style = {} , image = false} = this.props;
 		const classes = ['btn', 'btn-circle', 'text-uppercase', 'inline-block'];
 		const buttonStyles = {
 			...buttonStyle,
@@ -36,7 +40,9 @@ export default class CircleButton extends Component {
 		};
 		return (
 			<div className="btn-circle-wrapper">
-				<button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}>{title}</button>
+				<button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}>
+					{image && <img src="/images/modal/close.png"/>}{title}
+				</button>
 			</div>
 		);
 	}

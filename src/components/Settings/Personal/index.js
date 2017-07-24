@@ -110,6 +110,7 @@ export default class Personal extends Component {
 										<IconButton	onClick={() => this.handleShowPassword('currentPassword')} >
 											<img
 												className="input-inline-icon"
+												alt=""
 												src={(showPassword.currentPassword && "/images/no-view.png") || "/images/view.png"} />
 										</IconButton>
 									</div>
@@ -125,6 +126,7 @@ export default class Personal extends Component {
 										<IconButton	onClick={() => this.handleShowPassword('newPassword')} >
 											<img
 												className="input-inline-icon"
+												alt=""
 												src={(showPassword.newPassword && "/images/no-view.png") || "/images/view.png"} />
 										</IconButton>
 									</div>

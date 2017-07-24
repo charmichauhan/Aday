@@ -200,7 +200,7 @@ td.shiftbox {
     height: 20px;
     border: 1px solid;
     border-radius: 5px;
-    width: 125px;
+    width: 100%;
     color: #4A4A4A;
     font-family: Roboto;
     font-size: 12px;
@@ -208,6 +208,7 @@ td.shiftbox {
     line-height: 20px;
     text-align: center;
     text-transform: uppercase;
+    margin:0 auto;
 }
 
 .maintitle {
@@ -235,9 +236,6 @@ td.shiftbox {
     white-space: pre-line;
 }
 
-/*.day-item:hover .overlay {*/
-/*opacity: 1;*/
-/*}*/
 .day-item-title a.glyphicon.glyphicon-plus {
     height: 21.21px;
     width: 21.21px;
@@ -379,16 +377,6 @@ img.btn-image {
     box-shadow: 0 1px 2px 0 rgba(74, 74, 74, 0.5);
 }
 
-/* .headcol {
-    position:absolute;
-    width:13em;
-    left:0;
-    top:auto;
-    background: #fafafa;
-    height: 214px;
-
- }*/
-
 .textlist div.mtitle {
     width: 196px;
     margin-bottom: 10px;
@@ -488,10 +476,23 @@ img.btn-image {
     left: 50%;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
+    text-align: center;
 }
 
-.hoimg img {
-    padding: 0 4px;
+.hoimg a i {
+    width: 35px;
+    height: 35px;
+    display: inline-block;
+    text-align: center;
+    border: 1px solid #fff;
+    border-radius: 100%;
+    line-height: 30px;
+    margin: 0 4px;
+}
+
+.hoimg a:hover i {
+    background: #606060;
+    cursor: pointer;
 }
 
 .textlist table {
@@ -756,15 +757,70 @@ table.atable td.shiftbox {
 }
 
 .ui.grid>.row>[class*="twelve wide"].column.main-content {
-    margin-right: 2.6%;
+
+    width: -webkit-calc(100% - 290px) !important;
+    width: -moz-calc(100% - 290px) !important;
+    width: calc(100% - 290px) !important;
+    padding-bottom: 144px;
 }
 .ui.grid>.row>[class*="three wide"].column.left-content {
-    margin-left: 2.6%;
+    width: 260px !important;
+    padding-left: 0;
+    margin-right: 15px;
+}
+
+.left-content .ui.vertical.menu.fluid {
+    border-radius: 0;
+}
+
+.rbc-calendar nav.navbar .container-fluid .wrapper-div {
+    text-align: center;
+}
+
+.ui.fluid .ui.grid>.row {
+    padding-bottom: 0;
+}
+
+.user_profile .user_img i {
+    border-radius: 100%;
+    border: 1px solid #acacac;
+    width: 46px;
+    height: 46px;
+    display: block;
+    text-align: center;
+    line-height: 42px;
+}
+
+.user_profile .user_img i img {
+    border-radius: 0;
+    width:24px;
+}
+
+@media screen and (min-width: 2200px) {
+    .start-time .date-time {
+        width: 55%;
+    }
+    .ui.grid>.row>[class*="twelve wide"].column.main-content {
+
+        width: -webkit-calc(100% - 19.5%) !important;
+        width: -moz-calc(100% - 19.5%) !important;
+        width: calc(100% - 19.5%) !important;
+    }
+    .ui.grid>.row>[class*="three wide"].column.left-content {
+        width: 18% !important;
+        padding-left: 0;
+    }
+    .left-menu_item {
+        width:18%;
+    }
 }
 
 @media screen and (min-width: 1500px) {
     .bottomtext table, .textlist table {
         width: 100%;
+    }
+    .start-time .date-time {
+        width: 56%;
     }
 }
 @media screen and (min-width: 1475px) {
@@ -775,6 +831,17 @@ table.atable td.shiftbox {
         width: 100%;
     }
 }
+@media screen and (max-width: 1474px) {
+    .main-content .table-responsive div[style="position: fixed; bottom: 0px; width: calc(100% - 290px); box-shadow: rgba(74, 74, 74, 0.5) 0px 1px 2px 0px;"] {
+        overflow-x: scroll;
+    }
+    .main-content .table-responsive div[style="position: fixed; bottom: 0px; width: calc(100% - 290px); box-shadow: rgba(74, 74, 74, 0.5) 0px 1px 2px 0px;"] table {
+        width: 1188px !important;
+    }
+    .ui.grid>.row>[class*="twelve wide"].column.main-content {
+        padding-bottom: 150px;
+    }
+}
 @media screen and (max-width: 1452px) and (min-width: 1351px) {
     .wrapper-div .maintitle {
         width: 36%;
@@ -782,7 +849,6 @@ table.atable td.shiftbox {
 }
 
 @media screen and (max-width: 1350px) {
-
     .wrapper-div .maintitle {
         width: 36%;
     }
@@ -794,28 +860,11 @@ table.atable td.shiftbox {
         width: 160px;
     }
 }
-
-
-@media screen and (max-width: 1279px) and (min-width: 1024px) {
-
-    .ui.grid>.row>[class*="twelve wide"].column.main-content {
-        width: 74% !important;
-    }
-    .ui.grid>.row>[class*="three wide"].column.left-content {
-        width: 20% !important;
-    }
-}
-
 @media screen and (min-width: 1200px) and (max-width: 1350px) {
     .dropdownweeky .dropdown {
         width: 400px;
     }
-    .ui.grid>.row>[class*="three wide"].column.left-content {
-        width: 20% !important;
-    }
-    .ui.grid>.row>[class*="twelve wide"].column.main-content {
-        width:74% !important;
-    }
+
 }
 
 @media screen and (min-width: 1025px) and (max-width: 1199px) {

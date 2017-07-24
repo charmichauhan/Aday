@@ -6,6 +6,7 @@ import localizer from "react-big-calendar/lib/localizer";
 import JobsRow from "./JobsRow";
 import HoursBooked from "./HoursBooked";
 import jobsData from "./jobs.json";
+import SpecialDay from "./SpecialDay";
 import Modal from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton';
 import "../../Scheduling/style.css";
@@ -20,7 +21,8 @@ const styles = {
     },
     root: {
         borderCollapse: 'separate',
-        borderSpacing: '8px 8px'
+        borderSpacing: '8px 8px',
+        marginBottom:0
     },
     tableFooter: {
         paddingLeft:'0px',
@@ -88,6 +90,7 @@ export default class ShiftWeekTable extends Week {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
+                        <SpecialDay/>
                         {jobData.map((value, index) => (
                                 <JobsRow data={jobData[index]} key={index}/>
                             )

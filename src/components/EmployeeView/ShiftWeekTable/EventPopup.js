@@ -75,9 +75,9 @@ export default class EventPopup extends Component{
                     :""}
                 <div className="overlay">
                     <div className="hoimg">
-                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><img src={close} alt="close"/></a>
-                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><img src={edit} alt="edit"/></a>
-                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><img src={create} alt="create"/></a>
+                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src={close} alt="close"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><i><img src={edit} alt="edit"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><i><img src={create} alt="create"/></i></a>
                     </div>
                 </div>
             </div>

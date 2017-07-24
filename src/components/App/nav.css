@@ -11,8 +11,8 @@
     background: none;
 }
 
-.ui.vertical.menu.fluid {
-    border: 1px solid #979797;
+.left-menu_item .ui.vertical.menu.fluid {
+    border-right: 1px solid #979797;
 }
 
 .header select {
@@ -73,6 +73,7 @@
     padding: 5px 8px;
     font-style: normal;
     float: right;
+    margin-top: 2px;
 }
 
 .menu-item-logout .menu-item-list {
@@ -80,8 +81,19 @@
 }
 
 .left-menu_item {
-    height:100%;
-    min-height: 980px;
+    height:100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.left-menu-fixed {
+    height: calc(100% - 375px);
+    overflow-y: auto;
+}
+
+.left-head-menu-logo {
+    height:300px;
 }
 
 .left-menu_item .vertical.menu {
@@ -93,6 +105,10 @@
     bottom: 0;
     left: 0;
     right: 0;
+    margin: 1px 2px;
+    background: #fff;
+    padding: 0;
+    height:74px;
 }
 .menu-item-logout .menu-item-list span {
     color: #4A4A4A;
@@ -114,4 +130,24 @@
 .ui.vertical.menu .item .dropdown-menu-item {
     margin-bottom: 0 !important;
     padding-bottom: 0;
+}
+
+.ui.vertical.menu .item.menu-item .menu .item:hover,
+.ui.vertical.menu .item.menu-item .menu .item.active {
+    background: #f5f5f5;
+    cursor: pointer;
+}
+
+.ui.vertical.menu .item.menu-item .menu .item.active .menu_item_left span {
+    color: #00a863;
+    font-weight: normal;
+}
+
+.ui.vertical.menu .menu-item-logout .menu-item-list:hover {
+    background: #f5f5f5;
+    cursor: pointer;
+}
+
+.ui.vertical.menu .menu-item-logout .menu-item-list:hover span {
+    color: #00a863;
 }

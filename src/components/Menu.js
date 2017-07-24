@@ -22,7 +22,6 @@ export default class MainMenu extends Component {
 						</Menu.Item>
 					</Menu.Menu>
 				</Menu>
-
 			</div>
 		);
 	}

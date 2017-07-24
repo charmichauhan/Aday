@@ -15,7 +15,7 @@ export default class Nav extends Component {
 			<div className="left-menu_item">
 				{/*<EmergencyShiftButton/>*/}
 				<Menu vertical fluid>
-					<Menu.Item className="menu-item">
+					<Menu.Item className="menu-item left-menu-logo">
 						<Menu.Header><Image src="/images/logos_aday.png" width="102" height="31" centered={true}/></Menu.Header>
 						<Menu.Header><Image src="/images/burger-king.png" width="75" height="75" centered={true}/></Menu.Header>
 						<Menu.Header className="dropdown-menu-item">
@@ -35,6 +35,7 @@ export default class Nav extends Component {
 							</select>
 						</Menu.Header>
 					</Menu.Item>
+                    <div className="left-menu-fixed">
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
 							<Menu.Item><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>DASHBOARD</span></div></Menu.Item>
@@ -52,6 +53,7 @@ export default class Nav extends Component {
 							<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/settings.png"/></i><div className="menu_item_left"><span>SETTINGS</span></div></Menu.Item>
 						</Menu.Menu>
 					</Menu.Item>
+                    </div>
 					<Menu.Item className="menu-item-logout">
 						<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/logout-icon.png"/></i><div className="menu_item_left"><span>LOGOUT</span></div></Menu.Item>
 					</Menu.Item>

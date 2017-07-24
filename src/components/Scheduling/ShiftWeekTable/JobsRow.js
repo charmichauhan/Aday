@@ -33,7 +33,7 @@ export default class JobsRow extends Component{
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
                     <div className="user_profile" width="80%">
                         <div className="user_img">
-                            <img src={data.icon} alt="img"/>
+                            <i><img src={data.icon} alt="img"/></i>
                         </div>
                         <div className="user_desc penalheading">{data.title}
                             <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>

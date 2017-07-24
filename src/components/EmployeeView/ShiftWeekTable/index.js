@@ -11,15 +11,14 @@ import jobsData from "./jobs.json";
 import '../../Scheduling/style.css';
 
 const styles = {
-    bodyStyle: {
-        maxHeight: 990
-    },
+
     wrapperStyle: {
         width: 1188
     },
     root: {
         borderCollapse: 'separate',
-        borderSpacing: '8px 8px'
+        borderSpacing: '8px 8px',
+        marginBottom:0
     },
     tableFooter: {
         paddingLeft:'0px',
@@ -29,6 +28,12 @@ const styles = {
         paddingLeft:'0px',
         paddingRight:'0px',
         width: 178
+    },
+    footerStyle: {
+        position:'fixed',
+        bottom:0,
+        width: 'calc(100% - 290px)',
+        boxShadow:'0 1px 2px 0 rgba(74, 74, 74, 0.5)'
     }
 };
 
@@ -40,7 +45,7 @@ export default class ShiftWeekTable extends Week {
         let { start } = ShiftWeekTable.range(date, this.props);
         return (
             <div className="table-responsive">
-                <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle}
+                <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle} headerStyle={{height: '12.5vh'}}
                        fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
@@ -71,6 +76,7 @@ export default class ShiftWeekTable extends Week {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
+                        <SpecialDay/>
                         {jobData.map((value, index) => (
                                 <JobsRow data={jobData[index]} key={index}/>
                             )

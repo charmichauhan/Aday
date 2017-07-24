@@ -7,7 +7,10 @@ import {
     TableRowColumn,
 } from 'material-ui/Table';
 
-
+const styles={
+    paddingLeft:'0',
+    paddingRight:'0'
+};
 export default class SpecialDay extends Component{
     render(){
         let start = this.props.dateStart;
@@ -23,26 +26,15 @@ export default class SpecialDay extends Component{
             }
         });
         return(
-            <TableRow className="spday" displayBorder={false}>
-                <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}></TableRowColumn>
-                {special[1]?<TableRowColumn><p className="spclDay">{special[1]}</p></TableRowColumn>:<TableRowColumn></TableRowColumn>}
-                {special[2]?<TableRowColumn><p className="spclDay">{special[2]}</p></TableRowColumn>:<TableRowColumn></TableRowColumn>}
-                {special[3]?<TableRowColumn><p className="spclDay">{special[3]}</p></TableRowColumn>:<TableRowColumn></TableRowColumn>}
-                {special[4]?<TableRowColumn><p className="spclDay">{special[4]}</p></TableRowColumn>:<TableRowColumn></TableRowColumn>}
-                {special[5]?<TableRowColumn><p className="spclDay">{special[5]}</p></TableRowColumn>:<TableRowColumn></TableRowColumn>}
-                {special[6]?<TableRowColumn><p className="spclDay">{special[6]}</p></TableRowColumn>:<TableRowColumn></TableRowColumn>}
-                {special[7]?<TableRowColumn><p className="spclDay">{special[7]}</p></TableRowColumn>:<TableRowColumn></TableRowColumn>}
-                <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
-                    <div className="user_profile" width="80%">
-                        <div className="user_img">
-                            <img src={data.image} alt="img"/>
-                        </div>
-                        <div className="user_desc penalheading">{data.firstName}
-                            <p className="lastName">{data.lastName}</p>
-                            <p className="finalHours employeeFinalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
-                        </div>
-                    </div>
-                </TableRowColumn>
+            <TableRow className="spday" displayBorder={false} style={{height:'auto'}}>
+                <TableRowColumn style={styles} className="headcol"></TableRowColumn>
+                {special[1]?<TableRowColumn style={styles}><p className="spclDay">{special[1]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[2]?<TableRowColumn style={styles}><p className="spclDay">{special[2]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[3]?<TableRowColumn style={styles}><p className="spclDay">{special[3]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[4]?<TableRowColumn style={styles}><p className="spclDay">{special[4]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[5]?<TableRowColumn style={styles}><p className="spclDay">{special[5]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[6]?<TableRowColumn style={styles}><p className="spclDay">{special[6]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[7]?<TableRowColumn style={styles}><p className="spclDay">{special[7]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
             </TableRow>
         )
     }

@@ -5,11 +5,13 @@ import { NavLink } from 'react-router-dom'
 import { Button } from 'semantic-ui-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
+import {BrowserRouter as Router,Redirect} from 'react-router-dom';
 import AddHours from '../../../public/assets/Buttons/add-hours.png';
 import AddAsTemplate from '../../../public/assets/Buttons/add-as-template.png';
 import TemplateList from '../../../public/assets/Buttons/template-list-button.png';
 import Automate from '../../../public/assets/Buttons/automate-schedule.png';
 import Modal from '../helpers/Modal';
+import AddAsTemplateModal from '../helpers/AddAsTemplateModal';
 import Publish from '../../../public/assets/Buttons/publish.png';
 import ShiftWeekTable from './ShiftWeekTable';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
@@ -42,6 +44,9 @@ export default class EmployeeView extends Component {
 		super(props);
         this.state = {
             publishModalPopped: false,
+            addTemplateModalOpen: false,
+            templateName:"",
+            redirect:false
         }
 	}
 
@@ -63,25 +68,49 @@ export default class EmployeeView extends Component {
 	onPublish = () => {
 		this.setState({publishModalPopped:true})
 	};
-
+    addTemplateclose = () => {
+        this.setState({
+            addTemplateModalOpen:false
+        });
+    };
+    addTemplateName = () => {
+        let that = this;
+        that.setState({redirect:true});
+    };
+    addTemplateModalOpen = () => {
+        this.setState({addTemplateModalOpen:true})
+    };
+    handleChange = (e) => {
+        this.setState({templateName:e});
+    };
     render() {
         let is_publish = true;
         BigCalendar.momentLocalizer(moment);
         let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
             {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
+        if(this.state.redirect){
+            return (
+                <Redirect to={{pathname:'/schedule/employeeview/template' ,templateName:this.state.templateName}}/>
+            )
+        }
         return (
 			<div className="App row">
 				<ShiftPublish ispublish={is_publish}/>
-                {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
+                {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													 message = "Are you sure that you want to delete this shift?"
 													 action = {publishModalOptions} closeAction={this.modalClose}/>
-                    :""}
+				}
+                {this.state.addTemplateModalOpen && <AddAsTemplateModal addTemplateModalOpen={true}
+																		handleClose={this.addTemplateclose}
+																		addTemplate={this.addTemplateName}
+																		handleChange={(e) =>this.handleChange(e)}/>
+                }
 				<div className="btn-action">
 					<Button className="btn-image" as={NavLink} to="/schedule/template"><img className="btn-image" src={AddHours} alt="Create Shift"/></Button>
 					<Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src={Publish} alt="Publish"/></Button>
-                    {!is_publish?<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={Automate} alt="Automate"/></Button>:<span></span>}
-					<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={AddAsTemplate} alt="Add As Template"/></Button>
-                    {!is_publish?<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={TemplateList} alt="Template List"/></Button>:<span></span>}
+                    {!is_publish && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={Automate} alt="Automate"/></Button>}
+					<Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src={AddAsTemplate} alt="Add As Template"/></Button>
+                    {!is_publish && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={TemplateList} alt="Template List"/></Button>}
 				</div>
 				<div>
 					<BigCalendar events={[]}

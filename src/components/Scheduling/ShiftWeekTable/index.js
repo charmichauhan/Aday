@@ -74,15 +74,27 @@ const styles = {
 
 class ShiftWeekTableComponent extends Week {
     render() {
-        // if (this.props.data.loading) {
-        //     return (<div>Loading</div>)
-        // }
-        //
-        // if (this.props.data.error) {
-        //     console.log(this.props.data.error)
-        //     return (<div>An unexpected error occurred</div>)
-        // }
-        let jobData = jobsData;
+        if (this.props.data.loading) {
+            return (<div>Loading</div>)
+        }
+        if (this.props.data.error) {
+            console.log(this.props.data.error);
+            return (<div>An unexpected error occurred</div>)
+        }
+        let calendarHash = {};
+        this.props.data.brandShiftByDate.edges.map((value,index) => {
+            const positionName = value.node.positionByPositionId.positionName;
+            const dayOfWeek = moment(value.node.startTime).format("dddd");
+
+            const rowHash = {};
+            rowHash["weekday"] = dayOfWeek;
+            if (calendarHash[positionName]){
+                calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node) ]
+            } else {
+                calendarHash[positionName] = [Object.assign(rowHash, value.node)];
+            }
+        });
+        let jobData = calendarHash;
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
         let is_publish = true;
@@ -126,8 +138,8 @@ class ShiftWeekTableComponent extends Week {
                         </TableHeader>
                         <TableBody>
                             <SpecialDay/>
-                            {jobData.map((value, index) => (
-                                    <JobsRow data={jobData[index]} key={index}/>
+                            {(Object.keys(jobData)).map((value, index) => (
+                                    <JobsRow data={jobData[value]} key={value}/>
                                 )
                             )
                             }
@@ -242,15 +254,15 @@ const allShifts = gql`
     }
 }`
 
-
 const ShiftWeekTable = graphql(allShifts, {
     options: (ownProps) => ({
         variables: {
             brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
-            daystart: "2017-07-07",
-            dayend: "2017-07-24"
+            daystart: moment(ownProps.date).subtract(1, 'day').startOf('day').format(),
+            dayend: moment(ownProps.date).add(6, 'day').endOf('day').format()
         }
     }),
-})(ShiftWeekTableComponent);
+})(ShiftWeekTableComponent)
 
-export default ShiftWeekTable;
+
+export default ShiftWeekTable

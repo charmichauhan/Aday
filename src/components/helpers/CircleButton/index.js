@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './circle-button.css';
-import close from '../../../../public/images/modal/close.png'
+import close from '../../../../public/images/modal/close.png';
 const buttonColors = {
 	white: {
 		backgroundColor: '#ffffff',
@@ -30,15 +30,16 @@ const buttonStyle = {
 
 export default class CircleButton extends Component {
 	render() {
-		const { type = 'white', title = 'Title', handleClick = () => {}, style = {} , image = false} = this.props;
+		const { type = 'white', title = 'Title', handleClick = () => {}, style = {} , image = false, wrapperClassName = ''} = this.props;
 		const classes = ['btn', 'btn-circle', 'text-uppercase', 'inline-block'];
+		const wrapperClasses = ['btn-circle-wrapper' , wrapperClassName];
 		const buttonStyles = {
 			...buttonStyle,
 			...style,
 			...buttonColors[type]
 		};
 		return (
-			<div className="btn-circle-wrapper">
+			<div className={wrapperClasses.join(' ')}>
 				<button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}>{image?<img src={close}/>:""}{title}</button>
 			</div>
 		);

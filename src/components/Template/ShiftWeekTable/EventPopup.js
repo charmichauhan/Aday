@@ -72,10 +72,10 @@ export default class EventPopup extends Component{
                     </span>
                     <span className="jobType">{data['location']}</span>
                 </div>
-                {this.state.deleteModalPopped?<Modal title="Confirm" isOpen={this.state.deleteModalPopped}
+                {this.state.deleteModalPopped && <Modal title="Confirm" isOpen={this.state.deleteModalPopped}
                                                      message = "Are you sure that you want to delete this shift?"
                                                      action = {deleteShiftAction} closeAction={this.modalClose}/>
-                    :""}
+                }
                 <div className="overlay">
                     <div className="hoimg">
                         <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src={close} alt="close"/></i></a>

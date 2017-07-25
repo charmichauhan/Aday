@@ -45,7 +45,7 @@ export default class ShiftWeekTable extends Week {
         let { start } = ShiftWeekTable.range(date, this.props);
         return (
             <div className="table-responsive">
-                <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle} headerStyle={{height: '12.5vh'}}
+                <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
                        fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>

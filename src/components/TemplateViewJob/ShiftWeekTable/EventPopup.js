@@ -34,9 +34,14 @@ export default class EventPopup extends Component{
 
     onPopupOpen = (modal) => {
         switch(modal){
-            case "deleteModalPopped" : this.setState({deleteModalPopped:true});
-            case "editModalPopped" : this.setState({editModalPopped:true});
+            case "deleteModalPopped"   : this.setState({deleteModalPopped:true});
+                                         break;
+            case "editModalPopped"     : this.setState({editModalPopped:true});
+                                         break;
             case "newShiftModalPopped" : this.setState({newShiftModalPopped:true});
+                                         break;
+            default:
+                    break;
         }
     };
     onLocationClick = () => {
@@ -44,14 +49,12 @@ export default class EventPopup extends Component{
     };
     render(){
         let data=this.props.data;
-        console.log("THIS EVENT POPUP")
-        console.log(data)
         let startTime = moment(data['timeFrom'],"hh:mm a");
         let endTime = moment(data['timeTo'],"hh:mm a");
         let h = endTime.diff(startTime,'hours');
         let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
         let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
-            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
+                                {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
         return(
             <div className="day-item hov">
                 <div className="start-time">
@@ -60,18 +63,19 @@ export default class EventPopup extends Component{
                     <p className="duration">{h} HR&thinsp; {m}MIN </p>
                 </div>
                 <div className="location">
-                    <span><img src={cashier} alt="jobtype"/></span>
-                    <span className="jobType">{data["job"]}</span>
-                </div>
-                <div className="location">
                     <span className="fa fa-map-marker mr5" aria-hidden="true">
                         <a onClick={()=>this.onLocationClick()}/>
                     </span>
-                    <span className="jobType">{data['location']}</span>
+                    <span>{data['location']}</span>
+                </div>
+                <div className="day-item-title">
+                    {data["openShift"]!=="" && <span className="box-title openshift">{data["openShift"]}</span>}
+                    {data["pendingShift"]!=="" && <span className="box-title pendingshift">{data["pendingShift"]}</span>}
+                    {data["filledShift"]===""?<span className="box-title filledshift">\</span>:<span className="box-title filledshift">{data["filledShift"]}</span>}
                 </div>
                 {this.state.deleteModalPopped && <Modal title="Confirm" isOpen={this.state.deleteModalPopped}
-                                                     message = "Are you sure that you want to delete this shift?"
-                                                     action = {deleteShiftAction} closeAction={this.modalClose}/>
+                                                        message = "Are you sure that you want to delete this shift?"
+                                                        action = {deleteShiftAction} closeAction={this.modalClose}/>
                 }
                 <div className="overlay">
                     <div className="hoimg">

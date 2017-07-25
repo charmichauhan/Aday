@@ -795,6 +795,14 @@ table.atable td.shiftbox {
     border-radius: 0;
     width:24px;
 }
+.btn-circle-wrapper.popup-btn-mrb {
+    margin: 15px 8px 25px;
+}
+
+
+.table-fixed-bottom-mrb {
+    padding-bottom: 187px;
+}
 
 @media screen and (min-width: 2200px) {
     .start-time .date-time {
@@ -821,7 +829,7 @@ table.atable td.shiftbox {
     }
     .start-time .date-time {
         width: 56%;
-    }
+       }
 }
 @media screen and (min-width: 1475px) {
     .table-responsive div[style="height: auto; overflow: auto; width: 1188px;"] {

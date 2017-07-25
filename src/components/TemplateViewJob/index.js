@@ -9,7 +9,8 @@ import ShiftWeekTable from "./ShiftWeekTable";
 import "../Scheduling/style.css";
 
 let templateName;
-export default class Template extends Component {
+export default class TemplateViewJob extends Component {
+
     render() {
         let is_publish = true;
         templateName = this.props.location.templateName;
@@ -30,7 +31,7 @@ export default class Template extends Component {
                                  views={{today: true, week: ShiftWeekTable, day: true}}
                                  components={{
                                      event: Event,
-                                     toolbar: CustomToolbar
+                                     toolbar:CustomToolbar
                                  }}
                     />
                 </div>
@@ -49,19 +50,19 @@ class CustomToolbar extends Toolbar {
                         <div className="wrapper-div text-center">
                             <ul className="nav navbar-nav dropdown_job">
                                 <li>
-                                    <Button className="template-view-job-btn" as={NavLink} to="/schedule/employeeview">Employee View</Button>
+                                    <Button className="template-view-job-btn" as={NavLink} to="/schedule/team">Job
+                                        View</Button>
                                 </li>
                             </ul>
                             <div className="dropdown_select">
                                 <ul className="nav navbar-nav dropdown_job">
                                     <li className="dropdownweeky">
                                         <select className="dropdown">
-                                            <option value="volvo">{templateName || "Standard $ 5,000 Sales Week"}</option>
+                                            <option value="volvo">{templateName || "Standard $ 5,000 Sales Week"} </option>
                                             <option value="saab">Saab</option>
                                             <option value="opel">Opel</option>
                                             <option value="audi">Audi</option>
                                         </select>
-
                                     </li>
                                 </ul>
                             </div>

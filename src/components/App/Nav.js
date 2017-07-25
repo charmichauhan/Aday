@@ -20,7 +20,7 @@ export default class Nav extends Component {
 						<Menu.Header><Image src="/images/burger-king.png" width="75" height="75" centered={true}/></Menu.Header>
 						<Menu.Header className="dropdown-menu-item">
 							<select>
-								<option value="volvo"><a>CHOOSE BRAND</a></option>
+								<option value="volvo">CHOOSE BRAND</option>
 								<option value="saab">Brand1</option>
 								<option value="opel">Brand2</option>
 								<option value="audi">Brand3</option>
@@ -28,7 +28,7 @@ export default class Nav extends Component {
 						</Menu.Header>
 						<Menu.Header>
 							<select>
-								<option value="volvo"><a>CHOOSE STORE</a></option>
+								<option value="volvo">CHOOSE STORE</option>
 								<option value="saab">Store1</option>
 								<option value="opel">Store2</option>
 								<option value="audi">Store3</option>

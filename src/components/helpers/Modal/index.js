@@ -37,8 +37,8 @@ export default class Modal extends Component {
     render() {
         let { title,message,action ,closeAction,handleClickOutside} = this.props;
         const actions = [
-            <CircleButton type={action[0]['type']} title={action[0]['title']} handleClick={action[0]['handleClick']} image={action[0]['image']}/>,
-            <CircleButton type={action[1]['type']} title={action[1]['title']} handleClick={action[1]['handleClick']} image={action[1]['image']}/>
+            <CircleButton type={action[0]['type']} wrapperClassName="popup-btn-mrb" title={action[0]['title']} handleClick={action[0]['handleClick']} image={action[0]['image']}/>,
+            <CircleButton type={action[1]['type']} wrapperClassName="popup-btn-mrb" title={action[1]['title']} handleClick={action[1]['handleClick']} image={action[1]['image']}/>
             ];
         const titleMessage=(<div>
             <h5 className="confirm-popup">{title}</h5>

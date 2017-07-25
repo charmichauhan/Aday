@@ -79,7 +79,7 @@ export default class AddShiftForm extends Component{
           onClick={ this.handleCloseFunc }
         />
       </Header>
-      <Segment raised style={{ marginTop:'2.5%' }}>
+      <Segment raised style={{ marginTop:'2.5%',boxShadow:'inset 0 2px 4px 0 rgba(34,36,38,.12), inset 0 2px 10px 0 rgba(34,36,38,.15)' }}>
        <Scrollbars autoHeight autoHeightMin='10vh' autoHeightMax='57vh'
           style={{marginBottom:'20px' }} >
            <Form style={{ marginLeft:'1%'}} >

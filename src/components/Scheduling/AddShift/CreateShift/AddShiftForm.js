@@ -4,10 +4,12 @@ import gql from 'graphql-tag'
 import uuidv1 from 'uuid/v1';
 import {Header,Image,Button,Divider,Segment,Label,Dropdown,Input,Icon,Form,TextArea,Loader} from 'semantic-ui-react';
 import {Scrollbars} from 'react-custom-scrollbars';
+import ReactScrollbar from 'react-scrollbar-js';
 import moment from 'moment';
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import TimePicker from '../../../TimePicker/TimePicker.js';
 import NumberOfTeamMembers from './NumberOfTeamMembers';
+import PositionSelectOption from '../../../Position/Position.js';
 import ToggleButton from './ToggleButton';
 import ManagerSelectOption from './ManagerSelectOption';
 import  PositionSelector  from './positionSelector'
@@ -34,21 +36,23 @@ export class AddShiftForm extends Component{
       jobShadowingOppurtunity:'',
       disabledSubmitButton:true
     }
-   
+
+    this.onWorkplace=this.onWorkplace.bind(this);
     this.onUnpaidBreak=this.onUnpaidBreak.bind(this);
     this.onInstructions=this.onInstructions.bind(this);
     this.checkSubmitButton=this.checkSubmitButton.bind(this);
     this.updateFormState=this.updateFormState.bind(this);
     this.handleCloseFunc=this.handleCloseFunc.bind(this);
-   this.handleSave=this.handleSave.bind(this);
-    this.onPositionChange=this.onPositionChange.bind(this);
   }
   checkSubmitButton(){
-    console.log(this.state);
-    const {instructions,unpaidBreak,position,shiftDaysSelected,startTime,stopTime,managerValue,numberOfTeamMembers,}=this.state;
-    if(instructions!==''&&unpaidBreak!==''&&position!=='' && numberOfTeamMembers!==''){
+    const {workplace,instructions,unpaidBreak,position,shiftDaysSelected,startTime,stopTime,managerValue,numberOfTeamMembers,}=this.state;
+    if(workplace!==''&&startTime!==''&&instructions!==''&&unpaidBreak!==''&&position!==''&&stopTime!==''&&managerValue!==''&&numberOfTeamMembers!==''&&shiftDaysSelected!==''){
        this.setState({disabledSubmitButton:false});
     }
+  }
+  onWorkplace(event){
+    this.setState({workplace:event.target.value})
+    this.checkSubmitButton();
   }
 
   onUnpaidBreak(event){
@@ -67,54 +71,8 @@ export class AddShiftForm extends Component{
     this.props.closeFunc();
     this.props.closeAddFun();
   }
-  onPositionChange(value){
-    this.setState({position:value});
-    this.checkSubmitButton();
-  }
 
-  
-   handleSave = () => {
-     if(!this.state.disabledSubmitButton){
-    this.props.mutate({
-      variables: {
-     "data":{
-       "clientMutationId": "123456786",
-        "shift": {
-            "id": uuidv1(),
-            "creatorId": "5a01782c-c220-4927-b059-f4f22d01c230",
-            "managersOnShift": [],
-            "workplaceId": "5a01782c-c220-4927-b059-f4f22d01c230",
-            "positionId": "6a01782c-c220-4927-b059-f4f22d01c230",
-            "startTime": "2017-07-24T16:30:00+05:30",
-            "endTime": "2017-04-22T16:30:00+05:30",
-            "workersRequestedNum": 1,
-            "traineesRequestedNum": this.state.numberOfTeamMembers,
-            "workersInvited": [],
-            "workersAssigned": [],
-            "shiftDateCreated": moment.utc().format(),
-            "isInterview": false,
-            "unpaidBreakTime": "01:00:00",
-            "instructions": this.state.instructions,
-            "requestExpirationDate": "2017-07-20T09:30:00+05:30",
-            "isPublished": true,
-            "hourlyBonusPay": null          
-        }
-      }
-  }
-})
-  .then(({ data }) => {
-        console.log('got data', data);
-        alert("Data sucessfully added");
-        
-      }).catch((error) => {
-        console.log('there was an error sending the query', error);
-      });
-   }else{
-     alert("Please the form properly.");
-   }
-   }
-  render(){
-  
+    render(){
     const date=moment();
     const startDate=moment(date).startOf('week').isoWeekday(7).format('MM-DD-YYYY');
 
@@ -135,11 +93,18 @@ export class AddShiftForm extends Component{
           onClick={ this.handleCloseFunc }
         />
       </Header>
-      <Segment raised style={{ marginTop:'2.5%' }}>
-       <Scrollbars
-          style={{ height:'52vh',marginBottom:'20px' }} >
+      <Segment raised style={{ marginTop:'2.5%',boxShadow:'inset 0 2px 4px 0 rgba(34,36,38,.12), inset 0 2px 10px 0 rgba(34,36,38,.15)' }}>
+       <Scrollbars autoHeight autoHeightMin='10vh' autoHeightMax='57vh'
+          style={{marginBottom:'20px' }} >
            <Form style={{ marginLeft:'1%'}} >
-               <PositionSelector formCallBack={this.onPositionChange}/>
+           <div>
+              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>WORKPLACE</p>
+              <Input disabled fluid placeholder="WORKPLACE" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={ this.onWorkplace } />
+           </div>
+           <div>
+              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>POSITION</p>
+              <PositionSelectOption formCallBack={ this.updateFormState } />
+            </div>
             <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>SHIFT DAY(S) OF THE WEEK</p>
                <ShiftDaySelector startDate={startDate} formCallBack={ this.updateFormState } />
@@ -160,7 +125,7 @@ export class AddShiftForm extends Component{
             </div>
             <div style={{ marginTop:'2%' }}>
               <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>MANAGER-OPTIONAL</p>
-              <ManagerSelectOption fluid formCallBack={ this.updateFormState } />
+              <ManagerSelectOption formCallBack={ this.updateFormState } />
             </div>
             <div>
               <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>MAXIMUM WAGE FOR SHIFT,INCLUDING SURGE WAGE</p>
@@ -168,13 +133,13 @@ export class AddShiftForm extends Component{
              </div>
              <div>
               <p style={{  fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>INSTRUCTIONS - <span style={{ color:'RED' }}>OPTIONAL</span></p>
-              <TextArea rows={3} style={{ width:'95%' }} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={this.onInstructions} />
+              <TextArea rows={3} style={{width:'100%'}} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={this.onInstructions} />
              </div>
             </Form>
            </Scrollbars>
           </Segment>
          <div>
-          <Image.Group style={{ marginLeft:'36%',float:'left',marginBottom:'4px' }}>
+          <Image.Group style={{ marginLeft:'36%',float:'left',marginBottom:'4px'}}>
            <Image
              src="/images/Assets/Icons/Buttons/cancel-shift.png"
              shape="circular"

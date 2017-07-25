@@ -5,6 +5,7 @@ import {Scrollbars} from 'react-custom-scrollbars';
 import TimePicker from '../../TimePicker/TimePicker';
 import NumberOfMemberSelector from '../../NumberOfMemberSelector/NumberOfMemberSelector';
 import ShiftDaySelector from '../../DaySelector/ShiftDaySelector';
+import PositionSelectOption from '../../Position/Position';
 import './EmergencyShiftForm.css';
 
 class EmergencyShiftForm extends Component {
@@ -19,31 +20,29 @@ class EmergencyShiftForm extends Component {
       stopTime:'',
       numberOfTeamMembers:'',
       unpaidBreak:'',
-      manager:'',
       instructions:'',
       disabledSubmitButton:true
     }
     this.onWorkplace=this.onWorkplace.bind(this);
-    this.onPosition=this.onPosition.bind(this);
     this.onUnpaidBreak=this.onUnpaidBreak.bind(this);
     this.onInstructions=this.onInstructions.bind(this);
     this.checkSubmitButton=this.checkSubmitButton.bind(this);
     this.updateFormState=this.updateFormState.bind(this);
   }
   checkSubmitButton(){
+    console.log(this.state);
     const { workplace,instructions,unpaidBreak,position,startTime,stopTime,shiftDaysSelected,numberOfTeamMembers}=this.state;
     if(workplace!==''&&instructions!==''&&unpaidBreak!==''&&position!==''&&startTime!==''&&stopTime!==''&&shiftDaysSelected!==''&&numberOfTeamMembers!==''){
        this.setState({disabledSubmitButton:false});
+    }else{
+       this.setState({disabledSubmitButton:true});
     }
   }
   onWorkplace(event){
     this.setState({workplace:event.target.value});
     this.checkSubmitButton();
   }
-  onPosition(event){
-    this.setState({position:event.target.value});
-    this.checkSubmitButton();
-  }
+
   onUnpaidBreak(event){
     this.setState({unpaidBreak:event.target.value});
     this.checkSubmitButton();
@@ -75,17 +74,17 @@ class EmergencyShiftForm extends Component {
           onClick={ this.props.closeFunc }
         />
       </Header>
-         <Segment raised style={{ marginTop:'2.5%' }}>
-          <Scrollbars autoHide
-             style={{ height:'52.0vh',marginBottom:'20px'}} >
+         <Segment raised style={{ marginTop:'2.5%',boxShadow:'inset 0 2px 4px 0 rgba(34,36,38,.12), inset 0 2px 10px 0 rgba(34,36,38,.15)' }}>
+          <Scrollbars autoHide autoHeight autoHeightMin='10vh' autoHeightMax='57vh'
+             style={{ marginBottom:'20px'}} >
           <Form style={{marginLeft:'1%'}}>
             <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>WORKPLACE</p>
-             <Input placeholder="CHAO CENTER" icon={<Icon name="sort" />} style={{ marginTop:'-2%',width:'95%',backgroundColor:'lightgrey' }} onChange={ this.onWorkplace }/>
+             <Input disabled fluid placeholder="WORKPLACE" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={ this.onWorkplace } />
             </div>
             <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>POSITION</p>
-             <Input placeholder="POSITION" icon={<Icon name="sort" />} style={{ marginTop:'-2%',width:'95%',backgroundColor:'lightgrey' }} onChange={ this.onPosition } />
+             <PositionSelectOption formCallBack={ this.updateFormState } />
             </div>
             <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>SHIFT DATE(S)</p>
@@ -100,7 +99,7 @@ class EmergencyShiftForm extends Component {
             </div>
            <div style={{ marginTop:'2%' }}>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>UNPAID-BREAK</p>
-             <Input placeholder="30 MINUTES (SET BY POLICY)" icon={<Icon name="chevron down" />} style={{ marginTop:'-2%',width:'95%',backgroundColor:'lightgrey' }} onChange={ this.onUnpaidBreak }/>
+             <Input fluid placeholder="30 MINUTES (SET BY POLICY)" icon={<Icon name="chevron down" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={ this.onUnpaidBreak }/>
            </div>
            <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}><span style={{color:'#0022A1'}}>Maximum</span> INCENTIVE BONUS PER HOUR</p>
@@ -108,7 +107,7 @@ class EmergencyShiftForm extends Component {
            </div>
            <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>INSTRUCTIONS - <span style={{color:'RED'}}>OPTIONAL</span></p>
-             <TextArea rows={3} style={{ width:'95%' }} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={ this.onInstructions } />
+             <TextArea rows={3} fluid  placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={ this.onInstructions } />
            </div>
 
           </Form>

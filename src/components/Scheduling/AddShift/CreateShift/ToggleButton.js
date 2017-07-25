@@ -14,6 +14,13 @@ export default class ToggleButton extends Component {
       jobShadowingOppurtunity: false
     }
   }
+  componentWillMount(){
+    const {formCallBack}=this.props;
+    const newState={
+      jobShadowingOppurtunity:this.state.jobShadowingOppurtunity
+    }
+    formCallBack(newState);
+  }
   handleToggleButton(){
     const {formCallBack}=this.props;
     const {handleToggle,positive,negative,label,labelPosition}=this.state;

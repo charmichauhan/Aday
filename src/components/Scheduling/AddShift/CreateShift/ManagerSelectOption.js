@@ -2,8 +2,9 @@ import React,{ Component } from 'react';
 import Select from 'react-select';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
-import $ from 'webpack-zepto';
 import ChipSelector from './ChipSelector';
+import {Icon} from 'semantic-ui-react';
+
 import './select.css';
 
 const Managers = [
@@ -13,16 +14,19 @@ const Managers = [
 ];
 const styles ={
 	chip :{
-		margin:4,
-		width:'90%'
+		margin:4
 	},
       wrapper: {
         display: 'flex',
         flexWrap: 'wrap',
-				width:'100%'
   },
 };
 
+function arrowRenderer(){
+   return (
+     <Icon name="sort" />
+   )
+}
 
 export default class ManagerSelectOption extends Component{
   constructor(props){
@@ -59,9 +63,9 @@ export default class ManagerSelectOption extends Component{
 			   className='sectionTest'
 			   name="managers"
          multi
+				 arrowRenderer={arrowRenderer}
    	 		 autosize="false"
 				 value={this.state.managerValue}
-
          onChange={this.onChange}
          options={this.state.options}
   			 valueComponent={(value) => {
@@ -73,7 +77,6 @@ export default class ManagerSelectOption extends Component{
 									 >
 									 <Avatar src="images/uxceo-128.jpg" />
 										{value.value.label}
-
 						  </Chip>
 						</div>
 				   );

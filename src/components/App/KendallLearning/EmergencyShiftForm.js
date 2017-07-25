@@ -80,7 +80,7 @@ class EmergencyShiftForm extends Component {
           <Form style={{marginLeft:'1%'}}>
             <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>WORKPLACE</p>
-             <Input fluid placeholder="WORKPLACE" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={ this.onWorkplace } />
+             <Input disabled fluid placeholder="WORKPLACE" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={ this.onWorkplace } />
             </div>
             <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>POSITION</p>
@@ -107,7 +107,7 @@ class EmergencyShiftForm extends Component {
            </div>
            <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>INSTRUCTIONS - <span style={{color:'RED'}}>OPTIONAL</span></p>
-             <TextArea rows={3} style={{ width:'95%' }} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={ this.onInstructions } />
+             <TextArea rows={3} fluid  placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={ this.onInstructions } />
            </div>
 
           </Form>

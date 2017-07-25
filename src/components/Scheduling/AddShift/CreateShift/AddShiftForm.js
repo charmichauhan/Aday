@@ -15,6 +15,7 @@ export default class AddShiftForm extends Component{
     super(props);
 
     this.state = {
+      workplace:'',
       position:'',
       shiftDaysSelected:'',
       startTime:'',
@@ -26,6 +27,7 @@ export default class AddShiftForm extends Component{
       jobShadowingOppurtunity:'',
       disabledSubmitButton:true
     }
+    this.onWorkplace=this.onWorkplace.bind(this);
     this.onUnpaidBreak=this.onUnpaidBreak.bind(this);
     this.onInstructions=this.onInstructions.bind(this);
     this.checkSubmitButton=this.checkSubmitButton.bind(this);
@@ -33,13 +35,15 @@ export default class AddShiftForm extends Component{
     this.handleCloseFunc=this.handleCloseFunc.bind(this);
   }
   checkSubmitButton(){
-    console.log(this.state);
-    const {instructions,unpaidBreak,position,shiftDaysSelected,startTime,stopTime,managerValue,numberOfTeamMembers,}=this.state;
-    if(startTime!==''&&instructions!==''&&unpaidBreak!==''&&position!==''&&stopTime!==''&&managerValue!==''&&numberOfTeamMembers!==''&&shiftDaysSelected!==''){
+    const {workplace,instructions,unpaidBreak,position,shiftDaysSelected,startTime,stopTime,managerValue,numberOfTeamMembers,}=this.state;
+    if(workplace!==''&&startTime!==''&&instructions!==''&&unpaidBreak!==''&&position!==''&&stopTime!==''&&managerValue!==''&&numberOfTeamMembers!==''&&shiftDaysSelected!==''){
        this.setState({disabledSubmitButton:false});
     }
   }
-
+  onWorkplace(event){
+    this.setState({workplace:event.target.value})
+    this.checkSubmitButton();
+  }
   onUnpaidBreak(event){
     this.setState({unpaidBreak:event.target.value});
     this.checkSubmitButton();
@@ -56,6 +60,7 @@ export default class AddShiftForm extends Component{
     this.props.closeFunc();
     this.props.closeAddFun();
   }
+
 
     render(){
 
@@ -83,7 +88,11 @@ export default class AddShiftForm extends Component{
        <Scrollbars autoHeight autoHeightMin='10vh' autoHeightMax='57vh'
           style={{marginBottom:'20px' }} >
            <Form style={{ marginLeft:'1%'}} >
-            <div>
+           <div>
+              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>WORKPLACE</p>
+              <Input disabled fluid placeholder="WORKPLACE" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={ this.onWorkplace } />
+           </div>
+           <div>
               <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>POSITION</p>
               <PositionSelectOption formCallBack={ this.updateFormState } />
             </div>
@@ -115,7 +124,7 @@ export default class AddShiftForm extends Component{
              </div>
              <div>
               <p style={{  fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>INSTRUCTIONS - <span style={{ color:'RED' }}>OPTIONAL</span></p>
-              <TextArea rows={3} style={{ width:'95%' }} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={this.onInstructions} />
+              <TextArea rows={3} style={{width:'100%'}} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={this.onInstructions} />
              </div>
             </Form>
            </Scrollbars>

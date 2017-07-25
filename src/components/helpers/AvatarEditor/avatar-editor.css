@@ -1,0 +1,29 @@
+.avatar-editor .avatar-rotate-label {
+    color: #666666;
+    display: table-cell;
+    font-size: 18px;
+    line-height: 21px;
+    font-weight: normal;
+    vertical-align: middle;
+    text-transform: uppercase;
+}
+
+.avatar-editor .select-upload-rotate-btn {
+    display: inline-block;
+}
+
+.avatar-editor .rotate-img-btn {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.avatar-editor .right-btn {
+    transform: rotateY(180deg);
+    display: inline-block;
+}
+
+.avatar-editor .select-upload-wrapper {
+    margin: 10px 0;
+    float: left;
+    width: 100%;
+}

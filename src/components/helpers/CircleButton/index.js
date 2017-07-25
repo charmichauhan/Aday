@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './circle-button.css';
-import close from '../../../../public/images/modal/close.png'
+
 const buttonColors = {
 	white: {
 		backgroundColor: '#ffffff',
@@ -24,8 +24,9 @@ const buttonStyle = {
 	color: '#333',
 	fontSize: 16,
 	whiteSpace: 'normal',
-	boxShadow: '`0 -4px 10px 0 rgba(0,0,0,0.5), 0 4px 10px 0 rgba(1,1,1,0.5)',
-	marginRight: 10
+	boxShadow: '0 -4px 10px 0 rgba(0,0,0,0.5), 0 4px 10px 0 rgba(1,1,1,0.5)',
+	marginRight: 10,
+	outline: 'none'
 };
 
 export default class CircleButton extends Component {
@@ -39,7 +40,9 @@ export default class CircleButton extends Component {
 		};
 		return (
 			<div className="btn-circle-wrapper">
-				<button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}>{image?<img src={close}/>:""}{title}</button>
+				<button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}>
+					{image && <img src="/images/modal/close.png"/>}{title}
+				</button>
 			</div>
 		);
 	}

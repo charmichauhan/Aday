@@ -208,14 +208,14 @@ img.list-left-image {
 }
 
 .drawer-section.brand-drawer-section {
-    height: 75vh;
+    height: 80vh;
     overflow-y: scroll;
 }
 
 .drawer-section.workplace-drawer-section {
     display: block;
     overflow: hidden;
-    height: 75vh;
+    height: 80vh;
     overflow-y: scroll;
 }
 

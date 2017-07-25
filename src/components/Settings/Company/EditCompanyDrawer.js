@@ -8,7 +8,6 @@ import CircleButton from '../../helpers/CircleButton/index';
 
 const DrawerHelper = (props) => {
 	const handleSubmit = (event) => {
-		event.preventDefault();
 		// Resetting the field values.
 		document.getElementById('company-name').value = '';
 		props.handleSubmit(event);

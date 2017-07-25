@@ -65,7 +65,6 @@ export default class Personal extends Component {
 			.replace(/\)/g, '')
 			.replace(/ /g, '');
 		}
-		event.preventDefault();
 		const { name, value } = event.target;
 		let phoneNumber = name === personalFields.phoneNumber && escapeHtml(value);
 		const isValid = hasError(name, value);

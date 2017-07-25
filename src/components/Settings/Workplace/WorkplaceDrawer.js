@@ -8,7 +8,7 @@ import Dropzone from 'react-dropzone';
 
 import CircleButton from '../../helpers/CircleButton/index';
 import { stateOptions } from '../../helpers/common/states';
-import { closeButton } from '../../styles';
+import { closeButton, colors } from '../../styles';
 
 import './workplace-drawer.css';
 
@@ -48,7 +48,6 @@ class DrawerHelper extends Component {
 	}
 
 	handleSubmitEvent = (event) => {
-		event.preventDefault();
 		// Resetting the field values.
 		this.setState({ ...initialState });
 		this.props.handleSubmit(event);
@@ -62,8 +61,12 @@ class DrawerHelper extends Component {
 		this.setState({ workplace, blob: files[0] });
 	};
 
+	handleNewImageUpload = (files) => {
+		files[0].preview = window.URL.createObjectURL(files[0]);
+		this.handleImageUpload(files);
+	};
+
 	handleChange = (event) => {
-		event.preventDefault();
 		const { name, value } = event.target;
 		const workplace = Object.assign(this.state.workplace, { [name]: value });
 		this.setState({ workplace });
@@ -97,7 +100,7 @@ class DrawerHelper extends Component {
 						</IconButton>
 						<h2 className="text-center text-uppercase">{messages.title}</h2>
 					</div>
-					<div className="upload-wrapper col-md-8 col-md-offset-2 text-center">
+					{!DrawerWorkplace.image && !this.state.blob && <div className="upload-wrapper col-md-8 col-md-offset-2 text-center">
 						<Dropzone
 							multiple={false}
 							accept="image/*"
@@ -115,13 +118,21 @@ class DrawerHelper extends Component {
 								Or Drag and Drop File
 							</p>
 						</Dropzone>
-					</div>
+					</div>}
 					{DrawerWorkplace.image && !this.state.blob &&
 						<Image className="uploaded-image" src={DrawerWorkplace.image} size="large" />
 					}
 					{this.state.blob &&
 						<Image className="uploaded-image" src={this.state.blob.preview} size="large" />
 					}
+					{(DrawerWorkplace.image || this.state.blob) && <RaisedButton
+							backgroundColor={colors.primaryBlue}
+							labelColor="#fafafa"
+							className='upload-btn'
+							containerElement='label'
+							label='Change image'>
+							<input type='file' onChange={(e) => this.handleNewImageUpload(e.target.files)} />
+					</RaisedButton>}
 					<div className="col-md-12 form-div">
 						<div className="form-group">
 							<label className="text-uppercase">Workplace Name</label>

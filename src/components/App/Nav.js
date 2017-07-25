@@ -29,7 +29,7 @@ class NavComponent extends Component {
 				<Menu vertical fluid>
 					<Menu.Item className="menu-item">
 						<Menu.Header><Image src="/images/logos_aday.png" width="102" height="31" centered={true}/></Menu.Header>
-						<Menu.Header><Image src={brandLogo} width="75" height="75" centered={true}/></Menu.Header>
+						<Menu.Header><Image src={brandLogo} width="100" height="100" centered={true}/></Menu.Header>
 						<Menu.Header>
 							<select>
 								<option value=""><a>CHOOSE WORKPLACE</a></option>

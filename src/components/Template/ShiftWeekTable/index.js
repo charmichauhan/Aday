@@ -55,6 +55,7 @@ class ShiftWeekTableComponent extends Week {
         let that =this;
         that.setState({deleteTemplateModal:true})
     };
+
     render() {
          if (this.props.data.loading) {
              return (<div>Loading</div>)
@@ -70,32 +71,38 @@ class ShiftWeekTableComponent extends Week {
 ///
         let calendarHash = {};
         let userHash={};
-        const workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
-        this.props.data.templateById.templateShiftsByTemplateId.edges.map((value,index) => {
-            
-            if (value.node.workerCount > value.node.templateShiftAssigneesByTemplateShiftId.edges.length){
+        let workplace = ""
+        if (this.props.data.templateById){
+            workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
+        }
+
+        if (this.props.data.templateById) {
+            this.props.data.templateById.templateShiftsByTemplateId.edges.map((value,index) => {
+                
+                if (value.node.workerCount > value.node.templateShiftAssigneesByTemplateShiftId.edges.length){
+                            const rowHash = {};
+                            rowHash["user"] = ["Open", "Shifts"];
+                            rowHash["workplace"] = workplace;
+                            if (calendarHash["Open Shifts"]){
+                                calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"],  Object.assign(rowHash, value.node)]
+                            } else {
+                                calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
+                            }
+                }
+                
+                value.node.templateShiftAssigneesByTemplateShiftId.edges.map((value2,index2) => {
+                        const user = [value2.node.userByUserId.firstName, value2.node.userByUserId.lastName, value2.node.userByUserId.avatarUrl] 
                         const rowHash = {};
-                        rowHash["user"] = ["Open", "Shifts"];
+                        rowHash["user"] = user;
                         rowHash["workplace"] = workplace;
-                        if (calendarHash["Open Shifts"]){
-                            calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"],  Object.assign(rowHash, value.node)]
+                        if (calendarHash[user]){
+                            calendarHash[user] = [...calendarHash[user],  Object.assign(rowHash, value.node)]
                         } else {
-                            calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
+                            calendarHash[user] = [Object.assign(rowHash, value.node)]
                         }
-            }
-            
-            value.node.templateShiftAssigneesByTemplateShiftId.edges.map((value2,index2) => {
-                    const user = [value2.node.userByUserId.firstName, value2.node.userByUserId.lastName, value2.node.userByUserId.avatarUrl] 
-                    const rowHash = {};
-                    rowHash["user"] = user;
-                    rowHash["workplace"] = workplace;
-                    if (calendarHash[user]){
-                        calendarHash[user] = [...calendarHash[user],  Object.assign(rowHash, value.node)]
-                    } else {
-                        calendarHash[user] = [Object.assign(rowHash, value.node)]
-                    }
-                })
-        });
+                    })
+            });
+        }
         
         console.log(calendarHash)
         let jobData = calendarHash;

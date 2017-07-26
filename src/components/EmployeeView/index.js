@@ -74,7 +74,7 @@ export default class EmployeeView extends Component {
             {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
         return (
 			<div className="App row">
-				<ShiftPublish date={this.state.date}/>
+				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date}/></div>
                 {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													 message = "Are you sure that you want to delete this shift?"
 													 action = {publishModalOptions} closeAction={this.modalClose}/>

@@ -24,14 +24,18 @@ class ShiftPublishComponent extends Component{
              console.log(this.props.data.error)
              return (<div>An unexpected error occurred</div>)
         }
-        let is_publish = false
+        let is_publish = ""
         const week_published = this.props.data.weekPublishedByDate.nodes[0]
         if(week_published){
              is_publish = week_published.published;
         }
-        let status = "UNPUBLISHED SCHEDULE";
-        let statusImg = Unpublished;
-        if(is_publish){
+        let status = "";
+        let statusImg = "";
+        if (is_publish == false){
+             let status = "UNPUBLISHED SCHEDULE";
+            let statusImg = Unpublished;
+        }
+        else if (is_publish == true ){
             status="PUBLISHED SCHEDULE";
             statusImg = Published;
         }
@@ -39,15 +43,15 @@ class ShiftPublishComponent extends Component{
             <div>
             <div className="col-md-12">
                 <div className="col-sm-offset-3 col-sm-5 rectangle">
-                    <img src={statusImg} alt="nooo"/>
+                    {is_publish == ""? "NO SHIFTS FOR GIVEN WEEK" :<img src={statusImg}/>}
                     <p className="col-sm-offset-2">{status}</p>
                 </div>
             </div>
             <div className="btn-action">
                     <Button className="btn-image"><CreateShiftButton/></Button>
-                    <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src={Publish} alt="Publish"/></Button>
-                    <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={Automate} alt="Automate"/></Button>
-                    <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={AddAsTemplate} alt="Add As Template"/></Button>
+                   {(is_publish == false && is_publish != "") ? <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src={Publish} alt="Publish"/></Button> : ""}
+                   {(is_publish != "")? <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={Automate} alt="Automate"/></Button> :""}
+                   {is_publish != ""? <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={AddAsTemplate} alt="Add As Template"/></Button>:""}
                     <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={TemplateList} alt="Template List"/></Button>
             </div>
             </div>

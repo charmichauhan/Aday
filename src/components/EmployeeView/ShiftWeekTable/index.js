@@ -102,8 +102,7 @@ class ShiftWeekTableComponent extends Week {
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p><HoursBooked
-                                Data={jobData}/></TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname"></TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -134,6 +133,68 @@ class ShiftWeekTableComponent extends Week {
                                 ))
                             }
                     </TableBody>
+                </Table>
+            </div>
+        );
+    }
+}
+
+ShiftWeekTableComponent.range = (date, { culture }) => {
+    let firstOfWeek = localizer.startOfWeek(culture);
+    let start = dates.startOf(date, 'week', firstOfWeek);
+    let end = dates.endOf(date, 'week', firstOfWeek);
+    return { start, end };
+};
+
+const allShifts = gql
+  `query allShifts($brandid: Uuid!, $day: Datetime!){ 
+        weekPublishedByDate(brandid: $brandid, day: $day){
+            nodes{
+            id
+            shiftsByWeekPublishedId{
+                    edges {
+                        node {
+                            id
+                            startTime
+                            endTime
+                            workersInvited
+                            workersAssigned
+                            workersRequestedNum
+                            positionByPositionId{
+                            positionName
+                            positionIconUrl
+                                brandByBrandId {
+                                    brandName
+                                }
+                            }
+                            workplaceByWorkplaceId{
+                                workplaceName
+                            }
+                        }
+                    }
+                }
+            }
+        }
+}`
+
+const allUsers = gql`
+    query allUsers {
+        allUsers{
+            edges{
+                node{
+                    id
+                    firstName
+                    lastName
+                    avatarUrl
+                }
+            }
+        }
+    }
+    `
+
+/*
+                    <p className="weekDay">Hours Booked</p><HoursBooked
+                                Data={jobData}/>
                     <TableFooter adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
                             <TableRowColumn style={styles.tableFooterHeading}>
@@ -204,64 +265,7 @@ class ShiftWeekTableComponent extends Week {
                             </TableRowColumn>
                         </TableRow>
                     </TableFooter>
-                </Table>
-            </div>
-        );
-    }
-}
-
-ShiftWeekTableComponent.range = (date, { culture }) => {
-    let firstOfWeek = localizer.startOfWeek(culture);
-    let start = dates.startOf(date, 'week', firstOfWeek);
-    let end = dates.endOf(date, 'week', firstOfWeek);
-    return { start, end };
-};
-
-const allShifts = gql
-  `query allShifts($brandid: Uuid!, $day: Datetime!){ 
-        weekPublishedByDate(brandid: $brandid, day: $day){
-            nodes{
-            id
-            shiftsByWeekPublishedId{
-                    edges {
-                        node {
-                            id
-                            startTime
-                            endTime
-                            workersInvited
-                            workersAssigned
-                            workersRequestedNum
-                            positionByPositionId{
-                            positionName
-                            positionIconUrl
-                                brandByBrandId {
-                                    brandName
-                                }
-                            }
-                            workplaceByWorkplaceId{
-                                workplaceName
-                            }
-                        }
-                    }
-                }
-            }
-        }
-}`
-
-const allUsers = gql`
-    query allUsers {
-        allUsers{
-            edges{
-                node{
-                    id
-                    firstName
-                    lastName
-                    avatarUrl
-                }
-            }
-        }
-    }
-    `
+*/
     
 ///
 const ShiftWeekTable = compose(

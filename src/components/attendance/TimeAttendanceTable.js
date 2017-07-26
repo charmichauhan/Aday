@@ -49,7 +49,7 @@ class TimeAttendanceTable extends Component {
 						<Table.HeaderCell>REQUEST TYPE</Table.HeaderCell>
 						<Table.HeaderCell>SUBMITTED</Table.HeaderCell>
 						<Table.HeaderCell>NOTES</Table.HeaderCell>
-						<Table.HeaderCell></Table.HeaderCell>
+						<Table.HeaderCell>ACTIONS {this.props.filter=="HISTORY" && "(LOCKED)"}</Table.HeaderCell>
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
@@ -74,8 +74,11 @@ class TimeAttendanceTable extends Component {
 								 <Table.Cell><span style={{color: 'blue', cursor: 'pointer'}} onClick={() => this.onDecide(req.node.id, "APPROVED")}> Approve </span> |
 								 						 <span style={{color: 'blue', cursor: 'pointer'}} onClick={() => this.onDecide(req.node.id, "DENIED")}> Deny </span> </Table.Cell>
 								}
-								{this.props.filter!="PENDING" &&
+								{(this.props.filter=="APPROVED" || this.props.filter=="DENIED") &&
 								 <Table.Cell><span style={{color: 'blue', cursor: 'pointer'}} onClick={() => this.onDecide(req.node.id, "PENDING")}> Revoke </span></Table.Cell>
+								}
+								{this.props.filter=="HISTORY" &&
+								 <Table.Cell> {req.node.decisionStatus} </Table.Cell>
 								}
 							</Table.Row>)
 						})

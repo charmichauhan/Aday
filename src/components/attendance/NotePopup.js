@@ -16,7 +16,7 @@ export default class NotePopup extends Component {
   render() {
 		return (
       <div>
-			   <div onClick={()=>this.setState({show: true})} style={{color: 'blue'}}>Show</div>
+			   <div onClick={()=>this.setState({show: true})} style={{color: 'blue', cursor: 'pointer'}}>Show</div>
          {this.state.show &&
            <ModalContainer onClose={this.onClose}>
            <ModalDialog onClose={this.onClose}>

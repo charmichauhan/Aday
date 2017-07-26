@@ -33,6 +33,7 @@ const approveTimeOffRequestMutation = gql`
     		id: $id,
     		timeOffRequestPatch: {decisionStatus: $decision, approverId: $approverId}}){
       timeOffRequest{
+        id
         decisionStatus
       }
     }

@@ -48,25 +48,22 @@ export default class Schedule extends Component {
     onPublish = () => {
         this.setState({publishModalPopped:true})
     };
+
+    onNavigate = (start) => {
+		this.setState({date: start})
+	};
+
     render() {
-        let is_publish = true;
         BigCalendar.momentLocalizer(moment);
         let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
             {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
         return (
 			<div className="App row">
-				<ShiftPublish ispublish={is_publish}/>
+				<ShiftPublish date={this.state.date}/>
                 {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													  message = "Are you sure that you want to delete this shift?"
 													  action = {publishModalOptions} closeAction={this.modalClose}/>
                     :""}
-				<div className="btn-action">
-					<Button className="btn-image"> <CreateShiftButton /> </Button>
-					<Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src={Publish} alt="Publish"/></Button>
-                    {!is_publish?<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={Automate} alt="Automate"/></Button>:<span></span>}
-					<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={AddAsTemplate} alt="Add As Template"/></Button>
-                    {!is_publish?<Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src={TemplateList} alt="Template List"/></Button>:<span></span>}
-				</div>
 				<div>
 					<BigCalendar events={[]}
 								 culture='en-us'
@@ -74,6 +71,7 @@ export default class Schedule extends Component {
 								 endAccessor='endDate'
 								 defaultView='week'
 								 views={{today: true, week: ShiftWeekTable, day: true}}
+								 onNavigate={(start)=>this.onNavigate(start)}
 								 components={{
                                      event: Event,
                                      toolbar: CustomToolbar

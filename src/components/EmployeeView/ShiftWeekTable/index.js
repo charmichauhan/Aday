@@ -48,15 +48,20 @@ class ShiftWeekTableComponent extends Week {
 
 
         const userHash = {};
-        this.props.allUsers.allUsers.edges.map((value,index) => {
-            userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
-        });
+        if  (this.props.allUsers){
+            this.props.allUsers.allUsers.edges.map((value,index) => {
+                userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
+            });
+        }
 
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
 
         let calendarHash = {};
-        this.props.data.brandShiftByDate.edges.map((value,index) => {
+
+       const weekPublished = this.props.data.weekPublishedByDate.nodes[0]
+       if (weekPublished){
+        weekPublished.shiftsByWeekPublishedId.edges.map((value,index) => {
             const rowHash = {}
             const dayOfWeek = moment(value.node.startTime).format("dddd");
             rowHash["weekday"] = dayOfWeek;
@@ -88,7 +93,7 @@ class ShiftWeekTableComponent extends Week {
                 })
             }
         });
-
+        }
         let jobData = calendarHash;
         return (
             <div className="table-responsive">
@@ -212,26 +217,35 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
     return { start, end };
 };
 
-const allShifts = gql`
-  query allShifts($brandid: Uuid!, $daystart: Datetime!, $dayend: Datetime!){ 
-    brandShiftByDate(brandid: $brandid, daystart: $daystart, dayend: $dayend){
-        edges{
-          node {
+const allShifts = gql
+  `query allShifts($brandid: Uuid!, $day: Datetime!){ 
+        weekPublishedByDate(brandid: $brandid, day: $day){
+            nodes{
             id
-            startTime
-            endTime
-            workersAssigned
-            workersRequestedNum
-            positionByPositionId{
-                positionName  
-                positionIconUrl       
+            shiftsByWeekPublishedId{
+                    edges {
+                        node {
+                            id
+                            startTime
+                            endTime
+                            workersInvited
+                            workersAssigned
+                            workersRequestedNum
+                            positionByPositionId{
+                            positionName
+                            positionIconUrl
+                                brandByBrandId {
+                                    brandName
+                                }
+                            }
+                            workplaceByWorkplaceId{
+                                workplaceName
+                            }
+                        }
+                    }
+                }
             }
-            workplaceByWorkplaceId{
-              workplaceName
-            }
-          }
         }
-    }
 }`
 
 const allUsers = gql`
@@ -255,8 +269,7 @@ graphql(allShifts, {
    options: (ownProps) => ({ 
      variables: {
        brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
-       daystart: moment(ownProps.date).subtract(1, 'day').startOf('day').format(),
-       dayend: moment(ownProps.date).add(6, 'day').endOf('day').format() 
+       day: moment(ownProps.date)
      }
    }),
  }),

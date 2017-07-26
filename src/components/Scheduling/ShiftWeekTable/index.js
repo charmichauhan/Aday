@@ -80,18 +80,21 @@ class ShiftWeekTableComponent extends Week {
         console.log(this.props)
 
         let calendarHash = {};
-        this.props.data.brandShiftByDate.edges.map((value,index) => {
-            const positionName = value.node.positionByPositionId.positionName;
-            const dayOfWeek = moment(value.node.startTime).format("dddd");
- 
-            const rowHash = {};
-            rowHash["weekday"] = dayOfWeek;
-            if (calendarHash[positionName]){
-                calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node) ]
-            } else {
-                calendarHash[positionName] = [Object.assign(rowHash, value.node)];
-            }
-        })
+        const weekPublished = this.props.data.weekPublishedByDate.nodes[0]
+        if(weekPublished){
+            weekPublished.shiftsByWeekPublishedId.edges.map((value,index) => {
+                const positionName = value.node.positionByPositionId.positionName;
+                const dayOfWeek = moment(value.node.startTime).format("dddd");
+     
+                const rowHash = {};
+                rowHash["weekday"] = dayOfWeek;
+                if (calendarHash[positionName]){
+                    calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node) ]
+                } else {
+                    calendarHash[positionName] = [Object.assign(rowHash, value.node)];
+                }
+            })
+        }
 
         let jobData = calendarHash;
         let { date } = this.props;
@@ -155,38 +158,43 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
     return { start, end };
 };
 
-const allShifts = gql`
-  query allShifts($brandid: Uuid!, $daystart: Datetime!, $dayend: Datetime!){ 
-    brandShiftByDate(brandid: $brandid, daystart: $daystart, dayend: $dayend){
-        edges {
-            node {
-                id
-                startTime
-                endTime
-                workersInvited
-                workersAssigned
-                workersRequestedNum
-                positionByPositionId{
-                positionName
-                positionIconUrl
-                    brandByBrandId {
-                        brandName
+const allShifts = gql
+  `query allShifts($brandid: Uuid!, $day: Datetime!){ 
+        weekPublishedByDate(brandid: $brandid, day: $day){
+            nodes{
+            id
+            shiftsByWeekPublishedId{
+                    edges {
+                        node {
+                            id
+                            startTime
+                            endTime
+                            workersInvited
+                            workersAssigned
+                            workersRequestedNum
+                            positionByPositionId{
+                            positionName
+                            positionIconUrl
+                                brandByBrandId {
+                                    brandName
+                                }
+                            }
+                            workplaceByWorkplaceId{
+                                workplaceName
+                            }
+                        }
                     }
-                }
-                workplaceByWorkplaceId{
-                    workplaceName
                 }
             }
         }
-    }
 }`
+
 
 const ShiftWeekTable = graphql(allShifts, {
    options: (ownProps) => ({ 
      variables: {
        brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
-       daystart: moment(ownProps.date).subtract(1, 'day').startOf('day').format(),
-       dayend: moment(ownProps.date).add(6, 'day').endOf('day').format() 
+       day: moment(ownProps.date)
      }
    }),
  })(ShiftWeekTableComponent)

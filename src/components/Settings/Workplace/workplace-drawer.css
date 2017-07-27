@@ -1,92 +1,99 @@
 .settings .workplace-drawer-section .inline-form.form-inline .form-group {
-    width: 33.33%;
-    padding: 0 10px;
+  width: 33.33%;
+  padding: 0 10px;
 }
 
 .settings .workplace-drawer-section .inline-form.form-inline .form-group:first-child {
-    padding-left: 0;
+  padding-left: 0;
 }
 
 .settings .workplace-drawer-section .inline-form.form-inline .form-group:last-child {
-    padding-right: 0;
+  padding-right: 0;
 }
 
 .settings .workplace-drawer-section .semantic-drawer-drop-down.ui.selection.dropdown {
-    height: 45px;
-    width: 100%;
-    min-width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+  height: 45px;
+  width: 100%;
+  min-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
 }
 
 .settings .workplace-drawer-section .semantic-drawer-drop-down.ui.selection.active.dropdown {
-    border-color: #96c8da;
-    box-shadow: 0 2px 3px 0 rgba(34,36,38,.15);
+  border-color: #96c8da;
+  box-shadow: 0 2px 3px 0 rgba(34, 36, 38, .15);
 }
 
 .settings .workplace-drawer-section .form-div .form-group label {
-                       display: block;
+  display: block;
 }
 
 .settings .workplace-drawer-section .form-div .form-group input,
 .settings .drawer-section .form-div .form-group select {
-    width: 100%;
-    height: 45px;
+  width: 100%;
+  height: 45px;
 }
 
 .settings .drawer-section .upload-wrapper {
-    border: 1px solid #979797;
-    border-radius: 10px;
-    padding: 0 20px 20px 20px;
-    margin-top: 30px;
-    margin-bottom: 30px;
+  border: 1px solid #979797;
+  border-radius: 10px;
+  padding: 0 20px 20px 20px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .settings .upload-btn input[type="file"] {
-    display: none;
+  display: none;
+}
+
+.settings .drawer-section .upload-btn {
+  margin: 10px auto 0 !important;
+  display: table !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
 }
 
 .settings .upload-img {
-    margin: 0 auto;
+  margin: 0 auto;
 }
 
 .settings .upload-desc {
-    margin-top: 10px;
-    color: #4A4A4A;
+  margin-top: 10px;
+  color: #4A4A4A;
 }
 
 .settings .workplace-list.secondary span {
-    display: block;
+  display: block;
 }
 
 .settings .workplace-list.secondary span[for="type"] {
-    font-size: 18px;
-    color: #4A4A4A;
+  font-size: 18px;
+  color: #4A4A4A;
 }
 
 .settings .workplace-list.secondary span.claimed {
-    font-size: 12px;
-    color: #008000;
-    text-transform: uppercase;
+  font-size: 12px;
+  color: #008000;
+  text-transform: uppercase;
 }
 
 .settings .workplace-list.secondary span.unclaimed {
-    font-size: 12px;
-    color: #E33821;
-    text-transform: uppercase;
+  font-size: 12px;
+  color: #E33821;
+  text-transform: uppercase;
 }
 
 .settings .workplaces-content .workplace-progress-bar {
-    padding-top: 10px;
+  padding-top: 10px;
 }
 
 .settings .workplaces-content .progress {
-    height: auto;
+  height: auto;
 }
 
 .settings .workplaces-content .progress .bar .progress {
-    background-color: transparent;
+  background-color: transparent;
 }

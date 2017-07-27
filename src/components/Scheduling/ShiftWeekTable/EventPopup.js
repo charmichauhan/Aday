@@ -86,7 +86,7 @@ export default class EventPopup extends Component{
                 <div className="day-item-title">
                     {this.openShift>0 && <span className="box-title openshift">{this.openShift}</span>}
                     {data.workersInvited.length>0 && <span className="box-title pendingshift">{data.workersInvited.length}</span>}
-                    {data.workersAssigned.length==0?<span className="box-title filledshift">\</span>:<span className="box-title filledshift">{data.workersAssigned.length}</span>}
+                    {data.workersAssigned.length>0 && <span className="box-title filledshift">{data.workersAssigned.length}</span>}
                 </div>
                 {this.state.deleteModalPopped && <Modal title="Confirm" isOpen={this.state.deleteModalPopped}
                                                      message = "Are you sure that you want to delete this shift?"

@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #feffff;
+  background-color: #fafafa;
   color: #838890;
   font-family: Roboto,'Helvetica Neue',Helvetica,Arial,sans-serif !important;
 }
@@ -72,7 +72,10 @@ body {
 }
 .todo small {
 	text-transform: uppercase;
-	letter-spacing: 3;
+	letter-spacing: normal;
 	font-weight: bolder;
 }
 
+.mr10 {
+	margin-right: 10px;
+}

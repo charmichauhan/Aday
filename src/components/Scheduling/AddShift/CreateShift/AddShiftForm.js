@@ -1,5 +1,8 @@
 import React,{Component} from 'react';
-import {Header,Image,Button,Divider,Segment,Label,Input,Icon,Form,TextArea} from 'semantic-ui-react';
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
+import uuidv1 from 'uuid/v1';
+import {Header,Image,Button,Divider,Segment,Label,Dropdown,Input,Icon,Form,TextArea,Loader} from 'semantic-ui-react';
 import {Scrollbars} from 'react-custom-scrollbars';
 import ReactScrollbar from 'react-scrollbar-js';
 import moment from 'moment';
@@ -9,13 +12,19 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import PositionSelectOption from '../../../Position/Position.js';
 import ToggleButton from './ToggleButton';
 import ManagerSelectOption from './ManagerSelectOption';
+import  PositionSelector  from './positionSelector'
 
-export default class AddShiftForm extends Component{
+export class AddShiftForm extends Component{
+ static propTypes = {
+  router: React.PropTypes.object.isRequired,
+  mutate: React.PropTypes.func.isRequired,
+ 
+}
+
+
   constructor(props){
     super(props);
-
     this.state = {
-      workplace:'',
       position:'',
       shiftDaysSelected:'',
       startTime:'',
@@ -27,6 +36,7 @@ export default class AddShiftForm extends Component{
       jobShadowingOppurtunity:'',
       disabledSubmitButton:true
     }
+
     this.onWorkplace=this.onWorkplace.bind(this);
     this.onUnpaidBreak=this.onUnpaidBreak.bind(this);
     this.onInstructions=this.onInstructions.bind(this);
@@ -44,6 +54,7 @@ export default class AddShiftForm extends Component{
     this.setState({workplace:event.target.value})
     this.checkSubmitButton();
   }
+
   onUnpaidBreak(event){
     this.setState({unpaidBreak:event.target.value});
     this.checkSubmitButton();
@@ -59,12 +70,20 @@ export default class AddShiftForm extends Component{
   handleCloseFunc(){
     this.props.closeFunc();
     this.props.closeAddFun();
+
+  }
+  updateFormState(dataValue){
+    this.setState(dataValue);
+    this.checkSubmitButton();
+  }
+  handleCloseFunc(){
+    this.props.closeFunc();
+    this.props.closeAddFun();
   }
 
 
     render(){
-
-    const date=moment();
+     const date=moment();
     const startDate=moment(date).startOf('week').isoWeekday(7).format('MM-DD-YYYY');
 
     return(
@@ -112,7 +131,7 @@ export default class AddShiftForm extends Component{
             </div>
             <div style={{ marginTop:'7%' }}>
               <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>UNPAID-BREAK</p>
-              <Input fluid placeholder="30 MINUTES" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={this.onUnpaidBreak} />
+              <Input type="number" min="0" fluid placeholder="30 MINUTES" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={this.onUnpaidBreak} />
             </div>
             <div style={{ marginTop:'2%' }}>
               <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>MANAGER-OPTIONAL</p>
@@ -120,7 +139,7 @@ export default class AddShiftForm extends Component{
             </div>
             <div>
               <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>MAXIMUM WAGE FOR SHIFT,INCLUDING SURGE WAGE</p>
-              <Input disabled fluid placeholder="$0.00" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} />
+              <Input type="number" min="0" disabled fluid placeholder="$0.00" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} />
              </div>
              <div>
               <p style={{  fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>INSTRUCTIONS - <span style={{ color:'RED' }}>OPTIONAL</span></p>
@@ -141,6 +160,7 @@ export default class AddShiftForm extends Component{
              shape="circular"
              width="42%"
              disabled={this.state.disabledSubmitButton}
+             onClick={this.handleSave}
            />
           </Image.Group>
         </div>
@@ -148,3 +168,17 @@ export default class AddShiftForm extends Component{
     );
   }
 }
+
+
+const createShiftMutation = gql`
+ mutation createShift($data:CreateShiftInput!){
+  createShift(input:$data)
+  {
+    shift{
+      id
+    }
+  }
+}`
+
+const AddShift = graphql(createShiftMutation)(AddShiftForm)
+export default AddShift

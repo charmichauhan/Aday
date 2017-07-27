@@ -4,6 +4,7 @@ import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
 import ChipSelector from './ChipSelector';
 import {Icon} from 'semantic-ui-react';
+
 import './select.css';
 
 const Managers = [
@@ -20,6 +21,7 @@ const styles ={
         flexWrap: 'wrap',
   },
 };
+
 function arrowRenderer(){
    return (
      <Icon name="sort" />
@@ -70,7 +72,6 @@ export default class ManagerSelectOption extends Component{
 					return(
 					  <div style={styles.wrapper}>
 						   <Chip
-
 											 onRequestDelete={()=> this.handleRequestDelete(value.value.key)}
 											 style={styles.chip}
 									 >

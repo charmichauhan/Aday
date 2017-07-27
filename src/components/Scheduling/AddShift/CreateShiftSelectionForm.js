@@ -24,6 +24,7 @@ export default class CreateShiftSelectionForm extends Component{
   onStandard(){
     this.setState({standard:true})
   }
+
   onTemplate(){
     this.setState({template:true})
   }

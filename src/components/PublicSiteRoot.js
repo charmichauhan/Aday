@@ -7,11 +7,10 @@ import Footer from './Footer'
 
 const PublicSiteRoot = ({ route }) => (
 	<div>
-		<Menu/>
+		<p/>
 		{
 			renderRoutes(route.routes)
 		}
-		<Footer/>
 	</div>
 )
 

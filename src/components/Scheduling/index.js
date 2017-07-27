@@ -7,6 +7,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
 import ShiftWeekTable from './ShiftWeekTable';
 import './style.css';
+import {Modal} from 'semantic-ui-react';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
 import 'fullcalendar/dist/fullcalendar.min.css';
 import 'fullcalendar/dist/fullcalendar.min.js';
@@ -37,20 +38,30 @@ export default class Schedule extends Component {
             publishModalPopped: false,
 			addTemplateModalOpen: false,
 			templateName:"",
-            redirect:false
+            redirect:false,
+            date: moment()
         }
     }
 
     onNavigate = (start) => {
         this.setState({date: start})
     };
+
     render() {
-        let is_publish = true;
         BigCalendar.momentLocalizer(moment);
+
+
+         let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
+              {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
 
         return (
 			<div className="App row">
-				<ShiftPublish ispublish={is_publish}/>
+
+				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date}/> </div>
+                {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
+													  message = "Are you sure that you want to delete this shift?"
+													  action = {publishModalOptions} closeAction={this.modalClose}/>
+                    :""}
 				<div>
 					<BigCalendar events={[]}
 								 culture='en-us'
@@ -58,7 +69,7 @@ export default class Schedule extends Component {
 								 endAccessor='endDate'
 								 defaultView='week'
 								 views={{today: true, week: ShiftWeekTable, day: true}}
-                                 onNavigate={(start)=>this.onNavigate(start)}
+								 onNavigate={(start)=>this.onNavigate(start)}
 								 components={{
                                      event: Event,
                                      toolbar: CustomToolbar

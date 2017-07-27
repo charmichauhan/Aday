@@ -49,10 +49,7 @@ class ShiftWeekTableComponent extends Week {
             return (<div>An unexpected error occurred</div>)
         }
 
-        const userHash = {};
-        let { date } = this.props;
-        let { start } = ShiftWeekTable.range(date, this.props);
-
+        let userHash = {};
         let calendarHash = {};
         if  (this.props.allUsers && this.props.allUsers.allUsers){
             this.props.allUsers.allUsers.edges.map((value,index) => {
@@ -93,10 +90,10 @@ class ShiftWeekTableComponent extends Week {
                     }
                 });
             }
+
         }
-
-
-
+        let { date } = this.props;
+        let { start } = ShiftWeekTableComponent.range(date, this.props);
         let jobData = calendarHash;
         return (
             <div className="table-responsive">
@@ -137,6 +134,16 @@ class ShiftWeekTableComponent extends Week {
                             ))
                         }
                     </TableBody>
+                </Table>
+            </div>
+        );
+    }
+}
+
+
+/*
+                    <p className="weekDay">Hours Booked</p><HoursBooked
+                                Data={jobData}/>
                     <TableFooter adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
                             <TableRowColumn style={styles.tableFooterHeading}>
@@ -213,6 +220,8 @@ class ShiftWeekTableComponent extends Week {
     }
 }
 
+*/
+
 ShiftWeekTableComponent.range = (date, { culture }) => {
     let firstOfWeek = localizer.startOfWeek(culture);
     let start = dates.startOf(date, 'week', firstOfWeek);
@@ -265,18 +274,19 @@ const allUsers = gql`
         }
     }
     `
-
+    
 ///
 const ShiftWeekTable = compose(
-    graphql(allShifts, {
-        options: (ownProps) => ({
-            variables: {
-                brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
-                day: moment(ownProps.date)
-            }
-        }),
-    }),
-    graphql(allUsers, {name: "allUsers"})
-)(ShiftWeekTableComponent)
+graphql(allShifts, {
+   options: (ownProps) => ({ 
+     variables: {
+       brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+       day: moment(ownProps.date)
+     }
+   }),
+ }),
+ graphql(allUsers, {name: "allUsers"})
+ )(ShiftWeekTableComponent)
+
 
 export default ShiftWeekTable

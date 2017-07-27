@@ -50,13 +50,13 @@ class DrawerHelper extends Component {
 
   handleSubmitEvent = (event) => {
     // Resetting the field values.
-    this.setState({ ...initialState });
     this.props.handleSubmit(this.state.workplace);
+    this.setState({ ...initialState });
   };
 
   handleImageUpload = (files) => {
     // handle image upload code here.
-    console.log('Image upload button clicked');
+    console.log('Image upload code goes here');
     const workplace = Object.assign(this.state.workplace, { image: files[0] });
     this.setState({ workplace, blob: files[0] });
   };
@@ -67,7 +67,6 @@ class DrawerHelper extends Component {
   };
 
   handleChange = (event) => {
-    debugger;
     const { name, value } = event.target;
     const workplace = Object.assign(this.state.workplace, { [name]: value });
     this.setState({ workplace });
@@ -89,7 +88,7 @@ class DrawerHelper extends Component {
       title: (workplaceId && 'Update Workplace') || 'Add Workplace',
       buttonText: (workplaceId && 'Update Workplace') || 'Add Workplace'
     };
-    const brandOptions = map(brands, brand => ({ key: brand.id, value: brand.id, text: brand.name }));
+    const brandOptions = map(brands, brand => ({ key: brand.id, value: brand.name, text: brand.name }));
     const DrawerWorkplace = this.state.workplace;
     return (
       <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={closeDrawer}

@@ -67,11 +67,9 @@ export default class Settings extends Component {
   };
 
   addOrUpdateWorkPlace = (workplace) => {
-    const { workplaces, brands } = this.state;
+    const { workplaces } = this.state;
     // Just for dummy data (To be removed after actual data submission)
-    workplace.image = workplace.image.preview;
-    const selectedBrand = find(workplaces, { id: brands.id });
-    workplace.brand = selectedBrand && selectedBrand.name;
+    if (typeof workplace.image !== 'string') workplace.image = workplace.image.preview;
     if (!workplace.id) {
       workplace.id = maxBy(workplaces, 'id').id + 1;
       workplaces.push(workplace);
@@ -91,6 +89,17 @@ export default class Settings extends Component {
 
   addOrUpdateBrand = (brand) => {
     const { brands } = this.state;
+    // Just for dummy data (To be removed after actual data submission)
+    if (typeof brand.image !== 'string') brand.image = brand.image.preview;
+    if (!brand.id) {
+      brand.id = maxBy(brands, 'id').id + 1;
+      brands.push(brand);
+      this.setState({ brands });
+    } else {
+      const workplaceIndex = findIndex(brands, { id: brand.id });
+      brands[workplaceIndex] = brand;
+      this.setState({ brands });
+    }
   };
 
   getButtonStyle = (value) => ({
@@ -126,8 +135,10 @@ export default class Settings extends Component {
             buttonStyle={this.getButtonStyle('brand')}
             label="Brand"
             value="brand">
-            <Brand brands={this.state.brands}
-                   onDeleteBrand={this.deleteBrand}/>
+            <Brand
+              addOrUpdateBrand={this.addOrUpdateBrand}
+              brands={this.state.brands}
+              onDeleteBrand={this.deleteBrand} />
           </Tab>
           <Tab
             buttonStyle={this.getButtonStyle('company')}

@@ -52,7 +52,7 @@ export default class Personal extends Component {
 
   handleImageUpload = (files) => {
     // Image uploading code to be done here
-    console.log('Image upload button clicked');
+    console.log('Image upload code goes here');
     this.setState({ blob: files[0] });
   };
 

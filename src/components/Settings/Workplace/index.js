@@ -50,7 +50,6 @@ export default class Workplace extends Component {
   };
 
   handleDeleteClick = (id) => {
-    console.log('Delete button clicked');
     this.setState({ openDeleteModal: true, toDeleteWorkplace: id });
   };
 
@@ -80,7 +79,7 @@ export default class Workplace extends Component {
   render() {
     const { workplaces } = this.props;
     const claimedWorkplaces = filter(workplaces, { 'claimed': true });
-    const progressLabel = `${claimedWorkplaces.length * 100 / workplaces.length}% WORKPLACES`;
+    const progressLabel = `${(claimedWorkplaces.length * 100 / workplaces.length).toFixed(2)}% WORKPLACES`;
     return (
       <div className="content workplaces-content">
         <div className="workplace-add-button">

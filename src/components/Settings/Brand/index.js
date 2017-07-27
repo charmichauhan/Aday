@@ -38,7 +38,6 @@ export default class Brand extends Component {
   };
 
   handleDeleteClick = (id) => {
-    console.log('Delete button clicked');
     this.setState({ openDeleteModal: true, toDeleteBrand: id });
   };
 
@@ -80,7 +79,6 @@ export default class Brand extends Component {
               <GridColumn width={14}>
                 <ListItem
                   key={brand.id}
-
                   open={this.state.open} primaryText={brand.name}
                 >
                   <IconButton style={styles.actionButtons} onClick={() => this.openBrandDrawer(brand)}>

@@ -14,7 +14,8 @@ const initialState = {
     id: '',
     name: '',
     image: ''
-  }
+  },
+  blob: null
 };
 
 class DrawerHelper extends Component {
@@ -30,16 +31,15 @@ class DrawerHelper extends Component {
     this.setState({ brand });
   }
 
-  handleSubmitEvent = (event) => {
+  handleSubmitEvent = () => {
     // Resetting the field values.
-    document.getElementById('brand-name').value = '';
+    this.props.handleSubmit(this.state.brand);
     this.setState({ ...initialState });
-    this.props.handleSubmit(event);
   };
 
   handleImageUpload = (files) => {
     // handle image upload code here.
-    console.log('Image upload button clicked');
+    console.log('Image upload code goes here');
     const brand = Object.assign(this.state.brand, { image: files[0] });
     this.setState({ brand, blob: files[0] });
   };

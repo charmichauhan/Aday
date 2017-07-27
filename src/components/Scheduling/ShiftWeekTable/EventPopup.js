@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import close from '../../../../public/assets/Icons/close-shift.png';
-import edit from '../../../../public/assets/Icons/edit-shift.png';
-import create from '../../../../public/assets/Icons/create-shift.png';
 import Modal from '../../helpers/Modal';
 import '../style.css';
 import './shiftWeekTable.css';
@@ -60,12 +57,10 @@ export default class EventPopup extends Component{
 
     render(){
         let data=this.props.data;
-        // let startTime = moment(data['timeFrom'],"hh:mm a");
-        // let endTime = moment(data['timeTo'],"hh:mm a");
-        let startTime = moment(data.startTime);
-        let endTime = moment(data.endTime);
-        let h = endTime.diff(startTime,'hours');
-        let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
+        let startTime = moment(data.startTime).format("hh:mm A");
+        let endTime = moment(data.endTime).format("hh:mm A");
+        let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
+        let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
         let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
             {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
         if (data.workersAssigned == null){
@@ -79,8 +74,8 @@ export default class EventPopup extends Component{
             <div className="day-item hov">
                 <div className="start-time">
                     <span className="fa fa-clock-o"/>
-                    <p className="date-time"> {startTime.format("HH:mm")} {endTime.format("HH:mm")} </p>
-                    <p className="duration">{h} HR&thinsp; {m}MIN </p>
+                    <p className="date-time"> {startTime.replace("M","")} {endTime.replace("M","")}</p>
+                    <p className="duration">{h} HR&thinsp; {m}MIN</p>
                 </div>
                 <div className="location">
                     <span className="fa fa-map-marker mr5" aria-hidden="true">
@@ -89,7 +84,7 @@ export default class EventPopup extends Component{
                     <span>{data.workplaceByWorkplaceId.workplaceName}</span>
                 </div>
                 <div className="day-item-title">
-                    {this.openShift!=="" && <span className="box-title openshift">{this.openShift}</span>}
+                    {this.openShift>0 && <span className="box-title openshift">{this.openShift}</span>}
                     {data.workersInvited.length>0 && <span className="box-title pendingshift">{data.workersInvited.length}</span>}
                     {data.workersAssigned.length==0?<span className="box-title filledshift">\</span>:<span className="box-title filledshift">{data.workersAssigned.length}</span>}
                 </div>
@@ -99,9 +94,9 @@ export default class EventPopup extends Component{
                 }
                 <div className="overlay">
                     <div className="hoimg">
-                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src={close} alt="close"/></i></a>
-                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><i><img src={edit} alt="edit"/></i></a>
-                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><i><img src={create} alt="create"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src="/assets/Icons/close-shift.png" alt="close"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><i><img src="/assets/Icons/edit-shift.png" alt="edit"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><i><img src="/assets/Icons/create-shift.png" alt="create"/></i></a>
                     </div>
                 </div>
             </div>

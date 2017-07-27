@@ -7,6 +7,7 @@ import Toolbar from "react-big-calendar/lib/Toolbar";
 import {Button} from "semantic-ui-react";
 import ShiftWeekTable from "./ShiftWeekTable";
 import "../Scheduling/style.css";
+import { gql, graphql } from 'react-apollo';
 
 let templateName;
 export default class Template extends Component {
@@ -39,8 +40,17 @@ export default class Template extends Component {
     }
 }
 
-class CustomToolbar extends Toolbar {
+class CustomToolbarComponent extends Toolbar {
+
     render() {
+        if (this.props.data.loading) {
+            return (<div>Loading</div>)
+        }
+
+        if (this.props.data.error) {
+            console.log(this.props.data.error)
+            return (<div>An unexpected error occurred</div>)
+        }
         let month = moment(this.props.date).format("MMMM YYYY");
         return (
             <div>
@@ -56,12 +66,11 @@ class CustomToolbar extends Toolbar {
                                 <ul className="nav navbar-nav dropdown_job">
                                     <li className="dropdownweeky">
                                         <select className="dropdown">
-                                            <option value="volvo">{templateName || "Standard $ 5,000 Sales Week"}</option>
-                                            <option value="saab">Saab</option>
-                                            <option value="opel">Opel</option>
-                                            <option value="audi">Audi</option>
+                                        { this.props.data.allTemplates.edges.map((value,index) =>
+                                            <option value={ index }> { value.node.templateName }</option>
+                                            )
+                                        }
                                         </select>
-
                                     </li>
                                 </ul>
                             </div>
@@ -89,3 +98,17 @@ class CustomToolbar extends Toolbar {
         );
     }
 }
+
+const allTemplates = gql`
+  query allTemplates {
+    allTemplates {
+        edges{
+            node{
+              id
+              templateName
+            }
+        }
+    }
+}`
+
+const CustomToolbar  = graphql(allTemplates)(CustomToolbarComponent);

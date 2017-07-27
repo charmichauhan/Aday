@@ -1,0 +1,241 @@
+/* Content */
+.settings .content {
+    padding-top: 40px;
+}
+
+/* Drawers */
+.settings .drawer-heading {
+    margin: 0 0 10px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f5f5f5;
+    background-color: #2200a1;
+}
+
+.settings .drawer-heading button {
+    box-shadow: 1px 2px 3px #000;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+}
+
+.settings .drawer-heading h2 {
+    display: inline-block;
+    width: 85%;
+    margin-top: 0;
+    color: #FFFFFF;
+}
+
+.settings .drawer-section label {
+    color: #666666;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.settings .drawer-section .form-div {
+    margin: 20px 0;
+}
+
+.settings .drawer-section .form-div .form-group {
+    margin-bottom: 30px;
+}
+
+.settings .drawer-section input[type="text"].form-control,
+.settings .drawer-section select.form-control {
+    height: 45px;
+}
+
+.settings .brands-content .brand-add-button .btn-circle-wrapper,
+.settings .workplaces-content .workplace-add-button .btn-circle-wrapper {
+    width: 100%;
+    margin: 15px auto;
+    text-align: center;
+}
+
+/* Personal tab */
+.settings .personal-content .heading {
+    color: #31363D;
+    font-size: 24px;
+    text-align: left;
+    line-height: 21px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    font-weight: normal;
+}
+
+.settings .personal-content .personal-info-img {
+    width: 100%;
+    float: left;
+}
+
+.settings .personal-content .personal-info-img .personal-info {
+    width: 50%;
+    float: left;
+}
+
+.settings .personal-content .personal-info-img .personal-img {
+    width: 50%;
+    float: left;
+    cursor: pointer;
+    padding: 20px 50px;
+}
+
+.settings .personal-content .personal-info-img .personal-info ul {
+    padding: 0;
+    margin: 0 auto;
+}
+
+.settings .personal-content .personal-info-img .personal-info li {
+    list-style: none;
+    margin-bottom: 25px;
+}
+
+.settings .personal-content .personal-info-img .personal-info li label {
+    color: #666666;
+    font-size: 18px;
+    line-height: 21px;
+    font-weight: normal;
+    text-transform: uppercase;
+
+}
+
+.settings .personal-content .personal-info-img .personal-info li input {
+    border: 2px solid rgba(74, 74, 74, 0.5);
+    border-radius: 4px;
+    background-color: #FFFFFF;
+    height: 50px;
+    text-transform: uppercase;
+}
+.settings .personal-content .personal-info-img .personal-info li .field-password-view input {
+    text-transform: none;
+}
+
+.settings .personal-content .personal-info-img .personal-info li.has-error input {
+    border: 1px solid #ee3622;
+}
+
+.settings .personal-content .personal-info-img .personal-info li.has-error label {
+    color: #ee3622;
+}
+
+.settings .personal-content .personal-info-img .personal-info li input::placeholder {
+    color: #999999;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 21px;
+}
+
+.settings .personal-content .personal-info-img .personal-img .personal-img-icon {
+    box-sizing: border-box;
+    height: 254px;
+    width: 254px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    background-color: #FFFFFF;
+    box-shadow: 0 9px 7px 0 rgba(1, 1, 1, 0.09);
+    border-radius: 100%;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 250px;
+}
+
+.settings .personal-content .payment-option {
+    float: left;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.settings .personal-content .payment-option .payment-service {
+    border: 1px solid #D9D9D9;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+    width: 220px;
+    text-align: center;
+    padding: 10px 40px 20px;
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.settings .personal-content .payment-option .payment-service span {
+    color: #31363D;
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 26px;
+    text-transform: uppercase;
+    display: block;
+}
+
+.settings .personal-content .payment-option .payment-service i {
+    width: 100px;
+    height: 50px;
+    display: inline-block;
+}
+
+.settings .personal-content .payment-option .payment-service i img {
+    width: 100px;
+    margin-top: -24px;
+}
+
+/* Brand Section */
+
+.ui.grid .two.wide.column {
+    height: 80px;
+    padding: 0 1rem;
+}
+
+div.list-left-image-wrapper {
+    margin: auto 0;
+}
+
+img.list-left-image {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+/*Uploaded Image CSS*/
+
+.uploaded-image {
+    border: 1px dashed #ccc;
+    margin: 0 auto;
+}
+
+.drawer-footer {
+    position: fixed;
+    left: 50%;
+    bottom: 10px;
+    transform: translate(-50%);
+    width: 100%;
+}
+
+.drawer-section.brand-drawer-section {
+    height: 75vh;
+    overflow-y: scroll;
+}
+
+.drawer-section.workplace-drawer-section {
+    display: block;
+    overflow: hidden;
+    height: 75vh;
+    overflow-y: scroll;
+}
+
+.field-password-view {
+    position: relative;
+}
+
+.field-password-view button {
+    position: absolute !important;
+    right: 0;
+    top: 0;
+}
+
+.input-inline-icon {
+    width: 100%;
+}
+
+.workplace-progress-bar {
+    text-align: center;
+    font-size: larger;
+    font-weight: bold;
+    color: #333333;
+}

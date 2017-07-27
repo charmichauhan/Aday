@@ -1,0 +1,26 @@
+.shift-modal-day-cell {
+  display: inline-block;
+}
+.shift-modal-day-cell .shift-modal-day-cell-button {
+    margin: 0 11px;
+    width: 70px;
+    height: 70px;
+    background-color: #fff;
+    border: 1px solid #f7f7f7;
+    color: #423a3f;
+    font-weight: bold;
+    font-size: 19px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    letter-spacing: -1px;
+    padding-top:10px;
+}
+.shift-modal-day-cell .shift-modal-day-cell-button:hover, .shift-modal-day-cell .shift-modal-day-cell-button:active, .shift-modal-day-cell .shift-modal-day-cell-button.selected {
+  background-color: #0022A1;
+  border-color: #0022A1;
+  color: #fff;
+}
+.shift-modal-day-cell .shift-modal-day-cell-button:focus {
+  outline: none;
+}

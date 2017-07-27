@@ -9,45 +9,54 @@ import {
 
 export default class JobsRow extends Component{
     render(){
-
         let data = this.props.data;
-        let shifts = data.shifts[0];
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
+         data.map((value,index) => {
+             const day = value.weekday
+             if (hashByDay[day]){
+                 hashByDay[day] = [...hashByDay[day], value];
+             } else {
+                 hashByDay[day] =  [value];
+             }
+         })
+
+
         let finalHours = 0;
         let finalMinutes = 0;
-        Object.values(shifts).map((value,index) => {
-            if(value.length){
-                for(let i=0;i<value.length;i++){
-                    let startTime = moment(value[i]['timeFrom'],"hh:mm a");
-                    let endTime = moment(value[i]['timeTo'],"hh:mm a");
-                    let h = endTime.diff(startTime,'hours');
-                    let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
-                    finalHours += h;
-                    finalMinutes += parseInt(m);
-                }
-            }
+        Object.values(data).map((value,index) => {
+            let startTime = moment(value.startTime).format("hh:mm A");
+            let endTime = moment(value.endTime).format("hh:mm A");
+            let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
+            let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
+            finalHours += parseInt(h);
+            finalMinutes += parseInt(m);
         });
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
+
         return(
+
             <TableRow className="tableh" displayBorder={false}>
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
                     <div className="user_profile" width="80%">
                         <div className="user_img">
-                            <img src={data.image} alt="img"/>
+                            <img width="55px" src={data[0].userAvatar} alt="img"/>
                         </div>
-                        <div className="user_desc penalheading">{data.firstName}
-                            <p className="lastName">{data.lastName}</p>
+                        <div className="user_desc penalheading">{data[0].userFirstName}
+                            <p className="lastName">{data[0].userLastName}</p>
                             <p className="finalHours employeeFinalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
                         </div>
                     </div>
                 </TableRowColumn>
                 {
-                    Object.values(shifts).map((value,index)=> ((
+                    daysOfWeek.map((value,index)=> ((
                             <TableRowColumn key={index} className="shiftbox" style={{paddingLeft:'0px',paddingRight:'0px',backgroundColor:'#F5F5F5'}}>
                                 {
-                                    Object.values(value).map((value,index)=>(
-                                        <EventPopup data={value} key={index}/>
+                                    Object.values(hashByDay[value]).map((v,i)=>(
+                                        <EventPopup data={v} key={i}/>
+
                                     ))
                                 }
                                 <button type="button" className="addshift">

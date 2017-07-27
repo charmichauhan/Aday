@@ -1,67 +1,129 @@
-import { DatePickerForm, TimePickerForm } from './datePickerForm';
 import React, { Component } from 'react';
-import { Field } from 'redux-form';
-import { Slider, SelectField } from 'redux-form-material-ui';
-import { Icon, Button } from 'semantic-ui-react'
-import MenuItem from 'material-ui/MenuItem';
+import moment from 'moment';
+import { Icon, Button,Image,Modal,Header,Segment,Input,TextArea,Form} from 'semantic-ui-react';
+import {Scrollbars} from 'react-custom-scrollbars';
+import TimePicker from '../../TimePicker/TimePicker';
+import NumberOfMemberSelector from '../../NumberOfMemberSelector/NumberOfMemberSelector';
+import ShiftDaySelector from '../../DaySelector/ShiftDaySelector';
+import PositionSelectOption from '../../Position/Position';
+import './EmergencyShiftForm.css';
 
 class EmergencyShiftForm extends Component {
+  constructor(props){
+    super(props);
+
+    this.state = {
+      workplace:'',
+      position:'',
+      shiftDaysSelected:'',
+      startTime:'',
+      stopTime:'',
+      numberOfTeamMembers:'',
+      unpaidBreak:'',
+      instructions:'',
+      disabledSubmitButton:true
+    }
+    this.onWorkplace=this.onWorkplace.bind(this);
+    this.onUnpaidBreak=this.onUnpaidBreak.bind(this);
+    this.onInstructions=this.onInstructions.bind(this);
+    this.checkSubmitButton=this.checkSubmitButton.bind(this);
+    this.updateFormState=this.updateFormState.bind(this);
+  }
+  checkSubmitButton(){
+    console.log(this.state);
+    const { workplace,instructions,unpaidBreak,position,startTime,stopTime,shiftDaysSelected,numberOfTeamMembers}=this.state;
+    if(workplace!==''&&instructions!==''&&unpaidBreak!==''&&position!==''&&startTime!==''&&stopTime!==''&&shiftDaysSelected!==''&&numberOfTeamMembers!==''){
+       this.setState({disabledSubmitButton:false});
+    }else{
+       this.setState({disabledSubmitButton:true});
+    }
+  }
+  onWorkplace(event){
+    this.setState({workplace:event.target.value});
+    this.checkSubmitButton();
+  }
+
+  onUnpaidBreak(event){
+    this.setState({unpaidBreak:event.target.value});
+    this.checkSubmitButton();
+  }
+  onInstructions(event){
+    this.setState({instructions:event.target.value});
+    this.checkSubmitButton();
+  }
+  updateFormState(dataValue){
+    this.setState(dataValue);
+    this.checkSubmitButton();
+  }
   render() {
-    const { handleSubmit, numMembers, pristine, reset, submitting } = this.props;
+    const startDate=moment().format('MM-DD-YYYY');
     return (
-      <form onSubmit={handleSubmit}>
-        <h3>Emergency Shift &nbsp;<Icon name="warning sign"/></h3>
-        <div style={{marginTop: -25}}>
-          <Field name="workplace" component={SelectField} hintText="Workplace"
-           floatingLabelText="Workplace">
-            <MenuItem value={'Chao Center'} primaryText="Chao Center"/>
-          </Field>
-        </div>
-        <div>
-          <label>Date</label>
-          <Field name="date" component={DatePickerForm}/>
-        </div>
-        <div style={{marginTop: -5}}>
-          <Field name="template" component={SelectField} label="Template (Optional)"
-           floatingLabelText="Template (Optional)">
-            <MenuItem value={'A'} primaryText="Template A"/>
-            <MenuItem value={'B'} primaryText="Template B"/>
-          </Field>
-        </div>
-        <div style={{marginTop: -15}}>
-          <Field name="certification" component={SelectField} hintText="Certification"
-            floatingLabelText="Certification">
-          <MenuItem value={'Line Cook'} primaryText="Line Cook"/>
-          <MenuItem value={'Sushi Chef'} primaryText="Sushi Chef"/>
-          </Field>
-        </div>
-        <div>Number of Team Members: {numMembers}</div>
-        <div>
-          <Field
-            name="members"
-            component={Slider}
-            defaultValue={1}
-            format={null}
-            min={1}
-            max={10}
-            step={1}
-          />
-        </div>
-        <div style={{marginTop: -30}}>
-          <label>Start Time</label>
-          <Field name="start" component={TimePickerForm}/>
-        </div>
-        <div>
-          <label>End Time</label>
-          <Field name="end" component={TimePickerForm}/>
-        </div>
-        <div style={{padding: 15, textAlign: 'center'}}>
-        <Button type="submit" disabled={pristine || submitting}>Create Shift</Button>
-        <Button type="button" disabled={pristine || submitting} onClick={reset}>Clear</Button>
-        </div>
-      </form>
+      <div>
+      <Header as='h1' style={{ textAlign: 'center' , color: '#0022A1',fontSize: '22px' }} >
+        <Image
+          floated="left"
+          src="/images/Assets/Icons/Icons/job-deck.png"
+          style={{ marginTop:'-1px',width:'25px' }}
+        />
+        <p style={{marginLeft:'40%',marginTop:'-1.5%',float:'left'}}>EMERGENCY SHIFT</p>
+        <Image
+          floated="right"
+          src="/images/Assets/Icons/Buttons/delete-round-small.png"
+          shape="circular"
+          style={{ marginTop:'-0.5%',right:'-11%',width:'37px',float:'right' }}
+          onClick={ this.props.closeFunc }
+        />
+      </Header>
+         <Segment raised style={{ marginTop:'2.5%',boxShadow:'inset 0 2px 4px 0 rgba(34,36,38,.12), inset 0 2px 10px 0 rgba(34,36,38,.15)' }}>
+          <Scrollbars autoHide autoHeight autoHeightMin='10vh' autoHeightMax='57vh'
+             style={{ marginBottom:'20px'}} >
+          <Form style={{marginLeft:'1%'}}>
+            <div>
+             <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>WORKPLACE</p>
+             <Input disabled fluid placeholder="WORKPLACE" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={ this.onWorkplace } />
+            </div>
+            <div>
+             <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>POSITION</p>
+             <PositionSelectOption formCallBack={ this.updateFormState } />
+            </div>
+            <div>
+             <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>SHIFT DATE(S)</p>
+             <ShiftDaySelector startDate={ startDate } formCallBack={this.updateFormState} />
+            </div>
+            <div>
+              <TimePicker formCallBack={this.updateFormState} />
+            </div>
+            <div style={{ marginTop:'32%' }}>
+               <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>NUMBER OF TEAM MEMBERS</p>
+              <NumberOfMemberSelector formCallBack={this.updateFormState} />
+            </div>
+           <div style={{ marginTop:'2%' }}>
+             <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>UNPAID-BREAK</p>
+             <Input fluid placeholder="30 MINUTES (SET BY POLICY)" icon={<Icon name="chevron down" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={ this.onUnpaidBreak }/>
+           </div>
+           <div>
+             <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}><span style={{color:'#0022A1'}}>Maximum</span> INCENTIVE BONUS PER HOUR</p>
+             <Input placeholder="$0.00" icon={<Icon name="sort" />} style={{ marginTop:'-2%',width:'95%',backgroundColor:'lightgrey' }} disabled />
+           </div>
+           <div>
+             <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>INSTRUCTIONS - <span style={{color:'RED'}}>OPTIONAL</span></p>
+             <TextArea rows={3} fluid  placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={ this.onInstructions } />
+           </div>
+
+          </Form>
+        </Scrollbars>
+      </Segment>
+      <div>
+         <Image
+           disabled={ this.state.disabledSubmitButton }
+           centered
+           src="/images/Assets/Icons/Buttons/emergency-shift.png"
+           shape="circular"
+           width="20%"
+         />
+      </div>
+    </div>
     );
   }
 }
-
 export default EmergencyShiftForm;

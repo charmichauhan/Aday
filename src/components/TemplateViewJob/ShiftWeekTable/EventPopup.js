@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import '../../Scheduling/style.css';
-import close from '../../../../public/assets/Icons/close-shift.png';
-import edit from '../../../../public/assets/Icons/edit-shift.png';
-import create from '../../../../public/assets/Icons/create-shift.png';
-import cashier from "../../../../public/assets/Icons/cashier.png"
+
 import Modal from '../../helpers/Modal';
 
 export default class EventPopup extends Component{
@@ -79,9 +76,9 @@ export default class EventPopup extends Component{
                 }
                 <div className="overlay">
                     <div className="hoimg">
-                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src={close} alt="close"/></i></a>
-                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><i><img src={edit} alt="edit"/></i></a>
-                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><i><img src={create} alt="create"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src="/assets/Icons/close-shift.png" alt="close"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><i><img src="/assets/Icons/edit-shift.png" alt="edit"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><i><img src="/assets/Icons/create-shift.png" alt="create"/></i></a>
                     </div>
                 </div>
             </div>

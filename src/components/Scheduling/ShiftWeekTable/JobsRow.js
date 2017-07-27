@@ -12,7 +12,7 @@ export default class JobsRow extends Component{
         let data = this.props.data;
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
-        this.props.data.map((value,index) => {
+        data.map((value,index) => {
             const day = value.weekday
             if (hashByDay[day]){
                 hashByDay[day] = [...hashByDay[day], value];
@@ -22,15 +22,14 @@ export default class JobsRow extends Component{
         });
         let finalHours = 0;
         let finalMinutes = 0;
-        Object.values(this.props.data).map((value,index) => {
-            let startTime = moment(value.startTime);
-            let endTime = moment(value.endTime);
-            let h = endTime.diff(startTime,'hours');
-            let m = moment.utc(moment(endTime).diff(moment(startTime))).format("mm");
-            finalHours += h;
+        Object.values(data).map((value,index) => {
+            let startTime = moment(value.startTime).format("hh:mm A");
+            let endTime = moment(value.endTime).format("hh:mm A");
+            let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
+            let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
+            finalHours += parseInt(h);
             finalMinutes += parseInt(m);
         });
-
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
@@ -42,7 +41,7 @@ export default class JobsRow extends Component{
                             <img width="65px" src={ data[0].positionByPositionId.positionIconUrl } alt="img"/>
                         </div>
                         <div className="user_desc penalheading">{data[0].positionByPositionId.positionName.split(" ")[0]}
-                            <p  className="lastName"> { data[0].positionByPositionId.positionName.split(" ")[1] }</p>
+                            <p className="lastName"> { data[0].positionByPositionId.positionName.split(" ")[1] }</p>
                             <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
                             <p className="scheduled_tag">SCHEDULED</p>
                         </div>

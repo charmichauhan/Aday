@@ -1,5 +1,6 @@
 .header {
     padding: 10px;
+    width:100% !important;
 }
 .dropdown-box {
     color:red;
@@ -16,6 +17,7 @@
 }
 
 .header select {
+    padding : 10px 0 !important;
     background: url("/images/dropdown-arrow.png") no-repeat 97% 50%;
     -moz-appearance: none;
     -webkit-appearance: none;
@@ -85,6 +87,7 @@
     position: fixed;
     top: 0;
     left: 0;
+    width:260px;
 }
 
 .left-menu-fixed {

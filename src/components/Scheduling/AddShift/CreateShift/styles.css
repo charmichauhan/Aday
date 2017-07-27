@@ -26,14 +26,14 @@
   from {top:-300px;opacity:0}
   to{top:0;opacity:1}
 }
-@@keyframes animatetop {
+@keyframes animatetop {
   from{top:-300px;opacity:0}
   to{top:0;opacity:1}
 }
-  p {
-  padding:12px 0 5px 0;
-  margin:0;
-}
+/*p {*/
+  /*padding:12px 0 5px 0;*/
+  /*margin:0;*/
+/*}*/
 .add-shift-close{
   color:#000;
   float:right;

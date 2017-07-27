@@ -6,8 +6,6 @@ import CircleButton from '../CircleButton';
 import IconButton from 'material-ui/IconButton';
 import {Image} from 'semantic-ui-react';
 import './addastemplate.css';
-import modalClose from '../../../../public/images/Modal-Close.png';
-
 const style = {
     titleStyle:{
         paddingLeft: '0',
@@ -49,7 +47,7 @@ export default class AddAsTemplateModal extends Component {
             <h5 className="confirm-popup">ADD TEMPLATE</h5>
             <div className="confirm-popup-close">
                 <IconButton style={{borderRadius:'50%',boxShadow:'0px 2px 9px -2px #000'}} onClick={handleClose}>
-                    <Image src="/images/Modal-Close.png" size="mini"/>
+                    <Image src="/images/Icons_Red_Cross.png" size="mini"/>
                 </IconButton>
             </div>
         </div>);

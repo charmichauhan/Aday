@@ -3,25 +3,26 @@ import moment from "moment";
 import Week from "react-big-calendar/lib/Week";
 import dates from "react-big-calendar/lib/utils/dates";
 import localizer from "react-big-calendar/lib/localizer";
+import SpecialDay from './SpecialDay';
 import JobsRow from "./JobsRow";
 import HoursBooked from "./HoursBooked";
 import jobsData from "./jobs.json";
-import SpecialDay from "./SpecialDay";
 import Modal from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton';
 import "../../Scheduling/style.css";
+import { gql, graphql } from 'react-apollo';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
 
 const styles = {
     bodyStyle: {
+        maxHeight: 900
     },
     wrapperStyle: {
         width: 1188
     },
     root: {
         borderCollapse: 'separate',
-        borderSpacing: '8px 8px',
-        marginBottom:0
+        borderSpacing: '8px 8px'
     },
     tableFooter: {
         paddingLeft:'0px',
@@ -39,7 +40,8 @@ const styles = {
         boxShadow:'0 1px 2px 0 rgba(74, 74, 74, 0.5)'
     }
 };
-export default class ShiftWeekTable extends Week {
+
+class ShiftWeekTableComponent extends Week {
     constructor(props){
         super(props);
         this.state={
@@ -55,8 +57,61 @@ export default class ShiftWeekTable extends Week {
         let that =this;
         that.setState({deleteTemplateModal:true})
     };
+
+    handleApplyTemplate = () => {
+        let that =this;
+        that.setState({deleteTemplateModal:true})
+    };
+
     render() {
-        let jobData = jobsData;
+         if (this.props.data.loading) {
+             return (<div>Loading</div>)
+         }
+
+         if (this.props.data.error) {
+             console.log(this.props.data.error)
+             return (<div>An unexpected error occurred</div>)
+        }
+
+
+        console.log(this.props.data)
+        let calendarHash = {};
+        let userHash={};
+        let workplace = ""
+        if (this.props.data.templateById){
+            workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
+        }
+
+        if (this.props.data.templateById) {
+            this.props.data.templateById.templateShiftsByTemplateId.edges.map((value,index) => {
+
+                if (value.node.workerCount > value.node.templateShiftAssigneesByTemplateShiftId.edges.length){
+                            const rowHash = {};
+                            rowHash["user"] = ["Open", "Shifts"];
+                            rowHash["workplace"] = workplace;
+                            if (calendarHash["Open Shifts"]){
+                                calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"],  Object.assign(rowHash, value.node)]
+                            } else {
+                                calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
+                            }
+                }
+
+                value.node.templateShiftAssigneesByTemplateShiftId.edges.map((value2,index2) => {
+                        const user = [value2.node.userByUserId.firstName, value2.node.userByUserId.lastName, value2.node.userByUserId.avatarUrl]
+                        const rowHash = {};
+                        rowHash["user"] = user;
+                        rowHash["workplace"] = workplace;
+                        if (calendarHash[user]){
+                            calendarHash[user] = [...calendarHash[user],  Object.assign(rowHash, value.node)]
+                        } else {
+                            calendarHash[user] = [Object.assign(rowHash, value.node)]
+                        }
+                    })
+            });
+        }
+
+        console.log(calendarHash)
+        let jobData = calendarHash;
         let {date} = this.props;
         let {start} = ShiftWeekTable.range(date,this.props);
         let deleteTemplateAction =[{type:"white",title:"Cancel",handleClick:this.modalClose,image:false},
@@ -96,10 +151,10 @@ export default class ShiftWeekTable extends Week {
                     </TableHeader>
                     <TableBody>
                         <SpecialDay/>
-                        {jobData.map((value, index) => (
-                                <JobsRow data={jobData[index]} key={index}/>
-                            )
-                        )
+                        {Object.keys(jobData).map((value, index) => (
+                                <JobsRow data={jobData[value]} key={index}/>
+                                     )
+                             )
                         }
                     </TableBody>
                     <TableFooter adjustForCheckbox={false}>
@@ -173,31 +228,76 @@ export default class ShiftWeekTable extends Week {
                         </TableRow>
                         <TableRow>
                             <TableRowColumn colSpan="8">
-                            <div className="text-center">
-                                <CircleButton type="white" title="Cancel" handleClick={this.handleDeleteTemplate}/>
-                                <CircleButton type="red" title="delete template" handleClick={this.handleDeleteTemplate}/>
-                                <CircleButton type="blue" title="apply template" handleClick={this.handleDeleteTemplate}/>
-                            </div>
+                                <div className="text-center">
+                                    <CircleButton type="white" title="Cancel" handleClick={this.handleDeleteTemplate}/>
+                                    <CircleButton type="red" title="delete template" handleClick={this.handleDeleteTemplate}/>
+                                    <CircleButton type="blue" title="apply template" handleClick={this.handleDeleteTemplate}/>
+                                </div>
                             </TableRowColumn>
                         </TableRow>
                     </TableFooter>
-
                 </Table>
             </div>
-                {this.state.deleteTemplateModal && <Modal isOpen = {this.state.deleteTemplateModal} title="Confirm"
+                {this.state.deleteTemplateModal?<Modal isOpen = {this.state.deleteTemplateModal} title="Confirm"
                                                      message = 'Are you sure that you want to delete the "Standard $5000 Sales Week" template?'
-                                                     action = {deleteTemplateAction} 
+                                                     action = {deleteTemplateAction}
                                                        closeAction={this.modalClose} />
-                }
-
+                    :""}
             </div>
         );
     }
 }
 
-ShiftWeekTable.range = (date, {culture}) => {
+ShiftWeekTableComponent.range = (date, {culture}) => {
     let firstOfWeek = localizer.startOfWeek(culture);
     let start = dates.startOf(date, 'week', firstOfWeek);
     let end = dates.endOf(date, 'week', firstOfWeek);
     return {start, end};
 };
+
+
+const allTemplateShifts = gql`
+  query allTemplateShifts($id: Uuid!){
+    templateById(id: $id) {
+              id
+              workplaceByWorkplaceId{
+                workplaceName
+              }
+                templateShiftsByTemplateId{
+                    edges{
+                      node{
+                        id
+                        dayOfWeek
+                        startTime
+                        endTime
+                        workerCount
+                        positionByPositionId{
+                            positionName
+                        }
+                        templateShiftAssigneesByTemplateShiftId{
+                            edges{
+                              node{
+                                userByUserId {
+                                  firstName
+                                  lastName
+                                  avatarUrl
+                                }
+                              }
+                            }
+                        } 
+                      }          
+                    }
+            }  
+    }
+}`
+
+const ShiftWeekTable = graphql(allTemplateShifts, {
+   options: (ownProps) => ({
+     variables: {
+       id: "5a03282c-c220-4927-b059-f4f22d01c230",
+     }
+   }),
+ })(ShiftWeekTableComponent)
+
+
+export default ShiftWeekTable

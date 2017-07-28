@@ -74,6 +74,7 @@ const styles = {
 
 class ShiftWeekTableComponent extends Week {
     render() {
+
         if (this.props.data.loading) {
             return (<div>Loading</div>)
         }
@@ -139,6 +140,7 @@ class ShiftWeekTableComponent extends Week {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
+
                             <SpecialDay/>
                             {(Object.keys(jobData)).map((value, index) => (
                                     <JobsRow data={jobData[value]} key={value}/>
@@ -162,7 +164,7 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
 };
 
 const allShifts = gql
-  `query allShifts($brandid: Uuid!, $day: Datetime!){ 
+  `query allShifts($brandid: Uuid!, $day: Datetime!){
         weekPublishedByDate(brandid: $brandid, day: $day){
             nodes{
             id
@@ -194,7 +196,7 @@ const allShifts = gql
 
 
 const ShiftWeekTable = graphql(allShifts, {
-   options: (ownProps) => ({ 
+   options: (ownProps) => ({
      variables: {
        brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
        day: moment(ownProps.date)
@@ -291,3 +293,4 @@ export default ShiftWeekTable
     }
 }
 */
+

@@ -3,6 +3,7 @@ import { Menu, Segment } from 'semantic-ui-react'
 import TimeAttendanceTable from './TimeAttendanceTable'
 import { corporationTimeOffRequestQuery } from './TimeOffQueries'
 import { graphql } from 'react-apollo';
+import moment from 'moment';
 
 class AttendanceRequests extends Component {
 	state = { activeItem: 'PENDING' }
@@ -18,7 +19,13 @@ class AttendanceRequests extends Component {
     }
 		if (this.props.data.allTimeOffRequests){
 			data = this.props.data.allTimeOffRequests.edges;
-			filtered_data = data.filter((item) => item.node.decisionStatus == activeItem);
+			if (activeItem != 'HISTORY'){
+				filtered_data = data.filter((item) => item.node.decisionStatus == activeItem &&
+																						 	moment().diff(item.node.startDate) <= 0);
+			} else {
+				filtered_data = data.filter((item) => moment().diff(item.node.startDate) > 0)
+			}
+
 		}
 		return (
 			<div>
@@ -37,6 +44,11 @@ class AttendanceRequests extends Component {
 						content="Denied Requests"
 						name="DENIED"
 						active={activeItem === 'DENIED'}
+						onClick={this.handleItemClick}/>
+					<Menu.Item
+						content="Request History"
+						name="HISTORY"
+						active={activeItem === 'HISTORY'}
 						onClick={this.handleItemClick}/>
 				</Menu>
 				<Segment attached="bottom">

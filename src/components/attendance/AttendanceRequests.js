@@ -1,31 +1,42 @@
 import React, { Component } from 'react'
-import { Menu, Segment } from 'semantic-ui-react'
+import { Menu, Segment, Button } from 'semantic-ui-react'
 import TimeAttendanceTable from './TimeAttendanceTable'
 import { corporationTimeOffRequestQuery } from './TimeOffQueries'
 import { graphql } from 'react-apollo';
 import moment from 'moment';
 
 class AttendanceRequests extends Component {
-	state = { activeItem: 'PENDING' }
+	constructor(props) {
+    super(props);
+    this.state = { activeItem: 'PENDING' }
+  }
 	handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+	isPast(request){
+		return moment().diff(request.node.startDate) > 0;
+	}
 	render() {
-		const {
-			activeItem
-		} = this.state
-		let data = [];
-		let filtered_data = [];
-    if (this.props.data.error) {
+		const activeItem = this.state.activeItem;
+		if (this.props.data.error) {
         return <div>Error! {this.props.data.error.message}</div>;
     }
-		if (this.props.data.allTimeOffRequests){
-			data = this.props.data.allTimeOffRequests.edges;
-			if (activeItem != 'HISTORY'){
-				filtered_data = data.filter((item) => item.node.decisionStatus == activeItem &&
-																						 	moment().diff(item.node.startDate) <= 0);
-			} else {
-				filtered_data = data.filter((item) => moment().diff(item.node.startDate) > 0)
+		let content = (<div></div>);
+		let requests = [];
+		let data = [];
+		let filtered_data = [];
+		if (!this.props.data.allTimeOffRequests){
+			content = (<div> Loading... </div>);
+		} else {
+			let requests = this.props.data.allTimeOffRequests.edges;
+			if (requests.filter(this.isPast).length === 0) {
+				this.props.data.loadMoreEntries();
 			}
-
+			if (activeItem != 'HISTORY'){
+				filtered_data = requests.filter((item) => item.node.decisionStatus == activeItem &&
+																						 	!this.isPast(item));
+			} else {
+				filtered_data = requests.filter(this.isPast);
+			}
+			content = (<TimeAttendanceTable requests={filtered_data} filter={activeItem}/>);
 		}
 		return (
 			<div>
@@ -52,15 +63,46 @@ class AttendanceRequests extends Component {
 						onClick={this.handleItemClick}/>
 				</Menu>
 				<Segment attached="bottom">
-					{!this.props.data.allTimeOffRequests ?
-					 (<div> Loading... </div>) :
-					 (<TimeAttendanceTable requests={filtered_data} filter={activeItem}/>)}
+					{content}
 				</Segment>
+				{(activeItem=="HISTORY" && this.props.data.allTimeOffRequests &&
+					this.props.data.allTimeOffRequests.pageInfo.hasNextPage) &&
+				 <Button onClick={this.props.data.loadMoreEntries}>Load More</Button>
+				}
 			</div>
 		);
 	}
 }
 
-export default graphql(corporationTimeOffRequestQuery,
-											 {options: {variables: {"corporationId": "3b14782b-c220-4927-b059-f4f22d01c230"}}})
-											 (AttendanceRequests);
+export default graphql(corporationTimeOffRequestQuery, {
+	                    options(props){
+											 	return {
+													variables: {corporationId: "3b14782b-c220-4927-b059-f4f22d01c230"}
+												};
+											},
+											props({ data: { loading, allTimeOffRequests, fetchMore } }) {
+										  	return {data : {
+										    	loading,
+										    	allTimeOffRequests,
+										    	loadMoreEntries: () => {
+										      	return fetchMore({
+										        	query: corporationTimeOffRequestQuery,
+										        	variables: {
+										          	cursor: allTimeOffRequests.pageInfo.endCursor,
+																corporationId: "3b14782b-c220-4927-b059-f4f22d01c230"
+										         	},
+										        	updateQuery: (previousResult, { fetchMoreResult }) => {
+										          	const newEdges = fetchMoreResult.allTimeOffRequests.edges;
+										          	const pageInfo = fetchMoreResult.allTimeOffRequests.pageInfo;
+										          	return {
+										            	allTimeOffRequests: {
+										              	edges: [...previousResult.allTimeOffRequests.edges, ...newEdges],
+										            		pageInfo,
+										            	},
+										          	};
+										        	},
+										      	});
+										    	},
+										  	}};
+											}})
+											(AttendanceRequests);

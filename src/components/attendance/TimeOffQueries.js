@@ -1,29 +1,36 @@
 import { gql } from 'react-apollo';
 
+const requestFragment = gql`
+  fragment RequestData on TimeOffRequestsConnection {
+    edges{
+      node{
+        userByRequestorId{
+          firstName
+          lastName
+        }
+        id
+        startDate
+        endDate
+        submissionDate
+        requestType
+        minutesPaid
+        payDate
+        notes
+        decisionStatus
+      }
+    }
+  }
+`
+
 const corporationTimeOffRequestQuery = gql`
   query ($corporationId: Uuid!){
     allTimeOffRequests(
         condition: {corporationId: $corporationId}
-        orderBy: SUBMISSION_DATE_DESC){
-      edges{
-        node{
-          userByRequestorId{
-            firstName
-            lastName
-          }
-          id
-          startDate
-          endDate
-          submissionDate
-          requestType
-          minutesPaid
-          payDate
-          notes
-          decisionStatus
-        }
-      }
+        orderBy: START_DATE_DESC){
+      ...RequestData
     }
   }
+  ${requestFragment}
 `
 
 const approveTimeOffRequestMutation = gql`
@@ -33,6 +40,7 @@ const approveTimeOffRequestMutation = gql`
     		id: $id,
     		timeOffRequestPatch: {decisionStatus: $decision, approverId: $approverId}}){
       timeOffRequest{
+        id
         decisionStatus
       }
     }

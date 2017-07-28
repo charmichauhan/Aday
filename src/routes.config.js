@@ -8,6 +8,7 @@ import Settings from './components/Settings';
 import Positions from './components/Positions';
 import MyWorkplace from './components/workplace/MyWorkplace'
 import SharedWorkplace from './components/workplace/SharedWorkplace'
+import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
 import Roster from './components/team/Roster'
 import Policies from './components/team/Policies'
@@ -49,10 +50,15 @@ const routes = [
                         component: EmployeeView
 					},
 					{
-                        path: '/schedule/template/',
+                        path: '/schedule/employeeview/template',
                         exact: true,
                         component: Template
 					},
+                    {
+                        path: '/schedule/team/template',
+                        exact: true,
+                        component: TemplateViewJob
+                    },
 					{
 						path: '/schedule/manager',
 						exact: true,

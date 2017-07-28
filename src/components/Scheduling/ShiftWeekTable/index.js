@@ -11,7 +11,7 @@ import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 import JobsRow from './JobsRow';
 import SpecialDay from "./SpecialDay";
-import { gql, graphql } from 'react-apollo';
+import { gql,graphql } from 'react-apollo';
 import jobsData from "./jobs.json";
 import '../style.css';
 
@@ -52,7 +52,8 @@ const styles = {
     },
     root: {
         borderCollapse: 'separate',
-        borderSpacing: '8px 8px'
+        borderSpacing: '8px 8px',
+        marginBottom:0
     },
     tableFooter: {
         paddingLeft:'0px',
@@ -62,40 +63,41 @@ const styles = {
         paddingLeft:'0px',
         paddingRight:'0px',
         width: 178
+    },
+    footerStyle: {
+        position: 'fixed',
+        bottom: 0,
+        width:'calc(100% - 290px)',
+        boxShadow:'0 1px 2px 0 rgba(74, 74, 74, 0.5)'
     }
 };
 
 class ShiftWeekTableComponent extends Week {
     render() {
-         if (this.props.data.loading) {
-             return (<div>Loading</div>)
-         }
-        
-         if (this.props.data.error) {
-             console.log(this.props.data.error)
-             return (<div>An unexpected error occurred</div>)
+
+        if (this.props.data.loading) {
+            return (<div>Loading</div>)
         }
-
-        console.log("Scheduling Data")
-        console.log(this.props)
-
+        if (this.props.data.error) {
+            console.log(this.props.data.error);
+            return (<div>An unexpected error occurred</div>)
+        }
         let calendarHash = {};
         const weekPublished = this.props.data.weekPublishedByDate.nodes[0]
-        if(weekPublished){
-            weekPublished.shiftsByWeekPublishedId.edges.map((value,index) => {
+
+        if(weekPublished) {
+            weekPublished.shiftsByWeekPublishedId.edges.map((value, index) => {
                 const positionName = value.node.positionByPositionId.positionName;
                 const dayOfWeek = moment(value.node.startTime).format("dddd");
-     
                 const rowHash = {};
                 rowHash["weekday"] = dayOfWeek;
-                if (calendarHash[positionName]){
-                    calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node) ]
+                if (calendarHash[positionName]) {
+                    calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node)]
                 } else {
                     calendarHash[positionName] = [Object.assign(rowHash, value.node)];
                 }
-            })
+            });
         }
-
         let jobData = calendarHash;
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
@@ -108,12 +110,12 @@ class ShiftWeekTableComponent extends Week {
         return (
             <Provider store={store}>
                 <div className="table-responsive">
-                    <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle}
+                    <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
                            fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
                            className="table atable emp_view_table" style={styles.root}>
-                        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow displayBorder={false}>
-                                <TableRowColumn style={styles.tableFooter} className="long dayname"></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p>78%</TableRowColumn>
                                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                     className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                     className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -138,12 +140,15 @@ class ShiftWeekTableComponent extends Week {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            { 
-                                (Object.keys(jobData)).map((value, index)=>(
-                                    <JobsRow data={jobData[value]} key={value}/> 
-                                ))
+
+                            <SpecialDay/>
+                            {(Object.keys(jobData)).map((value, index) => (
+                                    <JobsRow data={jobData[value]} key={value}/>
+                                )
+                            )
                             }
                         </TableBody>
+                        <TableFooter adjustForCheckbox={false}/>
                     </Table>
                 </div>
             </Provider>
@@ -159,7 +164,7 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
 };
 
 const allShifts = gql
-  `query allShifts($brandid: Uuid!, $day: Datetime!){ 
+  `query allShifts($brandid: Uuid!, $day: Datetime!){
         weekPublishedByDate(brandid: $brandid, day: $day){
             nodes{
             id
@@ -191,7 +196,7 @@ const allShifts = gql
 
 
 const ShiftWeekTable = graphql(allShifts, {
-   options: (ownProps) => ({ 
+   options: (ownProps) => ({
      variables: {
        brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
        day: moment(ownProps.date)
@@ -281,4 +286,11 @@ export default ShiftWeekTable
                                 </TableRowColumn>
                             </TableRow>
                         </TableFooter>
+                    </Table>
+                </div>
+            </Provider>
+        );
+    }
+}
 */
+

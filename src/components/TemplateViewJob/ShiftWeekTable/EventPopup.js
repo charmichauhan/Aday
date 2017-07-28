@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import Modal from '../../helpers/Modal';
-import '../style.css';
-import './shiftWeekTable.css';
+import '../../Scheduling/style.css';
 
+import Modal from '../../helpers/Modal';
 
 export default class EventPopup extends Component{
     constructor(props){
@@ -31,66 +30,49 @@ export default class EventPopup extends Component{
     };
 
     onPopupOpen = (modal) => {
-        //console.log(modal)
-        /*this.setState({
-         deleteModalPopped : true
-         })*/
-    };
-    onPopupOpen = (modal) => {
         switch(modal){
-            case "deleteModalPopped" : this.setState({deleteModalPopped:true});
-            case "editModalPopped" : this.setState({editModalPopped:true});
+            case "deleteModalPopped"   : this.setState({deleteModalPopped:true});
+                                         break;
+            case "editModalPopped"     : this.setState({editModalPopped:true});
+                                         break;
             case "newShiftModalPopped" : this.setState({newShiftModalPopped:true});
+                                         break;
+            default:
+                    break;
         }
     };
-    onPopupClose = (modal) => {
-        console.log("Close");
-        console.log([modal])
-        this.setState({
-            deleteModalPopped: false
-        })
-    };
-
     onLocationClick = () => {
         console.log("onLocationClick");
     };
-
     render(){
         let data=this.props.data;
-        let startTime = moment(data.startTime).format("hh:mm A");
-        let endTime = moment(data.endTime).format("hh:mm A");
-        let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
-        let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
+        let startTime = moment(data['timeFrom'],"hh:mm a");
+        let endTime = moment(data['timeTo'],"hh:mm a");
+        let h = endTime.diff(startTime,'hours');
+        let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
         let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
-            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
-        if (data.workersAssigned == null){
-            data.workersAssigned = [];
-        }
-        if (data.workersInvited == null){
-            data.workersInvited= [];
-        }
-        this.openShift = data.workersRequestedNum - (data.workersAssigned.length + data.workersInvited.length );
+                                {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
         return(
             <div className="day-item hov">
                 <div className="start-time">
                     <span className="fa fa-clock-o"/>
-                    <p className="date-time"> {startTime.replace("M","")} {endTime.replace("M","")}</p>
-                    <p className="duration">{h} HR&thinsp; {m}MIN</p>
+                    <p className="date-time"> {data['timeFrom']} {data['timeTo']} </p>
+                    <p className="duration">{h} HR&thinsp; {m}MIN </p>
                 </div>
                 <div className="location">
                     <span className="fa fa-map-marker mr5" aria-hidden="true">
                         <a onClick={()=>this.onLocationClick()}/>
                     </span>
-                    <span>{data.workplaceByWorkplaceId.workplaceName}</span>
+                    <span>{data['location']}</span>
                 </div>
                 <div className="day-item-title">
-                    {this.openShift>0 && <span className="box-title openshift">{this.openShift}</span>}
-                    {data.workersInvited.length>0 && <span className="box-title pendingshift">{data.workersInvited.length}</span>}
-                    {data.workersAssigned.length>0 && <span className="box-title filledshift">{data.workersAssigned.length}</span>}
+                    {data["openShift"]!=="" && <span className="box-title openshift">{data["openShift"]}</span>}
+                    {data["pendingShift"]!=="" && <span className="box-title pendingshift">{data["pendingShift"]}</span>}
+                    {data["filledShift"]===""?<span className="box-title filledshift">\</span>:<span className="box-title filledshift">{data["filledShift"]}</span>}
                 </div>
                 {this.state.deleteModalPopped && <Modal title="Confirm" isOpen={this.state.deleteModalPopped}
-                                                     message = "Are you sure that you want to delete this shift?"
-                                                     action = {deleteShiftAction} closeAction={this.modalClose}/>
+                                                        message = "Are you sure that you want to delete this shift?"
+                                                        action = {deleteShiftAction} closeAction={this.modalClose}/>
                 }
                 <div className="overlay">
                     <div className="hoimg">

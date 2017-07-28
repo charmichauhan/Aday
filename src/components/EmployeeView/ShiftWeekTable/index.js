@@ -11,17 +11,15 @@ import jobsData from "./jobs.json";
 import '../../Scheduling/style.css';
 import { gql, graphql, compose } from 'react-apollo';
 
-
 const styles = {
-    bodyStyle: {
-        maxHeight: 990
-    },
+
     wrapperStyle: {
         width: 1188
     },
     root: {
         borderCollapse: 'separate',
-        borderSpacing: '8px 8px'
+        borderSpacing: '8px 8px',
+        marginBottom:0
     },
     tableFooter: {
         paddingLeft:'0px',
@@ -31,46 +29,44 @@ const styles = {
         paddingLeft:'0px',
         paddingRight:'0px',
         width: 178
+    },
+    footerStyle: {
+        position:'fixed',
+        bottom:0,
+        width: 'calc(100% - 290px)',
+        boxShadow:'0 1px 2px 0 rgba(74, 74, 74, 0.5)'
     }
 };
 
 class ShiftWeekTableComponent extends Week {
     render() {
-
-         if (this.props.data.loading) {
-             return (<div>Loading</div>)
-         }
-        
-         if (this.props.data.error) {
-             console.log(this.props.data.error)
-             return (<div>An unexpected error occurred</div>)
+        if (this.props.data.loading) {
+            return (<div>Loading</div>)
         }
 
+        if (this.props.data.error) {
+            console.log(this.props.data.error)
+            return (<div>An unexpected error occurred</div>)
+        }
 
-        const userHash = {};
-        if  (this.props.allUsers){
+        let userHash = {};
+        let calendarHash = {};
+        if  (this.props.allUsers && this.props.allUsers.allUsers){
             this.props.allUsers.allUsers.edges.map((value,index) => {
                 userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
             });
-        }
-
-        let { date } = this.props;
-        let { start } = ShiftWeekTable.range(date, this.props);
-
-        let calendarHash = {};
-
-       const weekPublished = this.props.data.weekPublishedByDate.nodes[0]
-       if (weekPublished){
-        weekPublished.shiftsByWeekPublishedId.edges.map((value,index) => {
-            const rowHash = {}
-            const dayOfWeek = moment(value.node.startTime).format("dddd");
-            rowHash["weekday"] = dayOfWeek;
-            let assigned = value.node.workersAssigned
-            if (value.node.workersAssigned == null){
-                assigned  = [];
-            }
-            if (value.node.workersRequestedNum > assigned.length){           
-                        rowHash["userFirstName"] = "Open" 
+            const weekPublished = this.props.data.weekPublishedByDate.nodes[0];
+            if (weekPublished){
+                weekPublished.shiftsByWeekPublishedId.edges.map((value,index) => {
+                    const rowHash = {}
+                    const dayOfWeek = moment(value.node.startTime).format("dddd");
+                    rowHash["weekday"] = dayOfWeek;
+                    let assigned = value.node.workersAssigned
+                    if (value.node.workersAssigned == null){
+                        assigned  = [];
+                    }
+                    if (value.node.workersRequestedNum > assigned.length){
+                        rowHash["userFirstName"] = "Open"
                         rowHash["userLastName"] = "Shifts"
                         rowHash["userAvatar"] = ""
                         if (calendarHash["Open Shifts"]){
@@ -78,31 +74,35 @@ class ShiftWeekTableComponent extends Week {
                         } else {
                             calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
                         }
-            }
-            if (assigned.length) {
-                value.node.workersAssigned.map((v) => {
-                    const userName = userHash[v];
-                    rowHash["userFirstName"] = userHash[v][0]
-                    rowHash["userLastName"] = userHash[v][1]
-                    rowHash["userAvatar"] = userHash[v][2]
-                    if (calendarHash[userName]) {
-                        calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, value.node) ]
-                    } else {
-                        calendarHash[userName] = [Object.assign(rowHash, value.node)];
                     }
-                })
+                    if (assigned.length) {
+                        value.node.workersAssigned.map((v) => {
+                            const userName = userHash[v];
+                            rowHash["userFirstName"] = userHash[v][0]
+                            rowHash["userLastName"] = userHash[v][1]
+                            rowHash["userAvatar"] = userHash[v][2]
+                            if (calendarHash[userName]) {
+                                calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, value.node) ]
+                            } else {
+                                calendarHash[userName] = [Object.assign(rowHash, value.node)];
+                            }
+                        })
+                    }
+                });
             }
-        });
+
         }
+        let { date } = this.props;
+        let { start } = ShiftWeekTableComponent.range(date, this.props);
         let jobData = calendarHash;
         return (
             <div className="table-responsive">
-                <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle}
+                <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
                        fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"></TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p>78%</TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -127,11 +127,12 @@ class ShiftWeekTableComponent extends Week {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                            { 
-                                (Object.keys(jobData)).map((value, index)=>(
-                                    <JobsRow data={jobData[value]} key={value}/> 
-                                ))
-                            }
+                        <SpecialDay/>
+                        {
+                            (Object.keys(jobData)).map((value, index)=>(
+                                <JobsRow data={jobData[value]} key={value}/>
+                            ))
+                        }
                     </TableBody>
                 </Table>
             </div>
@@ -139,58 +140,6 @@ class ShiftWeekTableComponent extends Week {
     }
 }
 
-ShiftWeekTableComponent.range = (date, { culture }) => {
-    let firstOfWeek = localizer.startOfWeek(culture);
-    let start = dates.startOf(date, 'week', firstOfWeek);
-    let end = dates.endOf(date, 'week', firstOfWeek);
-    return { start, end };
-};
-
-const allShifts = gql
-  `query allShifts($brandid: Uuid!, $day: Datetime!){ 
-        weekPublishedByDate(brandid: $brandid, day: $day){
-            nodes{
-            id
-            shiftsByWeekPublishedId{
-                    edges {
-                        node {
-                            id
-                            startTime
-                            endTime
-                            workersInvited
-                            workersAssigned
-                            workersRequestedNum
-                            positionByPositionId{
-                            positionName
-                            positionIconUrl
-                                brandByBrandId {
-                                    brandName
-                                }
-                            }
-                            workplaceByWorkplaceId{
-                                workplaceName
-                            }
-                        }
-                    }
-                }
-            }
-        }
-}`
-
-const allUsers = gql`
-    query allUsers {
-        allUsers{
-            edges{
-                node{
-                    id
-                    firstName
-                    lastName
-                    avatarUrl
-                }
-            }
-        }
-    }
-    `
 
 /*
                     <p className="weekDay">Hours Booked</p><HoursBooked
@@ -265,7 +214,66 @@ const allUsers = gql`
                             </TableRowColumn>
                         </TableRow>
                     </TableFooter>
+                </Table>
+            </div>
+        );
+    }
+}
+
 */
+
+ShiftWeekTableComponent.range = (date, { culture }) => {
+    let firstOfWeek = localizer.startOfWeek(culture);
+    let start = dates.startOf(date, 'week', firstOfWeek);
+    let end = dates.endOf(date, 'week', firstOfWeek);
+    return { start, end };
+};
+
+const allShifts = gql
+    `query allShifts($brandid: Uuid!, $day: Datetime!){ 
+        weekPublishedByDate(brandid: $brandid, day: $day){
+            nodes{
+            id
+            shiftsByWeekPublishedId{
+                    edges {
+                        node {
+                            id
+                            startTime
+                            endTime
+                            workersInvited
+                            workersAssigned
+                            workersRequestedNum
+                            positionByPositionId{
+                            positionName
+                            positionIconUrl
+                                brandByBrandId {
+                                    brandName
+                                }
+                            }
+                            workplaceByWorkplaceId{
+                                workplaceName
+                            }
+                        }
+                    }
+                }
+            }
+        }
+}`
+
+const allUsers = gql`
+    query allUsers {
+        allUsers{
+            edges{
+                node{
+                    id
+                    firstName
+                    lastName
+                    avatarUrl
+                }
+            }
+        }
+    }
+    `
     
 ///
 const ShiftWeekTable = compose(
@@ -280,4 +288,5 @@ graphql(allShifts, {
  graphql(allUsers, {name: "allUsers"})
  )(ShiftWeekTableComponent)
 
- export default ShiftWeekTable
+
+export default ShiftWeekTable

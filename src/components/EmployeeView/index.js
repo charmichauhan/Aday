@@ -5,15 +5,10 @@ import { NavLink } from 'react-router-dom'
 import { Button } from 'semantic-ui-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
-import AddHours from '../../../public/assets/Buttons/add-hours.png';
-import AddAsTemplate from '../../../public/assets/Buttons/add-as-template.png';
-import TemplateList from '../../../public/assets/Buttons/template-list-button.png';
-import Automate from '../../../public/assets/Buttons/automate-schedule.png';
-import Modal from '../helpers/Modal';
-import Publish from '../../../public/assets/Buttons/publish.png';
 import ShiftWeekTable from './ShiftWeekTable';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
 import '../Scheduling/style.css';
+import {Modal} from 'semantic-ui-react';
 
 const styles = {
     bodyStyle: {
@@ -42,7 +37,10 @@ export default class EmployeeView extends Component {
 		super(props);
         this.state = {
             publishModalPopped: false,
-            start: moment().format
+            addTemplateModalOpen: false,
+            templateName:"",
+            redirect:false,
+            date: Date.today
         }
 	}
 
@@ -70,10 +68,11 @@ export default class EmployeeView extends Component {
 
     render() {
         BigCalendar.momentLocalizer(moment);
-        let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
-            {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
+        				 let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
+              {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
         return (
 			<div className="App row">
+
 				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date}/></div>
                 {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													 message = "Are you sure that you want to delete this shift?"

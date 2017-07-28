@@ -2,7 +2,15 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import specialday from './specialday.json';
 import '../style.css';
-
+import {
+    TableRow,
+    TableRowColumn,
+} from 'material-ui/Table';
+const styles={
+    paddingLeft:'0',
+    paddingRight:'0',
+    height:'auto'
+};
 export default class SpecialDay extends Component{
     render(){
         let start = this.props.dateStart;
@@ -18,16 +26,16 @@ export default class SpecialDay extends Component{
             }
         });
         return(
-            <tr className="spday">
-                <td></td>
-                {special[1]?<td><p className="spclDay">{special[1]}</p></td>:<td></td>}
-                {special[2]?<td><p className="spclDay">{special[2]}</p></td>:<td></td>}
-                {special[3]?<td><p className="spclDay">{special[3]}</p></td>:<td></td>}
-                {special[4]?<td><p className="spclDay">{special[4]}</p></td>:<td></td>}
-                {special[5]?<td><p className="spclDay">{special[5]}</p></td>:<td></td>}
-                {special[6]?<td><p className="spclDay">{special[6]}</p></td>:<td></td>}
-                {special[7]?<td><p className="spclDay">{special[7]}</p></td>:<td></td>}
-            </tr>
+            <TableRow className="spday" displayBorder={false} style={{height:'auto'}}>
+                <TableRowColumn style={styles} className="headcol"></TableRowColumn>
+                {special[1]?<TableRowColumn style={styles}><p className="spclDay">{special[1]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[2]?<TableRowColumn style={styles}><p className="spclDay">{special[2]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[3]?<TableRowColumn style={styles}><p className="spclDay">{special[3]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[4]?<TableRowColumn style={styles}><p className="spclDay">{special[4]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[5]?<TableRowColumn style={styles}><p className="spclDay">{special[5]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[6]?<TableRowColumn style={styles}><p className="spclDay">{special[6]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+                {special[7]?<TableRowColumn style={styles}><p className="spclDay">{special[7]}</p></TableRowColumn>:<TableRowColumn style={styles}></TableRowColumn>}
+            </TableRow>
         )
     }
 }

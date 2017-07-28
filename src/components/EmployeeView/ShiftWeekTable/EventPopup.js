@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import '../../Scheduling/style.css';
-import close from '../../../../public/assets/Icons/close-shift.png';
-import edit from '../../../../public/assets/Icons/edit-shift.png';
-import create from '../../../../public/assets/Icons/create-shift.png';
-import cashier from "../../../../public/assets/Icons/cashier.png"
 import Modal from '../../helpers/Modal';
 
 export default class EventPopup extends Component{
@@ -44,21 +40,21 @@ export default class EventPopup extends Component{
     };
     render(){
         let data=this.props.data;
-        let startTime = moment(data.startTime)
-        let endTime = moment(data.endTime)
-        let h = endTime.diff(startTime,'hours');
-        let m = moment.utc(moment(endTime).diff(moment(startTime))).format("mm");
+        let startTime = moment(data.startTime).format("hh:mm A");
+        let endTime = moment(data.endTime).format("hh:mm A");
+        let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
+        let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
         let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
             {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
         return(
             <div className="day-item hov">
                 <div className="start-time">
                     <span className="fa fa-clock-o"/>
-                    <p className="date-time"> {startTime.format("HH:mm")} {endTime.format("HH:mm")} </p>
+                    <p className="date-time">{startTime.replace("M","")} {endTime.replace("M","")}</p>
                     <p className="duration">{h} HR&thinsp; {m}MIN </p>
                 </div>
                 <div className="location">
-                    <span><img src={cashier} alt="jobtype"/></span>
+                    <span><img src="/assets/Icons/cashier.png" alt="jobtype"/></span>
                     <span className="jobType">{data.positionByPositionId.positionName}</span>
                 </div>
                 <div className="location">
@@ -67,15 +63,15 @@ export default class EventPopup extends Component{
                     </span>
                     <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
                 </div>
-                {this.state.deleteModalPopped?<Modal title="Confirm" isOpen={this.state.deleteModalPopped}
+                {this.state.deleteModalPopped && <Modal title="Confirm" isOpen={this.state.deleteModalPopped}
                                                      message = "Are you sure that you want to delete this shift?"
                                                      action = {deleteShiftAction} closeAction={this.modalClose}/>
-                    :""}
+                }
                 <div className="overlay">
                     <div className="hoimg">
-                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><img src={close} alt="close"/></a>
-                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><img src={edit} alt="edit"/></a>
-                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><img src={create} alt="create"/></a>
+                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src="/assets/Icons/close-shift.png" alt="close"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><i><img src="/assets/Icons/edit-shift.png" alt="edit"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><i><img src="/assets/Icons/create-shift.png" alt="create"/></i></a>
                     </div>
                 </div>
             </div>

@@ -4,61 +4,59 @@ import BigCalendar from 'react-big-calendar';
 import { NavLink } from 'react-router-dom'
 import { Button } from 'semantic-ui-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { browserHistory } from 'react-router';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
-import Modal from '../helpers/Modal';
-import AddHours from '../../../public/assets/Buttons/add-hours.png';
-import AddAsTemplate from '../../../public/assets/Buttons/add-as-template.png';
-import TemplateList from '../../../public/assets/Buttons/template-list-button.png';
-import Automate from '../../../public/assets/Buttons/automate-schedule.png';
-import Publish from '../../../public/assets/Buttons/publish.png';
 import ShiftWeekTable from './ShiftWeekTable';
 import './style.css';
+import {Modal} from 'semantic-ui-react';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
-import CreateShiftButton from './AddShift/CreateShiftButton';
 import 'fullcalendar/dist/fullcalendar.min.css';
 import 'fullcalendar/dist/fullcalendar.min.js';
 import 'fullcalendar-scheduler/dist/scheduler.css';
 import 'fullcalendar-scheduler/dist/scheduler.js';
 
+const style = {
+    titleStyle:{
+        paddingLeft: '0',
+        paddingRight: '0',
+        borderBottom:'1px solid #F5F5F5'
+    },
+    actionsContainerStyle:{
+        textAlign:'center',
+        padding:'0'
+    },
+    contentStyle:{
+        width:600,
+        height:333,
+        borderRadius:6
+    }
+};
 
 export default class Schedule extends Component {
     constructor(props){
         super(props);
         this.state = {
             publishModalPopped: false,
+			addTemplateModalOpen: false,
+			templateName:"",
+            redirect:false,
+            date: moment()
         }
     }
 
-    modalClose = () => {
-        this.setState({
-            publishModalPopped:false
-        })
-    };
-
-    goBack = () => {
-        this.setState({
-            publishModalPopped:false
-        });
-    };
-
-    onConfirm = () => {
-
-    };
-    onPublish = () => {
-        this.setState({publishModalPopped:true})
-    };
-
     onNavigate = (start) => {
-		this.setState({date: start})
-	};
+        this.setState({date: start})
+    };
 
     render() {
         BigCalendar.momentLocalizer(moment);
-        let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
-            {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
+
+
+         let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
+              {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
+
         return (
 			<div className="App row">
+
 				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date}/> </div>
                 {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													  message = "Are you sure that you want to delete this shift?"
@@ -103,7 +101,7 @@ class CustomToolbar extends Toolbar {
 											onClick={() => this.navigate("NEXT")}/>
 								</div>
 								<ul className="nav navbar-nav">
-									<Button className="" as={NavLink} to="/schedule/employeeview" >Employee view</Button>
+									<Button className="" as={NavLink} to="/schedule/employeeview">Employee view</Button>
 								</ul>
 							<div className="maintitle">
 								{month}

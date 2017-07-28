@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import '../../Scheduling/style.css';
-import close from '../../../../public/assets/Icons/close-shift.png';
-import edit from '../../../../public/assets/Icons/edit-shift.png';
-import create from '../../../../public/assets/Icons/create-shift.png';
-import cashier from "../../../../public/assets/Icons/cashier.png"
 import Modal from '../../helpers/Modal';
 
 export default class EventPopup extends Component{
@@ -63,7 +59,7 @@ export default class EventPopup extends Component{
                     <p className="duration">{h} HR&thinsp; {m}MIN </p>
                 </div>
                 <div className="location">
-                    <span><img src={cashier} alt="jobtype"/></span>
+                    <span><img src="/assets/Icons/cashier.png" alt="jobtype"/></span>
                     <span className="jobType">{data.workplace}</span>
                 </div>
                  <div className="location">
@@ -72,15 +68,15 @@ export default class EventPopup extends Component{
                     </span>
                     <span className="jobType">{data.positionByPositionId.positionName}</span>
                 </div>
-                {this.state.deleteModalPopped?<Modal title="Confirm" isOpen={this.state.deleteModalPopped}
+                {this.state.deleteModalPopped && <Modal title="Confirm" isOpen={this.state.deleteModalPopped}
                                                      message = "Are you sure that you want to delete this shift?"
                                                      action = {deleteShiftAction} closeAction={this.modalClose}/>
-                    :""}
+                }
                 <div className="overlay">
                     <div className="hoimg">
-                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><img src={close} alt="close"/></a>
-                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><img src={edit} alt="edit"/></a>
-                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><img src={create} alt="create"/></a>
+                        <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src="/assets/Icons/close-shift.png" alt="close"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("editModalPopped")}><i><img src="/assets/Icons/edit-shift.png" alt="edit"/></i></a>
+                        <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><i><img src="/assets/Icons/create-shift.png" alt="create"/></i></a>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './circle-button.css';
-
 const buttonColors = {
   white: {
     backgroundColor: '#ffffff',

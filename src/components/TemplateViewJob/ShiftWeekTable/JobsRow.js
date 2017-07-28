@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import EventPopup from './EventPopup';
 import moment from 'moment';
-import '../style.css';
+import '../../Scheduling/style.css';
 import {
     TableRow,
     TableRowColumn,
@@ -9,26 +9,22 @@ import {
 
 export default class JobsRow extends Component{
     render(){
+
         let data = this.props.data;
-        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
-        data.map((value,index) => {
-            const day = value.weekday
-            if (hashByDay[day]){
-                hashByDay[day] = [...hashByDay[day], value];
-            } else {
-                hashByDay[day] =  [value];
-            }
-        });
+        let shifts = data.shifts[0];
         let finalHours = 0;
         let finalMinutes = 0;
-        Object.values(data).map((value,index) => {
-            let startTime = moment(value.startTime).format("hh:mm A");
-            let endTime = moment(value.endTime).format("hh:mm A");
-            let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
-            let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
-            finalHours += parseInt(h);
-            finalMinutes += parseInt(m);
+        Object.values(shifts).map((value,index) => {
+            if(value.length){
+                for(let i=0;i<value.length;i++){
+                    let startTime = moment(value[i]['timeFrom'],"hh:mm a");
+                    let endTime = moment(value[i]['timeTo'],"hh:mm a");
+                    let h = endTime.diff(startTime,'hours');
+                    let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
+                    finalHours += h;
+                    finalMinutes += parseInt(m);
+                }
+            }
         });
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
@@ -38,21 +34,20 @@ export default class JobsRow extends Component{
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
                     <div className="user_profile" width="80%">
                         <div className="user_img">
-                            <img width="65px" src={ data[0].positionByPositionId.positionIconUrl } alt="img"/>
+                            <i><img src={data.icon} alt="img"/></i>
                         </div>
-                        <div className="user_desc penalheading">{data[0].positionByPositionId.positionName.split(" ")[0]}
-                            <p className="lastName"> { data[0].positionByPositionId.positionName.split(" ")[1] }</p>
+                        <div className="user_desc penalheading">{data.title}
                             <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
                             <p className="scheduled_tag">SCHEDULED</p>
                         </div>
                     </div>
                 </TableRowColumn>
                 {
-                    daysOfWeek.map((value,index)=> ((
+                    Object.values(shifts).map((value,index)=> ((
                             <TableRowColumn key={index} className="shiftbox" style={{paddingLeft:'0px',paddingRight:'0px',backgroundColor:'#F5F5F5'}}>
                                 {
-                                    Object.values(hashByDay[value]).map((y, index)=>(
-                                        <EventPopup data={y} key={index}/>
+                                    Object.values(value).map((value,index)=>(
+                                        <EventPopup data={value} key={index}/>
                                     ))
                                 }
                                 <button type="button" className="addshift">

@@ -16,6 +16,7 @@ export class PositionSelector extends Component{
 
   constructor(props){
     super(props);
+    const {formCallBack}=this.props;
     this.state={
       positions:[]
     }
@@ -23,11 +24,8 @@ export class PositionSelector extends Component{
   }
 
    onPositionChange(event, data){
-    const {formCallBack}=this.props
-    console.log(event,data);
     this.setState({position:data.value});
-    formCallBack(data.value);
-
+    this.props.formCallBack({position:data.value});
   }
   render(){
   
@@ -42,7 +40,7 @@ export class PositionSelector extends Component{
       return (<div>An unexpected error occurred</div>)
     }else{
       if(!this.state.positions.length){
-        // add positions into state parameter
+        /// add positions into state parameter
       let positionsArray=this.props.data.allPositions.nodes;
       console.log(positionsArray,positionsArray.length);
       positionsArray.forEach(function(position,index) {
@@ -60,7 +58,7 @@ export class PositionSelector extends Component{
  
     <div>
       <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>POSITION</p>
-      <Dropdown  placeholder='Select Postion' fluid selection options={this.state.positions} style={{ marginTop:'-2%' }} onChange={this.onPositionChange}  />
+      <Dropdown placeholder='Select Postion' fluid selection options={this.state.positions} style={{ marginTop:'-2%' }} onChange={this.onPositionChange}  />
   
     </div>
            

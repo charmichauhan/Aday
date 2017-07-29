@@ -1,6 +1,5 @@
 import React,{Component} from 'react';
-import { graphql } from 'react-apollo'
-import gql from 'graphql-tag'
+import { gql, graphql, compose } from 'react-apollo';
 import uuidv1 from 'uuid/v1';
 import {Header,Image,Button,Divider,Segment, Modal, Label,Dropdown,Input,Icon,Form,TextArea,Loader} from 'semantic-ui-react';
 import {Scrollbars} from 'react-custom-scrollbars';
@@ -20,8 +19,8 @@ import '../styles.css';
 export class AddShiftForm extends Component{
  static propTypes = {
   router: React.PropTypes.object.isRequired,
-  mutate: React.PropTypes.func.isRequired,
- 
+  createShift: React.PropTypes.func.isRequired,
+  createWeekPublished: React.PropTypes.func.isRequired
 }
 
   constructor(props){
@@ -37,6 +36,7 @@ export class AddShiftForm extends Component{
       managerValue:'',
       instructions:'',
       jobShadowingOppurtunity:'',
+      weekPublishedId:''
     }
 
     this.onWorkplace=this.onWorkplace.bind(this);
@@ -65,12 +65,31 @@ export class AddShiftForm extends Component{
     this.props.closeFunc();
     this.props.closeAddFun();
   }
+  
   handleSave(){
-    console.log(this.state)
+      const day = Object.keys(this.state.shiftDaysSelected)[0]
+      let weekPublishedId = "";
+      this.props.data.allWeekPublisheds.edges.map((value,index) => {
+        if (moment(day).isAfter(moment(value.node.start)) && moment(day).isBefore(moment(value.node.end))){
+            console.log(value.node.id)
+            weekPublishedId = value.node.id;
+        }
+      })
+      console.log(weekPublishedId)
   }
 
 
     render(){
+       if (this.props.data.loading) {
+            return (<div>Loading</div>)
+        }
+
+        if (this.props.data.error) {
+            console.log(this.props.data.error)
+            return (<div>An unexpected error occurred</div>)
+        }
+        console.log("this.prop.data")
+        console.log(this.props.data)
      const date=moment();
     const startDate=moment(date).startOf('week').isoWeekday(7).format('MM-DD-YYYY');
     console.log(this.state)
@@ -174,9 +193,53 @@ const createShiftMutation = gql`
   {
     shift{
       id
+      positionId
+      workplaceId
+      weekPublishedId
     }
   }
 }`
 
-const AddShift = graphql(createShiftMutation)(AddShiftForm)
+const createWeekPublishedMutation = gql`
+ mutation createWeekPublished($data:CreateWeekPublishedInput!){
+  createWeekPublished(input:$data)
+    {
+    shift{
+      id
+    }
+  }
+}`
+
+const allWeekPublished = gql
+  `query allWeekPublished($brandid: Uuid!){
+      allWeekPublisheds(condition: {brandId:$brandid} ){
+          edges{
+              node{
+                id
+                start
+                end
+                published
+              }
+          }
+     }
+}
+`
+
+
+
+
+const AddShift = compose(
+  graphql(allWeekPublished, {
+   options: (ownProps) => ({ 
+     variables: {
+       brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+     }
+   }),
+ }),
+  graphql(createShiftMutation, {
+    name : 'createShift'
+  }),
+  graphql(createWeekPublishedMutation, {
+    name : 'createWeekPublished'
+  }))(AddShiftForm)
 export default AddShift

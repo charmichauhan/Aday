@@ -15,7 +15,6 @@ import PositionSelector  from './positionSelector'
 import WorkplaceSelector  from './workplaceSelector'
 import '../styles.css';
 
-
 export class AddShiftForm extends Component{
  static propTypes = {
   router: React.PropTypes.object.isRequired,
@@ -63,20 +62,49 @@ export class AddShiftForm extends Component{
   }
   handleCloseFunc(){
     this.props.closeFunc();
-    this.props.closeAddFun();
   }
   
   handleSave(){
+      console.log("in handle save")
       const day = Object.keys(this.state.shiftDaysSelected)[0]
       let weekPublishedId = "";
       this.props.data.allWeekPublisheds.edges.map((value,index) => {
-        if (moment(day).isAfter(moment(value.node.start)) && moment(day).isBefore(moment(value.node.end))){
-            console.log(value.node.id)
+        if ((moment(day).isAfter(moment(value.node.start)) && moment(day).isBefore(moment(value.node.end)))
+            ||  (moment(day).isSame(moment(value.node.start), 'day'))
+            || (moment(day).isSame(moment(value.node.end), 'day'))
+            ){
             weekPublishedId = value.node.id;
+          }
+       })
+
+
+      if(weekPublishedId) {
+            this.props.createShift({
+                variables: { data: {shift:{id: uuidv1(), workplaceId: this.state.workplace, 
+                                            positionId: this.state.position, workersRequestedNum: this.state.numberOfTeamMembers,
+                                            creatorId: "5a01782c-c220-4927-b059-f4f22d01c230", managersOnShift: ["5a01782c-c220-4927-b059-f4f22d01c230"],
+                                            startTime: moment(day).add(moment(this.state.startTime)), endTime: moment(day).add(moment(this.state.stopTime)), 
+                                            shiftDateCreated: moment().format(), weekPublishedId: weekPublishedId}} },
+                updateQueries: {
+                    allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+                      const shiftHash = mutationResult.data.createShift.shift;
+                      previousQueryResult.weekPublishedByDate.nodes[0].shiftsByWeekPublishedId.edges = 
+                      [...previousQueryResult.weekPublishedByDate.nodes[0].shiftsByWeekPublishedId.edges, 
+                      {"node": shiftHash, '__typename': "ShiftsEdge"}]
+                      return {
+                        weekPublishedByDate: previousQueryResult.weekPublishedByDate
+                      };
+                    },
+                }
+              })
+              .then(({ data }) => {
+                  this.props.closeFunc();
+                  console.log('got data', data);
+              }).catch((error) => {
+                  console.log('there was an error sending the query', error);
+              });
         }
-      })
-      console.log(weekPublishedId)
-  }
+    }
 
 
     render(){
@@ -193,9 +221,21 @@ const createShiftMutation = gql`
   {
     shift{
       id
-      positionId
-      workplaceId
-      weekPublishedId
+      startTime
+                            endTime
+                            workersInvited
+                            workersAssigned
+                            workersRequestedNum
+                            positionByPositionId{
+                            positionName
+                            positionIconUrl
+                                brandByBrandId {
+                                    brandName
+                                }
+                            }
+                            workplaceByWorkplaceId{
+                                workplaceName
+                            }
     }
   }
 }`
@@ -224,10 +264,6 @@ const allWeekPublished = gql
      }
 }
 `
-
-
-
-
 const AddShift = compose(
   graphql(allWeekPublished, {
    options: (ownProps) => ({ 

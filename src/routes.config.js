@@ -10,8 +10,7 @@ import MyWorkplace from './components/workplace/MyWorkplace'
 import SharedWorkplace from './components/workplace/SharedWorkplace'
 import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
-import Roster from './components/team/Roster'
-import Policies from './components/team/Policies'
+import Team from './components/Team'
 
 import Certificates from './components/certifications/Certificates'
 
@@ -39,11 +38,21 @@ const routes = [
 			{
 				component: App,
 				routes: [
+						// {
+						// 	path: '/schedule/team/:workplaceId',
+						// 	exact: true,
+						// 	component: Schedule
+						// },
 					{
 						path: '/schedule/team/',
 						exact: true,
 						component: Schedule
 					},
+					// {
+                     //    path: '/schedule/employeeview/:workplaceId',
+                     //    exact: true,
+                     //    component: EmployeeView
+					// },
 					{
                         path: '/schedule/employeeview',
                         exact: true,
@@ -75,14 +84,9 @@ const routes = [
 						component: SharedWorkplace
 					},
 					{
-						path: '/team/roster',
+						path: '/team',
 						exact: true,
-						component: Roster
-					},
-					{
-						path: '/team/policies',
-						exact: true,
-						component: Policies
+						component: Team
 					},
 					{
 						path: '/certifications/certificates',

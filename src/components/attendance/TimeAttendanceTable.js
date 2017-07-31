@@ -64,7 +64,7 @@ class TimeAttendanceTable extends Component {
 								<Table.Cell>{moment(req.node.endDate).format("MMM DD YYYY")}</Table.Cell>
 								<Table.Cell>{req.node.minutesPaid}</Table.Cell>
 								<Table.Cell>{req.node.payDate ? moment(req.node.payDate).format("MMM DD YYYY") : "N/A"}</Table.Cell>
-								<Table.Cell>{req.node.requestType}</Table.Cell>
+								<Table.Cell>{req.node.requestType ? req.node.requestType : "Unknown"}</Table.Cell>
 								<Table.Cell>{moment(req.node.submissionDate).format("MMM DD YYYY")}</Table.Cell>
 								<Table.Cell>
 									{(!req.node.notes || req.node.notes == "") ?

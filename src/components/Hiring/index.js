@@ -1,23 +1,18 @@
 import React, { Component } from 'react';
-import { Tabs, Tab } from 'material-ui/Tabs';
-
-import TeamMembers from './TeamMembers';
-import InviteTeamMembers from './InviteTeamMembers';
-import Managers from './Managers';
-import InviteManagers from './InviteManagers';
-
-import { Header, Button } from 'semantic-ui-react'
-
+import Candidates from './Candidates';
+import { Header, Button, Segment, Form, Dropdown, Menu, Checkbox } from 'semantic-ui-react'
+import RaisedButton from 'material-ui/RaisedButton';
 import { tabDesign } from '../styles';
+import Switch from 'react-flexible-switch';
 
-import './team.css';
+import './hiring.css';
 
 const styles = {
 	tabDesign
 };
 
 const initState = {
-	team_members: [
+	candidates: [
 		{
 			user: {
 				first_name: "Alfredo",
@@ -81,66 +76,50 @@ const initState = {
 	]
 };
 
-export default class Team extends Component {
+
+export default class Hiring extends Component {
 	constructor(props) {
 		super(props);
 		this.state = initState;
 	}
 
-	handleChange = (value) => {
-		this.setState({	value: value });
-	};
-
-	getButtonStyle = (value) => ({
-		...styles.tabDesign.buttonStyle,
-		fontWeight: (this.state.value === value && 700) || 500
-	});	
+	
 
 	render() {
+
+	const options = [
+	  { key: 1, text: 'By Position Title', value: 1 },
+	  { key: 2, text: 'By Name', value: 2 },
+	  { key: 3, text: 'Your Rating', value: 3 },
+	]
 		return (
-			<section className="team">
-				<br/>
-				<center>
-					<Button basic fluid active='false'>
-					<Header as='h1'>Team Members</Header>
-					</Button>
-				</center>
-				<br/>
-				<Tabs
-					value={this.state.value}
-					onChange={this.handleChange}
-					inkBarStyle={styles.tabDesign.inkBarStyle}
-					tabItemContainerStyle={styles.tabDesign.tabItemContainerStyle}>
-
-					<Tab
-						buttonStyle={this.getButtonStyle('team_members')}
-						label="Team Members"
-						value="team_members">
-						<TeamMembers team_members={this.state.team_members}/>
-					</Tab>
-
-					<Tab
-						buttonStyle={this.getButtonStyle('invite_members')}
-						label="Invite Team Members"
-						value="invitations_team">
-						<InviteTeamMembers />
-					</Tab>
-
-					<Tab						
-						buttonStyle={this.getButtonStyle('managers')}
-						label="Managers"
-						value="managers">
-						<Managers managers={this.state.team_members}/>
-					</Tab>
-
-					<Tab
-						buttonStyle={this.getButtonStyle('invite_managers')}
-						label="Invite Managers"
-						value="invitations_managers">
-						<InviteManagers/>
-					</Tab>
-				</Tabs>
-			</section>
+			<div>
+			<br/>
+			<center>
+				<Button basic fluid active='false'>
+				<Header as='h1'>Find Talent</Header>
+				</Button>
+			</center>
+			<br/>
+			<Segment>
+			    <Form>
+			      <Form.Group>
+			        <Form.Input  size='big' placeholder='Cashier, Cook' />
+					<Dropdown placeholder='By Position' selection simple options={options} />
+			        <Form.Field id='invite_team_member' control={Button} size='big' content='Search'/>
+					</Form.Group>
+			        <div>
+			        <Header as='h4'>Return Only Completed Profiles?</Header>
+			        <Switch value={false} labels={{ on: 'YES', off: 'NO' }} circleStyles={{ onColor: 'green', offColor: 'red', diameter: 20 }}/>
+			        </div>
+			    </Form>
+			</Segment>
+			<div>
+				<Candidates candidates={this.state.candidates}/>
+			</div>
+			</div>
 		)
 	}
 }
+
+

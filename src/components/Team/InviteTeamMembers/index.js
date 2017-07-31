@@ -56,9 +56,9 @@ export default class InviteTeamMembers extends Component {
 			<Segment>
 			    <Form onSubmit={this.handleSubmit} widths='equal'>
 			      <Form.Group>
-			        <Form.Input  size='big' placeholder='First Name' name='first_name' value={first_name} onChange={this.handleChange} />
-			        <Form.Input  size='big' placeholder='Last Name' name='last_name' value={last_name} onChange={this.handleChange} />
-			        <Form.Input  size='big' placeholder='Email' name='email' value={email} onChange={this.handleChange} />
+			        <Form.Input  size='medium' placeholder='First Name' name='first_name' value={first_name} onChange={this.handleChange} />
+			        <Form.Input  size='medium' placeholder='Last Name' name='last_name' value={last_name} onChange={this.handleChange} />
+			        <Form.Input  size='medium' placeholder='Email' name='email' value={email} onChange={this.handleChange} />
 			      </Form.Group>
 			      <Form.Dropdown
 				    multiple
@@ -69,7 +69,6 @@ export default class InviteTeamMembers extends Component {
 				    renderLabel={renderLabel}
 				    onChange={this.handleChange}
 				  />
-			    <br/>
 			    {/*<Form.Field id='invite_team_member' control={Button} content='Invite'/>*/}
 			    <RaisedButton label="Invite Team Member" backgroundColor="#0022A1" labelColor="#FFFFFF"/>
 			    </Form>

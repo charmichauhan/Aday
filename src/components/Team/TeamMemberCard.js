@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
-import { Image, Button, Icon, Card, Header, Rating } from 'semantic-ui-react'
+import { Image, Button, Icon, Card, Rating, Header } from 'semantic-ui-react'
 import RaisedButton from 'material-ui/RaisedButton';
 import "./team-member-card.css"
 
 export default class TeamMemberCard extends Component {
-
-
 	render() {
 		const {
 			user,
@@ -16,7 +14,6 @@ export default class TeamMemberCard extends Component {
 		} = this.props.member
 
 		return (
-//		  <Card.Group itemsPerRow="4">
 		    <Card>
 		    	<Card.Content>
 			      	<center>
@@ -34,30 +31,20 @@ export default class TeamMemberCard extends Component {
 							<Rating icon='star' defaultRating={5} maxRating={5} />
 							<br/>
 							<br/>
-							<font size="4">
+							<font size="3">
 							{user.phone_number}
 							<br/>
 							{user.email}
 							<br/>
 							</font>
 							<br/>
-							<RaisedButton label="View Profile" backgroundColor="#0022A1" labelColor="#FFFFFF"/>
-							<br/>
+							<Button color='blue'>View Profile</Button>
 							<br/>
 						</center>
 					</Card.Content>
 		        	</Card.Description>
 		    	</Card.Content>
-{/* To be used with applicants for the position
-		      <Card.Content extra>
-		        <div className='ui two buttons'>
-		          <Button basic color='green'>Approve</Button>
-		          <Button basic color='red'>Decline</Button>
-		        </div>
-		      </Card.Content>
-*/}
 		    </Card>
-//		  </Card.Group>
 		);
 	}
 }

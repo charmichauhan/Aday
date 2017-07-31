@@ -38,7 +38,7 @@ export default class TeamMembers extends Component {
 		return (
 			<div>
 				<br/><br/>
-				<Card.Group itemsPerRow="4">
+				<Card.Group itemsPerRow="5">
 					{
 						this.state.team_members.map((m, i)=> <TeamMemberCard key={i} member={m}/>)
 					}

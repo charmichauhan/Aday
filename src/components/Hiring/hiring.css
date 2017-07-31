@@ -1,57 +1,62 @@
+/*
+     Direct copy from settings.css
+*/
+
+
 /* Content */
-.team .content {
+.hiring .content {
     padding-top: 40px;
 }
 
 /* Drawers */
-.team .drawer-heading {
+.hiring .drawer-heading {
     margin: 0 0 10px 0;
     padding-bottom: 10px;
     border-bottom: 2px solid #f5f5f5;
     background-color: #2200a1;
 }
 
-.team .drawer-heading button {
+.hiring .drawer-heading button {
     box-shadow: 1px 2px 3px #000;
     border-radius: 50%;
     background-color: #FFFFFF;
 }
 
-.team .drawer-heading h2 {
+.hiring .drawer-heading h2 {
     display: inline-block;
     width: 85%;
     margin-top: 0;
     color: #FFFFFF;
 }
 
-.team .drawer-section label {
+.hiring .drawer-section label {
     color: #666666;
     font-size: 18px;
     font-weight: 500;
 }
 
-.team .drawer-section .form-div {
+.hiring .drawer-section .form-div {
     margin: 20px 0;
 }
 
-.team .drawer-section .form-div .form-group {
+.hiring .drawer-section .form-div .form-group {
     margin-bottom: 30px;
 }
 
-.team .drawer-section input[type="text"].form-control,
-.team .drawer-section select.form-control {
+.hiring .drawer-section input[type="text"].form-control,
+.hiring .drawer-section select.form-control {
     height: 45px;
 }
 
-.team .brands-content .brand-add-button .btn-circle-wrapper,
-.team .workplaces-content .workplace-add-button .btn-circle-wrapper {
+.hiring .brands-content .brand-add-button .btn-circle-wrapper,
+.hiring .workplaces-content .workplace-add-button .btn-circle-wrapper {
     width: 100%;
     margin: 15px auto;
     text-align: center;
 }
 
 /* Personal tab */
-.team .personal-content .heading {
+.hiring .personal-content .heading {
     color: #31363D;
     font-size: 24px;
     text-align: left;
@@ -62,34 +67,34 @@
     font-weight: normal;
 }
 
-.team .personal-content .personal-info-img {
+.hiring .personal-content .personal-info-img {
     width: 100%;
     float: left;
 }
 
-.team .personal-content .personal-info-img .personal-info {
+.hiring .personal-content .personal-info-img .personal-info {
     width: 50%;
     float: left;
 }
 
-.team .personal-content .personal-info-img .personal-img {
+.hiring .personal-content .personal-info-img .personal-img {
     width: 50%;
     float: left;
     cursor: pointer;
     padding: 20px 50px;
 }
 
-.team .personal-content .personal-info-img .personal-info ul {
+.hiring .personal-content .personal-info-img .personal-info ul {
     padding: 0;
     margin: 0 auto;
 }
 
-.team .personal-content .personal-info-img .personal-info li {
+.hiring .personal-content .personal-info-img .personal-info li {
     list-style: none;
     margin-bottom: 25px;
 }
 
-.team .personal-content .personal-info-img .personal-info li label {
+.hiring .personal-content .personal-info-img .personal-info li label {
     color: #666666;
     font-size: 18px;
     line-height: 21px;
@@ -98,33 +103,33 @@
 
 }
 
-.team .personal-content .personal-info-img .personal-info li input {
+.hiring .personal-content .personal-info-img .personal-info li input {
     border: 2px solid rgba(74, 74, 74, 0.5);
     border-radius: 4px;
     background-color: #FFFFFF;
     height: 50px;
     text-transform: uppercase;
 }
-.team .personal-content .personal-info-img .personal-info li .field-password-view input {
+.hiring .personal-content .personal-info-img .personal-info li .field-password-view input {
     text-transform: none;
 }
 
-.team .personal-content .personal-info-img .personal-info li.has-error input {
+.hiring .personal-content .personal-info-img .personal-info li.has-error input {
     border: 1px solid #ee3622;
 }
 
-.team .personal-content .personal-info-img .personal-info li.has-error label {
+.hiring .personal-content .personal-info-img .personal-info li.has-error label {
     color: #ee3622;
 }
 
-.team .personal-content .personal-info-img .personal-info li input::placeholder {
+.hiring .personal-content .personal-info-img .personal-info li input::placeholder {
     color: #999999;
     font-size: 18px;
     font-weight: 500;
     line-height: 21px;
 }
 
-.team .personal-content .personal-info-img .personal-img .personal-img-icon {
+.hiring .personal-content .personal-info-img .personal-img .personal-img-icon {
     box-sizing: border-box;
     height: 254px;
     width: 254px;
@@ -137,13 +142,13 @@
     line-height: 250px;
 }
 
-.team .personal-content .payment-option {
+.hiring .personal-content .payment-option {
     float: left;
     width: 100%;
     margin-top: 40px;
 }
 
-.team .personal-content .payment-option .payment-service {
+.hiring .personal-content .payment-option .payment-service {
     border: 1px solid #D9D9D9;
     background-color: #FFFFFF;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
@@ -154,7 +159,7 @@
     margin: 0 10px;
 }
 
-.team .personal-content .payment-option .payment-service span {
+.hiring .personal-content .payment-option .payment-service span {
     color: #31363D;
     font-family: Lato;
     font-size: 14px;
@@ -164,13 +169,13 @@
     display: block;
 }
 
-.team .personal-content .payment-option .payment-service i {
+.hiring .personal-content .payment-option .payment-service i {
     width: 100px;
     height: 50px;
     display: inline-block;
 }
 
-.team .personal-content .payment-option .payment-service i img {
+.hiring .personal-content .payment-option .payment-service i img {
     width: 100px;
     margin-top: -24px;
 }

@@ -7,7 +7,7 @@ import EmployeeView from './components/EmployeeView';
 import Settings from './components/Settings';
 import Positions from './components/Positions';
 import MyWorkplace from './components/workplace/MyWorkplace'
-import SharedWorkplace from './components/workplace/SharedWorkplace'
+import Hiring from './components/Hiring'
 import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
 import Team from './components/Team'
@@ -79,9 +79,9 @@ const routes = [
 						component: MyWorkplace
 					},
 					{
-						path: '/workplaces/shared',
+						path: '/hiring',
 						exact: true,
-						component: SharedWorkplace
+						component: Hiring
 					},
 					{
 						path: '/team',

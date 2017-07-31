@@ -1,24 +1,19 @@
 import React, { Component } from 'react'
-import TeamMemberCard from './../TeamMemberCard'
+import CandidateCard from './CandidateCard'
 import { Image, Button, Icon, Card, Header, Rating } from 'semantic-ui-react'
 
 const initialState = {
 	//stub
 };
 
-export default class TeamMembers extends Component {
+export default class Candidates extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			...initialState,
-			team_members: props.managers
+			candidates: props.candidates
 		};
 	}
-
-	handleDeleteClick = (event) => {
-		event.preventDefault();
-		console.log('Delete button clicked');
-	};
 
 	handleDrawerSubmit = (event) => {
 		event.preventDefault();
@@ -38,9 +33,9 @@ export default class TeamMembers extends Component {
 		return (
 			<div>
 				<br/><br/>
-				<Card.Group itemsPerRow="4">
+				<Card.Group itemsPerRow="5">
 					{
-						this.state.team_members.map((m, i)=> <TeamMemberCard key={i} member={m}/>)
+						this.state.candidates.map((m, i)=> <CandidateCard key={i} member={m}/>)
 					}
 				</Card.Group>
 			</div>

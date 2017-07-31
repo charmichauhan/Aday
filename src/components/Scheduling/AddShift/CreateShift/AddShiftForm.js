@@ -35,7 +35,8 @@ export class AddShiftForm extends Component{
       managerValue: null,
       instructions:'',
       jobShadowingOppurtunity:'',
-      weekPublishedId:''
+      weekPublishedId:'',
+      loading: false
     }
 
     this.onWorkplace=this.onWorkplace.bind(this);
@@ -46,7 +47,6 @@ export class AddShiftForm extends Component{
     this.handleSave=this.handleSave.bind(this);
     this.saveShift=this.saveShift.bind(this);
   }
-
   
   onWorkplace(event){
     this.setState({workplace:event.target.value})
@@ -85,7 +85,7 @@ export class AddShiftForm extends Component{
                         weekPublishedByDate: previousQueryResult.weekPublishedByDate
                       };
                     },
-                }
+                },
               })
               .then(({ data }) => {
                   this.props.closeFunc();
@@ -96,14 +96,18 @@ export class AddShiftForm extends Component{
   }
   
   handleSave(){
-      const day = Object.keys(this.state.shiftDaysSelected)[0]
+      this.setState({loading: true})
+      const days = Object.keys(this.state.shiftDaysSelected)
+      const _this = this
+      const brandId = this.props.brandId
+      days.forEach(function(day){
         let startTime = "";
         let endTime = "";
         let weekPublishedId = null;
 
          // formatting time 
-          if (this.state.startTime) {
-            const start = this.state.startTime.split(":")
+          if (_this.state.startTime) {
+            const start = _this.state.startTime.split(":")
             const hour  = start[0]
             const minute = start[1].split(" ")[0]
             if (start[1].split(" ")[1]  == 'pm'){
@@ -111,8 +115,8 @@ export class AddShiftForm extends Component{
             }
             startTime = moment(day).hour(parseInt(hour)).minute(parseInt(minute))
           }
-          if (this.state.stopTime) {
-            const stop = this.state.stopTime.split(":")
+          if (_this.state.stopTime) {
+            const stop = _this.state.stopTime.split(":")
             const hour  = stop[0]
             const minute = stop[1].split(" ")[0]
             if (stop[1].split(" ")[1]  == 'pm'){
@@ -121,7 +125,7 @@ export class AddShiftForm extends Component{
             endTime = moment(day).hour(hour).minute(parseInt(minute))
           }
 
-          this.props.data.allWeekPublisheds.edges.map((value,index) => {
+          _this.props.data.allWeekPublisheds.edges.map((value,index) => {
             if ((moment(day).isAfter(moment(value.node.start)) && moment(day).isBefore(moment(value.node.end)))
                 ||  (moment(day).isSame(moment(value.node.start), 'day'))
                 || (moment(day).isSame(moment(value.node.end), 'day'))
@@ -132,49 +136,47 @@ export class AddShiftForm extends Component{
 
       if(!weekPublishedId){
          weekPublishedId = uuidv1()
-         this.props.createWeekPublished({
+         _this.props.createWeekPublished({
                 variables: { data: 
                                 {weekPublished:
                                   { id: weekPublishedId, 
                                     start: moment(startTime).startOf('week').format(), 
                                     end: moment(startTime).endOf('week').format(),
                                     published: false, datePublished: moment().format(),
-                                    brandid: "5a14782b-c220-4927-b059-f4f22d01c230" }
-                            }}
+                                    brandId: brandId }
+                            }},
+                updateQueries: {
+                    allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+                      const returnHash = {};
+                      const weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
+                      weekPublishedHash['__typename'] = "WeekPublished"
+                      returnHash['nodes'] = [ weekPublishedHash ]
+                      returnHash['__typename'] = "WeekPublishedByDateConnection"
+                      return {
+                        weekPublishedByDate: returnHash
+                      };
+                    },
+                },
             })
             .then(({ data }) => {
-                  this.saveShift(startTime, endTime, weekPublishedId);
+                  _this.saveShift(startTime, endTime, weekPublishedId);
                   console.log('got data', data);
               }).catch((error) => {
                   console.log('there was an error sending the query', error);
               });
         }
         else if(weekPublishedId) {
-          this.saveShift(startTime, endTime, weekPublishedId);
+          _this.saveShift(startTime, endTime, weekPublishedId);
         }
+      })
   }
 
 
-
-
-
     render(){
-       if (this.props.data.loading) {
-            return (<div>Loading</div>)
-        }
 
-        if (this.props.data.error) {
-            console.log(this.props.data.error)
-            return (<div>An unexpected error occurred</div>)
-        }
-        console.log("this.prop.data")
-        console.log(this.props.data)
-     const date=moment();
-    const startDate=moment(date).startOf('week').isoWeekday(7).format('MM-DD-YYYY');
-    console.log(this.state)
-    return(
-      <div>
-      <Header as='h1' style={{ textAlign: 'center' , color: '#0022A1', fontSize: '22px', marginTop: '10px', height: "40px"}} >
+
+      const header = (
+        <Header as='h1' style={{ textAlign: 'center' , color: '#0022A1', fontSize: '22px', marginTop: '10px', height: "40px"}} >
         <div style={{width: '33%', float: 'left'}}>
           <Image
             src="/images/Assets/Icons/Icons/job-deck.png"
@@ -194,6 +196,30 @@ export class AddShiftForm extends Component{
         />
         </div>
       </Header>
+        )
+
+       if (this.props.data.loading || this.state.loading ) {
+            return (
+              <div>
+                 { header }  
+                <div className="outside-add-shift">
+                    <div className="inside-add-shift">
+                <div>Loading</div></div></div>
+              </div>
+           )
+        }
+
+        if (this.props.data.error) {
+            console.log(this.props.data.error)
+            return (<div>An unexpected error occurred</div>)
+        }
+
+    const date=moment();
+    const startDate=moment(date).startOf('week').isoWeekday(7).format('MM-DD-YYYY');
+
+    return(
+      <div>
+        { header }
         <Form>
           <div className="outside-add-shift">
            <div className="inside-add-shift">
@@ -266,6 +292,8 @@ export class AddShiftForm extends Component{
              </div>
 */
 
+
+
 const createShiftMutation = gql`
  mutation createShift($data:CreateShiftInput!){
   createShift(input:$data)
@@ -273,20 +301,20 @@ const createShiftMutation = gql`
     shift{
       id
       startTime
-                            endTime
-                            workersInvited
-                            workersAssigned
-                            workersRequestedNum
-                            positionByPositionId{
-                            positionName
-                            positionIconUrl
-                                brandByBrandId {
-                                    brandName
-                                }
-                            }
-                            workplaceByWorkplaceId{
-                                workplaceName
-                            }
+      endTime
+      workersInvited
+      workersAssigned
+      workersRequestedNum
+      positionByPositionId{
+        positionName
+        positionIconUrl
+        brandByBrandId {
+              brandName
+        }
+      }
+      workplaceByWorkplaceId{
+        workplaceName
+      }
     }
   }
 }`
@@ -297,6 +325,13 @@ const createWeekPublishedMutation = gql`
     {
     weekPublished{
       id
+      shiftsByWeekPublishedId{
+          edges {
+            node {
+              id
+            }
+        }
+      }
     }
   }
 }`
@@ -319,7 +354,7 @@ const AddShift = compose(
   graphql(allWeekPublished, {
    options: (ownProps) => ({ 
      variables: {
-       brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+       brandid: ownProps.brandId,
      }
    }),
  }),

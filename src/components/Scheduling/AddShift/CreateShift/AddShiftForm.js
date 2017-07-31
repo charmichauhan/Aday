@@ -104,7 +104,6 @@ export class AddShiftForm extends Component{
         let startTime = "";
         let endTime = "";
         let weekPublishedId = null;
-
          // formatting time 
           if (_this.state.startTime) {
             const start = _this.state.startTime.split(":")

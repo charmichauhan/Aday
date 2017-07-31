@@ -33,7 +33,7 @@ export default class Brand extends Component {
   getDeleteActions = () => {
     return [
       { type: 'white', title: 'Cancel', handleClick: this.closeModal, image: false },
-      { type: 'red', title: 'Delete Brand', handleClick: this.handleDelete, image: true }
+      { type: 'red', title: 'Delete Brand', handleClick: this.handleDelete, image: '/images/modal/close.png' }
     ];
   };
 

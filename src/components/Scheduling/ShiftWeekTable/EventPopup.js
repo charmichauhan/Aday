@@ -74,7 +74,7 @@ export default class EventPopup extends Component{
             <div className="day-item hov">
                 <div className="start-time">
                     <span className="fa fa-clock-o"/>
-                    <p className="date-time"> {startTime.replace("M","")} {endTime.replace("M","")}</p>
+                    <p className="date-time"> {startTime} {endTime}</p>
                     <p className="duration">{h} HR&thinsp; {m}MIN</p>
                 </div>
                 <div className="location">

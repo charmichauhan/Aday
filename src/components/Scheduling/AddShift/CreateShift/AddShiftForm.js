@@ -32,7 +32,7 @@ export class AddShiftForm extends Component{
       stopTime:'',
       numberOfTeamMembers:'',
       unpaidBreak:'',
-      managerValue:'',
+      managerValue: null,
       instructions:'',
       jobShadowingOppurtunity:'',
       weekPublishedId:''
@@ -44,6 +44,7 @@ export class AddShiftForm extends Component{
     this.updateFormState=this.updateFormState.bind(this);
     this.handleCloseFunc=this.handleCloseFunc.bind(this);
     this.handleSave=this.handleSave.bind(this);
+    this.saveShift=this.saveShift.bind(this);
   }
 
   
@@ -63,28 +64,17 @@ export class AddShiftForm extends Component{
   handleCloseFunc(){
     this.props.closeFunc();
   }
-  
-  handleSave(){
-      console.log("in handle save")
-      const day = Object.keys(this.state.shiftDaysSelected)[0]
-      let weekPublishedId = "";
-      this.props.data.allWeekPublisheds.edges.map((value,index) => {
-        if ((moment(day).isAfter(moment(value.node.start)) && moment(day).isBefore(moment(value.node.end)))
-            ||  (moment(day).isSame(moment(value.node.start), 'day'))
-            || (moment(day).isSame(moment(value.node.end), 'day'))
-            ){
-            weekPublishedId = value.node.id;
-          }
-       })
 
-
-      if(weekPublishedId) {
-            this.props.createShift({
-                variables: { data: {shift:{id: uuidv1(), workplaceId: this.state.workplace, 
-                                            positionId: this.state.position, workersRequestedNum: this.state.numberOfTeamMembers,
-                                            creatorId: "5a01782c-c220-4927-b059-f4f22d01c230", managersOnShift: ["5a01782c-c220-4927-b059-f4f22d01c230"],
-                                            startTime: moment(day).add(moment(this.state.startTime)), endTime: moment(day).add(moment(this.state.stopTime)), 
-                                            shiftDateCreated: moment().format(), weekPublishedId: weekPublishedId}} },
+  saveShift(startTime, endTime, weekPublishedId){
+      this.props.createShift({
+          variables: { data: 
+                  {shift:
+                    { id: uuidv1(), workplaceId: this.state.workplace, 
+                      positionId: this.state.position, workersRequestedNum: this.state.numberOfTeamMembers,
+                      creatorId: "5a01782c-c220-4927-b059-f4f22d01c230", 
+                      managersOnShift: this.state.managerValue,
+                      startTime: startTime, endTime: endTime, 
+                      shiftDateCreated: moment().format(), weekPublishedId: weekPublishedId}} },
                 updateQueries: {
                     allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
                       const shiftHash = mutationResult.data.createShift.shift;
@@ -103,8 +93,69 @@ export class AddShiftForm extends Component{
               }).catch((error) => {
                   console.log('there was an error sending the query', error);
               });
+  }
+  
+  handleSave(){
+      const day = Object.keys(this.state.shiftDaysSelected)[0]
+        let startTime = "";
+        let endTime = "";
+        let weekPublishedId = null;
+
+         // formatting time 
+          if (this.state.startTime) {
+            const start = this.state.startTime.split(":")
+            const hour  = start[0]
+            const minute = start[1].split(" ")[0]
+            if (start[1].split(" ")[1]  == 'pm'){
+               hour =  parseInt(hour) + 12
+            }
+            startTime = moment(day).hour(parseInt(hour)).minute(parseInt(minute))
+          }
+          if (this.state.stopTime) {
+            const stop = this.state.stopTime.split(":")
+            const hour  = stop[0]
+            const minute = stop[1].split(" ")[0]
+            if (stop[1].split(" ")[1]  == 'pm'){
+               hour =  parseInt(hour) + 12
+            }
+            endTime = moment(day).hour(hour).minute(parseInt(minute))
+          }
+
+          this.props.data.allWeekPublisheds.edges.map((value,index) => {
+            if ((moment(day).isAfter(moment(value.node.start)) && moment(day).isBefore(moment(value.node.end)))
+                ||  (moment(day).isSame(moment(value.node.start), 'day'))
+                || (moment(day).isSame(moment(value.node.end), 'day'))
+                ){
+                weekPublishedId = value.node.id;
+              }
+           })
+
+      if(!weekPublishedId){
+         weekPublishedId = uuidv1()
+         this.props.createWeekPublished({
+                variables: { data: 
+                                {weekPublished:
+                                  { id: weekPublishedId, 
+                                    start: moment(startTime).startOf('week').format(), 
+                                    end: moment(startTime).endOf('week').format(),
+                                    published: false, datePublished: moment().format(),
+                                    brandid: "5a14782b-c220-4927-b059-f4f22d01c230" }
+                            }}
+            })
+            .then(({ data }) => {
+                  this.saveShift(startTime, endTime, weekPublishedId);
+                  console.log('got data', data);
+              }).catch((error) => {
+                  console.log('there was an error sending the query', error);
+              });
         }
-    }
+        else if(weekPublishedId) {
+          this.saveShift(startTime, endTime, weekPublishedId);
+        }
+  }
+
+
+
 
 
     render(){
@@ -196,8 +247,8 @@ export class AddShiftForm extends Component{
              src="/images/Assets/Icons/Buttons/add-shift-button.png"
              shape="circular"
              width="42%"
-             disabled={this.state.workplace==""||this.state.startTime==""||this.state.position==""
-                        ||this.state.stopTime==""||this.state.numberOfTeamMembers==""||this.state.shiftDaysSelected==""}
+             disabled={ this.state.workplace==""||this.state.startTime==""||this.state.position==""
+             ||this.state.stopTime==""||this.state.numberOfTeamMembers==""||this.state.shiftDaysSelected=="" }
              onClick={this.handleSave}
            />
           </Image.Group>
@@ -244,7 +295,7 @@ const createWeekPublishedMutation = gql`
  mutation createWeekPublished($data:CreateWeekPublishedInput!){
   createWeekPublished(input:$data)
     {
-    shift{
+    weekPublished{
       id
     }
   }

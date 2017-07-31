@@ -9,7 +9,6 @@ class ManagerSelectComponent extends Component{
     data: React.PropTypes.shape({
       loading: React.PropTypes.bool,
       error: React.PropTypes.object,
-      Trainer: React.PropTypes.object,
     }).isRequired,
   }
 
@@ -23,11 +22,7 @@ class ManagerSelectComponent extends Component{
   }
 
    onManagerChange(event, data){
-    const {formCallBack}=this.props
-    console.log(event,data);
-    this.setState({users:data.value});
-    formCallBack(data.value);
-
+    this.props.formCallBack({managerValue: [data.value]});
   }
   render(){
   
@@ -43,12 +38,13 @@ class ManagerSelectComponent extends Component{
     }else{
       if(!this.state.users.length){
         // add positions into state parameter
-      let usersArray=this.props.data.allUsers.nodes;
+      let usersArray=this.props.data.allEmployees.edges;
       usersArray.forEach(function(user,index) {
+        const usr = user.node.userByUserId
         this.state.users.push({
-          text:user.firstName,
-          value:user.id,
-          key:user.id
+          text: usr.firstName + " " + usr.lastName,
+          value: usr.id,
+          key: usr.id
         })
       }, this);
     }
@@ -56,24 +52,26 @@ class ManagerSelectComponent extends Component{
   
 
     return(
- 
-    <div>
-      <Dropdown  placeholder='Select Manager' fluid selection options={this.state.users} style={{ marginTop:'-2%' }} onChange={this.onManagerChange}  />
-    </div>
-           
+      <div>
+        <Dropdown  placeholder='Select Manager' fluid selection options={this.state.users} style={{ marginTop:'-2%' }} onChange={this.onManagerChange}  />
+      </div>     
     );
   }
 }
 
 const getAllUsers = gql`
-  query getAllUsersQuery {
-  allUsers{
-    nodes{
-      firstName,
-      lastName,
-      id
+  query getAllUsersQuery{
+    allEmployees(condition:{isManager:true, corporationId: "3b14782b-c220-4927-b059-f4f22d01c230"}){
+        edges{
+          node{
+            userByUserId{
+              id
+              firstName
+              lastName
+            }
+          }
+        }
     }
-  }
 }
 `
 

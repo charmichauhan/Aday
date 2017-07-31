@@ -6,7 +6,7 @@ import { Button } from 'semantic-ui-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
 import ShiftWeekTable from './ShiftWeekTable';
-import ShiftPublish from './ShiftWeekTable/ShiftPublish';
+import ShiftPublish from '../Scheduling/ShiftWeekTable/ShiftPublish';
 import '../Scheduling/style.css';
 import {Modal} from 'semantic-ui-react';
 

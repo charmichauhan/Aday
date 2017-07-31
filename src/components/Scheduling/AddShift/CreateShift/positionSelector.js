@@ -9,7 +9,6 @@ export class PositionSelector extends Component{
     data: React.PropTypes.shape({
       loading: React.PropTypes.bool,
       error: React.PropTypes.object,
-      Trainer: React.PropTypes.object,
     }).isRequired,
   }
 

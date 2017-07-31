@@ -103,7 +103,7 @@ class ShiftWeekTableComponent extends Week {
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p>78%</TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p></TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>

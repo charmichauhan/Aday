@@ -7,7 +7,7 @@ import AddEmployeeForm from './CreateShift/AddEmployeeForm';
 import { createStore, combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
 import './styles.css';
-
+import { NavLink } from 'react-router-dom'
 
 
 export default class CreateShiftButton extends Component {
@@ -75,26 +75,26 @@ export default class CreateShiftButton extends Component {
 			                          src="/images/Assets/Icons/Buttons/employee-count-coming.png"
 			                          shape="rounded"
 			                          style={{float: 'left',left: '2.5%',marginTop: '3%' , cursor: 'pointer'}}
-			                           onClick={ this.onEmployeeCount }
-			                          height='90%'
-			                          width='30%'
+			                          onClick={ this.onEmployeeCount }
+			                           height='186.719'
+			                           width='215.391'
 			                         />
 			               <Image
 			                          src="/images/Assets/Icons/Buttons/standard-add.png"
 			                          shape="rounded"
 			                          style={{ float: 'left',left: '4.8%',marginTop: '3%',cursor: 'pointer' }}
 			                          onClick={ this.onStandard }
-			                          height='90%'
-			                          width='30%'
+			                           height='186.719'
+			                           width='215.391'
 
 			                       />
 			                <Image
 			                           src="/images/Assets/Icons/Buttons/add-template.png"
 			                           shape="rounded"
 			                           style={{ float: 'left',right: '1.8%',marginTop: '3%',cursor: 'pointer',left: '7.2%' }}
-			                           onClick={ this.onTemplate }
-			                           height='90%'
-			                           width='30%'
+			                           as={NavLink} to="/schedule/template"
+			                           height='186.719'
+			                           width='215.391'
 
 			                        />
 			            </Modal.Content>

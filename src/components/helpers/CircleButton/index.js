@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { Image } from 'semantic-ui-react';
+
 import './circle-button.css';
+
 const buttonColors = {
   white: {
     backgroundColor: '#ffffff',
@@ -30,7 +33,14 @@ const buttonStyle = {
 
 export default class CircleButton extends Component {
   render() {
-    const { type = 'white', title = 'Title', handleClick = () => { }, style = {}, image = false } = this.props;
+    const {
+      type = 'white',
+      title = 'Title',
+      handleClick = () => { },
+      style = {},
+      image = false,
+      imageSize = 'small'
+    } = this.props;
     const classes = ['btn', 'btn-circle', 'text-uppercase', 'inline-block'];
     const buttonStyles = {
       ...buttonStyle,
@@ -40,7 +50,8 @@ export default class CircleButton extends Component {
     return (
       <div className="btn-circle-wrapper">
         <button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}>
-          {image && <img src="/images/modal/close.png" />}{title}
+          {image && <Image src={image} className={[imageSize, 'img-icon'].join(' ')} />}
+          <p>{title}</p>
         </button>
       </div>
     );

@@ -45,7 +45,7 @@ export default class Workplace extends Component {
   getDeleteActions = () => {
     return [
       { type: 'white', title: 'Cancel', handleClick: this.closeModal, image: false },
-      { type: 'red', title: 'Delete Workplace', handleClick: this.handleDelete, image: true }
+      { type: 'red', title: 'Delete Workplace', handleClick: this.handleDelete, image: '/images/modal/close.png' }
     ];
   };
 

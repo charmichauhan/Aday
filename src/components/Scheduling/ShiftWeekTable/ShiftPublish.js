@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import Published from '../../../../public/assets/Icons/published.png';
-import Unpublished from '../../../../public/assets/Icons/unpublished.png';
 import '../../Scheduling/style.css';
 import { gql, graphql, compose } from 'react-apollo';
 import moment from 'moment'
@@ -67,16 +65,16 @@ class ShiftPublishComponent extends Component{
             console.log(this.props.data.error)
             return (<div>An unexpected error occurred</div>)
         }
-        let is_publish = ""
+        let is_publish = "none"
         const week_published = this.props.data.weekPublishedByDate.nodes[0]
         if(week_published){
-        is_publish = week_published.published;
+            is_publish = week_published.published;
         }
         let status = "";
         let statusImg = "";
         if (is_publish == false){
-        let status = "UNPUBLISHED SCHEDULE";
-        let statusImg = Unpublished;
+            status = "UNPUBLISHED SCHEDULE";
+            statusImg = "/assets/Icons/unpublished.png";
         }
         else if (is_publish == true ){
             status="PUBLISHED SCHEDULE";
@@ -102,16 +100,15 @@ class ShiftPublishComponent extends Component{
                 }
                     <div className="col-md-12">
                         <div className="col-sm-offset-3 col-sm-5 rectangle">
-                            {is_publish == ""? "NO SHIFTS FOR GIVEN WEEK" :<img src={statusImg}/>}
+                            {is_publish == "none"? "NO SHIFTS FOR GIVEN WEEK" :<img src={statusImg}/>}
                             <p className="col-sm-offset-2">{status}</p>
                         </div>
                     </div>
                   <div className="btn-action">
                     <Button className="btn-image"><CreateShiftButton/></Button>
-                    {(is_publish == false && is_publish != "") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
-                    {(is_publish != "") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
-                    {is_publish != "" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
-                    <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/template-list-button.png" alt="Template List"/></Button>
+                    {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
+                    {(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
+                    {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
                 </div>
             </div>
         )

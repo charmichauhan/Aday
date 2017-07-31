@@ -224,9 +224,9 @@ export default class TimePicker extends Component {
     const minute = (startFocused) ? startMinute : stopMinute;
 
     return(
-    <div style={{ marginTop:'4%' }}>
+    <div style={{ height: "190px" }}>
      <div>
-       <div style={{ float:'left',width:'30%',marginTop:'2%' }}>
+       <div style={{ float:'left',width:'370px', marginTop:'4px' }}>
            <p style={{ fontSize:'18px',fontStyle:'normal',color:'#666666' }}>START TIME</p>
            <Input
              label={<Image
@@ -236,21 +236,21 @@ export default class TimePicker extends Component {
                        style={{ padding:'0px',height:"38px" }}
                />}
                labelPosition="left"
-               style={{ marginTop:'-4%',width:'100%',backgroundColor:'lightgrey' }}
+               style={{ width:'80%',backgroundColor:'lightgrey', marginTop: "-10px" }}
                id="start"
                onChange={ this.textFieldOnChange }
                onFocus={ this.textFieldOnFocus }
                onBlur={ this.textFieldOnBlur }
                value={ this.state.startFieldText }
-               icon={<Icon.Group size="large" style={{marginLeft: '-6%',marginTop:'1%'}}  >
-                   <Icon fitted name="toggle up" style={{marginTop:'-3%',marginRight:'0%'}} id="start" onClick={ this.increaseTime }/>
+               icon={<Icon.Group size="large" style={{marginLeft: '-6%',marginTop:'1px'}}  >
+                   <Icon fitted name="toggle up" style={{marginTop:'-3px',marginRight:'0%'}} id="start" onClick={ this.increaseTime }/>
                    <Icon fitted name="toggle down" style={{marginTop:'38%'}}  id="start" onClick={ this.decreaseTime }/>
                    </Icon.Group>
                }
 
              />
        </div>
-       <div style={{ float:'right',width:'30%',marginRight:"20%",marginTop:'2%' }}>
+       <div style={{ float:'left', width:'370px', marginLeft: '30px', marginTop:'4px' }}>
        <p style={{ fontSize:'18px',fontStyle:'normal',color:'#666666' }}>END TIME</p>
            <Input
              label={<Image
@@ -260,20 +260,21 @@ export default class TimePicker extends Component {
                        style={{ padding:'0px',height:"38px" }}
                />}
                labelPosition="left"
-               style={{ marginTop:'-4%',width:'100%',backgroundColor:'lightgrey' }}
+               style={{ width:'80%',backgroundColor:'lightgrey', marginTop: "-10px" }}
                id="stop"
                onChange={ this.textFieldOnChange }
                onFocus={ this.textFieldOnFocus }
                onBlur={ this.textFieldOnBlur }
                value={ this.state.stopFieldText }
-               icon={<Icon.Group size="large" style={{marginLeft: '-6%',marginTop:'1%'}}  >
-                   <Icon name="toggle up" style={{marginTop:'-3%',marginRight:'0%'}} id="stop" onClick={ this.increaseTime } />
+               icon={<Icon.Group size="large" style={{marginLeft: '-6%',marginTop:'1px'}}  >
+                   <Icon name="toggle up" style={{marginTop:'-3px',marginRight:'0%'}} id="stop" onClick={ this.increaseTime } />
                    <Icon name="toggle down" style={{marginTop:'38%'}}  id="stop" onClick={ this.decreaseTime} />
                    </Icon.Group>
                }
            />
        </div>
     </div>
+    <div style={{width: "770px"}}>
       <div className="_arc_horizontal_list_hour"  >
        <div>
          <List horizontal>
@@ -366,7 +367,7 @@ export default class TimePicker extends Component {
        </List>
       </div>
      </div>
-     <div style={{ float:'left',marginLeft:'5%',marginTop:'4%' }}>
+     <div style={{ float:'left',marginLeft:'5%',marginTop:'4%', width: "290px" }}>
         <List horizontal>
             <List.Item>
                <Image
@@ -390,6 +391,7 @@ export default class TimePicker extends Component {
             </List.Item>
         </List>
      </div>
+    </div>
     </div>
     );
   }

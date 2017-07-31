@@ -80,7 +80,7 @@ export default class DaySelector extends React.Component {
       };
     });
     return (
-      <div>
+      <div style={{width: "800px", height: "100px"}}>
         <div style={{float:'left'}}>
           <SquareButton
             name="angle left"
@@ -104,12 +104,12 @@ export default class DaySelector extends React.Component {
          }
          </div>
         <div style={{float:'left'}}>
-        <SquareButton
-          name="angle right"
-          onClick={this.stepDateRange}
-          dataDirection="right"
-        />
-     </div>
+            <SquareButton
+              name="angle right"
+              onClick={this.stepDateRange}
+              dataDirection="right"
+            />
+         </div>
     </div>
     );
   }

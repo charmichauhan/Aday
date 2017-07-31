@@ -59,7 +59,7 @@ const routes = [
                         component: EmployeeView
 					},
 					{
-                        path: '/schedule/employeeview/template',
+                        path: '/schedule/template',
                         exact: true,
                         component: Template
 					},

@@ -3,8 +3,8 @@
 }
 .shift-modal-day-cell .shift-modal-day-cell-button {
     margin: 0 11px;
-    width: 70px;
-    height: 70px;
+    width: 85px;
+    height: 85px;
     background-color: #fff;
     border: 1px solid #f7f7f7;
     color: #423a3f;
@@ -15,6 +15,7 @@
     border-radius: 5px;
     letter-spacing: -1px;
     padding-top:10px;
+    line-height: 25px;
 }
 .shift-modal-day-cell .shift-modal-day-cell-button:hover, .shift-modal-day-cell .shift-modal-day-cell-button:active, .shift-modal-day-cell .shift-modal-day-cell-button.selected {
   background-color: #0022A1;

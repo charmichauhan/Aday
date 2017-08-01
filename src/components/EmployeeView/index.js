@@ -9,6 +9,7 @@ import ShiftWeekTable from './ShiftWeekTable';
 import ShiftPublish from '../Scheduling/ShiftWeekTable/ShiftPublish';
 import '../Scheduling/style.css';
 import {Modal} from 'semantic-ui-react';
+import { gql, graphql, compose } from 'react-apollo';
 
 const styles = {
     bodyStyle: {
@@ -32,7 +33,7 @@ const styles = {
     }
 };
 
-export default class EmployeeView extends Component {
+class EmployeeViewComponent extends Component {
 	constructor(props){
 		super(props);
         this.state = {
@@ -68,15 +69,39 @@ export default class EmployeeView extends Component {
 
     render() {
         BigCalendar.momentLocalizer(moment);
-        				 let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
+
+         if (this.props.data.loading) {
+            return (<div>Loading</div>)
+        }
+
+        if (this.props.data.error) {
+            console.log(this.props.data.error)
+            return (<div>An unexpected error occurred</div>)
+        }
+
+        let is_publish = "none";
+        let publish_id = "";
+        const date = this.state.date;
+        this.props.data.allWeekPublisheds.nodes.forEach(function(value){
+        if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
+            ||  (moment(date).isSame(moment(value.start), 'day'))
+            || (moment(date).isSame(moment(value.end), 'day'))
+            ){
+              is_publish = value.published;
+              publish_id = value.id;
+          }
+        })
+
+         let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
               {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
+
         return (
 			<div className="App row">
 
-				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date}/></div>
+				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date} isPublish={ is_publish }/> </div>
                 {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
-													 message = "Are you sure that you want to delete this shift?"
-													 action = {publishModalOptions} closeAction={this.modalClose}/>
+													  message = "Are you sure that you want to delete this shift?"
+													  action = {publishModalOptions} closeAction={this.modalClose}/>
                     :""}
 				<div>
 					<BigCalendar events={[]}
@@ -140,3 +165,25 @@ class CustomToolbar extends Toolbar {
         );
     }
 }
+
+const allWeekPublisheds = gql
+  `query allWeekPublisheds($brandid: Uuid!){ 
+        allWeekPublisheds(condition: { brandId: $brandid }){
+            nodes{
+            id
+            published
+            start
+            end
+        }
+    }
+}`
+
+const EmployeeView = graphql(allWeekPublisheds, {
+    options: (ownProps) => ({
+        variables: {
+            brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+        }
+    }),
+})(EmployeeViewComponent)
+
+export default EmployeeView

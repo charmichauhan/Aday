@@ -13,6 +13,7 @@ import 'fullcalendar/dist/fullcalendar.min.css';
 import 'fullcalendar/dist/fullcalendar.min.js';
 import 'fullcalendar-scheduler/dist/scheduler.css';
 import 'fullcalendar-scheduler/dist/scheduler.js';
+import { gql, graphql, compose } from 'react-apollo';
 
 const style = {
     titleStyle:{
@@ -31,7 +32,7 @@ const style = {
     }
 };
 
-export default class Schedule extends Component {
+class ScheduleComponent extends Component {
     constructor(props){
         super(props);
         this.state = {
@@ -39,7 +40,7 @@ export default class Schedule extends Component {
 			addTemplateModalOpen: false,
 			templateName:"",
             redirect:false,
-            date: moment()
+            date: moment().format()
         }
     }
 
@@ -50,6 +51,27 @@ export default class Schedule extends Component {
     render() {
         BigCalendar.momentLocalizer(moment);
 
+         if (this.props.data.loading) {
+            return (<div>Loading</div>)
+        }
+
+        if (this.props.data.error) {
+            console.log(this.props.data.error)
+            return (<div>An unexpected error occurred</div>)
+        }
+
+        let is_publish = "none";
+        let publish_id = "";
+        const date = this.state.date;
+        this.props.data.allWeekPublisheds.nodes.forEach(function(value){
+        if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
+            ||  (moment(date).isSame(moment(value.start), 'day'))
+            || (moment(date).isSame(moment(value.end), 'day'))
+            ){
+              is_publish = value.published;
+              publish_id = value.id;
+          }
+        })
 
          let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
               {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
@@ -57,7 +79,7 @@ export default class Schedule extends Component {
         return (
 			<div className="App row">
 
-				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date}/> </div>
+				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date} isPublish={ is_publish }/> </div>
                 {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													  message = "Are you sure that you want to delete this shift?"
 													  action = {publishModalOptions} closeAction={this.modalClose}/>
@@ -128,3 +150,24 @@ class CustomToolbar extends Toolbar {
     }
 }
 
+const allWeekPublisheds = gql
+  `query allWeekPublisheds($brandid: Uuid!){ 
+        allWeekPublisheds(condition: { brandId: $brandid }){
+            nodes{
+            id
+            published
+            start
+            end
+        }
+    }
+}`
+
+const Schedule = graphql(allWeekPublisheds, {
+    options: (ownProps) => ({
+        variables: {
+            brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+        }
+    }),
+})(ScheduleComponent)
+
+export default Schedule

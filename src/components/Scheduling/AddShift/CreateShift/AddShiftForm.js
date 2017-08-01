@@ -46,6 +46,7 @@ export class AddShiftForm extends Component{
     this.handleCloseFunc=this.handleCloseFunc.bind(this);
     this.handleSave=this.handleSave.bind(this);
     this.saveShift=this.saveShift.bind(this);
+    this.formatDays=this.formatDays.bind(this);
   }
   
   onWorkplace(event){
@@ -94,53 +95,59 @@ export class AddShiftForm extends Component{
                   console.log('there was an error sending the query', error);
               });
   }
-  
-  handleSave(){
-      this.setState({loading: true})
-      const days = Object.keys(this.state.shiftDaysSelected)
-      const _this = this
-      const brandId = this.props.brandId
-      days.forEach(function(day){
+
+  formatDays(day){
+       // formatting time 
         let startTime = "";
         let endTime = "";
-        let weekPublishedId = null;
-         // formatting time 
-          if (_this.state.startTime) {
-            const start = _this.state.startTime.split(":")
-            const hour  = start[0]
-            const minute = start[1].split(" ")[0]
+        
+        if (this.state.startTime) {
+          const start = this.state.startTime.split(":")
+          const hour  = start[0]
+          const minute = start[1].split(" ")[0]
             if (start[1].split(" ")[1]  == 'pm'){
                hour =  parseInt(hour) + 12
             }
             startTime = moment(day).hour(parseInt(hour)).minute(parseInt(minute))
           }
-          if (_this.state.stopTime) {
-            const stop = _this.state.stopTime.split(":")
+        if (this.state.stopTime) {
+            const stop = this.state.stopTime.split(":")
             const hour  = stop[0]
             const minute = stop[1].split(" ")[0]
             if (stop[1].split(" ")[1]  == 'pm'){
                hour =  parseInt(hour) + 12
             }
             endTime = moment(day).hour(hour).minute(parseInt(minute))
+        }
+      return [startTime, endTime]
+  }
+  
+  handleSave(){
+      this.setState({loading: true})
+      const days = Object.keys(this.state.shiftDaysSelected)
+      const _this = this
+      const brandId = this.props.brandId
+      let weekPublishedId = null;
+
+      // get selected week's published ID
+      _this.props.data.allWeekPublisheds.edges.map((value,index) => {
+        if ((moment(days[0]).isAfter(moment(value.node.start)) && moment(days[0]).isBefore(moment(value.node.end)))
+            ||  (moment(days[0]).isSame(moment(value.node.start), 'day'))
+            || (moment(days[0]).isSame(moment(value.node.end), 'day'))
+            ){
+              weekPublishedId = value.node.id;
           }
-
-          _this.props.data.allWeekPublisheds.edges.map((value,index) => {
-            if ((moment(day).isAfter(moment(value.node.start)) && moment(day).isBefore(moment(value.node.end)))
-                ||  (moment(day).isSame(moment(value.node.start), 'day'))
-                || (moment(day).isSame(moment(value.node.end), 'day'))
-                ){
-                weekPublishedId = value.node.id;
-              }
-           })
-
-      if(!weekPublishedId){
-         weekPublishedId = uuidv1()
+      })
+      
+      // if it doesn't exist create and then create shifts
+      if(!weekPublishedId) {
+         weekPublishedId = uuidv1();
          _this.props.createWeekPublished({
                 variables: { data: 
                                 {weekPublished:
                                   { id: weekPublishedId, 
-                                    start: moment(startTime).startOf('week').format(), 
-                                    end: moment(startTime).endOf('week').format(),
+                                    start: moment(days[0]).startOf('week').format(), 
+                                    end: moment(days[0]).endOf('week').format(),
                                     published: false, datePublished: moment().format(),
                                     brandId: brandId }
                             }},
@@ -158,16 +165,22 @@ export class AddShiftForm extends Component{
                 },
             })
             .then(({ data }) => {
-                  _this.saveShift(startTime, endTime, weekPublishedId);
-                  console.log('got data', data);
+                 days.forEach(function(day){
+                    const times = _this.formatDays(day)
+                    _this.saveShift(times[0], times[1], weekPublishedId);
+                  })
               }).catch((error) => {
                   console.log('there was an error sending the query', error);
               });
+
         }
-        else if(weekPublishedId) {
-          _this.saveShift(startTime, endTime, weekPublishedId);
+        // else create all shifts with existing week published
+        else {
+            days.forEach(function(day){
+              const times = _this.formatDays(day)
+              _this.saveShift(times[0], times[1], weekPublishedId);
+            })
         }
-      })
   }
 
 
@@ -214,7 +227,7 @@ export class AddShiftForm extends Component{
         }
 
     const date=moment();
-    const startDate=moment(date).startOf('week').isoWeekday(7).format('MM-DD-YYYY');
+    const startDate=this.props.start
 
     return(
       <div>

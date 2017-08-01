@@ -101,7 +101,7 @@ export default class CreateShiftButton extends Component {
 			                }
 			            
 			                { this.state.employeeCount && <AddEmployeeForm /> } 
-			                { this.state.standard && <AddShiftForm  brandId={ this.props.brandId }closeFunc={ this.onFormClose } /> } 
+			                { this.state.standard && <AddShiftForm  brandId={ this.props.brandId } start={this.props.weekStart} closeFunc={ this.onFormClose } /> } 
 
 		  </Modal>
 		);

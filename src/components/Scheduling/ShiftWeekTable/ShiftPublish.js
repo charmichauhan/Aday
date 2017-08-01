@@ -105,7 +105,7 @@ class ShiftPublishComponent extends Component{
                     {(is_publish == false && is_publish != "") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
                     {(is_publish != "") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
                     {is_publish != "" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
-                    <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/template-list-button.png" alt="Template List"/></Button>
+                    <Button className="btn-image flr" as={NavLink} to="/schedule/team/template"><img className="btn-image flr" src="/assets/Buttons/template-list-button.png" alt="Template List"/></Button>
                 </div>
             </div>
         )

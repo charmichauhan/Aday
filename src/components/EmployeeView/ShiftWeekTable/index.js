@@ -4,8 +4,8 @@ import Week from 'react-big-calendar/lib/Week';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 import JobsRow from './JobsRow';
+import { concat, groupBy  } from 'lodash';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
-import HoursBooked from "./HoursBooked";
 import SpecialDay from "./SpecialDay";
 import jobsData from "./jobs.json";
 import '../../Scheduling/style.css';
@@ -39,6 +39,20 @@ const styles = {
 };
 
 class ShiftWeekTableComponent extends Week {
+    getSummary = (summary,start ) =>{
+        let summaryDetail = [];
+        for(var i=0;i<=6;i++){
+            summaryDetail.push(<TableRowColumn style={styles.tableFooter}>
+                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours booked:</p>
+                    <p className="sfont">
+                        {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalBookedHours'] || 0} of {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalHours'] || 0} |
+                        {summary && summary[moment(start).day(i).format('D')] && Math.round((summary[moment(start).day(i).format('D')]['totalBookedHours']*100)/summary[moment(start).day(i).format('D')]['totalHours']) || 0}%
+                    </p>
+                </div>
+            </TableRowColumn>);
+        }
+        return summaryDetail;
+    };
     render() {
         if (this.props.data.loading) {
             return (<div>Loading</div>)
@@ -48,7 +62,6 @@ class ShiftWeekTableComponent extends Week {
             console.log(this.props.data.error)
             return (<div>An unexpected error occurred</div>)
         }
-
         const userHash = {};
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
@@ -61,7 +74,7 @@ class ShiftWeekTableComponent extends Week {
             const weekPublished = this.props.data.weekPublishedByDate.nodes[0];
             if (weekPublished){
                 weekPublished.shiftsByWeekPublishedId.edges.map((value,index) => {
-                    const rowHash = {}
+                    const rowHash = {};
                     const dayOfWeek = moment(value.node.startTime).format("dddd");
                     rowHash["weekday"] = dayOfWeek;
                     let assigned = value.node.workersAssigned
@@ -94,10 +107,37 @@ class ShiftWeekTableComponent extends Week {
                 });
             }
         }
-
-
-
         let jobData = calendarHash;
+        let jobs = [];
+        (Object.keys(jobData)).forEach((jobType,index) => {
+            jobs = concat(jobs, jobData[jobType])
+        });
+        let sortedData = jobs.map((job) => ({ ...job, startDate: new Date(job.startTime).getUTCDate()}));
+        let groupedData = groupBy(sortedData, 'startDate');
+        let summary = {};
+        let weeklyHoursTotal = 0;
+        let weeklyHoursBooked = 0;
+        Object.keys(groupedData).forEach((shift,index) => {
+            let totalHours=0;
+            let totalBookedHours=0;
+            let shiftData = groupedData[shift];
+            Object.keys(shiftData).forEach((data,index) => {
+                let startTime = moment(shiftData[data]['startTime']).format("hh:mm A");
+                let endTime = moment(shiftData[data]['endTime']).format("hh:mm A");
+                let shiftHours = parseInt(moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("H"));
+                let openShift = shiftData[data]['workersRequestedNum'] - (shiftData[data]['workersAssigned'].length + shiftData[data]['workersInvited'].length);
+                let openShiftTotal = shiftHours*openShift;
+                let workersAssignedTotal = shiftHours*(shiftData[data]['workersAssigned'].length);
+                let workersInvitedTotal = shiftHours*(shiftData[data]['workersInvited'].length);
+                let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
+                totalHours += parseInt(workerShiftHours);
+                totalBookedHours += workersAssignedTotal;
+            });
+            summary[shift] = {'totalHours':totalHours,'totalBookedHours':totalBookedHours};
+            weeklyHoursTotal +=totalHours;
+            weeklyHoursBooked += totalBookedHours;
+        });
+        let weeklyTotalHoursBooked = Math.round((weeklyHoursBooked*100)/weeklyHoursTotal);
         return (
             <div className="table-responsive">
                 <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
@@ -105,7 +145,7 @@ class ShiftWeekTableComponent extends Week {
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p>78%</TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p><p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -141,36 +181,10 @@ class ShiftWeekTableComponent extends Week {
                         <TableRow displayBorder={false}>
                             <TableRowColumn style={styles.tableFooterHeading}>
                                 <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
-                                    hours booked:</p><p className="sfont">185 of 236 | 78%</p></div>
+                                    hours booked:</p><p className="sfont">{weeklyHoursBooked} of {weeklyHoursTotal}
+                                    | {weeklyTotalHoursBooked}%</p></div>
                             </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
+                            {this.getSummary(summary,start)}
                         </TableRow>
                         <TableRow displayBorder={false}>
                             <TableRowColumn style={styles.tableFooter}>
@@ -266,7 +280,7 @@ const allUsers = gql`
     }
     `
 
-///
+
 const ShiftWeekTable = compose(
     graphql(allShifts, {
         options: (ownProps) => ({

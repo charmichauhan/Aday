@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import '../../Scheduling/style.css';
 import Modal from '../../helpers/Modal';
+import { gql, graphql, compose } from 'react-apollo';
+const uuidv4 = require('uuid/v4');
 
-export default class EventPopup extends Component{
+class EventPopupComponent extends Component{
     constructor(props){
         super(props)
         this.state = {
@@ -25,7 +27,15 @@ export default class EventPopup extends Component{
     };
 
     deleteShift = () => {
-
+        let id =this.props.data.id;
+        let that = this;
+        that.props.deleteTemplateShiftById(uuidv4(),id)
+            .then(({ data }) => {
+                console.log('Delete Data', data);
+            }).catch((error) => {
+            console.log('there was an error sending the query', error);
+        });
+        that.setState({deleteModalPopped:false});
     };
 
     onPopupOpen = (modal) => {
@@ -84,3 +94,21 @@ export default class EventPopup extends Component{
     }
 }
 
+const deleteShift = gql`
+  mutation($clientMutationId: String,$id: Uuid!){
+    deleteTemplateShiftById(
+    input: {clientMutationId: $clientMutationId,
+    id: $id}){
+            deletedTemplateShiftId
+    }
+  }`
+const EvevtPopup = graphql(deleteShift,{
+    props:({ownProps,mutate}) =>({
+        deleteTemplateShiftById:(clientMutationId,id) => mutate({
+            variables: {clientMutationId: clientMutationId,id: id},
+        }),
+
+    }),
+})(EventPopupComponent);
+
+export default EvevtPopup;

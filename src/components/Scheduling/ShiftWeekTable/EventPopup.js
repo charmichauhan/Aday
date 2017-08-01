@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import Modal from '../../helpers/Modal';
+import { gql, graphql, compose } from 'react-apollo';
 import '../style.css';
 import './shiftWeekTable.css';
+const uuidv4 = require('uuid/v4');
 
-
-export default class EventPopup extends Component{
+class EventPopupComponent extends Component{
     constructor(props){
         super(props)
         this.state = {
@@ -27,20 +28,28 @@ export default class EventPopup extends Component{
     };
 
     deleteShift = () => {
-
+        let id =this.props.data.id;
+        let that = this;
+        that.props.deleteShiftById(uuidv4(),id)
+            .then(({ data }) => {
+                console.log('Delete Data', data);
+            }).catch((error) => {
+            console.log('there was an error sending the query', error);
+        });
+        that.setState({deleteModalPopped:false});
     };
 
-    onPopupOpen = (modal) => {
-        //console.log(modal)
-        /*this.setState({
-         deleteModalPopped : true
-         })*/
-    };
     onPopupOpen = (modal) => {
         switch(modal){
-            case "deleteModalPopped" : this.setState({deleteModalPopped:true});
-            case "editModalPopped" : this.setState({editModalPopped:true});
-            case "newShiftModalPopped" : this.setState({newShiftModalPopped:true});
+            case "deleteModalPopped" :
+                this.setState({deleteModalPopped:true});
+                break;
+            case "editModalPopped" :
+                this.setState({editModalPopped:true});
+                break;
+            case "newShiftModalPopped" :
+                this.setState({newShiftModalPopped:true});
+                break;
         }
     };
     onPopupClose = (modal) => {
@@ -103,4 +112,23 @@ export default class EventPopup extends Component{
         )
     }
 }
+
+const deleteShift = gql`
+  mutation($clientMutationId: String,$id: Uuid!){
+    deleteShiftById(
+    input: {clientMutationId: $clientMutationId,
+    id: $id}){
+            deletedShiftId
+    }
+  }`
+const EvevtPopup = graphql(deleteShift,{
+    props:({ownProps,mutate}) =>({
+        deleteShiftById:(clientMutationId,id) => mutate({
+            variables: {clientMutationId: clientMutationId,id: id},
+        }),
+
+    }),
+})(EventPopupComponent);
+
+export default EvevtPopup;
 

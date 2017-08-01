@@ -8,6 +8,7 @@ import {
 } from 'material-ui/Table';
 
 export default class JobsRow extends Component{
+
     render(){
         let data = this.props.data;
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

@@ -13,7 +13,7 @@ const styles = {
 
 class NavComponent extends Component {
 	render() {
-		  if (this.props.data.loading) {
+		if (this.props.data.loading) {
              return (<div>Loading</div>)
          }
 
@@ -57,7 +57,7 @@ class NavComponent extends Component {
 					</Menu.Item>
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
-							<Menu.Item className="menu-item-list" as={NavLink} to="/schedule/team"><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
+							<Menu.Item className="menu-item-list" name="schedule" as={NavLink} to="/schedule/team"><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance/requests"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/team-member.png"/></i><div className="menu_item_left"><span>TEAM MEMBERS</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/hiring/opportunities"><i><Image src="/images/Sidebar/hiring.png"/></i><div className="menu_item_left"><span>HIRING</span></div></Menu.Item>

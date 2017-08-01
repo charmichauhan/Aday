@@ -69,7 +69,6 @@ export default class EmployeeView extends Component {
 }
 
 class CustomToolbar extends Toolbar {
-
 	render() {
         let month = moment(this.props.date).format("MMMM YYYY");
         return (
@@ -87,7 +86,7 @@ class CustomToolbar extends Toolbar {
 							</div>
 
 							<ul className="nav navbar-nav">
-								<Button className="" as={NavLink} to="/schedule/team" >Job view</Button>
+								<Button as={NavLink} to="/schedule/team" active="shcedule">Job view</Button>
 							</ul>
 							<div className="maintitle">{month}</div>
 							<ul className="nav navbar-nav navbar-right">

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Icon, Button,Modal,Header,Image} from 'semantic-ui-react';
+import { Icon, Button,Modal,Header,Image,Menu} from 'semantic-ui-react';
 import 'react-date-picker/index.css';
 import EmergencyShiftForm from './EmergencyShiftFormContainer';
 import { Provider } from 'react-redux';
@@ -82,11 +82,7 @@ export default class EmergencyShiftButton extends Component {
 	return(
 		 <Provider store={store} >
 		  <Modal
-			   trigger={<Image
-					            src="/images/Assets/Icons/Buttons/emergency-shfit-button.png"
-											onClick={this.onButtonClick}
-											style={{cursor:'pointer'}}
-									 />}
+			  trigger={<div onClick={this.onButtonClick}><i><Image src="/images/Sidebar/emergency-shifts.png"/></i><div className="menu_item_left"><span>EMERGENCY SHIFT</span></div></div>}
 				 open={this.state.poppedOut}
 				 style={{marginTop:'0px', left:'53%',top: '5%',padding: '1.0%',bottom: '5%'}}
 				 size="large"

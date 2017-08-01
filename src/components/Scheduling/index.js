@@ -29,7 +29,6 @@ const style = {
         borderRadius:6
     }
 };
-
 export default class Schedule extends Component {
     constructor(props){
         super(props);
@@ -37,17 +36,20 @@ export default class Schedule extends Component {
             publishModalPopped: false,
 			addTemplateModalOpen: false,
 			templateName:"",
-            redirect:false
+            redirect:false,
+			hoursBooked:0
         }
     }
 
     onNavigate = (start) => {
         this.setState({date: start})
     };
+	onChange = () => {
+		CustomToolbar.handleChange;
+	};
     render() {
         let is_publish = true;
         BigCalendar.momentLocalizer(moment);
-
         return (
 			<div className="App row">
 				<ShiftPublish ispublish={is_publish}/>
@@ -59,6 +61,7 @@ export default class Schedule extends Component {
 								 defaultView='week'
 								 views={{today: true, week: ShiftWeekTable, day: true}}
                                  onNavigate={(start)=>this.onNavigate(start)}
+								 eventPropGetter={this.onChange}
 								 components={{
                                      event: Event,
                                      toolbar: CustomToolbar
@@ -71,10 +74,7 @@ export default class Schedule extends Component {
 }
 
 class CustomToolbar extends Toolbar {
-    employeeView = (e) => {
-        window.location = '/schedule/team/employeeview';
-    };
-    render() {
+	render() {
         let month = moment(this.props.date).format("MMMM YYYY");
         return (
 			<div>
@@ -90,7 +90,7 @@ class CustomToolbar extends Toolbar {
 											onClick={() => this.navigate("NEXT")}/>
 								</div>
 								<ul className="nav navbar-nav">
-									<Button className="" as={NavLink} to="/schedule/employeeview">Employee view</Button>
+									<Button as={NavLink} to="/schedule/employeeview">Employee view</Button>
 								</ul>
 							<div className="maintitle">
 								{month}

@@ -41,7 +41,7 @@ class EmployeeViewComponent extends Component {
             addTemplateModalOpen: false,
             templateName:"",
             redirect:false,
-            date: Date.today
+            date: moment()
         }
 	}
 
@@ -109,6 +109,7 @@ class EmployeeViewComponent extends Component {
 								 startAccessor='startDate'
 								 endAccessor='endDate'
 								 defaultView='week'
+								 elementProps={publish_id}
 								 onNavigate={(start)=>this.onNavigate(start)}
 								 views={{today: true, week: ShiftWeekTable, day: true}}
 								 components={{

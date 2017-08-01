@@ -40,7 +40,7 @@ class ScheduleComponent extends Component {
 			addTemplateModalOpen: false,
 			templateName:"",
             redirect:false,
-            date: moment().format()
+            date: moment()
         }
     }
 
@@ -85,7 +85,7 @@ class ScheduleComponent extends Component {
 													  action = {publishModalOptions} closeAction={this.modalClose}/>
                     :""}
 				<div>
-					<BigCalendar events={[]}
+					<BigCalendar events={publish_id}
 								 culture='en-us'
 								 startAccessor='startDate'
 								 endAccessor='endDate'

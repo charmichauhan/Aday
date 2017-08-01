@@ -79,11 +79,10 @@ export class AddShiftForm extends Component{
                 updateQueries: {
                     allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
                       const shiftHash = mutationResult.data.createShift.shift;
-                      previousQueryResult.weekPublishedByDate.nodes[0].shiftsByWeekPublishedId.edges = 
-                      [...previousQueryResult.weekPublishedByDate.nodes[0].shiftsByWeekPublishedId.edges, 
-                      {"node": shiftHash, '__typename': "ShiftsEdge"}]
+                      previousQueryResult.allShifts.edges = 
+                      [...previousQueryResult.allShifts.edges, {"node": shiftHash, '__typename': "ShiftsEdge"}]
                       return {
-                        weekPublishedByDate: previousQueryResult.weekPublishedByDate
+                        allShifts: previousQueryResult.allShifts
                       };
                     },
                 },
@@ -151,7 +150,7 @@ export class AddShiftForm extends Component{
                                     published: false, datePublished: moment().format(),
                                     brandId: brandId }
                             }},
-                updateQueries: {
+           /*     updateQueries: {
                     allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
                       const returnHash = {};
                       const weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
@@ -162,7 +161,7 @@ export class AddShiftForm extends Component{
                         weekPublishedByDate: returnHash
                       };
                     },
-                },
+                },*/
             })
             .then(({ data }) => {
                  days.forEach(function(day){

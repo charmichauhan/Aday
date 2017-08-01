@@ -61,7 +61,7 @@ class ScheduleComponent extends Component {
         }
 
         let is_publish = "none";
-        let publish_id = "";
+        let publish_id = "66666666-12c4-11e1-840d-7b25c5ee7756";
         const date = this.state.date;
         this.props.data.allWeekPublisheds.nodes.forEach(function(value){
         if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))

@@ -85,10 +85,8 @@ class ShiftWeekTableComponent extends Week {
         }
         let calendarHash = {};
 
-        const weekPublished = this.props.data.weekPublishedByDate.nodes[0]
-
-        if(weekPublished) {
-            weekPublished.shiftsByWeekPublishedId.edges.map((value, index) => {
+        console.log(this.props)
+            this.props.data.allShifts.edges.map((value, index) => {
                 const positionName = value.node.positionByPositionId.positionName;
                 const dayOfWeek = moment(value.node.startTime).format("dddd");
                 const rowHash = {};
@@ -99,7 +97,7 @@ class ShiftWeekTableComponent extends Week {
                     calendarHash[positionName] = [Object.assign(rowHash, value.node)];
                 }
             });
-        }
+
         let jobData = calendarHash;
         let { date } = this.props;
         let { start } = ShiftWeekTable.range(date, this.props);
@@ -169,8 +167,7 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
 const ShiftWeekTable = graphql(allShiftsByWeeksPublished, {
    options: (ownProps) => ({
      variables: {
-       brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
-       day: moment(ownProps.date)
+       publishId: ownProps.events
      }
    }),
  })(ShiftWeekTableComponent)

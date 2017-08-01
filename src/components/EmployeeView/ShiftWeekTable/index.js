@@ -280,7 +280,7 @@ const allUsers = gql`
     }
     `
 
-
+///
 const ShiftWeekTable = compose(
     graphql(allShifts, {
         options: (ownProps) => ({

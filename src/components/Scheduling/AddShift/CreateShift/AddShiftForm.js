@@ -70,10 +70,20 @@ export class AddShiftForm extends Component{
   handleCloseFunc(){
     this.props.closeFunc();
     this.props.closeAddFun();
+
+  }
+  updateFormState(dataValue){
+    this.setState(dataValue);
+    this.checkSubmitButton();
+  }
+  handleCloseFunc(){
+    this.props.closeFunc();
+    this.props.closeAddFun();
   }
 
+
     render(){
-    const date=moment();
+     const date=moment();
     const startDate=moment(date).startOf('week').isoWeekday(7).format('MM-DD-YYYY');
 
     return(

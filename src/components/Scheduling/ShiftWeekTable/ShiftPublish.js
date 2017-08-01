@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Published from '../../../../public/assets/Icons/published.png';
+import Unpublished from '../../../../public/assets/Icons/unpublished.png';
 import '../../Scheduling/style.css';
 import { gql, graphql, compose } from 'react-apollo';
 import moment from 'moment'
@@ -8,6 +10,10 @@ import { NavLink } from 'react-router-dom'
 import {BrowserRouter as Router,Redirect} from 'react-router-dom';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
+import AddAsTemplate from '../../../../public/assets/Buttons/add-as-template.png';
+import TemplateList from '../../../../public/assets/Buttons/template-list-button.png';
+import Automate from '../../../../public/assets/Buttons/automate-schedule.png';
+import Publish from '../../../../public/assets/Buttons/publish.png';
 
 
 class ShiftPublishComponent extends Component{
@@ -64,13 +70,13 @@ class ShiftPublishComponent extends Component{
         let is_publish = ""
         const week_published = this.props.data.weekPublishedByDate.nodes[0]
         if(week_published){
-            is_publish = week_published.published;
+        is_publish = week_published.published;
         }
         let status = "";
         let statusImg = "";
         if (is_publish == false){
-            let status = "UNPUBLISHED SCHEDULE";
-            let statusImg = "/assets/Icons/unpublished.png";
+        let status = "UNPUBLISHED SCHEDULE";
+        let statusImg = Unpublished;
         }
         else if (is_publish == true ){
             status="PUBLISHED SCHEDULE";
@@ -94,13 +100,13 @@ class ShiftPublishComponent extends Component{
                                                                         addTemplate={this.addTemplateName}
                                                                         handleChange={(e) =>this.handleChange(e)} />
                 }
-                <div className="col-md-12">
-                    <div className="col-sm-offset-3 col-sm-5 rectangle">
-                        {is_publish == ""? "NO SHIFTS FOR GIVEN WEEK" :<img src={statusImg}/>}
-                        <p className="col-sm-offset-2">{status}</p>
+                    <div className="col-md-12">
+                        <div className="col-sm-offset-3 col-sm-5 rectangle">
+                            {is_publish == ""? "NO SHIFTS FOR GIVEN WEEK" :<img src={statusImg}/>}
+                            <p className="col-sm-offset-2">{status}</p>
+                        </div>
                     </div>
-                </div>
-                <div className="btn-action">
+                  <div className="btn-action">
                     <Button className="btn-image"><CreateShiftButton/></Button>
                     {(is_publish == false && is_publish != "") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
                     {(is_publish != "") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
@@ -112,8 +118,10 @@ class ShiftPublishComponent extends Component{
     }
 }
 
+
+
 const allShifts = gql
-    `query allShifts($brandid: Uuid!, $day: Datetime!){ 
+  `query allShifts($brandid: Uuid!, $day: Datetime!){ 
         weekPublishedByDate(brandid: $brandid, day: $day){
             nodes{
             id

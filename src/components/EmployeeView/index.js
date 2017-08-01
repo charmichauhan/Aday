@@ -8,6 +8,7 @@ import Toolbar from 'react-big-calendar/lib/Toolbar';
 import ShiftWeekTable from './ShiftWeekTable';
 import ShiftPublish from './ShiftWeekTable/ShiftPublish';
 import '../Scheduling/style.css';
+import {Modal} from 'semantic-ui-react';
 
 const styles = {
     bodyStyle: {
@@ -39,23 +40,51 @@ export default class EmployeeView extends Component {
             addTemplateModalOpen: false,
             templateName:"",
             redirect:false,
-            start: moment().format
+            date: Date.today
         }
 	}
 
+   modalClose = () => {
+        this.setState({
+            publishModalPopped:false
+        })
+    };
+
+    goBack = () => {
+        this.setState({
+            publishModalPopped:false
+        });
+    };
+
+    onConfirm = () => {
+
+    };
+	onPublish = () => {
+		this.setState({publishModalPopped:true})
+	};
+	onNavigate = (start) => {
+		this.setState({date: start})
+	};
+
     render() {
-        let is_publish = true;
         BigCalendar.momentLocalizer(moment);
+        				 let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
+              {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
         return (
 			<div className="App row">
-				<ShiftPublish ispublish={is_publish}/>
+
+				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date}/></div>
+                {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
+													 message = "Are you sure that you want to delete this shift?"
+													 action = {publishModalOptions} closeAction={this.modalClose}/>
+                    :""}
 				<div>
 					<BigCalendar events={[]}
 								 culture='en-us'
 								 startAccessor='startDate'
 								 endAccessor='endDate'
 								 defaultView='week'
-                                 onNavigate={(start)=>this.onNavigate(start)}
+								 onNavigate={(start)=>this.onNavigate(start)}
 								 views={{today: true, week: ShiftWeekTable, day: true}}
 								 components={{
                                      event: Event,

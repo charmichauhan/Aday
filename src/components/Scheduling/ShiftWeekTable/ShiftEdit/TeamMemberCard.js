@@ -3,11 +3,11 @@ import { Image, Icon } from 'semantic-ui-react';
 
 export default class TeamMemberCard extends Component {
 	render() {
-		const { avatar, firstName, otherNames, content, color } = this.props;
+		const { avatar, firstName, otherNames, content, color, handleRemove } = this.props;
 		return (
 			<div className="teamMemberCard">
 				<div className="edits">
-					<Icon name="close"/>
+					<Icon name="close" onClick={handleRemove}/>
 				</div>
 				<div className={"content "+color}>
 					<div className="avatar">

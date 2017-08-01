@@ -76,7 +76,7 @@ class ShiftHistoryDrawer extends Component {
           texted: true,
           called: true,
           replied: true,
-          showDetails: true,
+          showDetails: false,
           notes: [
             {
               title: 'Ashley did not receive this shift because:',
@@ -118,6 +118,11 @@ class ShiftHistoryDrawer extends Component {
     this.props.handleBack();
   };
 
+  showDetails = (i) => {
+    const { shiftHistory } = this.state;
+    shiftHistory[i].showDetails = !shiftHistory[i].showDetails;
+    this.setState({ shiftHistory });
+  };
 
   render() {
     const {
@@ -158,7 +163,8 @@ class ShiftHistoryDrawer extends Component {
                   <Table.Row>
                     <Table.Cell>
                       <Icon
-                        name={history.showDetails ? 'chevron down' : 'chevron up'} />
+                        name={history.showDetails ? 'chevron down' : 'chevron up'}
+                        onClick={() => this.showDetails(i)} />
                     </Table.Cell>
                     <Table.Cell colSpan={2}>
                       <User user={history.user} />
@@ -189,8 +195,7 @@ class ShiftHistoryDrawer extends Component {
                         size='large' />
                     </Table.Cell>
                   </Table.Row>
-                  {history.showDetails &&
-                  <Table.Row >
+                  <Table.Row className={(history.showDetails && 'show-details') || 'hide-details'} >
                     <Table.Cell className="shiftDetailRow" colSpan={8}>
                       {history.notes.map((note, k) => (
                         <div key={k}>
@@ -203,7 +208,7 @@ class ShiftHistoryDrawer extends Component {
                         </div>
                       ))}
                     </Table.Cell>
-                  </Table.Row>}
+                  </Table.Row>
                 </Table.Body>)
               )}
             </Table>

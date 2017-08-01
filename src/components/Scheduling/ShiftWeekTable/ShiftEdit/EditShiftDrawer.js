@@ -3,21 +3,25 @@ import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import { Image, Input, Divider } from 'semantic-ui-react';
 import RaisedButton from 'material-ui/RaisedButton';
-import cloneDeep from 'lodash/cloneDeep';
 
 import TeamMemberCard from './TeamMemberCard'
-import { leftCloseButton, colors } from '../../../styles';
+import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
+
 import './shift-edit.css';
 
-const initialState = {
-  brand: {
-    id: '',
-    name: '',
-    image: ''
+const unassignedTeamMember = {
+  user: {
+    firstName: 'Unassigned',
+    otherNames: '',
+    avatar: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
   },
-  blob: null,
-  team_members: [
+  content: 'Leave this field empty to warn app credit!',
+  status: 'unassigned'
+};
+
+const initialState = {
+  teamMembers: [
     {
       user: {
         firstName: 'Eric',
@@ -27,18 +31,10 @@ const initialState = {
       content: 'Seniority: 0003',
       status: 'accepted'
     },
-    {
-      user: {
-        firstName: 'Unassigned',
-        otherNames: '',
-        avatar: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
-      },
-      content: 'Leave this field empty to warn app credit!',
-      status: 'rejeted'
-    }
+    unassignedTeamMember
   ],
 
-  job_shadowers: [
+  jobShadowers: [
     {
       user: {
         firstName: 'Eric',
@@ -61,45 +57,30 @@ const initialState = {
 };
 
 class DrawerHelper extends Component {
+
   constructor(props) {
     super(props);
-    this.state = {
-      ...initialState,
-      brand: cloneDeep(props.brand || initialState.brand)
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const brand = cloneDeep(nextProps.brand || initialState.brand);
-    this.setState({ brand });
+    this.state = initialState;
   }
 
   borderColor = status => {
     switch (status) {
       case 'accepted':
         return 'green';
-      case 'rejected':
+        break;
+      case 'unassigned':
         return 'red';
+        break;
+      case 'pending':
+        return 'orange';
+        break;
       default:
         return 'orange';
     }
   };
 
-  handleSubmitEvent = () => {
-    // Resetting the field values.
-    this.props.handleSubmit(this.state.brand);
-    this.setState({ ...initialState });
-  };
-
   handleCloseDrawer = () => {
-    /*this.setState({ blob: undefined });*/
     this.props.handlerClose();
-  };
-
-  handleChange = (event) => {
-    const { name, value } = event.target;
-    const brand = Object.assign(this.state.brand, { [name]: value });
-    this.setState({ brand });
   };
 
   handleShiftHistoryDrawer = () => {
@@ -107,15 +88,28 @@ class DrawerHelper extends Component {
     this.props.handleHistory();
   };
 
+  removeTeamMember = (i) => {
+    const { teamMembers } = this.state;
+    // teamMembers[i] = unassignedTeamMember;
+    teamMembers.splice(i, 1);
+    this.setState({ teamMembers });
+  };
+
+  addTeamMember = () => {
+    const { teamMembers } = this.state;
+    teamMembers.push(unassignedTeamMember);
+    this.setState({ teamMembers });
+  };
+
   render() {
     const {
-      brand = {},
       width = 600,
       open,
       openSecondary = true,
       docked = false
     } = this.props;
 
+    const { teamMembers, jobShadowers } = this.state;
     const actionTypes = [{
       type: 'white',
       title: 'Cancel',
@@ -151,10 +145,10 @@ class DrawerHelper extends Component {
             </div>
           </div>
           <div className="drawer-content scroll-div">
-              <div className="member_list">
-                <h5>TEAM MEMBERS (2)</h5>
-                {this.state.team_members &&
-                  this.state.team_members.map((tm, i) => (
+              <div className="member-list">
+                <h5>TEAM MEMBERS ({teamMembers.length})</h5>
+                {teamMembers &&
+                  teamMembers.map((tm, i) => (
                     <TeamMemberCard
                       avatar={tm.user.avatar}
                       firstName={tm.user.firstName}
@@ -162,18 +156,19 @@ class DrawerHelper extends Component {
                       content={tm.content}
                       color={this.borderColor(tm.status) + 'Border'}
                       key={i}
+                      handleRemove={() => this.removeTeamMember(i)}
                     />
                   ))
                 }
                 <div className="btn-member">
-                  <RaisedButton label="ADD TEAM MEMBER"/>
+                  <RaisedButton label="ADD TEAM MEMBER" onClick={this.addTeamMember} />
                 </div>
 
               </div>
-              <div className="member_list">
-                <h5>JOB SHADOWERS (2)</h5>
-                {this.state.job_shadowers &&
-                  this.state.job_shadowers.map((tm, i) => (
+              <div className="member-list">
+                <h5>JOB SHADOWERS ({jobShadowers.length})</h5>
+                {jobShadowers &&
+                  jobShadowers.map((tm, i) => (
                     <TeamMemberCard
                       avatar={tm.user.avatar}
                       firstName={tm.user.firstName}

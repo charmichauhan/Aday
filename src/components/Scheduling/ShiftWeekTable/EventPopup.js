@@ -47,19 +47,16 @@ export default class EventPopup extends Component {
   };
 
   onPopupOpen = (modal) => {
-    //console.log(modal)
-    /*this.setState({
-     deleteModalPopped : true
-     })*/
-  };
-  onPopupOpen = (modal) => {
     switch (modal) {
       case 'deleteModalPopped' :
         this.setState({ deleteModalPopped: true });
+        break;
       case 'editShiftDrawer' :
         this.setState({ editShiftDrawerOpen: true });
+        break;
       case 'newShiftModalPopped' :
         this.setState({ newShiftModalPopped: true });
+        break;
     }
   };
   onPopupClose = (modal) => {

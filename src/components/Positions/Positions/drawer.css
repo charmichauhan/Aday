@@ -1,0 +1,46 @@
+
+.position-form{
+  max-width: 100%;
+  position: relative;
+  padding: 10px 25px;
+}
+
+.position-label{
+  height: 21px;	width: 555px;	color: #666666;	font-family: "Roboto Condensed";	font-size: 18px;	line-height: 21px;
+}
+
+.position-input{
+  border:solid 2px gray;
+  font-size:18px
+}
+/* Content */
+.positions .content {
+  padding-top: 40px;
+}
+
+/* Drawers */
+.positions .drawer-heading {
+  margin: 0px;
+  padding: 0 0 10px 0px;
+  border-bottom: 2px solid #f5f5f5;
+  background-color: #2200a1;
+}
+
+.positions .drawer-heading button {
+  box-shadow: 1px 2px 3px #000;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+}
+
+.positions .drawer-heading h2 {
+  display: inline-block;
+  width: 85%;
+  margin-top: 0;
+  color: #FFFFFF;
+}
+
+.positions .drawer-section label {
+  color: #666666;
+  font-size: 18px;
+  font-weight: 500;
+}

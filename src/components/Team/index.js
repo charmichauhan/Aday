@@ -81,7 +81,7 @@ const initState = {
 	]
 };
 
-export default class Team extends Component {
+export default class team extends Component {
 	constructor(props) {
 		super(props);
 		this.state = initState;

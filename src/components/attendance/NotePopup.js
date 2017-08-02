@@ -16,13 +16,13 @@ export default class NotePopup extends Component {
   render() {
 		return (
       <div>
-			   <div onClick={()=>this.setState({show: true})} style={{color: 'blue'}}>Show</div>
+			   <div onClick={()=>this.setState({show: true})} style={{color: 'blue', cursor: 'pointer'}}>Show</div>
          {this.state.show &&
            <ModalContainer onClose={this.onClose}>
            <ModalDialog onClose={this.onClose}>
              <div style={{textAlign: 'center'}}>
                <p style={{wordWrap: 'break-word', width: 500}}>{this.props.note}</p> <br/>
-               <Button type="Close" onClick={this.onClose}>Ok</Button>
+               <Button type="Close" onClick={this.onClose}>Close</Button>
              </div>
            </ModalDialog>
            </ModalContainer>

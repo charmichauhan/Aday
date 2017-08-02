@@ -4,7 +4,6 @@ import Week from "react-big-calendar/lib/Week";
 import dates from "react-big-calendar/lib/utils/dates";
 import localizer from "react-big-calendar/lib/localizer";
 import JobsRow from "./JobsRow";
-import HoursBooked from "./HoursBooked";
 import jobsData from "./jobs.json";
 import SpecialDay from "./SpecialDay";
 import Modal from '../../helpers/Modal';
@@ -110,8 +109,7 @@ class ShiftWeekTableComponent extends Week {
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p><HoursBooked
-                                Data={jobData}/></TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p>78 %</TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -227,7 +225,7 @@ class ShiftWeekTableComponent extends Week {
             </div>
                 {this.state.deleteTemplateModal && <Modal isOpen = {this.state.deleteTemplateModal} title="Confirm"
                                                      message = 'Are you sure that you want to delete the "Standard $5000 Sales Week" template?'
-                                                     action = {deleteTemplateAction} 
+                                                     action = {deleteTemplateAction}
                                                        closeAction={this.modalClose} />
                 }
 

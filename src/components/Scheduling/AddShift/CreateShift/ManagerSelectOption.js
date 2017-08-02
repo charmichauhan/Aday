@@ -1,88 +1,80 @@
-import React,{ Component } from 'react';
-import Select from 'react-select';
-import Avatar from 'material-ui/Avatar';
-import Chip from 'material-ui/Chip';
-import ChipSelector from './ChipSelector';
-import {Icon} from 'semantic-ui-react';
+import React,{Component} from 'react';
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
 
-import './select.css';
+import {Dropdown,Loader} from 'semantic-ui-react';
 
-const Managers = [
-	{ key:0,label: 'Rahkeem Morris', value: 'Rahkeem Morris' },
-	{ key:1,label: 'Archit Gupta', value: 'Archit Gupta' },
-	{ key:2,label: 'Giovanni Conserva', value: 'Giovani Conservani' }
-];
-const styles ={
-	chip :{
-		margin:4
-	},
-      wrapper: {
-        display: 'flex',
-        flexWrap: 'wrap',
-  },
-};
+class ManagerSelectComponent extends Component{
+   static propTypes = {
+    data: React.PropTypes.shape({
+      loading: React.PropTypes.bool,
+      error: React.PropTypes.object,
+    }).isRequired,
+  }
 
-function arrowRenderer(){
-   return (
-     <Icon name="sort" />
-   )
-}
 
-export default class ManagerSelectOption extends Component{
   constructor(props){
     super(props);
-    this.onChange=this.onChange.bind(this);
-		this.handleRequestDelete=this.handleRequestDelete.bind(this);
-    this.state = {
-      options:Managers,
-      managerValue:[],
+    this.state={
+      users:[]
     }
+    this.onManagerChange=this.onManagerChange.bind(this);
   }
-	onChange(value){
-		const {formCallBack}=this.props;
-		const updatedState = {
-			managerValue:value
-		}
-		this.setState(updatedState);
-		formCallBack(updatedState);
-	}
-	handleRequestDelete(key){
-		const { formCallBack }=this.props;
-		this.valueData=this.state.managerValue;
-		const valueToBeDeleted=this.valueData.map((value) =>value.key).indexOf(key);
-		this.valueData.splice(valueToBeDeleted,1);
-		const updatedState = {
-			managerValue:this.valueData
-		}
-		this.setState(updatedState);
-		formCallBack(updatedState);
-	}
+
+   onManagerChange(event, data){
+    this.props.formCallBack({managerValue: [data.value]});
+  }
   render(){
+  
+    if (this.props.data.loading) {
+      return (
+      <Loader active inline='centered' />
+      )
+    }
+
+    if (this.props.data.error) {
+      console.log(this.props.data.error)
+      return (<div>An unexpected error occurred</div>)
+    }else{
+      if(!this.state.users.length){
+        // add positions into state parameter
+      let usersArray=this.props.data.allEmployees.edges;
+      usersArray.forEach(function(user,index) {
+        const usr = user.node.userByUserId
+        this.state.users.push({
+          text: usr.firstName + " " + usr.lastName,
+          value: usr.id,
+          key: usr.id
+        })
+      }, this);
+    }
+    }
+  
+
     return(
-      <Select
-			   className='sectionTest'
-			   name="managers"
-         multi
-				 arrowRenderer={arrowRenderer}
-   	 		 autosize="false"
-				 value={this.state.managerValue}
-         onChange={this.onChange}
-         options={this.state.options}
-  			 valueComponent={(value) => {
-					return(
-					  <div style={styles.wrapper}>
-						   <Chip
-											 onRequestDelete={()=> this.handleRequestDelete(value.value.key)}
-											 style={styles.chip}
-									 >
-									 <Avatar src="images/uxceo-128.jpg" />
-										{value.value.label}
-						  </Chip>
-						</div>
-				   );
-			   }
-			 }
-			/>
+      <div>
+        <Dropdown  placeholder='Select Manager' fluid selection options={this.state.users} style={{ marginTop:'-2%' }} onChange={this.onManagerChange}  />
+      </div>     
     );
   }
 }
+
+const getAllUsers = gql`
+  query getAllUsersQuery{
+    allEmployees(condition:{isManager:true, corporationId: "3b14782b-c220-4927-b059-f4f22d01c230"}){
+        edges{
+          node{
+            userByUserId{
+              id
+              firstName
+              lastName
+            }
+          }
+        }
+    }
+}
+`
+
+
+const ManagerSelectOption= graphql(getAllUsers)(ManagerSelectComponent)
+export default ManagerSelectOption

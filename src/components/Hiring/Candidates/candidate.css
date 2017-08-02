@@ -1,0 +1,21 @@
+/*
+  To Do: Later merge this style with team-member-card.css
+*/
+
+.last_name {
+	color: #000000;
+	font-weight: 400;
+	font-family: 'roboto condensed';
+}
+
+.first_name{
+	color: #000000;
+	font-weight: 400;
+	font-family: 'roboto condensed';
+}
+
+.card_body{
+	color: #000000;
+	font-weight: 400;
+	font-family: 'lato';
+}

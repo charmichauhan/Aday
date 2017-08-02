@@ -3,6 +3,8 @@ import moment from 'moment';
 import '../../Scheduling/style.css';
 import { gql, graphql, compose } from 'react-apollo';
 import Modal from '../../helpers/Modal';
+import EditShiftDrawer from './ShiftEdit/EditShiftDrawer';
+import ShiftHistoryDrawer from './ShiftEdit/ShiftHistoryDrawer';
 const uuidv4 = require('uuid/v4');
 
     class EventPopupComponent extends Component{
@@ -52,6 +54,14 @@ const uuidv4 = require('uuid/v4');
                 break;
         }
     };
+    handleHistoryDrawer = () => {
+      this.setState({ shiftHistoryDrawer: !this.state.shiftHistoryDrawer });
+    };
+
+    handleNewShiftDrawerClose = () => {
+      this.setState({ newShiftModalPopped: !this.state.newShiftModalPopped });
+    };
+
     onLocationClick = () => {
         console.log("onLocationClick");
     };
@@ -62,7 +72,7 @@ const uuidv4 = require('uuid/v4');
         let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
         let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
         let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
-            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
+            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image: '/images/modal/close.png'}];
         return(
             <div className="day-item hov">
                 <div className="start-time">
@@ -80,10 +90,20 @@ const uuidv4 = require('uuid/v4');
                     </span>
                     <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
                 </div>
-                {this.state.deleteModalPopped && <Modal title="Confirm" isOpen={this.state.deleteModalPopped}
-                                                     message = "Are you sure that you want to delete this shift?"
-                                                     action = {deleteShiftAction} closeAction={this.modalClose}/>
-                }
+                <Modal
+                title="Confirm"
+                isOpen={this.state.deleteModalPopped}
+                message="Are you sure that you want to delete this shift?"
+                action={deleteShiftAction}
+                closeAction={this.modalClose} />
+                <EditShiftDrawer
+                open={this.state.newShiftModalPopped}
+                handlerClose={this.handleNewShiftDrawerClose}
+                handleHistory={this.handleHistoryDrawer} />
+                <ShiftHistoryDrawer
+                open={this.state.shiftHistoryDrawer}
+                handleBack={this.handleNewShiftDrawerClose}
+                handleHistory={this.handleHistoryDrawer} />
                 <div className="overlay">
                     <div className="hoimg">
                         <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src="/assets/Icons/close-shift.png" alt="close"/></i></a>
@@ -104,7 +124,7 @@ const deleteShift = gql`
             deletedShiftId
     }
   }`
-const EvevtPopup = graphql(deleteShift,{
+const EventPopup = graphql(deleteShift,{
     props:({ownProps,mutate}) =>({
         deleteShiftById:(clientMutationId,id) => mutate({
             variables: {clientMutationId: clientMutationId,id: id},
@@ -112,4 +132,4 @@ const EvevtPopup = graphql(deleteShift,{
     }),
 })(EventPopupComponent);
 
-export default EvevtPopup;
+export default EventPopup;

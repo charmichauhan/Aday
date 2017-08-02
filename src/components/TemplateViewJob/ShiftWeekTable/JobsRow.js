@@ -13,11 +13,11 @@ export default class JobsRow extends Component{
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
         data.map((value,index) => {
-            const day = value.weekday
+            const day = moment(value.startTime, "HH:mm:ss").format("dddd");
             if (hashByDay[day]){
                 hashByDay[day] = [...hashByDay[day], value];
             } else {
-                hashByDay[day] =  [value];
+                hashByDay[day] = [value];
             }
         });
         let finalHours = 0;
@@ -27,6 +27,9 @@ export default class JobsRow extends Component{
             let endTime = moment(value.endTime, "HH:mm:ss");
             let h = endTime.diff(startTime,'hours');
             let m = moment.utc(moment(endTime).diff(moment(startTime))).format("mm");
+            let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
+            h=h*workerAssigned;
+            m=m*workerAssigned;
             finalHours += h;
             finalMinutes += parseInt(m);
         });
@@ -43,7 +46,7 @@ export default class JobsRow extends Component{
                         </div>
                         <div className="user_desc penalheading">{data[0].positionByPositionId.positionName.split(" ")[0]}
                             <p className="lastName"> { data[0].positionByPositionId.positionName.split(" ")[1] }</p>
-                            <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                            <p className="finalHours">{finalHours || 0} hours<br/>{finalMinutes || 0} Minutes</p>
                             <p className="scheduled_tag">SCHEDULED</p>
                         </div>
                     </div>

@@ -9,7 +9,7 @@ export default class NumberOfTeamMenmbers extends Component {
     super(props);
     this.selectValue = this.selectValue.bind(this);
     this.state = {
-      selectedValue:'1'
+      selectedValue:''
     }
   }
   componentWillMount(){
@@ -34,9 +34,9 @@ export default class NumberOfTeamMenmbers extends Component {
   render(){
     const {selectedValue} = this.state;
     return(
-      <div>
+      <div style={{marginTop: "40px"}}>
          <p style={{fontSize:'18px',fontStyle:'normal',color:'#666666'}}>NUMBER OF TEAM MEMBERS</p>
-         <List horizontal style={{marginTop: '-1%'}}>
+         <List horizontal style={{marginTop: "-10px"}}>
          {
            _.map(_.range(1, 12), (value) => {
            const displayValue = value === 11 ? '+' : value;

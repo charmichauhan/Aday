@@ -12,6 +12,16 @@ const styles = {
 };
 
 class NavComponent extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      workplaceId:""
+    }
+  }
+  changeWorkplace = () => {
+    let workplaceId = document.getElementById("workplace").value;
+    this.props.handleChange(workplaceId);
+  };
 	render() {
 		if (this.props.data.loading) {
              return (<div>Loading</div>)
@@ -21,8 +31,7 @@ class NavComponent extends Component {
              console.log(this.props.data.error)
              return (<div>An unexpected error occurred</div>)
         }
-
-        const brandLogo = this.props.data.brandById.brandIconUrl
+    const brandLogo = this.props.data.brandById.brandIconUrl
 		return (
 			<div className="left-menu_item">
 				{/*<EmergencyShiftButton/>*/}
@@ -39,19 +48,20 @@ class NavComponent extends Component {
 							</select>
 						</Menu.Header>
 						<Menu.Header>
-							<select>
+							<select onChange={this.changeWorkplace} id="workplace">
 								<option value="">CHOOSE WORKPLACE</option>
-                                {
-                                    this.props.data.brandById.workplacesByBrandId.edges.map((v,i)=>(
+                {
+                  this.props.data.brandById.workplacesByBrandId.edges.map((v,i)=>(
 											<option value={v.node.id} key={i}> { v.node.workplaceName } </option>
-                                        )
-									)}
+                    )
+                  )}
 							</select>
 						</Menu.Header>
 					</Menu.Item>
 					<div className="left-menu-fixed">
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
+              <Menu.Item><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>DASHBOARD</span></div></Menu.Item>
 							<Menu.Item><EmergencyShiftButton/></Menu.Item>
 						</Menu.Menu>
 					</Menu.Item>
@@ -59,8 +69,8 @@ class NavComponent extends Component {
 						<Menu.Menu>
 							<Menu.Item className="menu-item-list" name="schedule" as={NavLink} to="/schedule/team"><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance/requests"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
-							<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/team-member.png"/></i><div className="menu_item_left"><span>TEAM MEMBERS</span></div></Menu.Item>
-							<Menu.Item className="menu-item-list" as={NavLink} to="/hiring/opportunities"><i><Image src="/images/Sidebar/hiring.png"/></i><div className="menu_item_left"><span>HIRING</span></div></Menu.Item>
+							<Menu.Item className="menu-item-list" as={NavLink} to="/team"><i><Image src="/images/Sidebar/team-member.png"/></i><div className="menu_item_left"><span>TEAM MEMBERS</span></div></Menu.Item>
+							<Menu.Item className="menu-item-list" as={NavLink} to="/hiring"><i><Image src="/images/Sidebar/hiring.png"/></i><div className="menu_item_left"><span>HIRING</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/positions"><i><Image src="/images/Sidebar/positions.png"/></i><div className="menu_item_left"><span>POSITIONS</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/workplaces/mine"><i><Image src="/images/Sidebar/my-workplace.png"/></i><div className="menu_item_left"><span>MY WORKPLACE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/settings"><i><Image src="/images/Sidebar/settings.png"/></i><div className="menu_item_left"><span>SETTINGS</span></div></Menu.Item>
@@ -75,7 +85,6 @@ class NavComponent extends Component {
 		);
 	}
 }
-
 
 const allWorkplaces = gql`
   query allWorkplaces($brandid: Uuid!){ 

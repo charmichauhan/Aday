@@ -14,6 +14,7 @@ import SpecialDay from "./SpecialDay";
 import { gql,graphql } from 'react-apollo';
 import jobsData from "./jobs.json";
 import '../style.css';
+import allShiftsByWeeksPublished from './shiftsByWeeksPublishedQuery'
 
 
 /*import EditShift from './ShiftEdit/Edit';
@@ -100,23 +101,19 @@ class ShiftWeekTableComponent extends Week {
             console.log(this.props.data.error);
             return (<div>An unexpected error occurred</div>)
         }
+        let workplaceId = document.getElementById("workplace").value;
         let calendarHash = {};
-        const weekPublished = this.props.data.weekPublishedByDate.nodes[0];
-        if(weekPublished) {
-
-            weekPublished.shiftsByWeekPublishedId.edges.map((value, index) => {
-                const positionName = value.node.positionByPositionId.positionName;
-                const dayOfWeek = moment(value.node.startTime).format("dddd");
-
-                const rowHash = {};
-                rowHash["weekday"] = dayOfWeek;
-                if (calendarHash[positionName]) {
-                    calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node)]
-                } else {
-                    calendarHash[positionName] = [Object.assign(rowHash, value.node)];
-                }
-            });
-        }
+        this.props.data.allShifts.edges.map((value, index) => {
+          const positionName = value.node.positionByPositionId.positionName;
+          const dayOfWeek = moment(value.node.startTime).format("dddd");
+          const rowHash = {};
+          rowHash["weekday"] = dayOfWeek;
+          if (calendarHash[positionName]) {
+            calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node)]
+          } else {
+            calendarHash[positionName] = [Object.assign(rowHash, value.node)];
+          }
+        });
         let jobData = calendarHash;
         let jobs = [];
         (Object.keys(jobData)).forEach((jobType,index) => {
@@ -191,6 +188,7 @@ class ShiftWeekTableComponent extends Week {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
+
                             <SpecialDay/>
                             {(Object.keys(jobData)).map((value, index) => (
                                     <JobsRow data={jobData[value]} key={value}/>
@@ -287,14 +285,14 @@ const allShifts = gql
         }
 }`
 
-const ShiftWeekTable = graphql(allShifts, {
-    options: (ownProps) => ({
-        variables: {
-            brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
-            day: moment(ownProps.date)
-        },
-        fetchPolicy: 'cache-and-network',
-    }),
-})(ShiftWeekTableComponent);
+const ShiftWeekTable = graphql(allShiftsByWeeksPublished, {
+  options: (ownProps) => ({
+    variables: {
+      publishId: ownProps.events
+    }
+  }),
+})(ShiftWeekTableComponent)
+
 
 export default ShiftWeekTable
+

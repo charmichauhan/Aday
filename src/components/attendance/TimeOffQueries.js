@@ -1,10 +1,12 @@
 import { gql } from 'react-apollo';
 
 const corporationTimeOffRequestQuery = gql`
-  query ($corporationId: Uuid!){
+  query ($corporationId: Uuid!, $cursor: Cursor){
     allTimeOffRequests(
-        condition: {corporationId: $corporationId}
-        orderBy: SUBMISSION_DATE_DESC){
+        first: 25,
+        after: $cursor,
+        condition: {corporationId: $corporationId},
+        orderBy: START_DATE_DESC){
       edges{
         node{
           userByRequestorId{
@@ -22,6 +24,10 @@ const corporationTimeOffRequestQuery = gql`
           decisionStatus
         }
       }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
     }
   }
 `
@@ -33,6 +39,7 @@ const approveTimeOffRequestMutation = gql`
     		id: $id,
     		timeOffRequestPatch: {decisionStatus: $decision, approverId: $approverId}}){
       timeOffRequest{
+        id
         decisionStatus
       }
     }

@@ -7,18 +7,13 @@ import EmployeeView from './components/EmployeeView';
 import Settings from './components/Settings';
 import Positions from './components/Positions';
 import MyWorkplace from './components/workplace/MyWorkplace'
-import SharedWorkplace from './components/workplace/SharedWorkplace'
+import Hiring from './components/Hiring'
 import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
-import Roster from './components/team/Roster'
-import Policies from './components/team/Policies'
-
+import Team from './components/Team'
 import Certificates from './components/certifications/Certificates'
-
 import AttendanceRequests from './components/attendance/AttendanceRequests'
-
 import Login from './components/auth/Login'
-
 const routes = [
 	{
 		component: Root,
@@ -39,26 +34,36 @@ const routes = [
 			{
 				component: App,
 				routes: [
+						// {
+						// 	path: '/schedule/team/:workplaceId',
+						// 	exact: true,
+						// 	component: Schedule
+						// },
 					{
 						path: '/schedule/team/',
 						exact: true,
 						component: Schedule
 					},
+					// {
+                     //    path: '/schedule/employeeview/:workplaceId',
+                     //    exact: true,
+                     //    component: EmployeeView
+					// },
 					{
-                        path: '/schedule/employeeview',
-                        exact: true,
-                        component: EmployeeView
+            path: '/schedule/employeeview',
+            exact: true,
+            component: EmployeeView
 					},
 					{
-                        path: '/schedule/employeeview/template',
-                        exact: true,
-                        component: Template
+            path: '/schedule/template',
+            exact: true,
+            component: Template
 					},
-                    {
-                        path: '/schedule/team/template',
-                        exact: true,
-                        component: TemplateViewJob
-                    },
+          {
+            path: '/schedule/team/template',
+            exact: true,
+            component: TemplateViewJob
+          },
 					{
 						path: '/schedule/manager',
 						exact: true,
@@ -70,19 +75,14 @@ const routes = [
 						component: MyWorkplace
 					},
 					{
-						path: '/workplaces/shared',
+						path: '/hiring',
 						exact: true,
-						component: SharedWorkplace
+						component: Hiring
 					},
 					{
-						path: '/team/roster',
+						path: '/team',
 						exact: true,
-						component: Roster
-					},
-					{
-						path: '/team/policies',
-						exact: true,
-						component: Policies
+						component: Team
 					},
 					{
 						path: '/certifications/certificates',
@@ -109,6 +109,5 @@ const routes = [
 		]
 	}
 ]
-
 
 export default routes

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import Modal from '../../helpers/Modal';
 import EditShiftDrawer from './ShiftEdit/EditShiftDrawer';
+import EditShiftModal from './ShiftEdit/EditShiftModal';
 import ShiftHistoryDrawer from './ShiftEdit/ShiftHistoryDrawer';
 import '../style.css';
 import './shiftWeekTable.css';
@@ -34,8 +35,12 @@ export default class EventPopup extends Component {
 
   };
 
+  closeEditShiftModal = () => {
+    this.setState({ editShiftModalOpen: false });
+  }
+
   handleEditShiftDrawerClose = () => {
-    this.setState({ editShiftDrawerOpen: !this.state.editShiftDrawerOpen });
+    this.setState({ editShiftDrawerOpen: false });
   };
 
   handleHistoryDrawer = () => {
@@ -43,7 +48,7 @@ export default class EventPopup extends Component {
   };
 
   handleNewShiftDrawerClose = () => {
-    this.setState({ newShiftModalPopped: !this.state.newShiftModalPopped });
+    this.setState({ newShiftModalPopped: false });
   };
 
   onPopupOpen = (modal) => {
@@ -53,12 +58,16 @@ export default class EventPopup extends Component {
      })*/
   };
   onPopupOpen = (modal) => {
-    switch (modal) {
-      case 'deleteModalPopped' :
+    if (modal == 'deleteModalPopped'){
         this.setState({ deleteModalPopped: true });
-      case 'editShiftDrawer' :
+    }
+    else if (modal == 'editShiftDrawer' ){
         this.setState({ editShiftDrawerOpen: true });
-      case 'newShiftModalPopped' :
+    } 
+    else if (modal == 'editShiftModal' ){
+        this.setState({ editShiftModalOpen: true });
+    } 
+    else if (modal ==  'newShiftModalPopped' ){
         this.setState({ newShiftModalPopped: true });
     }
   };
@@ -123,20 +132,25 @@ export default class EventPopup extends Component {
           open={this.state.shiftHistoryDrawer}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
+        <EditShiftModal open={ this.state.editShiftModalOpen } onClose={ this.closeEditShiftModal } data={ this.props.data }/>
         <div className="overlay">
           <div className="hoimg">
-            <a onClick={() => this.onPopupOpen('deleteModalPopped')}>
-              <i><img src="/assets/Icons/close-shift.png" alt="close" /></i>
+            <a>
+              <i><img src="/assets/Icons/close-shift.png" alt="close" 
+                    onClick={() => this.onPopupOpen('deleteModalPopped')} /></i>
             </a>
-            <a onClick={() => this.onPopupOpen('editShiftDrawer')}>
-              <i><img src="/assets/Icons/edit-shift.png" alt="edit" /></i>
+            <a>
+              <i><img src="/assets/Icons/edit-shift.png" alt="edit" 
+                    onClick={() => this.onPopupOpen('editShiftModal')} /></i>
             </a>
-            <a onClick={() => this.onPopupOpen('newShiftModalPopped')}>
-              <i><img src="/assets/Icons/create-shift.png" alt="create" /></i>
+            <a>
+              <i><img src="/assets/Icons/create-shift.png" alt="create" 
+                    onClick={() => this.onPopupOpen('newShiftModalPopped')} /></i>
             </a>
           </div>
         </div>
       </div>
+
     )
   }
 }

@@ -60,6 +60,7 @@ class ShiftPublish extends Component{
         console.log(this.props)
         
         let is_publish = this.props.isPublish
+        let publishId = this.props.publishId
         const startDate = this.props.date
 
         let status = "";
@@ -100,7 +101,7 @@ class ShiftPublish extends Component{
                         </div>
                     </div>
                   <div className="btn-action">
-                    <Button className="btn-image"><CreateShiftButton brandId={"5a14782b-c220-4927-b059-f4f22d01c230"} weekStart={ start } /></Button>
+                    <Button className="btn-image"><CreateShiftButton brandId={"5a14782b-c220-4927-b059-f4f22d01c230"} weekPublishedId={ publishId } weekStart={ start } /></Button>
                     {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
                     {(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
                     {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}

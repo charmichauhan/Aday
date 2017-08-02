@@ -52,11 +52,6 @@ class NavComponent extends Component {
 					<div className="left-menu-fixed">
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
-							<Menu.Item><EmergencyShiftButton/></Menu.Item>
-						</Menu.Menu>
-					</Menu.Item>
-					<Menu.Item className="menu-item">
-						<Menu.Menu>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/schedule/team"><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance/requests"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/team"><i><Image src="/images/Sidebar/team-member.png"/></i><div className="menu_item_left"><span>TEAM MEMBERS</span></div></Menu.Item>

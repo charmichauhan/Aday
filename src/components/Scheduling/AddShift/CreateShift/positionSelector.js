@@ -52,12 +52,15 @@ export class PositionSelector extends Component{
     }
     }
   
-
     return(
  
     <div>
       <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>POSITION</p>
-      <Dropdown placeholder='Select Postion' fluid selection options={this.state.positions} style={{ marginTop:'-2%' }} onChange={this.onPositionChange}  />
+      { !this.props.position && <Dropdown placeholder="Select Position" fluid selection 
+            options={this.state.positions} style={{ marginTop:'-2%' }} onChange={this.onPositionChange}  /> }
+
+      { this.props.position && <Dropdown defaultValue={ this.props.position } fluid selection 
+            options={this.state.positions} style={{ marginTop:'-2%' }} onChange={this.onPositionChange}  /> }
   
     </div>
            

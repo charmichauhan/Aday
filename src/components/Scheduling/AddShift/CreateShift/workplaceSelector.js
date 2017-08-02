@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import '../styles.css';
 
 import {Dropdown,Loader} from 'semantic-ui-react';
 
@@ -21,7 +22,7 @@ export class WorkplaceSelector extends Component{
     this.onWorkplaceChange=this.onWorkplaceChange.bind(this);
   }
 
-   onWorkplaceChange(event, data){
+  onWorkplaceChange(event, data){
     this.setState({workplace:data.value});
     this.props.formCallBack({workplace: data.value});
   }
@@ -38,6 +39,8 @@ export class WorkplaceSelector extends Component{
       console.log(this.props.data.error)
       return (<div>An unexpected error occurred</div>)
     }else{
+
+
       if(!this.state.workplaces.length){
         /// add positions into state parameter
       let workplacesArray=this.props.data.allWorkplaces.nodes;
@@ -51,12 +54,17 @@ export class WorkplaceSelector extends Component{
       }, this);
     }
     }
-  
-
+    
+    let workplaceHolder = this.props.workplace? this.props.workplace : "Select Workplace"
     return(
  
     <div>
-      <Dropdown placeholder='Select Workplace' fluid selection options={this.state.workplaces} style={{ marginTop:'-2%' }} onChange={this.onWorkplaceChange}  />
+    { !this.props.workplace && <Dropdown placeholder="Select Workplace" fluid selection 
+      options={this.state.workplaces} style={{ marginTop:'-2%', fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
+
+    { this.props.workplace && <Dropdown defaultValue={this.props.workplace} fluid selection 
+      options={this.state.workplaces} style={{ marginTop:'-2%', fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
+
     </div>
            
     );

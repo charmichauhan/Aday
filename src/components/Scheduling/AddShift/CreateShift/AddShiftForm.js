@@ -19,13 +19,14 @@ export class AddShiftForm extends Component{
  static propTypes = {
   router: React.PropTypes.object.isRequired,
   createShift: React.PropTypes.func.isRequired,
+  updateShift: React.PropTypes.func.isRequired,
   createWeekPublished: React.PropTypes.func.isRequired
 }
 
   constructor(props){
     super(props);
     this.state = {
-      workplace:'',
+      workplace: '',
       position:'',
       shiftDaysSelected:'',
       startTime:'',
@@ -95,6 +96,25 @@ export class AddShiftForm extends Component{
               });
   }
 
+  udpateShift(startTime, endTime){
+      const shiftPatch = {}
+      if (this.state.workplace){
+        shiftPatch['workplaceId'] = this.state.workplace
+      }
+
+      this.props.updateShift({
+          variables: { data: 
+                    {id: this.props.data.id, shiftPatch:
+                    { shiftPatch }}}
+              })
+              .then(({ data }) => {
+                  this.props.closeFunc();
+                  console.log('got update data', data);
+              }).catch((error) => {
+                  console.log('there was an error sending the query', error);
+              });
+  }
+
   formatDays(day){
        // formatting time 
         let startTime = "";
@@ -123,69 +143,72 @@ export class AddShiftForm extends Component{
   
   handleSave(){
       this.setState({loading: true})
-      const days = Object.keys(this.state.shiftDaysSelected)
-      const _this = this
-      const brandId = this.props.brandId
-      let weekPublishedId = null;
+      if (this.props.editMode) {
+          const times = this.formatDays(this.props.startTime)
+          this.udpateShift(times[0], times[1]);
+      } else {
+          const days = Object.keys(this.state.shiftDaysSelected)
+          const _this = this
+          const brandId = this.props.brandId
+          let weekPublishedId = this.props.weekPublishedId
 
-      // get selected week's published ID
-      _this.props.data.allWeekPublisheds.edges.map((value,index) => {
-        if ((moment(days[0]).isAfter(moment(value.node.start)) && moment(days[0]).isBefore(moment(value.node.end)))
-            ||  (moment(days[0]).isSame(moment(value.node.start), 'day'))
-            || (moment(days[0]).isSame(moment(value.node.end), 'day'))
-            ){
-              weekPublishedId = value.node.id;
-          }
-      })
-      
-      // if it doesn't exist create and then create shifts
-      if(!weekPublishedId) {
-         weekPublishedId = uuidv1();
-         _this.props.createWeekPublished({
-                variables: { data: 
-                                {weekPublished:
-                                  { id: weekPublishedId, 
-                                    start: moment(days[0]).startOf('week').format(), 
-                                    end: moment(days[0]).endOf('week').format(),
-                                    published: false, datePublished: moment().format(),
-                                    brandId: brandId }
-                            }},
-           /*     updateQueries: {
-                    allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-                      const returnHash = {};
-                      const weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
-                      weekPublishedHash['__typename'] = "WeekPublished"
-                      returnHash['nodes'] = [ weekPublishedHash ]
-                      returnHash['__typename'] = "WeekPublishedByDateConnection"
-                      return {
-                        weekPublishedByDate: returnHash
-                      };
-                    },
-                },*/
-            })
-            .then(({ data }) => {
-                 days.forEach(function(day){
-                    const times = _this.formatDays(day)
-                    _this.saveShift(times[0], times[1], weekPublishedId);
-                  })
-              }).catch((error) => {
-                  console.log('there was an error sending the query', error);
-              });
+          // get selected week's published ID
+          _this.props.data.allWeekPublisheds.edges.map((value,index) => {
+            if ((moment(days[0]).isAfter(moment(value.node.start)) && moment(days[0]).isBefore(moment(value.node.end)))
+                ||  (moment(days[0]).isSame(moment(value.node.start), 'day'))
+                || (moment(days[0]).isSame(moment(value.node.end), 'day'))
+                ){
+                  weekPublishedId = value.node.id;
+              }
+          })
+          
+          // if it doesn't exist create and then create shifts
+          if(!weekPublishedId) {
+             weekPublishedId = uuidv1();
+             _this.props.createWeekPublished({
+                    variables: { data: 
+                                    {weekPublished:
+                                      { id: weekPublishedId, 
+                                        start: moment(days[0]).startOf('week').format(), 
+                                        end: moment(days[0]).endOf('week').format(),
+                                        published: false, datePublished: moment().format(),
+                                        brandId: brandId }
+                                }},
+               /*     updateQueries: {
+                        allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+                          const returnHash = {};
+                          const weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
+                          weekPublishedHash['__typename'] = "WeekPublished"
+                          returnHash['nodes'] = [ weekPublishedHash ]
+                          returnHash['__typename'] = "WeekPublishedByDateConnection"
+                          return {
+                            weekPublishedByDate: returnHash
+                          };
+                        },
+                    },*/
+                })
+                .then(({ data }) => {
+                     days.forEach(function(day){
+                        const times = _this.formatDays(day)
+                        _this.saveShift(times[0], times[1], weekPublishedId);
+                      })
+                  }).catch((error) => {
+                      console.log('there was an error sending the query', error);
+                  });
 
-        }
-        // else create all shifts with existing week published
-        else {
-            days.forEach(function(day){
-              const times = _this.formatDays(day)
-              _this.saveShift(times[0], times[1], weekPublishedId);
-            })
-        }
+            }
+            // else create all shifts with existing week published
+            else {
+                days.forEach(function(day){
+                  const times = _this.formatDays(day)
+                  _this.saveShift(times[0], times[1], weekPublishedId);
+                })
+            }
+      }
   }
 
 
     render(){
-
-
       const header = (
         <Header as='h1' style={{ textAlign: 'center' , color: '#0022A1', fontSize: '22px', marginTop: '10px', height: "40px"}} >
         <div style={{width: '33%', float: 'left'}}>
@@ -194,10 +217,16 @@ export class AddShiftForm extends Component{
             style={{ width:'30px', marginLeft: '10px'}}
           />
         </div>
-
+        { !this.props.editMode && 
          <div style={{width: '33%', float: 'left'}}>
             ADD SHIFT
          </div>
+        }
+        { this.props.editMode && 
+         <div style={{width: '33%', float: 'left'}}>
+            EDIT SHIFT
+         </div>
+        }
         <div style={{width: '33%', float: 'left'}}>
         <Image
           src="/images/Assets/Icons/Buttons/delete-round-small.png"
@@ -209,25 +238,35 @@ export class AddShiftForm extends Component{
       </Header>
         )
 
-       if (this.props.data.loading || this.state.loading ) {
-            return (
-              <div>
-                 { header }  
-                <div className="outside-add-shift">
-                    <div className="inside-add-shift">
-                <div>Loading</div></div></div>
-              </div>
-           )
-        }
-
-        if (this.props.data.error) {
-            console.log(this.props.data.error)
-            return (<div>An unexpected error occurred</div>)
-        }
-
     const date=moment();
     const startDate=this.props.start
-
+    const data = this.props.data
+    let workplace = "";
+    let position = "";
+    let start = "";
+    let end = "";
+    let numWorkers = 1;
+    if (data){
+      if (data.workplaceByWorkplaceId){
+        workplace = data.workplaceByWorkplaceId.id
+      }
+      if (data.positionByPositionId){
+        position = data.positionByPositionId.id
+      }
+      if (data.startTime && data.endTime){
+        start = moment(data.startTime).format("hh:mm a")
+        end = moment(data.endTime).format("hh:mm a")
+      }
+      numWorkers = data.workersRequestedNum
+    }
+    let disabled = false;
+    let saveImage = "/images/Assets/Icons/Buttons/save-shift-button.png";
+    if (!this.props.editMode){
+      saveImage = "/images/Assets/Icons/Buttons/add-shift-button.png";
+      disabled = (this.state.workplace==""||this.state.startTime==""||this.state.position==""
+             ||this.state.stopTime==""||this.state.numberOfTeamMembers==""||this.state.shiftDaysSelected=="")
+    }
+   
     return(
       <div>
         { header }
@@ -237,20 +276,28 @@ export class AddShiftForm extends Component{
            <div>
            <div>
               <p className="shift-form-title">WORKPLACE</p>
-              <WorkplaceSelector formCallBack={ this.updateFormState }/>
+              <WorkplaceSelector formCallBack={ this.updateFormState } workplace={ workplace }/>
            </div>
            <div style={{marginTop:'15px'}} >
-              <PositionSelector formCallBack={ this.updateFormState }/>
+              <PositionSelector formCallBack={ this.updateFormState } position={ position } />
             </div>
-            <div style={{marginTop:'30px'}} >
-               <p className="shift-form-title">SHIFT DAY(S) OF THE WEEK</p>
-               <ShiftDaySelector startDate={startDate} formCallBack={ this.updateFormState } />
-            </div>
+              {!this.props.editMode && (
+                   <div style={{marginTop:'30px'}} >
+                  <p className="shift-form-title">SHIFT DAY(S) OF THE WEEK</p> 
+                  <ShiftDaySelector startDate={startDate} formCallBack={ this.updateFormState } /> 
+                  </div>
+                  ) }
+
+              { this.props.editMode && ( <div style={{marginTop:'30px'}} > 
+                      <p className="shift-form-title"> This Shift Is On { moment(this.props.data.startTime).format("dddd MMMM Do, YYYY") } </p> 
+                    </div>
+                    )
+              }
             <div style={{marginTop:'15px'}} >
-               <TimePicker formCallBack={ this.updateFormState } />
+               <TimePicker formCallBack={ this.updateFormState } start={ start } stop={ end }/>
             </div>
             <div style={{marginTop: '15px'}} >
-               <NumberOfTeamMembers formCallBack={ this.updateFormState } />
+               <NumberOfTeamMembers formCallBack={ this.updateFormState }  numRequested={ numWorkers }/>
             </div>
             <div style={{marginTop:'30px', height: '80px', width: '100%'}} >
                <p className="shift-form-title" style={{marginBottom: "0"}}>JOB SHADOWING OPPORTUNITY</p>
@@ -281,11 +328,10 @@ export class AddShiftForm extends Component{
              onClick={ this.handleCloseFunc }
            />
            <Image
-             src="/images/Assets/Icons/Buttons/add-shift-button.png"
+             src={ saveImage }
              shape="circular"
              width="42%"
-             disabled={ this.state.workplace==""||this.state.startTime==""||this.state.position==""
-             ||this.state.stopTime==""||this.state.numberOfTeamMembers==""||this.state.shiftDaysSelected=="" }
+             disabled={ disabled }
              onClick={this.handleSave}
            />
           </Image.Group>
@@ -330,6 +376,32 @@ const createShiftMutation = gql`
   }
 }`
 
+
+const updateShiftMutation = gql`
+ mutation updateShiftById($data:UpdateShiftByIdInput!){
+  updateShiftById(input:$data)
+  {
+    shift{
+      id
+      startTime
+      endTime
+      workersInvited
+      workersAssigned
+      workersRequestedNum
+      positionByPositionId{
+        positionName
+        positionIconUrl
+        brandByBrandId {
+              brandName
+        }
+      }
+      workplaceByWorkplaceId{
+        workplaceName
+      }
+    }
+  }
+}`
+
 const createWeekPublishedMutation = gql`
  mutation createWeekPublished($data:CreateWeekPublishedInput!){
   createWeekPublished(input:$data)
@@ -347,30 +419,12 @@ const createWeekPublishedMutation = gql`
   }
 }`
 
-const allWeekPublished = gql
-  `query allWeekPublished($brandid: Uuid!){
-      allWeekPublisheds(condition: {brandId:$brandid} ){
-          edges{
-              node{
-                id
-                start
-                end
-                published
-              }
-          }
-     }
-}
-`
 const AddShift = compose(
-  graphql(allWeekPublished, {
-   options: (ownProps) => ({ 
-     variables: {
-       brandid: ownProps.brandId,
-     }
-   }),
- }),
   graphql(createShiftMutation, {
     name : 'createShift'
+  }),
+  graphql(updateShiftMutation, {
+    name : 'updateShift'
   }),
   graphql(createWeekPublishedMutation, {
     name : 'createWeekPublished'

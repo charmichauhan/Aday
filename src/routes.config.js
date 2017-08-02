@@ -10,7 +10,7 @@ import MyWorkplace from './components/workplace/MyWorkplace'
 import Hiring from './components/Hiring'
 import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
-import Team from './components/Team'
+//import Team from './components/Team'
 
 
 import Certificates from './components/certifications/Certificates'
@@ -81,11 +81,11 @@ const routes = [
 						exact: true,
 						component: Hiring
 					},
-					{
+					/*{
 						path: '/team',
 						exact: true,
 						component: Team
-					},
+					},*/
 					{
 						path: '/certifications/certificates',
 						exact: true,

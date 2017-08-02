@@ -188,38 +188,6 @@ class ShiftWeekTableComponent extends Week {
                           {this.getSummary(summary,start)}
                       </TableRow>
                       <TableRow displayBorder={false}>
-                          <TableRowColumn style={styles.tableFooter}>
-                              <div className="mtitle"><p className="bfont">weekly spend booked:</p><p
-                                  className="sfont">$12038 of $18293 | 66%</p></div>
-                          </TableRowColumn>
-                          <TableRowColumn style={styles.tableFooter}>
-                              <div className="stitle"><p className="bfont">spend booked</p><p className="sfont">$1293
-                                  of $2019 | 64%</p></div>
-                          </TableRowColumn>
-                          <TableRowColumn style={styles.tableFooter}>
-                              <div className="stitle"><p className="bfont">hours booked</p><p className="sfont">185 of
-                                  236 | 78%</p></div>
-                          </TableRowColumn>
-                          <TableRowColumn style={styles.tableFooter}>
-                              <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                  of 236 | 78%</p></div>
-                          </TableRowColumn>
-                          <TableRowColumn style={styles.tableFooter}>
-                              <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                  of 236 | 78%</p></div>
-                          </TableRowColumn>
-                          <TableRowColumn style={styles.tableFooter}>
-                              <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                  of 236 | 78%</p></div>
-                          </TableRowColumn>
-                          <TableRowColumn style={styles.tableFooter}>
-                              <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                  of 236 | 78%</p></div>
-                          </TableRowColumn>
-                          <TableRowColumn style={styles.tableFooter}>
-                              <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                  of 236 | 78%</p></div>
-                          </TableRowColumn>
                       </TableRow>
                   </TableFooter>
               </Table>

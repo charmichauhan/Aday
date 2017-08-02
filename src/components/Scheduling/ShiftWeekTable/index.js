@@ -166,7 +166,6 @@ class ShiftWeekTableComponent extends Week {
                           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow displayBorder={false}>
                                 <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p><p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></TableRowColumn>
-                                <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p> </TableRowColumn>
                                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                     className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                     className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -192,7 +191,6 @@ class ShiftWeekTableComponent extends Week {
                         </TableHeader>
                         <TableBody>
 
-                            <SpecialDay/>
                             {(Object.keys(jobData)).map((value, index) => (
                                     <JobsRow data={jobData[value]} key={value}/>
                                 )

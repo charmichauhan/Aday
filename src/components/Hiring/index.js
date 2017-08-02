@@ -73,9 +73,9 @@ const initState = {
       },
       position: 5,
     },
-  ]
+  ],
+	tabDesign
 };
-
 
 export default class Hiring extends Component {
   constructor(props) {
@@ -83,14 +83,12 @@ export default class Hiring extends Component {
     this.state = initState;
   }
 
-
-
   render() {
 
     const options = [
-      { key: 1, text: 'By Position Title', value: 1 },
-      { key: 2, text: 'By Name', value: 2 },
-      { key: 3, text: 'Your Rating', value: 3 },
+      {key: 1, text: 'By Position Title', value: 1},
+      {key: 2, text: 'By Name', value: 2},
+      {key: 3, text: 'Your Rating', value: 3},
     ]
     return (
       <div>
@@ -104,13 +102,14 @@ export default class Hiring extends Component {
         <Segment>
           <Form>
             <Form.Group>
-              <Form.Input  size='big' placeholder='Cashier, Cook' />
-              <Dropdown placeholder='By Position' selection simple options={options} />
+              <Form.Input size='big' placeholder='Cashier, Cook'/>
+              <Dropdown placeholder='By Position' selection simple options={options}/>
               <Form.Field id='invite_team_member' control={Button} size='big' content='Search'/>
             </Form.Group>
             <div>
               <Header as='h4'>Return Only Completed Profiles?</Header>
-              <Switch value={false} labels={{ on: 'YES', off: 'NO' }} circleStyles={{ onColor: 'green', offColor: 'red', diameter: 20 }}/>
+              <Switch value={false} labels={{on: 'YES', off: 'NO'}}
+                      circleStyles={{onColor: 'green', offColor: 'red', diameter: 20}}/>
             </div>
           </Form>
         </Segment>
@@ -121,5 +120,3 @@ export default class Hiring extends Component {
     )
   }
 }
-
-

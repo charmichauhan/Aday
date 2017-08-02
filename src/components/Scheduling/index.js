@@ -1,18 +1,19 @@
-import React, {Component} from "react";
-import moment from "moment";
-import BigCalendar from "react-big-calendar";
-import {NavLink} from "react-router-dom";
-import {Button, Modal} from "semantic-ui-react";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import Toolbar from "react-big-calendar/lib/Toolbar";
-import ShiftWeekTable from "./ShiftWeekTable";
-import "./style.css";
-import ShiftPublish from "./ShiftWeekTable/ShiftPublish";
-import "fullcalendar/dist/fullcalendar.min.css";
-import "fullcalendar/dist/fullcalendar.min.js";
-import "fullcalendar-scheduler/dist/scheduler.css";
-import "fullcalendar-scheduler/dist/scheduler.js";
-import {gql, graphql} from "react-apollo";
+import React, { Component } from 'react';
+import moment from 'moment';
+import BigCalendar from 'react-big-calendar';
+import { NavLink } from 'react-router-dom'
+import { Button } from 'semantic-ui-react';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import Toolbar from 'react-big-calendar/lib/Toolbar';
+import ShiftWeekTable from './ShiftWeekTable';
+import './style.css';
+import {Modal} from 'semantic-ui-react';
+import ShiftPublish from './ShiftWeekTable/ShiftPublish';
+import 'fullcalendar/dist/fullcalendar.min.css';
+import 'fullcalendar/dist/fullcalendar.min.js';
+import 'fullcalendar-scheduler/dist/scheduler.css';
+import 'fullcalendar-scheduler/dist/scheduler.js';
+import { gql, graphql, compose } from 'react-apollo';
 
 const style = {
   titleStyle: {
@@ -30,18 +31,18 @@ const style = {
     borderRadius: 6
   }
 };
-class ScheduleComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      publishModalPopped: false,
-      addTemplateModalOpen: false,
-      templateName: "",
-      redirect: false,
-      hoursBooked: 0
-    }
-  }
 
+class ScheduleComponent extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            publishModalPopped: false,
+			addTemplateModalOpen: false,
+			templateName:"",
+            redirect:false,
+            date: moment()
+        }
+    }
   onNavigate = (start) => {
     this.setState({date: start})
   };
@@ -74,7 +75,6 @@ class ScheduleComponent extends Component {
 
     return (
       <div className="App row">
-
         <div style={{height: '160px'}}><ShiftPublish date={this.state.date} isPublish={ is_publish }/></div>
         <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                message="Are you sure that you want to delete this shift?"
@@ -98,7 +98,6 @@ class ScheduleComponent extends Component {
     );
   }
 }
-
 class CustomToolbar extends Toolbar {
   render() {
     let month = moment(this.props.date).format("MMMM YYYY");

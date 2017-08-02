@@ -253,6 +253,7 @@ const allUsers = gql`
 
 
 const ShiftWeekTable = compose(
+
   graphql(allShiftsByWeeksPublished, {
     options: (ownProps) => ({
       variables: {
@@ -262,6 +263,4 @@ const ShiftWeekTable = compose(
   }),
   graphql(allUsers, {name: "allUsers"})
 )(ShiftWeekTableComponent)
-
-
 export default ShiftWeekTable

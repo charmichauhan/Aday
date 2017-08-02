@@ -99,10 +99,9 @@ class EmployeeViewComponent extends Component {
 			<div className="App row">
 
 				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date} isPublish={ is_publish }/> </div>
-                {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
+                <Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													  message = "Are you sure that you want to delete this shift?"
 													  action = {publishModalOptions} closeAction={this.modalClose}/>
-                    :""}
 				<div>
 					<BigCalendar events={publish_id}
 								 culture='en-us'

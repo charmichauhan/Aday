@@ -8,21 +8,16 @@ import '../style.css';
 import './shiftWeekTable.css';
 const uuidv4 = require('uuid/v4');
 
-class EventPopupComponent extends Component{
-    constructor(props){
-        super(props)
-        this.state = {
-            deleteModalPopped: false,
-            editModalPopped: false,
-            newShiftModalPopped: false
-        }
+class EventPopupComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      deleteModalPopped: false,
+      editModalPopped: false,
+      newShiftModalPopped: false,
+      shiftHistoryDrawer: false,
     }
-    handleClose = () => {
-        this.setState({
-            deleteModalPopped:false
-        })
-    };
-
+  }
   modalClose = () => {
     this.setState({
       deleteModalPopped: false
@@ -54,10 +49,6 @@ class EventPopupComponent extends Component{
                 break;
         }
     };
-  handleEditShiftDrawerClose = () => {
-    this.setState({ editShiftDrawerOpen: !this.state.editShiftDrawerOpen });
-  };
-
   handleHistoryDrawer = () => {
     this.setState({ shiftHistoryDrawer: !this.state.shiftHistoryDrawer });
   };

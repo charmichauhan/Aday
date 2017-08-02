@@ -89,15 +89,14 @@ class ShiftPublishComponent extends Component{
         }
         return(
             <div>
-                {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
-                                                         message = "Are you sure that you want to delete this shift?"
-                                                         action = {publishModalOptions} closeAction={this.modalClose}/>
-                }
-                {this.state.addTemplateModalOpen && <AddAsTemplateModal addTemplateModalOpen={true}
-                                                                        handleClose={this.addTemplateclose}
-                                                                        addTemplate={this.addTemplateName}
-                                                                        handleChange={(e) =>this.handleChange(e)}/>
-                }
+                <Modal title="Confirm" isOpen={this.state.publishModalPopped}
+                       message = "Are you sure that you want to delete this shift?"
+                       action = {publishModalOptions} closeAction={this.modalClose}/>
+                <AddAsTemplateModal addTemplateModalOpen={true}
+                                    handleClose={this.addTemplateclose}
+                                    addTemplate={this.addTemplateName}
+                                    handleChange={(e) =>this.handleChange(e)}/>
+
                 <div className="col-md-12">
                     <div className="col-sm-offset-3 col-sm-5 rectangle">
                         {is_publish == ""? "NO SHIFTS FOR GIVEN WEEK" :<img src={statusImg}/>}
@@ -107,7 +106,7 @@ class ShiftPublishComponent extends Component{
                 <div className="btn-action">
                     <Button className="btn-image"><CreateShiftButton/></Button>
                     {(is_publish == false && is_publish != "") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button> }
-                    {(is_publish != "")&& <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
+                    {is_publish != "" && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
                     {is_publish != "" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
                     <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/template-list-button.png" alt="Template List"/></Button>
                 </div>

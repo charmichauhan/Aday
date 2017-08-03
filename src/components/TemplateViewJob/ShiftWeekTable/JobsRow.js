@@ -9,23 +9,31 @@ import {
 
 export default class JobsRow extends Component{
     render(){
-
         let data = this.props.data;
-        let shifts = data.shifts[0];
-        let finalHours = 0;
-        let finalMinutes = 0;
-        Object.values(shifts).map((value,index) => {
-            if(value.length){
-                for(let i=0;i<value.length;i++){
-                    let startTime = moment(value[i]['timeFrom'],"hh:mm a");
-                    let endTime = moment(value[i]['timeTo'],"hh:mm a");
-                    let h = endTime.diff(startTime,'hours');
-                    let m = moment.utc(moment(endTime,"HH:mm:ss").diff(moment(startTime,"HH:mm:ss"))).format("mm");
-                    finalHours += h;
-                    finalMinutes += parseInt(m);
-                }
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
+        data.map((value,index) => {
+            const day = moment(value.startTime, "HH:mm:ss").format("dddd");
+            if (hashByDay[day]){
+                hashByDay[day] = [...hashByDay[day], value];
+            } else {
+                hashByDay[day] = [value];
             }
         });
+        let finalHours = 0;
+        let finalMinutes = 0;
+        Object.values(this.props.data).map((value,index) => {
+            let startTime = moment(value.startTime, "HH:mm:ss");
+            let endTime = moment(value.endTime, "HH:mm:ss");
+            let h = endTime.diff(startTime,'hours');
+            let m = moment.utc(moment(endTime).diff(moment(startTime))).format("mm");
+            let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
+            h=h*workerAssigned;
+            m=m*workerAssigned;
+            finalHours += h;
+            finalMinutes += parseInt(m);
+        });
+
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
@@ -34,20 +42,21 @@ export default class JobsRow extends Component{
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
                     <div className="user_profile" width="80%">
                         <div className="user_img">
-                            <i><img src={data.icon} alt="img"/></i>
+                            <img width="65px" src={ data[0].positionByPositionId.positionIconUrl } alt="img"/>
                         </div>
-                        <div className="user_desc penalheading">{data.title}
-                            <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                        <div className="user_desc penalheading">{data[0].positionByPositionId.positionName.split(" ")[0]}
+                            <p className="lastName"> { data[0].positionByPositionId.positionName.split(" ")[1] }</p>
+                            <p className="finalHours">{finalHours || 0} hours<br/>{finalMinutes || 0} Minutes</p>
                             <p className="scheduled_tag">SCHEDULED</p>
                         </div>
                     </div>
                 </TableRowColumn>
                 {
-                    Object.values(shifts).map((value,index)=> ((
+                    daysOfWeek.map((value,index)=> ((
                             <TableRowColumn key={index} className="shiftbox" style={{paddingLeft:'0px',paddingRight:'0px',backgroundColor:'#F5F5F5'}}>
                                 {
-                                    Object.values(value).map((value,index)=>(
-                                        <EventPopup data={value} key={index}/>
+                                    Object.values(hashByDay[value]).map((y, index)=>(
+                                        <EventPopup data={y} key={index}/>
                                     ))
                                 }
                                 <button type="button" className="addshift">

@@ -80,7 +80,7 @@ class EmployeeViewComponent extends Component {
         }
 
         let is_publish = "none";
-        let publish_id = "";
+        let publish_id = "66666666-12c4-11e1-840d-7b25c5ee7756";
         const date = this.state.date;
         this.props.data.allWeekPublisheds.nodes.forEach(function(value){
         if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
@@ -99,12 +99,11 @@ class EmployeeViewComponent extends Component {
 			<div className="App row">
 
 				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date} isPublish={ is_publish }/> </div>
-                {this.state.publishModalPopped?<Modal title="Confirm" isOpen={this.state.publishModalPopped}
+                <Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													  message = "Are you sure that you want to delete this shift?"
 													  action = {publishModalOptions} closeAction={this.modalClose}/>
-                    :""}
 				<div>
-					<BigCalendar events={[]}
+					<BigCalendar events={publish_id}
 								 culture='en-us'
 								 startAccessor='startDate'
 								 endAccessor='endDate'
@@ -124,7 +123,6 @@ class EmployeeViewComponent extends Component {
 }
 
 class CustomToolbar extends Toolbar {
-
 	render() {
         let month = moment(this.props.date).format("MMMM YYYY");
         return (
@@ -142,7 +140,7 @@ class CustomToolbar extends Toolbar {
 							</div>
 
 							<ul className="nav navbar-nav">
-								<Button className="" as={NavLink} to="/schedule/team" >Job view</Button>
+								<Button as={NavLink} to="/schedule/team" active="shcedule">Job view</Button>
 							</ul>
 							<div className="maintitle">{month}</div>
 							<ul className="nav navbar-nav navbar-right">

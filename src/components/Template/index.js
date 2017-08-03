@@ -67,7 +67,7 @@ class CustomToolbarComponent extends Toolbar {
                                     <li className="dropdownweeky">
                                         <select className="dropdown">
                                         { this.props.data.allTemplates.edges.map((value,index) =>
-                                            <option value={ index }> { value.node.templateName }</option>
+                                            <option value={ index } key={index}> { value.node.templateName }</option>
                                             )
                                         }
                                         </select>

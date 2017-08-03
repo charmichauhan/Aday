@@ -12,14 +12,14 @@ export default class JobsRow extends Component{
         let data = this.props.data;
         const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
          this.props.data.map((value,index) => {
-             const day = value.dayOfWeek
+             const day = moment(value.startTime, "HH:mm:ss").format("dddd");
              if (hashByDay[day]){
                  hashByDay[day] = [...hashByDay[day], value];
              } else {
                  hashByDay[day] =  [value];
              }
          })
-        
+
         let finalHours = 0;
         let finalMinutes = 0;
         Object.values(this.props.data).map((value,index) => {
@@ -27,13 +27,16 @@ export default class JobsRow extends Component{
             let endTime = moment(value.endTime, "HH:mm:ss");
             let h = endTime.diff(startTime,'hours');
             let m = moment.utc(moment(endTime).diff(moment(startTime))).format("mm");
+            let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
+            h=h*workerAssigned;
+            m=m*workerAssigned;
             finalHours += h;
             finalMinutes += parseInt(m);
         });
 
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
-        finalMinutes = finalMinutes - (adHours*60); 
+        finalMinutes = finalMinutes - (adHours*60);
 
         return(
             <TableRow className="tableh" displayBorder={false}>
@@ -44,7 +47,7 @@ export default class JobsRow extends Component{
                                     </div>
                                     <div className="user_desc penalheading">{data[0].user[0]}
                                        <p className="lastName">{data[0].user[1]}</p>
-                                        <p className="finalHours employeeFinalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                                        <p className="finalHours employeeFinalHours">{finalHours || 0} hours<br/>{finalMinutes || 0} Minutes</p>
                                   </div>
                                </div>
                 </TableRowColumn>

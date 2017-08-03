@@ -20,6 +20,8 @@ const unassignedTeamMember = {
   status: 'unassigned'
 };
 
+const unassignedJobShadower = { ...unassignedTeamMember };
+
 const initialState = {
   teamMembers: [
     {
@@ -31,7 +33,7 @@ const initialState = {
       content: 'Seniority: 0003',
       status: 'accepted'
     },
-    unassignedTeamMember
+    { ...unassignedTeamMember }
   ],
 
   jobShadowers: [
@@ -53,14 +55,40 @@ const initialState = {
       content: 'Current hours: 20 . You\'ve earned 1 credit',
       status: 'pending'
     }
-  ]
+  ],
+  users: [{
+    firstName: 'Eric',
+    otherNames: 'Wise',
+    avatar: 'https://pickaface.net/assets/images/slides/slide2.png',
+  }, {
+    firstName: 'Carol',
+    otherNames: 'Brown',
+    avatar: 'http://devilsworkshop.org/files/2013/01/enlarged-facebook-profile-picture.jpg',
+  }, {
+    firstName: 'Werner',
+    otherNames: 'Stroman',
+    avatar: '/images/employee/1.jpg',
+  }, {
+    firstName: 'Barton',
+    otherNames: 'Schmitt',
+    avatar: '/images/employee/2.jpg',
+  }, {
+    firstName: 'Mikayla',
+    otherNames: 'Hessel',
+    avatar: '/images/employee/3.jpg',
+  }, {
+    firstName: 'Sydnie',
+    otherNames: 'Wehner',
+    avatar: '/images/employee/4.jpg',
+  }]
+
 };
 
 class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
-    this.state = initialState;
+    this.state = { ...initialState };
   }
 
   borderColor = status => {
@@ -88,6 +116,20 @@ class DrawerHelper extends Component {
     this.props.handleHistory();
   };
 
+  handleDeleteShift = () => {
+    // Shift delete code to be done here
+  };
+
+  handleSaveShift = () => {
+    // Shift save/update code to be done here
+  };
+
+  addTeamMember = () => {
+    const { teamMembers } = this.state;
+    teamMembers.push({ ...unassignedTeamMember });
+    this.setState({ teamMembers });
+  };
+
   removeTeamMember = (i) => {
     const { teamMembers } = this.state;
     // teamMembers[i] = unassignedTeamMember;
@@ -95,34 +137,53 @@ class DrawerHelper extends Component {
     this.setState({ teamMembers });
   };
 
-  addTeamMember = () => {
+  setTeamMember = (user, index) => {
     const { teamMembers } = this.state;
-    teamMembers.push(unassignedTeamMember);
+    teamMembers[index].user = user;
     this.setState({ teamMembers });
+  };
+
+  addJobShadower = () => {
+    const { jobShadowers } = this.state;
+    jobShadowers.push({ ...unassignedJobShadower });
+    this.setState({ jobShadowers });
+  };
+
+  removeJobShadower = (i) => {
+    const { jobShadowers } = this.state;
+    // teamMembers[i] = unassignedTeamMember;
+    jobShadowers.splice(i, 1);
+    this.setState({ jobShadowers });
+  };
+
+  setJobShadower = (user, index) => {
+    const { jobShadowers } = this.state;
+    jobShadowers[index].user = user;
+    this.setState({ jobShadowers });
   };
 
   render() {
     const {
       width = 600,
-      open,
       openSecondary = true,
-      docked = false
+      docked = false,
+      open
     } = this.props;
 
-    const { teamMembers, jobShadowers } = this.state;
+    const { teamMembers, jobShadowers, users } = this.state;
     const actionTypes = [{
       type: 'white',
       title: 'Cancel',
-      handleClick: function () { }
+      handleClick: this.handleCloseDrawer
     }, {
       type: 'red',
       title: 'DELETE SHIFT',
-      handleClick: function () { },
+      handleClick: this.handleDeleteShift,
       image: '/images/modal/close.png'
     }, {
       type: 'blue',
       title: 'SAVE UPDATE',
-      handleClick: function () { },
+      handleClick: this.handleSaveShift,
       image: '/assets/Icons/save-icon.png'
     }];
 
@@ -132,7 +193,9 @@ class DrawerHelper extends Component {
     );
 
     return (
-      <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
+      <Drawer docked={docked} width={width}
+              openSecondary={openSecondary}
+              onRequestChange={this.handleCloseDrawer}
               open={open}>
         <div className="drawer-section">
           <div className="drawer-heading col-md-12">
@@ -145,85 +208,92 @@ class DrawerHelper extends Component {
             </div>
           </div>
           <div className="drawer-content scroll-div">
-              <div className="member-list">
-                <h5>TEAM MEMBERS ({teamMembers.length})</h5>
-                {teamMembers &&
-                  teamMembers.map((tm, i) => (
-                    <TeamMemberCard
-                      avatar={tm.user.avatar}
-                      firstName={tm.user.firstName}
-                      otherNames={tm.user.otherNames}
-                      content={tm.content}
-                      color={this.borderColor(tm.status) + 'Border'}
-                      key={i}
-                      handleRemove={() => this.removeTeamMember(i)}
-                    />
-                  ))
-                }
-                <div className="btn-member">
-                  <RaisedButton label="ADD TEAM MEMBER" onClick={this.addTeamMember} />
-                </div>
+            <div className="member-list">
+              <h5>TEAM MEMBERS ({teamMembers.length})</h5>
+              {teamMembers &&
+              teamMembers.map((tm, i) => (
+                <TeamMemberCard
+                  avatar={tm.user.avatar}
+                  firstName={tm.user.firstName}
+                  otherNames={tm.user.otherNames}
+                  content={tm.content}
+                  key={i}
+                  id={i}
+                  users={users}
+                  color={this.borderColor(tm.status) + 'Border'}
+                  handleRemove={() => this.removeTeamMember(i)}
+                  onSelectChange={this.setTeamMember}
+                />
+              ))
+              }
+              <div className="btn-member">
+                <RaisedButton label="ADD TEAM MEMBER" onClick={this.addTeamMember} />
+              </div>
 
+            </div>
+            <div className="member-list">
+              <h5>JOB SHADOWERS ({jobShadowers.length})</h5>
+              {jobShadowers &&
+              jobShadowers.map((tm, i) => (
+                <TeamMemberCard
+                  avatar={tm.user.avatar}
+                  firstName={tm.user.firstName}
+                  otherNames={tm.user.otherNames}
+                  content={tm.content}
+                  key={i}
+                  id={i}
+                  users={users}
+                  color={this.borderColor(tm.status) + 'Border'}
+                  handleRemove={() => this.removeJobShadower(i)}
+                  onSelectChange={this.setJobShadower}
+                />
+              ))
+              }
+              <div className="btn-member">
+                <RaisedButton label="ADD JOB SHADOWER" onClick={this.addJobShadower} />
               </div>
-              <div className="member-list">
-                <h5>JOB SHADOWERS ({jobShadowers.length})</h5>
-                {jobShadowers &&
-                  jobShadowers.map((tm, i) => (
-                    <TeamMemberCard
-                      avatar={tm.user.avatar}
-                      firstName={tm.user.firstName}
-                      otherNames={tm.user.otherNames}
-                      content={tm.content}
-                      color={this.borderColor(tm.status) + 'Border'}
-                      key={i}
-                    />
-                  ))
-                }
-                <div className="btn-member">
-                  <RaisedButton label="ADD JOB SHADOWER"/>
-                </div>
-              </div>
+            </div>
             <div className="shift-details">
-            <Divider/>
+              <Divider />
               <div className="shift-heading">
                 <img src="/assets/Icons/copying.png" />
                 <h5>SHIFT DETAILS</h5>
               </div>
-            <Input fluid type="text" placeholder="NAME THIS SHIFT TO SAVE IT AS A TAMPLATE"/>
-            <div className="shiftDetails">
-              <p><b>Work place</b>: Harvard Business School</p>
-              <p>
-                <b>Position</b>: Line Cook
-              </p>
-              <p>
-                <b>Shift Date</b>: Monday, September 3 2016
-              </p>
-              <p>
-                <b>Start Time</b>: 10:00PM
-              </p>
-              <p>
-                <b>End Time</b>: 5:00 PM
-              </p>
-              <p>
-                <b>Unpaid break (minutes)</b>: 30 minutes
-              </p>
-              <p>
-                <b>bonus payment per hour</b>: $0.00
-              </p>
-              <p>
-                <b>job shadowing shift</b>: No
-              </p>
-            </div>
+              <Input fluid type="text" placeholder="NAME THIS SHIFT TO SAVE IT AS A TAMPLATE" />
+              <div className="shiftDetails">
+                <p><b>Work place</b>: Harvard Business School</p>
+                <p>
+                  <b>Position</b>: Line Cook
+                </p>
+                <p>
+                  <b>Shift Date</b>: Monday, September 3 2016
+                </p>
+                <p>
+                  <b>Start Time</b>: 10:00PM
+                </p>
+                <p>
+                  <b>End Time</b>: 5:00 PM
+                </p>
+                <p>
+                  <b>Unpaid break (minutes)</b>: 30 minutes
+                </p>
+                <p>
+                  <b>bonus payment per hour</b>: $0.00
+                </p>
+                <p>
+                  <b>job shadowing shift</b>: No
+                </p>
+              </div>
 
-            <h5>INSTRUCTIONS</h5>
-            <p className="dimmedText">Enter additional information about this shift</p>
+              <h5>INSTRUCTIONS</h5>
+              <p className="dimmedText">Enter additional information about this shift</p>
+            </div>
           </div>
+          <div className="drawer-footer">
+            <div className="buttons text-center">
+              {actions}
+            </div>
           </div>
-        <div className="drawer-footer">
-          <div className="buttons text-center">
-            {actions}
-          </div>
-        </div>
         </div>
       </Drawer>
     );

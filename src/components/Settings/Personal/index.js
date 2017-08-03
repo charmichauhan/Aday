@@ -84,7 +84,6 @@ export default class Personal extends Component {
   };
 
   handleImageSave = (img) => {
-    debugger;
   };
 
   render() {

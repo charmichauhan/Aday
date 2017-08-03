@@ -4,11 +4,12 @@ import Modal from '../../helpers/Modal';
 import EditShiftDrawer from './ShiftEdit/EditShiftDrawer';
 import EditShiftModal from './ShiftEdit/EditShiftModal';
 import ShiftHistoryDrawer from './ShiftEdit/ShiftHistoryDrawer';
+import { gql, graphql, compose } from 'react-apollo';
 import '../style.css';
 import './shiftWeekTable.css';
+const uuidv4 = require('uuid/v4');
 
-
-export default class EventPopup extends Component {
+class EventPopupComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,12 +20,6 @@ export default class EventPopup extends Component {
     }
   }
 
-  handleClose = () => {
-    this.setState({
-      deleteModalPopped: false
-    })
-  };
-
   modalClose = () => {
     this.setState({
       deleteModalPopped: false
@@ -32,7 +27,15 @@ export default class EventPopup extends Component {
   };
 
   deleteShift = () => {
-
+    let id = this.props.data.id;
+    let that = this;
+    that.props.deleteShiftById(uuidv4(), id)
+    .then(({ data }) => {
+      console.log('Delete Data', data);
+    }).catch((error) => {
+      console.log('there was an error sending the query', error);
+    });
+    that.setState({ deleteModalPopped: false });
   };
 
   closeEditShiftModal = () => {
@@ -52,12 +55,6 @@ export default class EventPopup extends Component {
   };
 
   onPopupOpen = (modal) => {
-    //console.log(modal)
-    /*this.setState({
-     deleteModalPopped : true
-     })*/
-  };
-  onPopupOpen = (modal) => {
     if (modal == 'deleteModalPopped'){
         this.setState({ deleteModalPopped: true });
     }
@@ -71,6 +68,14 @@ export default class EventPopup extends Component {
         this.setState({ newShiftModalPopped: true });
     }
   };
+  handleHistoryDrawer = () => {
+    this.setState({ shiftHistoryDrawer: !this.state.shiftHistoryDrawer });
+  };
+
+  handleNewShiftDrawerClose = () => {
+    this.setState({ newShiftModalPopped: !this.state.newShiftModalPopped });
+  };
+
   onPopupClose = (modal) => {
     console.log('Close');
     console.log([modal])
@@ -154,4 +159,23 @@ export default class EventPopup extends Component {
     )
   }
 }
+
+const deleteShift = gql`
+  mutation($clientMutationId: String,$id: Uuid!){
+    deleteShiftById(
+    input: {clientMutationId: $clientMutationId,
+    id: $id}){
+            deletedShiftId
+    }
+  }`
+const EventPopup = graphql(deleteShift, {
+  props: ({ ownProps, mutate }) => ({
+    deleteShiftById: (clientMutationId, id) => mutate({
+      variables: { clientMutationId: clientMutationId, id: id },
+    }),
+
+  }),
+})(EventPopupComponent);
+
+export default EventPopup;
 

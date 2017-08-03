@@ -101,7 +101,7 @@ class DrawerHelper extends Component {
             <h2 className="text-center text-uppercase">{messages.title}</h2>
           </div>
           {!DrawerWorkplace.image && !this.state.blob &&
-          <div className="upload-wrapper col-md-8 col-md-offset-2 text-center">
+          <div className="upload-wrapper col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 text-center">
             <Dropzone
               multiple={false}
               accept="image/*"
@@ -150,7 +150,7 @@ class DrawerHelper extends Component {
                         placeholder="Brand"
                         name="brand"
                         search selection
-                        onChange={(e, target) => this.handleChange({ ...e, target})}
+                        onChange={(e, target) => this.handleChange({ ...e, target })}
                         options={brandOptions} />
             </div>
             <div className="form-group">
@@ -187,7 +187,7 @@ class DrawerHelper extends Component {
                           placeholder="State"
                           name="state"
                           search selection
-                          onChange={(e, target) => this.handleChange({ ...e, target})}
+                          onChange={(e, target) => this.handleChange({ ...e, target })}
                           options={stateOptions} />
               </div>
               <div className="form-group">

@@ -171,13 +171,29 @@ const deleteShift = gql`
     deleteShiftById(
     input: {clientMutationId: $clientMutationId,
     id: $id}){
-            deletedShiftId
+            shift{
+                id
+            }
     }
   }`
 const EventPopup = graphql(deleteShift, {
   props: ({ ownProps, mutate }) => ({
     deleteShiftById: (clientMutationId, id) => mutate({
       variables: { clientMutationId: clientMutationId, id: id },
+       updateQueries: {
+            allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+              let newEdges = []
+              previousQueryResult.allShifts.edges.map((value) => {
+                    if(value.node.id != mutationResult.data.deleteShiftById.shift.id){
+                        newEdges.push(value)
+                    }
+              })
+              previousQueryResult.allShifts.edges = newEdges
+              return {
+                allShifts: previousQueryResult.allShifts
+              };
+            },
+        },
     }),
 
   }),

@@ -52,13 +52,13 @@ export class UpdateShiftForm extends Component{
     this.formatDays=this.formatDays.bind(this);
     this.onTrainee=this.onTrainee.bind(this);
   }
-  
+
   onWorkplace(event){
     this.setState({workplace:event.target.value})
   }
 
   onUnpaidBreak(event){
-      const hours = Math.floor(event.target.value / 60)        
+      const hours = Math.floor(event.target.value / 60)
       let minutes = event.target.value % 60
       if ( minutes < 10 ){
           minutes = 0 + minutes
@@ -104,7 +104,7 @@ export class UpdateShiftForm extends Component{
         shiftPatch['traineesRequestedNum'] = this.state.jobShadowingOpportunity;
 
          this.props.updateShift({
-          variables: { data: 
+          variables: { data:
                     {id: this.props.data.id, shiftPatch: shiftPatch }
                 }
               })
@@ -117,16 +117,16 @@ export class UpdateShiftForm extends Component{
   }
 
   formatDays(day){
-       // formatting time 
+       // formatting time
         let startTime = "";
         let endTime = "";
-        
+
         if (this.state.startTime) {
           const start = this.state.startTime.split(":")
-          const hour  = start[0]
+          let hour  = start[0]
           const minute = start[1].split(" ")[0]
             if (start[1].split(" ")[1]  == 'pm'){
-              if (hour != 12){  
+              if (hour != 12){
                hour =  parseInt(hour) + 12
               }
             } else if (hour == 12){
@@ -136,10 +136,10 @@ export class UpdateShiftForm extends Component{
           }
         if (this.state.stopTime) {
             const stop = this.state.stopTime.split(":")
-            const hour  = stop[0]
+            let hour  = stop[0]
             const minute = stop[1].split(" ")[0]
             if (stop[1].split(" ")[1]  == 'pm'){
-              if (hour != 12){  
+              if (hour != 12){
                hour =  parseInt(hour) + 12
               }
             } else if (hour == 12){
@@ -159,12 +159,12 @@ export class UpdateShiftForm extends Component{
             style={{ width:'30px', marginLeft: '10px'}}
           />
         </div>
-        { !this.props.editMode && 
+        { !this.props.editMode &&
          <div style={{width: '33%', float: 'left'}}>
             ADD SHIFT
          </div>
         }
-        { this.props.editMode && 
+        { this.props.editMode &&
          <div style={{width: '33%', float: 'left'}}>
             EDIT SHIFT
          </div>
@@ -185,7 +185,7 @@ export class UpdateShiftForm extends Component{
     const data = this.props.data
 
     let saveImage = "/images/Assets/Icons/Buttons/save-shift-button.png";
-    
+
     if(this.state.loading){
       return(
         <div>
@@ -221,13 +221,13 @@ export class UpdateShiftForm extends Component{
             </div>
               {!this.props.editMode && (
                    <div style={{marginTop:'30px'}} >
-                  <p className="shift-form-title">SHIFT DAY(S) OF THE WEEK</p> 
-                  <ShiftDaySelector startDate={startDate} formCallBack={ this.updateFormState } /> 
+                  <p className="shift-form-title">SHIFT DAY(S) OF THE WEEK</p>
+                  <ShiftDaySelector startDate={startDate} formCallBack={ this.updateFormState } />
                   </div>
                   ) }
 
-              { this.props.editMode && ( <div style={{marginTop:'30px'}} > 
-                      <p className="shift-form-title"> This Shift Is On { moment(this.props.data.startTime).format("dddd MMMM Do, YYYY") } </p> 
+              { this.props.editMode && ( <div style={{marginTop:'30px'}} >
+                      <p className="shift-form-title"> This Shift Is On { moment(this.props.data.startTime).format("dddd MMMM Do, YYYY") } </p>
                     </div>
                     )
               }
@@ -311,6 +311,6 @@ const updateShiftMutation = gql`
   }
 }`
 
-const UpdateShift = graphql(updateShiftMutation, 
+const UpdateShift = graphql(updateShiftMutation,
   { name : 'updateShift'})(UpdateShiftForm)
 export default UpdateShift

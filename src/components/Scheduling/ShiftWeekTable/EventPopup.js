@@ -20,6 +20,12 @@ class EventPopupComponent extends Component {
     }
   }
 
+  handleClose = () => {
+    this.setState({
+      deleteModalPopped:false
+    })
+  };
+
   modalClose = () => {
     this.setState({
       deleteModalPopped: false
@@ -60,10 +66,10 @@ class EventPopupComponent extends Component {
     }
     else if (modal == 'editShiftDrawer' ){
         this.setState({ editShiftDrawerOpen: true });
-    } 
+    }
     else if (modal == 'editShiftModal' ){
         this.setState({ editShiftModalOpen: true });
-    } 
+    }
     else if (modal ==  'newShiftModalPopped' ){
         this.setState({ newShiftModalPopped: true });
     }
@@ -141,15 +147,15 @@ class EventPopupComponent extends Component {
         <div className="overlay">
           <div className="hoimg">
             <a>
-              <i><img src="/assets/Icons/close-shift.png" alt="close" 
+              <i><img src="/assets/Icons/close-shift.png" alt="close"
                     onClick={() => this.onPopupOpen('deleteModalPopped')} /></i>
             </a>
             <a>
-              <i><img src="/assets/Icons/edit-shift.png" alt="edit" 
+              <i><img src="/assets/Icons/edit-shift.png" alt="edit"
                     onClick={() => this.onPopupOpen('editShiftModal')} /></i>
             </a>
             <a>
-              <i><img src="/assets/Icons/create-shift.png" alt="create" 
+              <i><img src="/assets/Icons/create-shift.png" alt="create"
                     onClick={() => this.onPopupOpen('newShiftModalPopped')} /></i>
             </a>
           </div>

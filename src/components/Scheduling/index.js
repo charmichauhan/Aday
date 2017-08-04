@@ -57,6 +57,7 @@ class ScheduleComponent extends Component {
       console.log(this.props.data.error)
       return (<div>An unexpected error occurred</div>)
     }
+    let events= [];
     let is_publish = "none";
     let publish_id = "66666666-12c4-11e1-840d-7b25c5ee7756";
     const date = this.state.date;
@@ -69,7 +70,8 @@ class ScheduleComponent extends Component {
         publish_id = value.id;
       }
     });
-
+    events.publish_id = publish_id;
+    events.workplaceId = this.props.route.workplaceId;
     let publishModalOptions = [{type: "white", title: "Go Back", handleClick: this.goBack, image: false},
       {type: "blue", title: "Confirm", handleClick: this.onConfirm, image: false}];
 
@@ -80,7 +82,7 @@ class ScheduleComponent extends Component {
                message="Are you sure that you want to delete this shift?"
                action={publishModalOptions} closeAction={this.modalClose}/>
         <div>
-          <BigCalendar events={publish_id}
+          <BigCalendar events={events}
                        culture='en-us'
                        startAccessor='startDate'
                        endAccessor='endDate'
@@ -157,7 +159,7 @@ const allWeekPublisheds = gql
 const Schedule = graphql(allWeekPublisheds, {
   options: (ownProps) => ({
     variables: {
-      brandid:ownProps.route.workplaceId || "5a14782b-c220-4927-b059-f4f22d01c230" ,
+      brandid:"5a14782b-c220-4927-b059-f4f22d01c230" ,
     }
   }),
 })(ScheduleComponent);

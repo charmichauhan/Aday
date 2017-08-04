@@ -121,6 +121,9 @@ td.headcol, td.long {
     font-weight: 600;
     text-transform: capitalize;
 }
+.atable .spday td .spclDay p{
+  color:#0022A1;
+}
 
 td.shiftbox {
     background: #F5F5F5;
@@ -200,8 +203,9 @@ td.shiftbox {
     height: 20px;
     border: 1px solid;
     border-radius: 5px;
-    width: 100%;
-    color: #4A4A4A;
+    width: 125px;
+    border-color: #4A4A4A;
+    color: #0022A1;
     font-family: Roboto;
     font-size: 12px;
     font-weight: bold;
@@ -210,7 +214,20 @@ td.shiftbox {
     text-transform: uppercase;
     margin:0 auto;
 }
-
+.special-day-blank{
+  height: 20px;
+  border: 1px solid;
+  border-radius: 5px;
+  width: 125px;
+  border: 1px solid rgba(153,153,153,0.2);
+  font-family: Roboto;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  margin:0 auto;
+}
 .maintitle {
     display: inline-block;
     text-transform: uppercase;

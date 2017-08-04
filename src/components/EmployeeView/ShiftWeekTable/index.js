@@ -6,7 +6,7 @@ import localizer from 'react-big-calendar/lib/localizer';
 import JobsRow from './JobsRow';
 import { concat, groupBy  } from 'lodash';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
-import SpecialDay from "./SpecialDay";
+import SpecialDay from "../../Scheduling/ShiftWeekTable/SpecialDay";
 import jobsData from "./jobs.json";
 import '../../Scheduling/style.css';
 import { gql, graphql, compose } from 'react-apollo';
@@ -172,6 +172,7 @@ class ShiftWeekTableComponent extends Week {
                       </TableRow>
                   </TableHeader>
                   <TableBody>
+                      <SpecialDay dateStart={start}/>
                       {
                           (Object.keys(jobData)).map((value, index)=>(
                               <JobsRow data={jobData[value]} key={value}/>

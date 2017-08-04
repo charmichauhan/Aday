@@ -8,10 +8,6 @@ import { NavLink } from 'react-router-dom'
 import {BrowserRouter as Router,Redirect} from 'react-router-dom';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
-import AddAsTemplate from '../../../../public/assets/Buttons/add-as-template.png';
-import TemplateList from '../../../../public/assets/Buttons/template-list-button.png';
-import Automate from '../../../../public/assets/Buttons/automate-schedule.png';
-import Publish from '../../../../public/assets/Buttons/publish.png';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 
@@ -58,7 +54,7 @@ class ShiftPublish extends Component{
     };
     render(){
         console.log(this.props)
-        let is_publish = this.props.isPublish
+        let is_publish = this.props.isPublish;
         let publishId = this.props.publishId
         const startDate = this.props.date
 
@@ -103,19 +99,13 @@ class ShiftPublish extends Component{
                     <Button className="btn-image"><CreateShiftButton brandId={"5a14782b-c220-4927-b059-f4f22d01c230"} weekPublishedId={ publishId } weekStart={ start } /></Button>
                     {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
                     {(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/team/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
+                    {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
                     {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
                 </div>
             </div>
         )
     }
 }
-
-ShiftPublish.range = (date, { culture }) => {
-    let firstOfWeek = localizer.startOfWeek(culture);
-    let start = dates.startOf(date, 'week', firstOfWeek);
-    let end = dates.endOf(date, 'week', firstOfWeek);
-    return { start, end };
-};
 
 ShiftPublish.range = (date, { culture }) => {
     let firstOfWeek = localizer.startOfWeek(culture);

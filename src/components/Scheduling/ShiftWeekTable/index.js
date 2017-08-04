@@ -81,7 +81,7 @@ class ShiftWeekTableComponent extends Week {
     getSummary = (summary,start ) =>{
         let summaryDetail = [];
         for(let i=0;i<=6;i++){
-            summaryDetail.push(<TableRowColumn style={styles.tableFooter} key={i}>
+            summaryDetail.push(<TableRowColumn style={styles.tableFooter}>
                 <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours booked:</p>
                     <p className="sfont">
                         {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalBookedHours'] || 0} of {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalHours'] || 0} |
@@ -102,21 +102,38 @@ class ShiftWeekTableComponent extends Week {
             console.log(this.props.data.error);
             return (<div>An unexpected error occurred</div>)
         }
-        let workplaceId = document.getElementById("workplace").value;
+        let workplaceId = this.props.events.workplaceId;
         let calendarHash = {};
         this.props.data.allShifts.edges.map((value, index) => {
-          const positionName = value.node.positionByPositionId.positionName;
-          const dayOfWeek = moment(value.node.startTime).format("dddd");
-          const rowHash = {};
-          rowHash["weekday"] = dayOfWeek;
-          if (calendarHash[positionName]) {
-            calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node)]
-          } else {
-            calendarHash[positionName] = [Object.assign(rowHash, value.node)];
+          if(workplaceId != ""){
+            if(workplaceId == value.node.workplaceByWorkplaceId.id){
+              const positionName = value.node.positionByPositionId.positionName;
+              const dayOfWeek = moment(value.node.startTime).format("dddd");
+              const rowHash = {};
+              rowHash["weekday"] = dayOfWeek;
+              if (calendarHash[positionName]) {
+                calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node)]
+              } else {
+                calendarHash[positionName] = [Object.assign(rowHash, value.node)];
+              }
+
+            }
+            }
+          else{
+            const positionName = value.node.positionByPositionId.positionName;
+            const dayOfWeek = moment(value.node.startTime).format("dddd");
+            const rowHash = {};
+            rowHash["weekday"] = dayOfWeek;
+            if (calendarHash[positionName]) {
+              calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node)]
+            } else {
+              calendarHash[positionName] = [Object.assign(rowHash, value.node)];
+            }
           }
         });
 
         let jobData = calendarHash;
+        debugger;
         let jobs = [];
         (Object.keys(jobData)).forEach((jobType,index) => {
             jobs = concat(jobs, jobData[jobType])
@@ -190,6 +207,7 @@ class ShiftWeekTableComponent extends Week {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
+                            <SpecialDay dateStart={start}/>
 
                             {(Object.keys(jobData)).map((value, index) => (
                                     <JobsRow data={jobData[value]} key={value}/>
@@ -257,10 +275,10 @@ const allShifts = gql
 const ShiftWeekTable = graphql(allShiftsByWeeksPublished, {
    options: (ownProps) => ({
      variables: {
-       publishId: ownProps.events
+       publishId: ownProps.events.publish_id
      }
    }),
- })(ShiftWeekTableComponent)
+ })(ShiftWeekTableComponent);
 
 
 export default ShiftWeekTable

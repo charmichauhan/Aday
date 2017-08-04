@@ -43,6 +43,7 @@ class EmployeeViewComponent extends Component {
             redirect:false,
             date: moment()
         }
+    this.props.route.isEmployeeview(true);
 	}
 
    modalClose = () => {
@@ -78,7 +79,6 @@ class EmployeeViewComponent extends Component {
             console.log(this.props.data.error)
             return (<div>An unexpected error occurred</div>)
         }
-
         let is_publish = "none";
         let publish_id = "66666666-12c4-11e1-840d-7b25c5ee7756";
         const date = this.state.date;
@@ -183,6 +183,6 @@ const EmployeeView = graphql(allWeekPublisheds, {
             brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
         }
     }),
-})(EmployeeViewComponent)
+})(EmployeeViewComponent);
 
 export default EmployeeView

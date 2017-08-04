@@ -6,8 +6,8 @@ import { gql, graphql } from 'react-apollo';
 import './nav.css';
 const styles = {
     menuStyle:{
-    	width:200,
-		height:42
+      width:200,
+		  height:42
 	}
 };
 
@@ -67,7 +67,7 @@ class NavComponent extends Component {
 					</Menu.Item>
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
-							<Menu.Item className="menu-item-list" name="schedule" as={NavLink} to="/schedule/team"><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
+							<Menu.Item className="menu-item-list" name="schedule" as={NavLink} to="/schedule/team" active={this.props.isemployeeview}><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance/requests"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/team"><i><Image src="/images/Sidebar/team-member.png"/></i><div className="menu_item_left"><span>TEAM MEMBERS</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/hiring"><i><Image src="/images/Sidebar/hiring.png"/></i><div className="menu_item_left"><span>HIRING</span></div></Menu.Item>
@@ -77,7 +77,7 @@ class NavComponent extends Component {
 						</Menu.Menu>
 					</Menu.Item>
 					</div>
-					<Menu.Item className="menu-item-logout">
+  					<Menu.Item className="menu-item-logout">
 						<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/logout-icon.png"/></i><div className="menu_item_left"><span>LOGOUT</span></div></Menu.Item>
 					</Menu.Item>
 				</Menu>

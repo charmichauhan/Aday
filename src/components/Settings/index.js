@@ -62,6 +62,7 @@ export default class Settings extends Component {
 
   deleteWorkplace = (id) => {
     const { workplaces } = this.state;
+    console.log(workplaces);
     remove(workplaces, { 'id': id });
     this.setState({ workplaces });
   };

@@ -68,7 +68,7 @@ export default class DaySelector extends React.Component {
     const { selected } = this.state;
     const { startdate }=this.state;
     const {tableSize}=this.props;
-    console.log(startdate);
+
     const startMoment = moment(startdate);
     const cells = _.map(_.range(tableSize), (i) => {
       const calDate = startMoment.clone().add(i, 'days');
@@ -80,14 +80,7 @@ export default class DaySelector extends React.Component {
       };
     });
     return (
-      <div>
-        <div style={{float:'left'}}>
-          <SquareButton
-            name="angle left"
-            onClick={this.stepDateRange}
-            dataDirection="left"
-          />
-        </div>
+      <div style={{width: "800px", height: "100px"}}>
         <div style={{float:'left'}}>
          {
           _.map(cells, (cell) => {
@@ -103,13 +96,6 @@ export default class DaySelector extends React.Component {
           })
          }
          </div>
-        <div style={{float:'left'}}>
-        <SquareButton
-          name="angle right"
-          onClick={this.stepDateRange}
-          dataDirection="right"
-        />
-     </div>
     </div>
     );
   }
@@ -121,3 +107,22 @@ DaySelector.propTypes = {
   selectedDate: PropTypes.string,
   //formCallback: PropTypes.func.isRequired,
 };
+
+/* Not using this right now, too many use cases 
+
+        <div style={{float:'left'}}>
+          <SquareButton
+            name="angle left"
+            onClick={this.stepDateRange}
+            dataDirection="left"
+          />
+        </div>
+
+ <div style={{float:'left'}}>
+            <SquareButton
+              name="angle right"
+              onClick={this.stepDateRange}
+              dataDirection="right"
+            />
+         </div>
+*/

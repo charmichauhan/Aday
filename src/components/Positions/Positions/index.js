@@ -6,7 +6,7 @@ import Edit from 'material-ui/svg-icons/image/edit';
 import Delete from 'material-ui/svg-icons/action/delete';
 import Watch from 'material-ui/svg-icons/action/watch-later';
 import PositionDrawer from './PositionDrawer';
-import Modal from '../../helpers/Modal'; 
+import Modal from '../../helpers/Modal';
 
 import CircleButton from '../../helpers/CircleButton/index';
 
@@ -48,11 +48,12 @@ export default class Position extends Component {
   };
 
   handleDeleteClick = (id) => {
-     this.setState({ openDeleteModal: true, toDeleteBrand: id });
+     this.setState({ openDeleteModal: true, toDeletePosition: id });
   };
 
-  handleDrawerSubmit = (event) => {
+  handleDrawerSubmit = (position) => {
     this.setState({ open: false });
+    this.props.addOrUpdatePosition(position);
   };
 
   closeDrawer = (event) => {
@@ -64,6 +65,10 @@ export default class Position extends Component {
   };
   openPositionDrawer = (position) => {
     this.setState({ open: true, drawerPosition: position });
+  };
+  handleDelete = () => {
+    this.props.onDeletePosition(this.state.toDeletePosition);
+    this.setState({ openDeleteModal: false, toDeleteWorkplace: undefined });
   };
 
   render() {
@@ -78,26 +83,26 @@ export default class Position extends Component {
         <Table className="table list-grid">
           <TableBody displayRowCheckbox={false}>
             {positions.map((position) => (
-             <TableRow style={styles.noBorder} key={position.positionByPositionId.id}>
+             <TableRow style={styles.noBorder} key={position.id}>
                 <TableRowColumn style={{border:"none",width:"70px",padding:"4px 10px"}}>
-                  <i className="icon-circle-td"><Image src={position.positionByPositionId.positionIconUrl} size="mini" /></i>
+                  <i className="icon-circle-td"><Image src={position.positionIconUrl} size="mini" /></i>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
-                  <h6>{position.positionByPositionId.positionName}</h6><p>{position.positionByPositionId.teamMembers} Team Members</p>
+                  <h6>{position.positionName}</h6><p>{position.jobsByPositionId.nodes.length} Team Members</p>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
-                  <h6>5</h6><span>WORKPLACES</span>
+                  <h6>{position.opportunitiesByPositionId.nodes.length}</h6><span>WORKPLACES</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
-                  <h6>{position.positionByPositionId.traineeHours}</h6><span>TRAINING HOURS</span>
+                  <h6>{position.traineeHours}</h6><span>TRAINING HOURS</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
-                  <h6>{position.positionByPositionId.trainingTracks}</h6><span>TRAINING TRACKS</span>
+                  <h6>{position.trainingTracks}</h6><span>TRAINING TRACKS</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder} className="grid-actions">
                   <Watch style={styles.iconStyles} onClick={this.handleClick} />
-                  <Edit style={styles.iconStyles} onClick={() => this.openPositionDrawer(position.positionByPositionId)} />
-                  <Delete style={styles.iconStyles} onClick={() => this.handleDeleteClick(position.positionByPositionId.id)} />
+                  <Edit style={styles.iconStyles} onClick={() => this.openPositionDrawer(position)} />
+                  <Delete style={styles.iconStyles} onClick={() => this.handleDeleteClick(position.id)} />
                 </TableRowColumn>
               </TableRow>))
             }

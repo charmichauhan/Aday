@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { Image, Button, Icon, Card, Rating, Header } from 'semantic-ui-react'
 import RaisedButton from 'material-ui/RaisedButton';
-import "./team-member-card.css"
+import "./candidate.css"
 
-export default class TeamMemberCard extends Component {
+export default class CandidateCard extends Component {
 	render() {
 		const {
 			user,
@@ -28,6 +28,7 @@ export default class TeamMemberCard extends Component {
 						</center>
 					<Card.Content>
 						<center className='rating' className="card_body">
+							<br/>
 							<Rating icon='star' defaultRating={5} maxRating={5} />
 							<br/>
 							<br/>
@@ -38,12 +39,22 @@ export default class TeamMemberCard extends Component {
 							<br/>
 							</font>
 							<br/>
-							<Button color='blue'>View Profile</Button>
+							<Button basic color='blue'>View Profile</Button>
 							<br/>
 						</center>
 					</Card.Content>
 		        	</Card.Description>
 		    	</Card.Content>
+		      <Card.Content extra>
+		          <center>
+		          <Header as='h5'>Approve for Training Track?</Header>
+				  <Button.Group>
+				    <Button positive>Yes</Button>
+				    <Button.Or />
+				    <Button negative>No</Button>
+				  </Button.Group>
+				  </center>
+		      </Card.Content>
 		    </Card>
 		);
 	}

@@ -10,6 +10,7 @@ import SpecialDay from "./SpecialDay";
 import jobsData from "./jobs.json";
 import '../../Scheduling/style.css';
 import { gql, graphql, compose } from 'react-apollo';
+import allShiftsByWeeksPublished from '../../Scheduling/ShiftWeekTable/shiftsByWeeksPublishedQuery'
 
 const styles = {
 
@@ -102,7 +103,7 @@ class ShiftWeekTableComponent extends Week {
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p>78%</TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p></TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -229,37 +230,6 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
     return { start, end };
 };
 
-const allShifts = gql
-    `query allShifts($brandid: Uuid!, $day: Datetime!){ 
-        weekPublishedByDate(brandid: $brandid, day: $day){
-            nodes{
-            id
-            shiftsByWeekPublishedId{
-                    edges {
-                        node {
-                            id
-                            startTime
-                            endTime
-                            workersInvited
-                            workersAssigned
-                            workersRequestedNum
-                            positionByPositionId{
-                            positionName
-                            positionIconUrl
-                                brandByBrandId {
-                                    brandName
-                                }
-                            }
-                            workplaceByWorkplaceId{
-                                workplaceName
-                            }
-                        }
-                    }
-                }
-            }
-        }
-}`
-
 const allUsers = gql`
     query allUsers {
         allUsers{
@@ -277,7 +247,7 @@ const allUsers = gql`
     
 ///
 const ShiftWeekTable = compose(
-graphql(allShifts, {
+graphql(allShiftsByWeeksPublished, {
    options: (ownProps) => ({ 
      variables: {
        brandid: "5a14782b-c220-4927-b059-f4f22d01c230",

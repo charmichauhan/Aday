@@ -11,13 +11,13 @@ export default class ToggleButton extends Component {
       negative:true,
       label:'NO',
       labelPosition:'left',
-      jobShadowingOppurtunity: false
+      isAcceptApplicationForPosition: false
     }
   }
   componentWillMount(){
     const {formCallBack}=this.props;
     const newState={
-      jobShadowingOppurtunity:this.state.jobShadowingOppurtunity
+      isAcceptApplicationForPosition:this.state.isAcceptApplicationForPosition
     }
     formCallBack(newState);
   }
@@ -31,7 +31,7 @@ export default class ToggleButton extends Component {
         negative:false,
         label:'YES',
         labelPosition:'right',
-        jobShadowingOppurtunity: true,
+        isAcceptApplicationForPosition: true,
       });
     }else{
       this.setState({
@@ -40,11 +40,11 @@ export default class ToggleButton extends Component {
         negative:true,
         label:'NO',
         labelPosition:'left',
-        jobShadowingOppurtunity: false
+        isAcceptApplicationForPosition: false
       });
     }
     const newState={
-      jobShadowingOppurtunity:this.state.jobShadowingOppurtunity
+      isAcceptApplicationForPosition:this.state.isAcceptApplicationForPosition
     }
     formCallBack(newState);
   }

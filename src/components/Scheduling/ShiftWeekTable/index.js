@@ -14,6 +14,7 @@ import SpecialDay from "./SpecialDay";
 import { gql,graphql } from 'react-apollo';
 import jobsData from "./jobs.json";
 import '../style.css';
+import allShiftsByWeeksPublished from './shiftsByWeeksPublishedQuery'
 
 
 /*import EditShift from './ShiftEdit/Edit';
@@ -83,6 +84,7 @@ class ShiftWeekTableComponent extends Week {
             return (<div>An unexpected error occurred</div>)
         }
         let calendarHash = {};
+
         const weekPublished = this.props.data.weekPublishedByDate.nodes[0]
 
         if(weekPublished) {
@@ -115,7 +117,7 @@ class ShiftWeekTableComponent extends Week {
                            className="table atable emp_view_table" style={styles.root}>
                           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow displayBorder={false}>
-                                <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p>78%</TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p> </TableRowColumn>
                                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                     className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                     className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -163,39 +165,8 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
     return { start, end };
 };
 
-const allShifts = gql
-  `query allShifts($brandid: Uuid!, $day: Datetime!){
-        weekPublishedByDate(brandid: $brandid, day: $day){
-            nodes{
-            id
-            shiftsByWeekPublishedId{
-                    edges {
-                        node {
-                            id
-                            startTime
-                            endTime
-                            workersInvited
-                            workersAssigned
-                            workersRequestedNum
-                            positionByPositionId{
-                            positionName
-                            positionIconUrl
-                                brandByBrandId {
-                                    brandName
-                                }
-                            }
-                            workplaceByWorkplaceId{
-                                workplaceName
-                            }
-                        }
-                    }
-                }
-            }
-        }
-}`
 
-
-const ShiftWeekTable = graphql(allShifts, {
+const ShiftWeekTable = graphql(allShiftsByWeeksPublished, {
    options: (ownProps) => ({
      variables: {
        brandid: "5a14782b-c220-4927-b059-f4f22d01c230",

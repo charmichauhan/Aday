@@ -133,7 +133,6 @@ class ShiftWeekTableComponent extends Week {
         });
 
         let jobData = calendarHash;
-        debugger;
         let jobs = [];
         (Object.keys(jobData)).forEach((jobType,index) => {
             jobs = concat(jobs, jobData[jobType])

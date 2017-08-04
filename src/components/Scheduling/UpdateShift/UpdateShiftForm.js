@@ -18,26 +18,28 @@ import '../AddShift/CreateShift/styles.css';
 export class UpdateShiftForm extends Component{
  static propTypes = {
   router: React.PropTypes.object.isRequired,
-  createShift: React.PropTypes.func.isRequired,
   updateShift: React.PropTypes.func.isRequired,
-  createWeekPublished: React.PropTypes.func.isRequired
 }
 
   constructor(props){
     super(props);
     const data = this.props.data
+    let manager = null
+    if (data.managersOnShift){
+      manager = data.managersOnShift[0]
+    }
+
     this.state = {
       workplace: data.workplaceByWorkplaceId.id || '',
       position: data.positionByPositionId.id || '',
       shiftDaysSelected:'',
       startTime: moment(data.startTime).format("hh:mm a") || '',
       stopTime: moment(data.endTime).format("hh:mm a") || '',
-      numberOfTeamMembers: data.workersRequestedNum || '',
-      unpaidBreak:'',
-      managerValue: null,
-      instructions: data.instructions || '',
-      jobShadowingOppurtunity:'',
-      weekPublishedId:'',
+      numberOfTeamMembers: data.workersRequestedNum || 0,
+      unpaidBreak: data.unpaidBreakTime || '0:00',
+      managerValue: manager || null,
+      instructions: data.instructions,
+      jobShadowingOpportunity: data.traineesRequestedNum || 0,
       loading: false
     }
 
@@ -48,6 +50,7 @@ export class UpdateShiftForm extends Component{
     this.handleCloseFunc=this.handleCloseFunc.bind(this);
     this.handleSave=this.handleSave.bind(this);
     this.formatDays=this.formatDays.bind(this);
+    this.onTrainee=this.onTrainee.bind(this);
   }
   
   onWorkplace(event){
@@ -55,24 +58,38 @@ export class UpdateShiftForm extends Component{
   }
 
   onUnpaidBreak(event){
-    this.setState({unpaidBreak:event.target.value});
-  }
-  onInstructions(event){
-    this.setState({instructions:event.target.value});
-  }
-  updateFormState(dataValue){
-    this.setState(dataValue);
-  }
-  handleCloseFunc(){
-    this.props.closeFunc();
+      const hours = Math.floor(event.target.value / 60)        
+      let minutes = event.target.value % 60
+      if ( minutes < 10 ){
+          minutes = 0 + minutes
+      }
+      const finalTime = hours + ":" + minutes
+      this.setState({unpaidBreak: finalTime});
   }
 
+    onTrainee(event){
+      if (event.jobShadowingOpportunity){
+        this.setState({jobShadowingOpportunity: this.state.numberOfTeamMembers})
+      } else {
+        this.setState({jobShadowingOpportunity: 0})
+      }
 
-  handleSave(){
-      this.setState({loading: true})
-      const times = this.formatDays(this.props.data.startTime)
-      this.udpateShift(times[0], times[1]);
-  }
+    }
+    onInstructions(event){
+      this.setState({instructions:event.target.value});
+    }
+    updateFormState(dataValue){
+      this.setState(dataValue);
+    }
+    handleCloseFunc(){
+      this.props.closeFunc();
+    }
+
+    handleSave(){
+        this.setState({loading: true})
+        const times = this.formatDays(this.props.data.startTime)
+        this.udpateShift(times[0], times[1]);
+    }
 
   udpateShift(startTime, endTime){
       const shiftPatch = {}
@@ -81,6 +98,11 @@ export class UpdateShiftForm extends Component{
         shiftPatch['startTime'] = startTime;
         shiftPatch['endTime'] = endTime;
         shiftPatch['workersRequestedNum'] = this.state.numberOfTeamMembers;
+        shiftPatch['instructions'] = this.state.instructions;
+        shiftPatch['managersOnShift'] = this.state.managerValue;
+        shiftPatch['unpaidBreakTime'] = this.state.unpaidBreak;
+        shiftPatch['traineesRequestedNum'] = this.state.jobShadowingOpportunity;
+
          this.props.updateShift({
           variables: { data: 
                     {id: this.props.data.id, shiftPatch: shiftPatch }
@@ -104,7 +126,11 @@ export class UpdateShiftForm extends Component{
           const hour  = start[0]
           const minute = start[1].split(" ")[0]
             if (start[1].split(" ")[1]  == 'pm'){
+              if (hour != 12){  
                hour =  parseInt(hour) + 12
+              }
+            } else if (hour == 12){
+                hour = 0
             }
             startTime = moment(day).hour(parseInt(hour)).minute(parseInt(minute))
           }
@@ -113,7 +139,11 @@ export class UpdateShiftForm extends Component{
             const hour  = stop[0]
             const minute = stop[1].split(" ")[0]
             if (stop[1].split(" ")[1]  == 'pm'){
+              if (hour != 12){  
                hour =  parseInt(hour) + 12
+              }
+            } else if (hour == 12){
+                hour = 0
             }
             endTime = moment(day).hour(hour).minute(parseInt(minute))
         }
@@ -170,6 +200,10 @@ export class UpdateShiftForm extends Component{
         </div>
       )
     }
+    let trainees = false;
+    if (this.state.jobShadowingOpportunity > 0){
+        trainees = true;
+    }
 
     return(
       <div>
@@ -205,19 +239,19 @@ export class UpdateShiftForm extends Component{
             </div>
             <div style={{marginTop:'30px', height: '80px', width: '100%'}} >
                <p className="shift-form-title" style={{marginBottom: "0"}}>JOB SHADOWING OPPORTUNITY</p>
-               <ToggleButton formCallBack={ this.updateFormState } />
+               <ToggleButton formCallBack={ this.onTrainee } trainees={ trainees }/>
             </div>
             <div style={{marginTop:'15px', height: '80px', width: '100%'}} >
-              <p className="shift-form-title">UNPAID-BREAK - <span style={{ color:'RED' }}>OPTIONAL</span></p>
-              <Input type="number" min="0" fluid placeholder="0 MINUTES" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={this.onUnpaidBreak} />
+              <p className="shift-form-title">UNPAID-BREAK- <span style={{ color:'RED' }}>OPTIONAL</span></p>
+              <Input type="number" min="0" fluid placeholder={data.unpaidBreakTime} icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={this.onUnpaidBreak} />
             </div>
             <div style={{marginTop:'10px', height: '80px', width: '100%'}} >
               <p className="shift-form-title">MANAGER - <span style={{ color:'RED' }}>OPTIONAL</span></p>
-              <ManagerSelectOption formCallBack={ this.updateFormState } />
+              <ManagerSelectOption formCallBack={ this.updateFormState } manager={ this.state.managerValue }/>
             </div>
              <div style={{marginTop:'10px', height: '130px', width: '100%'}} >
               <p className="shift-form-title">INSTRUCTIONS - <span style={{ color:'RED' }}>OPTIONAL</span></p>
-              <TextArea rows={3} style={{width:'100%'}} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={this.onInstructions} />
+              <TextArea rows={3} style={{width:'100%'}} value={ this.state.instructions } onChange={this.onInstructions} />
              </div>
              </div>
              </div>
@@ -256,14 +290,18 @@ const updateShiftMutation = gql`
         workersInvited
         workersAssigned
         workersRequestedNum
+        instructions
+        traineesRequestedNum
+        managersOnShift
+        unpaidBreakTime
         positionByPositionId{
-        id
-        positionName
-        positionIconUrl
-            brandByBrandId {
-              id
-                brandName
-            }
+          id
+          positionName
+          positionIconUrl
+              brandByBrandId {
+                id
+                  brandName
+              }
         }
         workplaceByWorkplaceId{
           id

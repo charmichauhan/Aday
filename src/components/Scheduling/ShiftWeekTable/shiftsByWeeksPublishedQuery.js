@@ -11,14 +11,18 @@ const allShiftsByWeeksPublished = gql `query allShiftsByWeeksPublished($publishI
 		                            workersInvited
 		                            workersAssigned
 		                            workersRequestedNum
+		                            managersOnShift
+		                            unpaidBreakTime
+		                            instructions
+		                            traineesRequestedNum
 		                            positionByPositionId{
-		                            id
-		                            positionName
-		                            positionIconUrl
-		                                brandByBrandId {
-		                                	id
-		                                    brandName
-		                                }
+			                            id
+			                            positionName
+			                            positionIconUrl
+			                                brandByBrandId {
+			                                	id
+			                                    brandName
+			                                }
 		                            }
 		                            workplaceByWorkplaceId{
 		                            	id

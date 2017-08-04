@@ -31,11 +31,11 @@ export class AddShiftForm extends Component{
       shiftDaysSelected:'',
       startTime:'',
       stopTime:'',
-      numberOfTeamMembers:'',
-      unpaidBreak:'',
+      numberOfTeamMembers:0,
+      unpaidBreak:'0:00',
       managerValue: null,
       instructions:'',
-      jobShadowingOppurtunity:'',
+      jobShadowingOpportunity: 0,
       weekPublishedId:'',
       loading: false
     }
@@ -48,6 +48,7 @@ export class AddShiftForm extends Component{
     this.handleSave=this.handleSave.bind(this);
     this.saveShift=this.saveShift.bind(this);
     this.formatDays=this.formatDays.bind(this);
+    this.onTrainee=this.onTrainee.bind(this);
   }
   
   onWorkplace(event){
@@ -55,7 +56,22 @@ export class AddShiftForm extends Component{
   }
 
   onUnpaidBreak(event){
-    this.setState({unpaidBreak:event.target.value});
+      const hours = Math.floor(event.target.value / 60)        
+      let minutes = event.target.value % 60
+      if ( minutes < 10 ){
+          minutes = 0 + minutes
+      }
+      const finalTime = hours + ":" + minutes
+      this.setState({unpaidBreak: finalTime});
+  }
+
+  onTrainee(event){
+    if (event.jobShadowingOpportunity){
+      this.setState({jobShadowingOpportunity: this.state.numberOfTeamMembers})
+    } else {
+      this.setState({jobShadowingOpportunity: 0})
+    }
+
   }
   onInstructions(event){
     this.setState({instructions:event.target.value});
@@ -74,9 +90,14 @@ export class AddShiftForm extends Component{
                     { id: uuidv1(), workplaceId: this.state.workplace, 
                       positionId: this.state.position, workersRequestedNum: this.state.numberOfTeamMembers,
                       creatorId: "5a01782c-c220-4927-b059-f4f22d01c230", 
-                      managersOnShift: this.state.managerValue,
+                      managersOnShift: [this.state.managerValue],
                       startTime: startTime, endTime: endTime, 
-                      shiftDateCreated: moment().format(), weekPublishedId: weekPublishedId}} },
+                      shiftDateCreated: moment().format(), 
+                      weekPublishedId: weekPublishedId,
+                      instructions: this.state.instructions, 
+                      unpaidBreakTime: this.state.unpaidBreak,
+                      traineesRequestedNum: this.state.jobShadowingOpportunity
+                    }} },
                 updateQueries: {
                     allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
                       const shiftHash = mutationResult.data.createShift.shift;
@@ -96,37 +117,7 @@ export class AddShiftForm extends Component{
               });
   }
 
-  udpateShift(startTime, endTime){
-      const shiftPatch = {}
-      if (this.state.workplace){
-        shiftPatch['workplaceId'] = this.state.workplace;
-      }
-      if (this.state.position){
-        shiftPatch['positionId'] = this.state.position;
-      }
-      if (this.state.startTime){
-        shiftPatch['startTime'] = startTime;
-      }
-      if (this.state.endTime){
-        shiftPatch['endTime'] = endTime;
-      }
-      if (this.state.numberOfTeamMembers){
-        shiftPatch['workersRequestedNum'] = this.state.numberOfTeamMembers;
-      }
-
-      this.props.updateShift({
-          variables: { data: 
-                    {id: this.props.data.id, shiftPatch: shiftPatch }
-                }
-              })
-              .then(({ data }) => {
-                  this.props.closeFunc();
-                  console.log('got update data', data);
-              }).catch((error) => {
-                  console.log('there was an error sending the query', error);
-              });
-  }
-
+  
   formatDays(day){
        // formatting time 
         let startTime = "";
@@ -137,7 +128,11 @@ export class AddShiftForm extends Component{
           const hour  = start[0]
           const minute = start[1].split(" ")[0]
             if (start[1].split(" ")[1]  == 'pm'){
+              if (hour != 12){  
                hour =  parseInt(hour) + 12
+              }
+            } else if (hour == 12){
+                hour = 0
             }
             startTime = moment(day).hour(parseInt(hour)).minute(parseInt(minute))
           }
@@ -146,7 +141,11 @@ export class AddShiftForm extends Component{
             const hour  = stop[0]
             const minute = stop[1].split(" ")[0]
             if (stop[1].split(" ")[1]  == 'pm'){
+              if (hour != 12){  
                hour =  parseInt(hour) + 12
+              }
+            } else if (hour == 12){
+                hour = 0
             }
             endTime = moment(day).hour(hour).minute(parseInt(minute))
         }
@@ -155,58 +154,57 @@ export class AddShiftForm extends Component{
   
   handleSave(){
       this.setState({loading: true})
-      if (this.props.editMode) {
-          const times = this.formatDays(this.props.data.startTime)
-          this.udpateShift(times[0], times[1]);
-      } else {
-          const days = Object.keys(this.state.shiftDaysSelected)
-          const _this = this
-          const brandId = this.props.brandId
-          let weekPublishedId = this.props.weekPublishedId
+      const days = Object.keys(this.state.shiftDaysSelected)
+      const _this = this
+      const brandId = this.props.brandId
+      let weekPublishedId = this.props.weekPublishedId
 
-          // if it doesn't exist create and then create shifts
-          if(!weekPublishedId) {
-             weekPublishedId = uuidv1();
-             _this.props.createWeekPublished({
-                    variables: { data: 
-                                    {weekPublished:
-                                      { id: weekPublishedId, 
-                                        start: moment(days[0]).startOf('week').format(), 
-                                        end: moment(days[0]).endOf('week').format(),
-                                        published: false, datePublished: moment().format(),
-                                        brandId: brandId }
-                                }},
-               /*     updateQueries: {
-                        allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-                          const returnHash = {};
-                          const weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
-                          weekPublishedHash['__typename'] = "WeekPublished"
-                          returnHash['nodes'] = [ weekPublishedHash ]
-                          returnHash['__typename'] = "WeekPublishedByDateConnection"
-                          return {
-                            weekPublishedByDate: returnHash
-                          };
-                        },
-                    },*/
-                })
-                .then(({ data }) => {
-                     days.forEach(function(day){
-                        const times = _this.formatDays(day)
-                        _this.saveShift(times[0], times[1], weekPublishedId);
-                      })
-                  }).catch((error) => {
-                      console.log('there was an error sending the query', error);
-                  });
+      // if it doesn't exist create and then create shifts
+      if(!weekPublishedId) {
+         weekPublishedId = uuidv1();
+         _this.props.createWeekPublished({
+                variables: { data: 
+                                {weekPublished:
+                                  { id: weekPublishedId, 
+                                    start: moment(days[0]).startOf('week').format(), 
+                                    end: moment(days[0]).endOf('week').format(),
+                                    published: false, datePublished: moment().format(),
+                                    brandId: brandId }
+                            }},
+           /*     updateQueries: {
+                    allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+                      const returnHash = {};
+                      const weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
+                      weekPublishedHash['__typename'] = "WeekPublished"
+                      returnHash['nodes'] = [ weekPublishedHash ]
+                      returnHash['__typename'] = "WeekPublishedByDateConnection"
+                      return {
+                        weekPublishedByDate: returnHash
+                      };
+                    },
+                },*/
+            })
+            .then(({ data }) => {
+                 days.forEach(function(day){
+                   if (_this.state.shiftDaysSelected[day] == true) {
+                      const times = _this.formatDays(day)
+                      _this.saveShift(times[0], times[1], weekPublishedId);
+                    }
+                  })
+              }).catch((error) => {
+                  console.log('there was an error sending the query', error);
+              });
 
-            }
-            // else create all shifts with existing week published
-            else {
-                days.forEach(function(day){
-                  const times = _this.formatDays(day)
-                  _this.saveShift(times[0], times[1], weekPublishedId);
-                })
-            }
-      }
+        }
+        // else create all shifts with existing week published
+        else {
+            days.forEach(function(day){
+              if (_this.state.shiftDaysSelected[day] == true) {
+                const times = _this.formatDays(day)
+                _this.saveShift(times[0], times[1], weekPublishedId);
+              }
+            })
+        }
   }
 
 
@@ -218,17 +216,10 @@ export class AddShiftForm extends Component{
             src="/images/Assets/Icons/Icons/job-deck.png"
             style={{ width:'30px', marginLeft: '10px'}}
           />
-        </div>
-        { !this.props.editMode && 
+        </div> 
          <div style={{width: '33%', float: 'left'}}>
             ADD SHIFT
          </div>
-        }
-        { this.props.editMode && 
-         <div style={{width: '33%', float: 'left'}}>
-            EDIT SHIFT
-         </div>
-        }
         <div style={{width: '33%', float: 'left'}}>
         <Image
           src="/images/Assets/Icons/Buttons/delete-round-small.png"
@@ -242,32 +233,10 @@ export class AddShiftForm extends Component{
 
     const date=moment();
     const startDate=this.props.start
-    const data = this.props.data
-    let workplace = "";
-    let position = "";
-    let start = "";
-    let end = "";
-    let numWorkers = 1;
-    if (data){
-      if (data.workplaceByWorkplaceId){
-        workplace = data.workplaceByWorkplaceId.id
-      }
-      if (data.positionByPositionId){
-        position = data.positionByPositionId.id
-      }
-      if (data.startTime && data.endTime){
-        start = moment(data.startTime).format("hh:mm a")
-        end = moment(data.endTime).format("hh:mm a")
-      }
-      numWorkers = data.workersRequestedNum
-    }
-    let disabled = false;
-    let saveImage = "/images/Assets/Icons/Buttons/save-shift-button.png";
-    if (!this.props.editMode){
-      saveImage = "/images/Assets/Icons/Buttons/add-shift-button.png";
-      disabled = (this.state.workplace==""||this.state.startTime==""||this.state.position==""
+
+    const saveImage = "/images/Assets/Icons/Buttons/add-shift-button.png";
+    const disabled = (this.state.workplace==""||this.state.startTime==""||this.state.position==""
              ||this.state.stopTime==""||this.state.numberOfTeamMembers==""||this.state.shiftDaysSelected=="")
-    }
     
     if(this.state.loading){
       return(
@@ -293,32 +262,24 @@ export class AddShiftForm extends Component{
            <div>
            <div>
               <p className="shift-form-title">WORKPLACE</p>
-              <WorkplaceSelector formCallBack={ this.updateFormState } workplace={ workplace }/>
+              <WorkplaceSelector formCallBack={ this.updateFormState } />
            </div>
            <div style={{marginTop:'15px'}} >
-              <PositionSelector formCallBack={ this.updateFormState } position={ position } />
+              <PositionSelector formCallBack={ this.updateFormState } />
             </div>
-              {!this.props.editMode && (
-                   <div style={{marginTop:'30px'}} >
+              <div style={{marginTop:'30px'}} >
                   <p className="shift-form-title">SHIFT DAY(S) OF THE WEEK</p> 
                   <ShiftDaySelector startDate={startDate} formCallBack={ this.updateFormState } /> 
-                  </div>
-                  ) }
-
-              { this.props.editMode && ( <div style={{marginTop:'30px'}} > 
-                      <p className="shift-form-title"> This Shift Is On { moment(this.props.data.startTime).format("dddd MMMM Do, YYYY") } </p> 
-                    </div>
-                    )
-              }
+              </div>  
             <div style={{marginTop:'15px'}} >
-               <TimePicker formCallBack={ this.updateFormState } start={ start } stop={ end }/>
+               <TimePicker formCallBack={ this.updateFormState }/>
             </div>
             <div style={{marginTop: '15px'}} >
-               <NumberOfTeamMembers formCallBack={ this.updateFormState }  numRequested={ numWorkers }/>
+               <NumberOfTeamMembers formCallBack={ this.updateFormState }/>
             </div>
             <div style={{marginTop:'30px', height: '80px', width: '100%'}} >
                <p className="shift-form-title" style={{marginBottom: "0"}}>JOB SHADOWING OPPORTUNITY</p>
-               <ToggleButton formCallBack={ this.updateFormState } />
+               <ToggleButton formCallBack={ this.onTrainee } />
             </div>
             <div style={{marginTop:'15px', height: '80px', width: '100%'}} >
               <p className="shift-form-title">UNPAID-BREAK - <span style={{ color:'RED' }}>OPTIONAL</span></p>
@@ -379,43 +340,18 @@ const createShiftMutation = gql`
         workersInvited
         workersAssigned
         workersRequestedNum
+        instructions
+        managersOnShift
+        traineesRequestedNum
+        unpaidBreakTime
         positionByPositionId{
-        id
-        positionName
-        positionIconUrl
-            brandByBrandId {
-              id
-                brandName
-            }
-        }
-        workplaceByWorkplaceId{
           id
-            workplaceName
-        }
-    }
-  }
-}`
-
-
-const updateShiftMutation = gql`
- mutation updateShiftById($data:UpdateShiftByIdInput!){
-  updateShiftById(input:$data)
-  {
-    shift{
-        id
-        startTime
-        endTime
-        workersInvited
-        workersAssigned
-        workersRequestedNum
-        positionByPositionId{
-        id
-        positionName
-        positionIconUrl
-            brandByBrandId {
-              id
-                brandName
-            }
+          positionName
+          positionIconUrl
+              brandByBrandId {
+                id
+                  brandName
+              }
         }
         workplaceByWorkplaceId{
           id
@@ -445,9 +381,6 @@ const createWeekPublishedMutation = gql`
 const AddShift = compose(
   graphql(createShiftMutation, {
     name : 'createShift'
-  }),
-  graphql(updateShiftMutation, {
-    name : 'updateShift'
   }),
   graphql(createWeekPublishedMutation, {
     name : 'createWeekPublished'

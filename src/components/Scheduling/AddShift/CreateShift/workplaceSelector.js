@@ -44,7 +44,6 @@ export class WorkplaceSelector extends Component{
       if(!this.state.workplaces.length){
         /// add positions into state parameter
       let workplacesArray=this.props.data.allWorkplaces.nodes;
-      console.log(workplacesArray,workplacesArray.length);
       workplacesArray.forEach(function(workplace,index) {
         this.state.workplaces.push({
           text:workplace.workplaceName,
@@ -55,7 +54,6 @@ export class WorkplaceSelector extends Component{
     }
     }
     
-    let workplaceHolder = this.props.workplace? this.props.workplace : "Select Workplace"
     return(
  
     <div>

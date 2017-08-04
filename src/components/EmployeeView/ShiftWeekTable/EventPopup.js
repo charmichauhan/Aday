@@ -6,6 +6,7 @@ import Modal from '../../helpers/Modal';
 import EditShiftDrawer from './ShiftEdit/EditShiftDrawer';
 import ShiftHistoryDrawer from './ShiftEdit/ShiftHistoryDrawer';
 const uuidv4 = require('uuid/v4');
+import EditShiftModal from '../../Scheduling/ShiftWeekTable/ShiftEdit/EditShiftModal';
 
     class EventPopupComponent extends Component{
     constructor(props){
@@ -27,6 +28,10 @@ const uuidv4 = require('uuid/v4');
             deleteModalPopped:false
         });
     };
+
+    closeEditShiftModal = () => {
+        this.setState({ editModalPopped: false });
+    }
 
     deleteShift = () => {
         let id =this.props.data.id;
@@ -96,6 +101,7 @@ const uuidv4 = require('uuid/v4');
                 message="Are you sure that you want to delete this shift?"
                 action={deleteShiftAction}
                 closeAction={this.modalClose} />
+                <EditShiftModal open={ this.state.editModalPopped } onClose={ this.closeEditShiftModal } data={ this.props.data }/>
                 <EditShiftDrawer
                 open={this.state.newShiftModalPopped}
                 handlerClose={this.handleNewShiftDrawerClose}

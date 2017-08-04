@@ -41,7 +41,6 @@ export class PositionSelector extends Component{
       if(!this.state.positions.length){
         /// add positions into state parameter
       let positionsArray=this.props.data.allPositions.nodes;
-      console.log(positionsArray,positionsArray.length);
       positionsArray.forEach(function(position,index) {
         this.state.positions.push({
           text:position.positionName,

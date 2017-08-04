@@ -172,7 +172,6 @@ class ShiftWeekTableComponent extends Week {
                       </TableRow>
                   </TableHeader>
                   <TableBody>
-                      <SpecialDay dateStart={start}/>
                       {
                           (Object.keys(jobData)).map((value, index)=>(
                               <JobsRow data={jobData[value]} key={value}/>

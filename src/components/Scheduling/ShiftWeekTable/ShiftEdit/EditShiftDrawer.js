@@ -3,6 +3,7 @@ import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import { Image, Input, Divider } from 'semantic-ui-react';
 import RaisedButton from 'material-ui/RaisedButton';
+import moment from 'moment';
 
 import TeamMemberCard from './TeamMemberCard'
 import { leftCloseButton } from '../../../styles';
@@ -23,65 +24,66 @@ const unassignedTeamMember = {
 const unassignedJobShadower = { ...unassignedTeamMember };
 
 const initialState = {
-  teamMembers: [
-    {
-      user: {
-        firstName: 'Eric',
-        otherNames: 'Wise',
-        avatar: 'https://pickaface.net/assets/images/slides/slide2.png',
-      },
-      content: 'Seniority: 0003',
-      status: 'accepted'
+  teamMembers: [{
+    user: {
+      firstName: 'Eric',
+      otherNames: 'Wise',
+      avatar: 'https://pickaface.net/assets/images/slides/slide2.png',
     },
-    { ...unassignedTeamMember }
-  ],
+    content: 'Seniority: 0003',
+    status: 'accepted'
+  }, {
+    ...unassignedTeamMember
+  }],
 
-  jobShadowers: [
-    {
-      user: {
-        firstName: 'Eric',
-        otherNames: 'Wise',
-        avatar: 'https://pickaface.net/assets/images/slides/slide2.png',
-      },
-      content: 'Seniority: 0003 . Current hours: 37',
-      status: 'accepted'
+  jobShadowers: [{
+    user: {
+      firstName: 'Eric',
+      otherNames: 'Wise',
+      avatar: 'https://pickaface.net/assets/images/slides/slide2.png',
     },
-    {
-      user: {
-        firstName: 'Carol',
-        otherNames: 'Brown',
-        avatar: 'http://devilsworkshop.org/files/2013/01/enlarged-facebook-profile-picture.jpg',
-      },
-      content: 'Current hours: 20 . You\'ve earned 1 credit',
-      status: 'pending'
-    }
-  ],
+    content: 'Seniority: 0003 . Current hours: 37',
+    status: 'accepted'
+  }, {
+    user: {
+      firstName: 'Carol',
+      otherNames: 'Brown',
+      avatar: 'http://devilsworkshop.org/files/2013/01/enlarged-facebook-profile-picture.jpg',
+    },
+    content: 'Current hours: 20 . You\'ve earned 1 credit',
+    status: 'pending'
+  }],
   users: [{
+    id: 1,
     firstName: 'Eric',
     otherNames: 'Wise',
     avatar: 'https://pickaface.net/assets/images/slides/slide2.png',
   }, {
+    id: 2,
     firstName: 'Carol',
     otherNames: 'Brown',
     avatar: 'http://devilsworkshop.org/files/2013/01/enlarged-facebook-profile-picture.jpg',
   }, {
+    id: 3,
     firstName: 'Werner',
     otherNames: 'Stroman',
     avatar: '/images/employee/1.jpg',
   }, {
+    id: 4,
     firstName: 'Barton',
     otherNames: 'Schmitt',
     avatar: '/images/employee/2.jpg',
   }, {
+    id: 5,
     firstName: 'Mikayla',
     otherNames: 'Hessel',
     avatar: '/images/employee/3.jpg',
   }, {
+    id: 6,
     firstName: 'Sydnie',
     otherNames: 'Wehner',
     avatar: '/images/employee/4.jpg',
   }]
-
 };
 
 class DrawerHelper extends Component {
@@ -139,7 +141,13 @@ class DrawerHelper extends Component {
 
   setTeamMember = (user, index) => {
     const { teamMembers } = this.state;
-    teamMembers[index].user = user;
+    if (user.id) {
+      teamMembers[index].user = user;
+      teamMembers[index].content = 'Current hours: 20 . You\'ve earned 1 credit';
+      teamMembers[index].status = 'accepted';
+    } else {
+      teamMembers[index] = { ...unassignedTeamMember };
+    }
     this.setState({ teamMembers });
   };
 
@@ -158,12 +166,19 @@ class DrawerHelper extends Component {
 
   setJobShadower = (user, index) => {
     const { jobShadowers } = this.state;
-    jobShadowers[index].user = user;
+    if (user.id) {
+      jobShadowers[index].user = user;
+      jobShadowers[index].content = 'Current hours: 20 . You\'ve earned 1 credit';
+      jobShadowers[index].status = 'accepted';
+    } else {
+      jobShadowers[index] = { ...unassignedTeamMember };
+    }
     this.setState({ jobShadowers });
   };
 
   render() {
     const {
+      shift = {},
       width = 600,
       openSecondary = true,
       docked = false,
@@ -202,7 +217,7 @@ class DrawerHelper extends Component {
             <IconButton style={leftCloseButton} onClick={this.handleCloseDrawer}>
               <Image src="/images/Icons_Red_Cross.png" size="mini" />
             </IconButton>
-            <h5 className="confirm-popup">Line Cook</h5>
+            <h5 className="confirm-popup">Add Team Members</h5>
             <div className="drawer-right">
               <RaisedButton label="History" onClick={this.handleShiftHistoryDrawer} />
             </div>
@@ -261,21 +276,23 @@ class DrawerHelper extends Component {
               </div>
               <Input fluid type="text" placeholder="NAME THIS SHIFT TO SAVE IT AS A TAMPLATE" />
               <div className="shiftDetails">
-                <p><b>Work place</b>: Harvard Business School</p>
                 <p>
-                  <b>Position</b>: Line Cook
+                  <b>Work place</b>: {shift.workplaceByWorkplaceId.workplaceName}
                 </p>
                 <p>
-                  <b>Shift Date</b>: Monday, September 3 2016
+                  <b>Position</b>: {shift.positionByPositionId.positionName}
                 </p>
                 <p>
-                  <b>Start Time</b>: 10:00PM
+                  <b>Shift Date</b>: {moment(shift.startTime).format('dddd, MMMM Do YYYY')}
                 </p>
                 <p>
-                  <b>End Time</b>: 5:00 PM
+                  <b>Start Time</b>: {moment(shift.startTime).format('hh:mm A')}
                 </p>
                 <p>
-                  <b>Unpaid break (minutes)</b>: 30 minutes
+                  <b>End Time</b>: {moment(shift.endTime).format('hh:mm A')}
+                </p>
+                <p>
+                  <b>Unpaid break (minutes)</b>: {!shift.unpaidBreakTime && '0' || shift.unpaidBreakTime} minutes
                 </p>
                 <p>
                   <b>bonus payment per hour</b>: $0.00
@@ -286,7 +303,7 @@ class DrawerHelper extends Component {
               </div>
 
               <h5>INSTRUCTIONS</h5>
-              <p className="dimmedText">Enter additional information about this shift</p>
+              <p className="dimmedText">{shift.instructions}</p>
             </div>
           </div>
           <div className="drawer-footer">

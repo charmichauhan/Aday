@@ -29,9 +29,6 @@ export default class JobsRow extends Component{
             let endTime = moment(value.endTime).format("hh:mm A");
             let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
             let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
-            let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
-            h=h*workerAssigned;
-            m=m*workerAssigned;
             finalHours += parseInt(h);
             finalMinutes += parseInt(m);
         });

@@ -71,16 +71,21 @@ class ShiftWeekTableComponent extends Week {
         this.props.allUsers.allUsers.edges.map((value,index) => {
           userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
         });
+      }
 
         this.props.data.allShifts.edges.map((value, index) => {
-          const rowHash = {}
+
           const dayOfWeek = moment(value.node.startTime).format("dddd");
-          rowHash["weekday"] = dayOfWeek;
+
           let assigned = value.node.workersAssigned
           if (value.node.workersAssigned == null){
             assigned  = [];
           }
+
+
           if (value.node.workersRequestedNum > assigned.length){
+            const rowHash = {}
+            rowHash["weekday"] = dayOfWeek;
             rowHash["userFirstName"] = "Open"
             rowHash["userLastName"] = "Shifts"
             rowHash["userAvatar"] = ""
@@ -90,21 +95,25 @@ class ShiftWeekTableComponent extends Week {
               calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
             }
           }
+
+
           if (assigned.length) {
             value.node.workersAssigned.map((v) => {
               const userName = userHash[v];
+              const rowHash = {}
+              rowHash["weekday"] = dayOfWeek;
               rowHash["userFirstName"] = userHash[v][0]
               rowHash["userLastName"] = userHash[v][1]
               rowHash["userAvatar"] = userHash[v][2]
-              if (calendarHash[userName]) {
-                calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, value.node) ]
+              if (calendarHash[v]) {
+                calendarHash[v] = [...calendarHash[v], Object.assign(rowHash, value.node) ]
               } else {
-                calendarHash[userName] = [Object.assign(rowHash, value.node)];
+                calendarHash[v] = [Object.assign(rowHash, value.node)];
               }
             })
           }
         });
-      }
+ 
       let { date } = this.props;
       let { start } = ShiftWeekTableComponent.range(date, this.props);
       let jobData = calendarHash;

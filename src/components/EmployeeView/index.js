@@ -84,7 +84,7 @@ class EmployeeViewComponent extends Component {
         const date = this.state.date;
         this.props.data.allWeekPublisheds.nodes.forEach(function(value){
         if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
-            ||  (moment(date).isSame(moment(value.start), 'day'))
+            || (moment(date).isSame(moment(value.start), 'day'))
             || (moment(date).isSame(moment(value.end), 'day'))
             ){
               is_publish = value.published;
@@ -98,7 +98,7 @@ class EmployeeViewComponent extends Component {
         return (
 			<div className="App row">
 
-				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={publish_id}/> </div>
+				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={ publish_id }/> </div>
                 <Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													  message = "Are you sure that you want to delete this shift?"
 													  action = {publishModalOptions} closeAction={this.modalClose}/>

@@ -46,10 +46,6 @@ class EventPopupComponent extends Component {
 
   closeEditShiftModal = () => {
     this.setState({ editShiftModalOpen: false });
-  }
-
-  handleEditShiftDrawerClose = () => {
-    this.setState({ editShiftDrawerOpen: false });
   };
 
   onPopupOpen = (modal) => {
@@ -143,10 +139,12 @@ class EventPopupComponent extends Component {
           action={deleteShiftAction}
           closeAction={this.modalClose} />
         <EditShiftDrawer
+          shift={data}
           open={this.state.newShiftModalPopped}
           handlerClose={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
         <ShiftHistoryDrawer
+          shift={data}
           open={this.state.shiftHistoryDrawer}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />

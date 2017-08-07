@@ -163,3 +163,12 @@
     from {top:-300px; opacity:0}
     to {top:26%; opacity:1}
 }
+
+.ui.default.dropdown,  .ui.dropdown{
+    color: "#838890" !important;
+}
+
+.default{
+  color: "#838890" !important;
+}
+

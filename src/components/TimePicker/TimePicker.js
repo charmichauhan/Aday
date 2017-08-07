@@ -27,8 +27,8 @@ export default class TimePicker extends Component {
 
     this.state = {
       activeField: 'start',
-      startFieldText: '12:00 am',
-      stopFieldText: '12:00 pm',
+      startFieldText: this.props.start || '12:00 am',
+      stopFieldText: this.props.stop || '12:00 pm',
       startHour: '',
       startMinute: '',
       startMeridiem: '',

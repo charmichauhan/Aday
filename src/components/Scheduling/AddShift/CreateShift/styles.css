@@ -178,3 +178,11 @@ div.tab button.active{
   to{opacity:1;}
 }
 
+.ui.default.dropdown,  .ui.dropdown{
+    color: "#838890" !important;
+}
+
+.default {
+  color: "#838890" !important;
+}
+

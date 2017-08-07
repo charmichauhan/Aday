@@ -17,8 +17,7 @@ export const tabDesign = {
 };
 
 export const closeButton = {
-  backgroundColor: '#FFFFFF',
-  marginTop: 10
+  backgroundColor: '#FFFFFF'
 };
 
 export const leftCloseButton = {

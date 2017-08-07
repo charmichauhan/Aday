@@ -38,6 +38,7 @@ export default class CircleButton extends Component {
       title = 'Title',
       handleClick = () => { },
       style = {},
+      titleStyle = {},
       image = false,
       imageSize = 'small'
     } = this.props;
@@ -51,7 +52,7 @@ export default class CircleButton extends Component {
       <div className="btn-circle-wrapper">
         <button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}>
           {image && <Image src={image} className={[imageSize, 'img-icon'].join(' ')} />}
-          <p>{title}</p>
+          <p style={titleStyle}>{title}</p>
         </button>
       </div>
     );

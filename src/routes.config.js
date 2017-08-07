@@ -12,12 +12,10 @@ import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
 import Team from './components/Team'
 
+
 import Certificates from './components/certifications/Certificates'
-
 import AttendanceRequests from './components/attendance/AttendanceRequests'
-
 import Login from './components/auth/Login'
-
 const routes = [
 	{
 		component: Root,
@@ -54,20 +52,20 @@ const routes = [
                      //    component: EmployeeView
 					// },
 					{
-                        path: '/schedule/employeeview',
-                        exact: true,
-                        component: EmployeeView
+            path: '/schedule/employeeview',
+            exact: true,
+            component: EmployeeView
 					},
 					{
-                        path: '/schedule/template',
-                        exact: true,
-                        component: Template
+            path: '/schedule/template',
+            exact: true,
+            component: Template
 					},
-                    {
-                        path: '/schedule/team/template',
-                        exact: true,
-                        component: TemplateViewJob
-                    },
+          {
+            path: '/schedule/team/template',
+            exact: true,
+            component: TemplateViewJob
+          },
 					{
 						path: '/schedule/manager',
 						exact: true,
@@ -113,6 +111,5 @@ const routes = [
 		]
 	}
 ]
-
 
 export default routes

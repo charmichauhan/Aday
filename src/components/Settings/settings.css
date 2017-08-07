@@ -206,6 +206,8 @@ img.list-left-image {
   bottom: 10px;
   transform: translate(-50%);
   width: 100%;
+  background: #ffffff;
+  z-index: 2;
 }
 
 .drawer-section.brand-drawer-section {

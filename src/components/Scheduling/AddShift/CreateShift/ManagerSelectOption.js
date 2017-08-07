@@ -22,7 +22,7 @@ class ManagerSelectComponent extends Component{
   }
 
    onManagerChange(event, data){
-    this.props.formCallBack({managerValue: [data.value]});
+    this.props.formCallBack({managerValue: data.value});
   }
   render(){
   
@@ -49,11 +49,14 @@ class ManagerSelectComponent extends Component{
       }, this);
     }
     }
-  
-
-    return(
+    
+    return( 
       <div>
-        <Dropdown  placeholder='Select Manager' fluid selection options={this.state.users} style={{ marginTop:'-2%' }} onChange={this.onManagerChange}  />
+        { !this.props.manager && <Dropdown  placeholder='Select Manager' fluid selection 
+            options={this.state.users} style={{ marginTop:'-2%' }} onChange={this.onManagerChange} /> }
+
+       { this.props.manager && <Dropdown defaultValue={ this.props.manager } fluid selection 
+            options={this.state.users} style={{ marginTop:'-2%' }} onChange={this.onManagerChange} /> }
       </div>     
     );
   }

@@ -8,12 +8,13 @@ import {
 } from 'material-ui/Table';
 
 export default class JobsRow extends Component{
+
     render(){
         let data = this.props.data;
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
         data.map((value,index) => {
-            const day = value.weekday
+            const day =  moment(value.startTime, "YYYY-MM-DD HH:mm:ss").format("dddd");
             if (hashByDay[day]){
                 hashByDay[day] = [...hashByDay[day], value];
             } else {
@@ -27,6 +28,9 @@ export default class JobsRow extends Component{
             let endTime = moment(value.endTime).format("hh:mm A");
             let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
             let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
+            let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
+            h=h*workerAssigned;
+            m=m*workerAssigned;
             finalHours += parseInt(h);
             finalMinutes += parseInt(m);
         });

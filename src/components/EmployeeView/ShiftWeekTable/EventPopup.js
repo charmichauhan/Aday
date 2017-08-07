@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import '../../Scheduling/style.css';
+import { gql, graphql, compose } from 'react-apollo';
 import Modal from '../../helpers/Modal';
+import EditShiftDrawer from './ShiftEdit/EditShiftDrawer';
+import ShiftHistoryDrawer from './ShiftEdit/ShiftHistoryDrawer';
+const uuidv4 = require('uuid/v4');
+import EditShiftModal from '../../Scheduling/ShiftWeekTable/ShiftEdit/EditShiftModal';
 
-export default class EventPopup extends Component{
+    class EventPopupComponent extends Component{
     constructor(props){
         super(props)
         this.state = {
@@ -24,17 +29,44 @@ export default class EventPopup extends Component{
         });
     };
 
-    deleteShift = () => {
+    closeEditShiftModal = () => {
+        this.setState({ editModalPopped: false });
+    }
 
+    deleteShift = () => {
+        let id =this.props.data.id;
+        let that = this;
+        let uu = uuidv4();
+        that.props.deleteShiftById(uuidv4(), id)
+            .then(({ data }) => {
+                console.log('Delete Data', data);
+            }).catch((error) => {
+            console.log('there was an error sending the query', error);
+        });
+        this.setState({deleteModalPopped:false});
     };
 
     onPopupOpen = (modal) => {
         switch(modal){
-            case "deleteModalPopped" : this.setState({deleteModalPopped:true});
-            case "editModalPopped" : this.setState({editModalPopped:true});
-            case "newShiftModalPopped" : this.setState({newShiftModalPopped:true});
+            case "deleteModalPopped" :
+                this.setState({deleteModalPopped:true});
+                break;
+            case "editModalPopped" :
+                this.setState({editModalPopped:true});
+                break;
+            case "newShiftModalPopped" :
+                this.setState({newShiftModalPopped:true});
+                break;
         }
     };
+    handleHistoryDrawer = () => {
+      this.setState({ shiftHistoryDrawer: !this.state.shiftHistoryDrawer });
+    };
+
+    handleNewShiftDrawerClose = () => {
+      this.setState({ newShiftModalPopped: !this.state.newShiftModalPopped });
+    };
+
     onLocationClick = () => {
         console.log("onLocationClick");
     };
@@ -45,7 +77,7 @@ export default class EventPopup extends Component{
         let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
         let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
         let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
-            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
+            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image: '/images/modal/close.png'}];
         return(
             <div className="day-item hov">
                 <div className="start-time">
@@ -63,10 +95,21 @@ export default class EventPopup extends Component{
                     </span>
                     <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
                 </div>
-                {this.state.deleteModalPopped && <Modal title="Confirm" isOpen={this.state.deleteModalPopped}
-                                                     message = "Are you sure that you want to delete this shift?"
-                                                     action = {deleteShiftAction} closeAction={this.modalClose}/>
-                }
+                <Modal
+                title="Confirm"
+                isOpen={this.state.deleteModalPopped}
+                message="Are you sure that you want to delete this shift?"
+                action={deleteShiftAction}
+                closeAction={this.modalClose} />
+                <EditShiftModal open={ this.state.editModalPopped } onClose={ this.closeEditShiftModal } data={ this.props.data }/>
+                <EditShiftDrawer
+                open={this.state.newShiftModalPopped}
+                handlerClose={this.handleNewShiftDrawerClose}
+                handleHistory={this.handleHistoryDrawer} />
+                <ShiftHistoryDrawer
+                open={this.state.shiftHistoryDrawer}
+                handleBack={this.handleNewShiftDrawerClose}
+                handleHistory={this.handleHistoryDrawer} />
                 <div className="overlay">
                     <div className="hoimg">
                         <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src="/assets/Icons/close-shift.png" alt="close"/></i></a>
@@ -79,3 +122,37 @@ export default class EventPopup extends Component{
     }
 }
 
+const deleteShift = gql`
+  mutation($clientMutationId: String,$id: Uuid!){
+    deleteShiftById(
+    input: {clientMutationId: $clientMutationId,
+    id: $id}){
+            deletedShiftId
+            shift{
+                id
+            }
+    }
+  }`
+const EventPopup = graphql(deleteShift,{
+    props:({ownProps,mutate}) =>({
+        deleteShiftById:(clientMutationId,id) => mutate({
+            variables: {clientMutationId: clientMutationId,id: id},
+            updateQueries: {
+                    allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+                      let newEdges = []
+                      previousQueryResult.allShifts.edges.map((value) => {
+                            if(value.node.id != mutationResult.data.deleteShiftById.shift.id){
+                                newEdges.push(value)
+                            }
+                      })
+                      previousQueryResult.allShifts.edges = newEdges
+                      return {
+                        allShifts: previousQueryResult.allShifts
+                      };
+                    },
+            },
+        }),
+    }),
+})(EventPopupComponent);
+
+export default EventPopup;

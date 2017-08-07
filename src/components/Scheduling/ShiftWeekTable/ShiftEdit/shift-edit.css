@@ -5,6 +5,7 @@
 .floatLeft {
   float: left;
 }
+
 .text-uppercase {
   text-transform: uppercase;
 }
@@ -43,14 +44,6 @@
   margin-bottom: 10px;
 }
 
-.teamMemberCard > .content {
-  border-radius: 3px;
-  display: flex;
-  padding: 5px;
-  width: 100%;
-  text-transform: uppercase;
-}
-
 .teamMemberCard > .edits {
   display: block;
   -webkit-box-flex: 0;
@@ -83,36 +76,21 @@
   text-align: left;
 }
 
-.teamMemberCard > .label {
-  text-transform: uppercase;
-  display: block;
-  -webkit-box-flex: 1;
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
-  -ms-flex-item-align: stretch;
-  -ms-grid-row-align: stretch;
-  align-self: stretch;
-  text-align: left;
-  word-wrap: break-word;
-  font-size: .8em !important;
-  color: #ccc !important;
-}
-
 .teamMemberCard .description {
   font-size: .7em;
   color: #ccc;
 }
 
 .greenBorder {
-  border: 1px solid green;
+  border: 2px solid #00A863;
 }
 
 .redBorder {
-  border: 1px solid red;
+  border: 2px solid #E33821;
 }
 
 .orangeBorder {
-  border: 1px solid orange;
+  border: 2px solid #FFAD33;
 }
 
 .shiftDetails {
@@ -130,14 +108,6 @@
   margin-bottom: 10px;
 }
 
-.teamMemberCard > .content {
-  border-radius: 3px;
-  display: flex;
-  padding: 5px;
-  width: 100%;
-  text-transform: uppercase;
-}
-
 .teamMemberCard > .edits {
   display: block;
   -webkit-box-flex: 0;
@@ -168,21 +138,6 @@
   -ms-grid-row-align: stretch;
   align-self: stretch;
   text-align: left;
-}
-
-.teamMemberCard > .label {
-  text-transform: uppercase;
-  display: block;
-  -webkit-box-flex: 1;
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
-  -ms-flex-item-align: stretch;
-  -ms-grid-row-align: stretch;
-  align-self: stretch;
-  text-align: left;
-  word-wrap: break-word;
-  font-size: .8em !important;
-  color: #ccc !important;
 }
 
 .teamMemberCard .description {
@@ -212,10 +167,10 @@
   padding-top: 6px;
 }
 
-.drawer-section .scroll-div {
+.drawer-section .drawer-content.scroll-div {
   display: block;
   overflow-y: scroll;
-  height: 530px;
+  height: calc(100vh - 240px);
   width: 100%;
 }
 
@@ -228,18 +183,18 @@
 .shift-heading img, .shift-details .shift-heading h5 {
   display: table-cell;
 }
+
 .shift-details .shift-heading h5 {
   margin-left: 10px;
   vertical-align: middle;
 }
 
-.member_list, .shift-details {
+.member-list, .shift-details {
   float: left;
   width: 100%;
   margin-top: 31px;
 }
-
-.member_list h5, .shift-details h5 {
+.member-list h5, .shift-details h5 {
   color: #666666;
   font-family: "Roboto Condensed";
   font-size: 24px;
@@ -282,35 +237,79 @@
   margin-left: 32px;
 }
 
-.member_list .teamMemberCard .label {
+.member-list .ui.fluid.dropdown {
+  position: relative;
+}
+
+.member-list .teamMemberCard .label {
   color: #666666;
   font-family: "Roboto Condensed";
   font-size: 24px;
   font-weight: normal;
   line-height: 28px;
   text-align: left;
+  text-transform: uppercase;
+  display: inline-block;
 }
 
-.member_list .teamMemberCard .description {
+.member-list .teamMemberCard .description {
   color: #999999;
   font-family: Lato;
   font-size: 16px;
   line-height: 19px;
 }
 
-.member_list .teamMemberCard .avatar {
+.member-list .teamMemberCard .avatar {
   width: 55px;
-  border-radius: 100%;
+  border-radius: 50%;
   height: 55px;
   overflow: hidden;
+  display: inline-block;
 }
 
-.member_list .teamMemberCard .avatar img {
+.member-list .teamMemberCard .avatar img {
   width: auto;
   height: 100%;
 }
 
-.member_list .teamMemberCard .edits {
+.member-list .ui.dropdown.dropdown-team .menu {
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+.member-list .content {
+  position: relative;
+  padding: 10px 5px;
+  border-radius: 4px;
+  width: 100%;
+  text-transform: uppercase;
+}
+
+.member-list .ui.fluid.dropdown .icon {
+  float: none;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  opacity: 1;
+  transform: translate(-50%,-50%);
+}
+
+i.icon.dropdown-img-black {
+  height: 24px;
+  background: url('/assets/Icons/dropdown-icon-black.png') no-repeat;
+}
+
+.member-list img.select-dropdown-img {
+  border-radius: 50%;
+}
+
+.member-list .menu .item {
+  margin-bottom: 5px;
+}
+
+.member-list .teamMemberCard .edits {
   align-self: center;
 }
 
@@ -391,26 +390,51 @@
 .drawer-section .history-drawer-content {
   padding: 0px;
 }
+
 h2.ui.header {
   text-transform: uppercase;
 }
+
 .drawer-content .history-table thead th {
   text-transform: uppercase !important;
   color: #4A4A4A !important;
 }
+
 .drawer-section table.structured td.shiftDetailRow {
   text-align: left;
   padding: 15px 45px;
 }
+
 .drawer-section table.structured td.shiftDetailRow p {
   text-transform: uppercase;
   color: #4A4A4A;
   font-size: 18px;
 }
+
 .drawer-section table.structured td.shiftDetailRow .item {
   color: #4a4a4a;
   font-size: 16px;
 }
+
 i.chevron.up.icon, i.chevron.down.icon {
   color: #0022A1;
+}
+
+.hide-details {
+  display: none;
+  transform-origin: top;
+}
+
+.show-details {
+  display: table-row;
+  animation: anim 0.5s ease-in-out;
+}
+
+@keyframes anim {
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: scaleY(1);
+  }
 }

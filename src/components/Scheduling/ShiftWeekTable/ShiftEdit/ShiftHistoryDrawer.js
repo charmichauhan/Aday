@@ -32,6 +32,7 @@ class ShiftHistoryDrawer extends Component {
           texted: true,
           called: false,
           replied: true,
+          accepted: true,
           showDetails: false,
           notes: [
             {
@@ -54,6 +55,7 @@ class ShiftHistoryDrawer extends Component {
           texted: true,
           called: true,
           replied: false,
+          accepted: false,
           showDetails: false,
           notes: [
             {
@@ -76,7 +78,8 @@ class ShiftHistoryDrawer extends Component {
           texted: true,
           called: true,
           replied: true,
-          showDetails: true,
+          accepted: -1,
+          showDetails: false,
           notes: [
             {
               title: 'Ashley did not receive this shift because:',
@@ -98,6 +101,7 @@ class ShiftHistoryDrawer extends Component {
           texted: true,
           called: true,
           replied: true,
+          accepted: true,
           showDetails: false,
           notes: [
             {
@@ -118,6 +122,11 @@ class ShiftHistoryDrawer extends Component {
     this.props.handleBack();
   };
 
+  showDetails = (i) => {
+    const { shiftHistory } = this.state;
+    shiftHistory[i].showDetails = !shiftHistory[i].showDetails;
+    this.setState({ shiftHistory });
+  };
 
   render() {
     const {
@@ -141,16 +150,22 @@ class ShiftHistoryDrawer extends Component {
 
           </div>
           <div className="drawer-content history-drawer-content">
-            <Table structured className ="history-table">
+            <Table structured className="history-table">
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell></Table.HeaderCell>
-                  <Table.HeaderCell></Table.HeaderCell>
-                  <Table.HeaderCell colSpan={2}>Seniority</Table.HeaderCell>
-                  <Table.HeaderCell>Emailed</Table.HeaderCell>
-                  <Table.HeaderCell>Texted</Table.HeaderCell>
-                  <Table.HeaderCell>Called</Table.HeaderCell>
-                  <Table.HeaderCell>Replied</Table.HeaderCell>
+                  <Table.HeaderCell width={16}></Table.HeaderCell>
+                  <Table.HeaderCell width={6}>Seniority</Table.HeaderCell>
+                  <Table.HeaderCell width={6}>Accepted</Table.HeaderCell>
+                  <Table.HeaderCell width={4}>
+                    <Icon color='gray' name='mail' size='large' />
+                  </Table.HeaderCell>
+                  <Table.HeaderCell width={4}>
+                    <Icon color='gray' name='comment' size='large' />
+                  </Table.HeaderCell>
+                  <Table.HeaderCell width={4}>
+                    <Icon color='gray' name='call' size='large' />
+                  </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
               {this.state.shiftHistory && this.state.shiftHistory.map((history, i) => (
@@ -158,39 +173,39 @@ class ShiftHistoryDrawer extends Component {
                   <Table.Row>
                     <Table.Cell>
                       <Icon
-                        name={history.showDetails ? 'chevron down' : 'chevron up'} />
+                        name={history.showDetails ? 'chevron down' : 'chevron up'}
+                        onClick={() => this.showDetails(i)} />
                     </Table.Cell>
-                    <Table.Cell colSpan={2}>
+                    <Table.Cell width={16} textAlign="left">
                       <User user={history.user} />
                     </Table.Cell>
-                    <Table.Cell>{history.seniority}</Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell width={6}>{history.seniority}</Table.Cell>
+                    <Table.Cell textAlign='center' width={6}>
+                      <Icon
+                        color={history.accepted === -1 ? 'black' : history.accepted ? 'green' : 'red'}
+                        name={history.accepted === -1 ? 'help' : history.accepted ? 'checkmark' : 'remove'}
+                        size='large' />
+                    </Table.Cell>
+                    <Table.Cell width={4}>
                       <Icon
                         color={history.emailed ? 'green' : 'red'}
                         name={history.emailed ? 'checkmark' : 'remove'}
                         size='large' />
                     </Table.Cell>
-                    <Table.Cell textAlign='center'>
+                    <Table.Cell textAlign='center' width={4}>
                       <Icon
                         color={history.texted ? 'green' : 'red'}
                         name={history.texted ? 'checkmark' : 'remove'}
                         size='large' />
                     </Table.Cell>
-                    <Table.Cell textAlign='center'>
+                    <Table.Cell textAlign='center' width={4}>
                       <Icon
                         color={history.called ? 'green' : 'red'}
                         name={history.called ? 'checkmark' : 'remove'}
                         size='large' />
                     </Table.Cell>
-                    <Table.Cell textAlign='center'>
-                      <Icon
-                        color={history.replied ? 'green' : 'red'}
-                        name={history.replied ? 'checkmark' : 'remove'}
-                        size='large' />
-                    </Table.Cell>
                   </Table.Row>
-                  {history.showDetails &&
-                  <Table.Row >
+                  <Table.Row className={(history.showDetails && 'show-details') || 'hide-details'}>
                     <Table.Cell className="shiftDetailRow" colSpan={8}>
                       {history.notes.map((note, k) => (
                         <div key={k}>
@@ -203,7 +218,7 @@ class ShiftHistoryDrawer extends Component {
                         </div>
                       ))}
                     </Table.Cell>
-                  </Table.Row>}
+                  </Table.Row>
                 </Table.Body>)
               )}
             </Table>

@@ -5,7 +5,6 @@ import dates from "react-big-calendar/lib/utils/dates";
 import localizer from "react-big-calendar/lib/localizer";
 import SpecialDay from './SpecialDay';
 import JobsRow from "./JobsRow";
-import HoursBooked from "./HoursBooked";
 import jobsData from "./jobs.json";
 import Modal from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton';
@@ -74,10 +73,10 @@ class ShiftWeekTableComponent extends Week {
         }
 
 
-        console.log(this.props.data)
+        console.log(this.props.data);
         let calendarHash = {};
         let userHash={};
-        let workplace = ""
+        let workplace = "";
         if (this.props.data.templateById){
             workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
         }
@@ -124,8 +123,7 @@ class ShiftWeekTableComponent extends Week {
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p><HoursBooked
-                                Data={jobData}/></TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p><p className="hoursWorked">78%</p></TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -300,4 +298,4 @@ const ShiftWeekTable = graphql(allTemplateShifts, {
  })(ShiftWeekTableComponent)
 
 
-export default ShiftWeekTable
+export default ShiftWeekTable;

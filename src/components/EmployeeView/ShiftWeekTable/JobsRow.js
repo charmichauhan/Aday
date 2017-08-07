@@ -13,7 +13,7 @@ export default class JobsRow extends Component{
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
          data.map((value,index) => {
-             const day = value.weekday
+             const day = moment(value.startTime, "YYYY-MM-DD HH:mm:ss").format("dddd");
              if (hashByDay[day]){
                  hashByDay[day] = [...hashByDay[day], value];
              } else {

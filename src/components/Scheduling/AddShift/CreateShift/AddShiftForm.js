@@ -89,7 +89,7 @@ export class AddShiftForm extends Component{
                   {shift:
                     { id: uuidv1(), workplaceId: this.state.workplace, 
                       positionId: this.state.position, workersRequestedNum: this.state.numberOfTeamMembers,
-                      creatorId: "5a01782c-c220-4927-b059-f4f22d01c230", 
+                      creatorId: localStorage.getItem('userId'), 
                       managersOnShift: [this.state.managerValue],
                       startTime: startTime, endTime: endTime, 
                       shiftDateCreated: moment().format(), 

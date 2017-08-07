@@ -14,6 +14,7 @@ import 'fullcalendar/dist/fullcalendar.min.js';
 import 'fullcalendar-scheduler/dist/scheduler.css';
 import 'fullcalendar-scheduler/dist/scheduler.js';
 import { gql, graphql, compose } from 'react-apollo';
+import ApolloClient from 'apollo-client';
 
 const style = {
   titleStyle: {
@@ -48,6 +49,9 @@ class ScheduleComponent extends Component {
   };
 
   render() {
+    console.log(this.props)
+    console.log("this.props.client")
+    console.log(this.props.client)
     BigCalendar.momentLocalizer(moment);
     if (this.props.data.loading) {
       return (<div>Loading</div>)
@@ -159,7 +163,7 @@ const allWeekPublisheds = gql
 const Schedule = graphql(allWeekPublisheds, {
   options: (ownProps) => ({
     variables: {
-      brandid:"5a14782b-c220-4927-b059-f4f22d01c230" ,
+      brandid:localStorage.getItem('brandId') ,
     }
   }),
 })(ScheduleComponent);

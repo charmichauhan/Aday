@@ -180,7 +180,7 @@ const allWeekPublisheds = gql
 const EmployeeView = graphql(allWeekPublisheds, {
     options: (ownProps) => ({
         variables: {
-            brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+            brandid: localStorage.getItem('brandId'),
         }
     }),
 })(EmployeeViewComponent);

@@ -22,6 +22,11 @@ class NavComponent extends Component {
     let workplaceId = document.getElementById("workplace").value;
     this.props.handleChange(workplaceId);
   };
+
+  logout = () => {
+  	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  	window.location.href = '/login';
+  }
 	render() {
 		if (this.props.data.loading) {
              return (<div>Loading</div>)
@@ -78,7 +83,7 @@ class NavComponent extends Component {
 					</Menu.Item>
 					</div>
   					<Menu.Item className="menu-item-logout">
-						<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/logout-icon.png"/></i><div className="menu_item_left"><span>LOGOUT</span></div></Menu.Item>
+						<Menu.Item className="menu-item-list"><i><Image onClick={this.logout} src="/images/Sidebar/logout-icon.png"/></i><div className="menu_item_left"><span>LOGOUT</span></div></Menu.Item>
 					</Menu.Item>
 				</Menu>
 			</div>
@@ -105,7 +110,7 @@ const allWorkplaces = gql`
 const Nav = graphql(allWorkplaces, {
    options: (ownProps) => ({
      variables: {
-       brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
+       brandid: localStorage.getItem('brandId'),
      }
    }),
  })(NavComponent)

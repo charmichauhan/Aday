@@ -64,7 +64,7 @@ class ManagerSelectComponent extends Component{
 
 const getAllUsers = gql`
   query getAllUsersQuery{
-    allEmployees(condition:{isManager:true, corporationId: "3b14782b-c220-4927-b059-f4f22d01c230"}){
+    allEmployees(condition:{isManager:true}){
         edges{
           node{
             userByUserId{

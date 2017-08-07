@@ -77,7 +77,7 @@ class AttendanceRequests extends Component {
 export default graphql(corporationTimeOffRequestQuery, {
 	                    options(props){
 											 	return {
-													variables: {corporationId: "3b14782b-c220-4927-b059-f4f22d01c230"}
+													variables: {corporationId: localStorage.getItem('corporationId')}
 												};
 											},
 											props({ data: { loading, allTimeOffRequests, fetchMore } }) {
@@ -89,7 +89,7 @@ export default graphql(corporationTimeOffRequestQuery, {
 										        	query: corporationTimeOffRequestQuery,
 										        	variables: {
 										          	cursor: allTimeOffRequests.pageInfo.endCursor,
-																corporationId: "3b14782b-c220-4927-b059-f4f22d01c230"
+																corporationId: localStorage.getItem('corporationId')
 										         	},
 										        	updateQuery: (previousResult, { fetchMoreResult }) => {
 										          	const newEdges = fetchMoreResult.allTimeOffRequests.edges;

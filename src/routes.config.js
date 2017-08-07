@@ -10,7 +10,7 @@ import MyWorkplace from './components/workplace/MyWorkplace'
 import Hiring from './components/Hiring'
 import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
-import team from './components/team'
+import Team from './components/Team'
 
 
 import Certificates from './components/certifications/Certificates'
@@ -84,7 +84,7 @@ const routes = [
 					{
 						path: '/team',
 						exact: true,
-						component: team
+						component: Team
 					},
 					{
 						path: '/certifications/certificates',

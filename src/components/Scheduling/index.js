@@ -134,7 +134,7 @@ class CustomToolbar extends Toolbar {
                         onClick={() => this.navigate("NEXT")}/>
               </div>
               <ul className="nav navbar-nav">
-                <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:130}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
+                <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
               </ul>
               <div className="maintitle">
                 {month}

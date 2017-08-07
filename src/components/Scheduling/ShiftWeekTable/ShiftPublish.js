@@ -53,7 +53,6 @@ class ShiftPublish extends Component{
         this.setState({templateName:e});
     };
     render(){
-        console.log(this.props)
         let is_publish = this.props.isPublish;
         let publishId = this.props.publishId
         const startDate = this.props.date;

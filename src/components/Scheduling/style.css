@@ -66,9 +66,9 @@ table.table.emp_view_table {
 .atable .dayname {
     height: 90px;
     text-align: center !important;
-    margin: auto;
-    vertical-align: middle;
-    font-size: inherit;
+  margin: auto;
+  vertical-align: middle;
+  font-size: inherit;
     border-bottom: 7px solid #f5f5f5;
 }
 

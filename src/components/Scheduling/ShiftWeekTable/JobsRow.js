@@ -40,23 +40,23 @@ export default class JobsRow extends Component{
         return(
             <TableRow className="tableh" displayBorder={false}>
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
-                    <div className="user_profile" width="80%">
-                        <div className="user_img">
-                            <img width="65px" src={ data[0].positionByPositionId.positionIconUrl } alt="img"/>
-                        </div>
-                        <div className="user_desc penalheading">{data[0].positionByPositionId.positionName.split(" ")[0]}
-                            <p className="lastName"> { data[0].positionByPositionId.positionName.split(" ")[1] }</p>
-                            <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
-                            <p className="scheduled_tag">SCHEDULED</p>
-                        </div>
+                  <div className="user_profile" width="80%">
+                    <div className="user_img">
+                      <img width="65px" src={this.props.view=="job"?data[0].positionByPositionId.positionIconUrl:data[0].userAvatar } alt="img"/>
                     </div>
+                    <div className="user_desc penalheading">{this.props.view=="job"? data[0].positionByPositionId.positionName.split(" ")[0] : data[0].userFirstName}
+                      <p className="lastName"> {this.props.view=="job"?  data[0].positionByPositionId.positionName.split(" ")[1] :data[0].userLastName}</p>
+                      <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                      <p className="scheduled_tag">SCHEDULED</p>
+                    </div>
+                  </div>
                 </TableRowColumn>
                 {
                     daysOfWeek.map((value,index)=> ((
                             <TableRowColumn key={index} className="shiftbox" style={{paddingLeft:'0px',paddingRight:'0px',backgroundColor:'#F5F5F5'}}>
                                 {
                                     Object.values(hashByDay[value]).map((y, index)=>(
-                                        <EventPopup data={y} key={index}/>
+                                        <EventPopup data={y} key={index} view={this.props.view}/>
                                     ))
                                 }
                                 <button type="button" className="addshift">

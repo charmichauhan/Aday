@@ -3,7 +3,6 @@ import App from './components/App';
 import Root from './components/Root';
 import Home from './components/Home';
 import Schedule from './components/Scheduling';
-import EmployeeView from './components/EmployeeView';
 import Settings from './components/Settings';
 import Positions from './components/Positions';
 import MyWorkplace from './components/workplace/MyWorkplace'
@@ -51,11 +50,11 @@ const routes = [
                      //    exact: true,
                      //    component: EmployeeView
 					// },
-					{
-            path: '/schedule/employeeview',
-            exact: true,
-            component: EmployeeView
-					},
+				// 	{
+            // path: '/schedule/employeeview',
+            // exact: true,
+            // component: EmployeeView
+				// 	},
 					{
             path: '/schedule/template',
             exact: true,

@@ -59,7 +59,7 @@ class CustomToolbarComponent extends Toolbar {
                         <div className="wrapper-div text-center">
                             <ul className="nav navbar-nav dropdown_job">
                                 <li>
-                                    <Button className="template-view-job-btn" as={NavLink} to="/schedule/employeeview">Employee View</Button>
+                                    <Button className="template-view-job-btn" as={NavLink} to="/schedule/team/">Employee View</Button>
                                 </li>
                             </ul>
                             <div className="dropdown_select">

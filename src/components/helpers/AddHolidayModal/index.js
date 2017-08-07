@@ -49,9 +49,9 @@ export default class AddHolidayModal extends Component {
     super(props);
     this.state = {
       isOpen:props.isOpen,
-      holidayName:"",
-      holidayPayPremium:"one",
-      pyramidPayPremium:false,
+      holidayName: props.holidayData && props.holidayData.holidayName || "",
+      holidayPayPremium:props.holidayData && props.holidayData.holidayPayPremium || "one",
+      pyramidPayPremium:props.holidayData && props.holidayData.pyramidPayPremium || false,
     }
   }
   handleChange = (e) => {
@@ -64,13 +64,15 @@ export default class AddHolidayModal extends Component {
     this.setState({pyramidPayPremium:value})
   };
   handleClose = () => {
-    this.setState({isOpen:false,
+    let that = this;
+    that.setState({
       holidayName:"",
       holidayPayPremium:"one",
       pyramidPayPremium:false
     });
+    that.props.handleClose();
   };
-  handleSumbit = () => {
+  handleSubmit = () => {
     let holidayDetails = {
       holidayName:this.state.holidayName,
       holidayPayPremium:this.state.holidayPayPremium,
@@ -82,19 +84,18 @@ export default class AddHolidayModal extends Component {
       pyramidPayPremium:false
     });
     this.props.addHoliday(holidayDetails);
-
   };
-  componentWillReceiveProps(nextProps) {
-    if (this.state.isOpen !== nextProps.isOpen) this.setState({ isOpen: nextProps.isOpen });
-  };
+  // componentDidReceiveProps(nextProps) {
+  //   if (this.state.isOpen !== nextProps.isOpen) this.setState({ isOpen: nextProps.isOpen });
+  // };
   render() {
     const actions = [
       <CircleButton titleStyle={{fontSize:22,fontWeight:500}} type="white" wrapperClassName="popup-btn-mrb" title="Cancel" handleClick={this.handleClose} image={false}/>,
-      <CircleButton titleStyle={{fontSize:22,fontWeight:500}} type="blue" wrapperClassName="popup-btn-mrb" title="Add Holiday" handleClick={this.handleSumbit} image={false}/>
+      <CircleButton titleStyle={{fontSize:22,fontWeight:500}} type="blue" wrapperClassName="popup-btn-mrb" title="Add Holiday" handleClick={this.handleSubmit} image={false}/>
     ];
     const titleMessage=(<div>
       <div className="confirm-popup-copy">
-        <IconButton onClick={this.addTemplateclose} style={{padding:0}}>
+        <IconButton onClick={this.props.handleClose} style={{padding:0}}>
           <Image src="/images/Assets/Icons/Icons/copying.png" size="small"/>
         </IconButton>
       </div>
@@ -118,7 +119,7 @@ export default class AddHolidayModal extends Component {
           <div className="confirm-popup-body">
             <div className="add-template-popup">
               <label>HOLIDAY NAME</label>
-              <input type="text" onChange={(e)=>this.handleChange(e)} name="templateName"/>
+              <input type="text" onChange={(e)=>this.handleChange(e)} name="templateName" value={this.state.holidayName}/>
             </div>
             <div>
               <label>INDICATE HOLIDAY PAY PREMIUM</label>
@@ -132,7 +133,7 @@ export default class AddHolidayModal extends Component {
             </div>
             <div>
               <label>PYRAMID PAY PREMIUMS?</label>
-              <Switch labels={{on: 'YES', off: 'NO'}}
+              <Switch value={this.state.pyramidPayPremium} labels={{on: 'YES', off: 'NO'}}
                       circleStyles={{onColor: 'green', offColor: 'red', diameter: 25 }} switchStyles={{ width: 60}} onChange={this.onChange}/>
             </div>
           </div>

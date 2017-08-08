@@ -795,7 +795,11 @@ table.atable td.shiftbox {
 .rbc-calendar nav.navbar .container-fluid .wrapper-div {
     text-align: center;
 }
-
+.rbc-calendar .wrapper-div button{
+  text-align: center;
+  background: #FFFFFF;
+  font-weight: 600;
+}
 .ui.fluid .ui.grid>.row {
     padding-bottom: 0;
 }

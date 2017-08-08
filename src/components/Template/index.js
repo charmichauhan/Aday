@@ -10,7 +10,48 @@ import "../Scheduling/style.css";
 import { gql, graphql } from 'react-apollo';
 
 let templateName;
+let that;
+let viewName="Employee View";
+let currentView = "job";
 export default class Template extends Component {
+  constructor(props){
+    super(props);
+    this.state=({
+      view:props.location.viewName,
+      date: moment()
+    });
+  }
+
+  customEvent  = (currentlyView) => {
+    if(currentlyView == "job"){
+      viewName="Job View";
+      currentView="employee";
+      this.setState({view:currentView});
+    }else{
+      viewName="Employee View";
+      currentView="job";
+      this.setState({view:currentView});
+    }
+  };
+
+  onViewChange = () =>{
+    return this.state.view;
+  };
+
+  onNavigate = (start) => {
+    this.setState({date: start})
+  };
+
+  componentWillMount = () => {
+    that = this;
+    if(this.state.view == "job"){
+      viewName="Employee View";
+      currentView="job";
+    }else{
+      viewName="Job View";
+      currentView="employee";
+    }
+  };
     render() {
         let is_publish = true;
         templateName = this.props.location.templateName;
@@ -28,6 +69,8 @@ export default class Template extends Component {
                                  startAccessor='startDate'
                                  endAccessor='endDate'
                                  defaultView='week'
+                                 onNavigate={(start) => this.onNavigate(start)}
+                                 eventPropGetter={this.onViewChange}
                                  views={{today: true, week: ShiftWeekTable, day: true}}
                                  components={{
                                      event: Event,
@@ -41,7 +84,6 @@ export default class Template extends Component {
 }
 
 class CustomToolbarComponent extends Toolbar {
-
     render() {
         if (this.props.data.loading) {
             return (<div>Loading</div>)
@@ -57,9 +99,9 @@ class CustomToolbarComponent extends Toolbar {
                 <nav className="navbar weeklynavbar weekly_nav_height">
                     <div className="container-fluid">
                         <div className="wrapper-div text-center">
-                            <ul className="nav navbar-nav dropdown_job">
+                            <ul className="nav navbar-nav dropdown_job m8">
                                 <li>
-                                    <Button className="template-view-job-btn" as={NavLink} to="/schedule/team/">Employee View</Button>
+                                  <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
                                 </li>
                             </ul>
                             <div className="dropdown_select">

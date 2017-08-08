@@ -112,14 +112,16 @@ class ShiftWeekTableComponent extends Week {
       data.allShifts.edges.map((value, index) => {
         if(workplaceId != "") {
           if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-            const rowHash = {}
+            
             const dayOfWeek = moment(value.node.startTime).format("dddd");
-            rowHash["weekday"] = dayOfWeek;
+           
             let assigned = value.node.workersAssigned
             if (value.node.workersAssigned == null) {
               assigned = [];
             }
             if (value.node.workersRequestedNum > assigned.length) {
+              const rowHash = {}
+              rowHash["weekday"] = dayOfWeek;
               rowHash["userFirstName"] = "Open"
               rowHash["userLastName"] = "Shifts"
               rowHash["userAvatar"] = ""
@@ -131,6 +133,8 @@ class ShiftWeekTableComponent extends Week {
             }
             if (assigned.length) {
               value.node.workersAssigned.map((v) => {
+                const rowHash = {}
+                rowHash["weekday"] = dayOfWeek;
                 const userName = userHash[v];
                 rowHash["userFirstName"] = userHash[v][0]
                 rowHash["userLastName"] = userHash[v][1]
@@ -145,14 +149,16 @@ class ShiftWeekTableComponent extends Week {
           }
         }
         else {
-          const rowHash = {}
+         
           const dayOfWeek = moment(value.node.startTime).format("dddd");
-          rowHash["weekday"] = dayOfWeek;
+         
           let assigned = value.node.workersAssigned
           if (value.node.workersAssigned == null) {
             assigned = [];
           }
           if (value.node.workersRequestedNum > assigned.length) {
+            const rowHash = {}
+            rowHash["weekday"] = dayOfWeek;
             rowHash["userFirstName"] = "Open"
             rowHash["userLastName"] = "Shifts"
             rowHash["userAvatar"] = ""
@@ -164,6 +170,8 @@ class ShiftWeekTableComponent extends Week {
           }
           if (assigned.length) {
             value.node.workersAssigned.map((v) => {
+              const rowHash = {}
+              rowHash["weekday"] = dayOfWeek;
               const userName = userHash[v];
               rowHash["userFirstName"] = userHash[v][0]
               rowHash["userLastName"] = userHash[v][1]

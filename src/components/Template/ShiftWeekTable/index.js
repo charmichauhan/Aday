@@ -141,13 +141,16 @@ class ShiftWeekTableComponent extends Week {
       return calendarHash;
     }
     render() {
+         if (this.props.id == "") {
+           if (this.props.data.error) {}
+           return (<div>  No Template Selected</div>)
+         }
          if (this.props.data.loading || this.props.allUsers.loading) {
              return (<div>Loading</div>)
          }
-
          if (this.props.data.error) {
              console.log(this.props.data.error)
-             return (<div>An unexpected error occurred</div>)
+             return (<div>  An unexpected error occurred </div>)
         }
         if(this.state.redirect){
           return (
@@ -167,7 +170,7 @@ class ShiftWeekTableComponent extends Week {
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p><p className="hoursWorked">78%</p></TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname"></TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -200,74 +203,6 @@ class ShiftWeekTableComponent extends Week {
                         }
                     </TableBody>
                     <TableFooter adjustForCheckbox={false}>
-                        <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooterHeading}>
-                                <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
-                                    hours booked:</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                        </TableRow>
-                        <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="mtitle"><p className="bfont">weekly spend booked:</p><p
-                                    className="sfont">$12038 of $18293 | 66%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle"><p className="bfont">spend booked</p><p className="sfont">$1293
-                                    of $2019 | 64%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle"><p className="bfont">hours booked</p><p className="sfont">185 of
-                                    236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                        </TableRow>
                         <TableRow>
                             <TableRowColumn colSpan="8">
                                 <div className="text-center">
@@ -326,10 +261,10 @@ const allTemplateShifts = gql`
                                 }
                               }
                             }
-                        } 
-                      }          
+                        }
+                      }
                     }
-            }  
+            }
     }
 }`
 
@@ -352,7 +287,7 @@ const ShiftWeekTable = compose(
   graphql(allTemplateShifts, {
     options: (ownProps) => ({
       variables: {
-        id: "5a03282c-c220-4927-b059-f4f22d01c230",
+        id: ownProps.id,
       }
     }),
   }),

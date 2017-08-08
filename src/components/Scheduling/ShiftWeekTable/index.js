@@ -87,6 +87,7 @@ class ShiftWeekTableComponent extends Week {
   componentWillReceiveProps = () => {
     this.setState({calendarView:this.props.eventPropGetter()});
   };
+
   getSummary = (summary,start ) =>{
       let summaryDetail = [];
       for(let i=0;i<=6;i++){
@@ -295,7 +296,7 @@ class ShiftWeekTableComponent extends Week {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            <SpecialDay dateStart={start}/>
+                            <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay}/>
 
                             {(Object.keys(jobData)).map((value, index) => (
                                     <JobsRow data={jobData[value]} key={value} view={this.state.calendarView}/>

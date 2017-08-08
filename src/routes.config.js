@@ -7,7 +7,6 @@ import Settings from './components/Settings';
 import Positions from './components/Positions';
 import MyWorkplace from './components/workplace/MyWorkplace'
 import Hiring from './components/Hiring'
-import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
 import Team from './components/Team'
 
@@ -61,11 +60,6 @@ const routes = [
             exact: true,
             component: Template
 					},
-          {
-            path: '/schedule/team/template',
-            exact: true,
-            component: TemplateViewJob
-          },
 					{
 						path: '/schedule/manager',
 						exact: true,

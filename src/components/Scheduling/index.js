@@ -62,6 +62,18 @@ class ScheduleComponent extends Component {
     return this.state.view;
   };
   componentWillMount = () => {
+    if(this.props.location && this.props.location.viewName){
+      if(this.props.location.viewName == "job"){
+        viewName="Employee View";
+        currentView="job";
+        this.setState({view:"job"});
+      }
+      else{
+        viewName="Job View";
+        currentView="employee";
+        this.setState({view:"employee"});
+      }
+    }
     that = this
   };
   render() {

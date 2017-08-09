@@ -28,6 +28,9 @@ networkInterface.use([{
     // get the authentication token from local storage if it exists
     let token = decodeURIComponent(document.cookie)
     token = token.split("token=")[1]
+    if(token){
+      token = token.split(';')[0]
+    }
 
     if (token){
       	req.options.headers.authorization = `Bearer ${token}`;

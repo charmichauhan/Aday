@@ -3,6 +3,7 @@ import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import { gql, graphql ,compose } from 'react-apollo';
 import { Image ,Grid, Input, Segment,Form,Icon,TextArea,Dropdown} from 'semantic-ui-react';
+import uuidv1 from 'uuid/v1';
 import RaisedButton from 'material-ui/RaisedButton';
 import cloneDeep from 'lodash/cloneDeep';
 import Dropzone from 'react-dropzone';
@@ -26,8 +27,20 @@ const initialState = {
       trainingUrl:"",
       trainingTracks:"",
       worlplaces:"",
-      teamMembers:"",
-      isAcceptApplicationForPosition: "",
+      teamMembers:[],
+      exchangeLevel:"",
+      jobsByPositionId:{
+        nodes:[]
+      },
+        opportunitiesByPositionId: {
+        nodes:[
+          {
+            id:"",
+            opportunityWage:0.0,
+            isPublic:false
+          }
+        ]
+        }
     },
   blob:"",
   weightOptions: [],
@@ -86,13 +99,13 @@ class DrawerHelper extends Component {
   componentWillReceiveProps(nextProps) {
     const position = cloneDeep(nextProps.position || initialState.position);
     this.setState({ position });
-      console.log(nextProps.data.allEmployees.nodes);
+     // console.log(nextProps.data.allEmployees.nodes);
      const options=[];
      nextProps.data.allEmployees.nodes.map((employee)=>{
         console.log(employee);
         var option={
-          value:employee.id,
-          key:employee.userByUserId.id,
+          value:employee.userByUserId.id,
+          key:employee.id,
           text:`${employee.userByUserId.firstName} ${employee.userByUserId.lastName}`
         }
         options.push(option);
@@ -120,15 +133,31 @@ class DrawerHelper extends Component {
     const { name, value } = event.target;
     const position = Object.assign(this.state.position, { [name]: value });
     this.setState({ position });
-
   };
     handleDropdownChange = (event,data) => {
     const { name, value } = data;
     const position = Object.assign(this.state.position, { [name]: value });
     this.setState({ position });
-
   };
-  updateFormState=()=>{}
+  handleTeamMembers=(e, { value })=>{
+    const position = Object.assign(this.state.position, { teamMembers: value });
+    this.setState({ position });
+    console.log(position.teamMembers);
+  }
+  handleWageChange=(event)=>{
+  const { name, value } = event.target;
+  console.log(name,value);
+  this.state.position.opportunitiesByPositionId.nodes[0][name]= parseFloat(value);
+  const position=this.state.position;
+  this.setState({ position });
+  }
+          
+  updateFormState=(dataValue)=>{
+  this.state.position.opportunitiesByPositionId.nodes[0].isPublic= dataValue.isAcceptApplicationForPosition;
+  const position=this.state.position;
+  this.setState({ position });
+  console.log(dataValue,position);
+  }
 
   render() {
     const {
@@ -154,7 +183,7 @@ class DrawerHelper extends Component {
       console.log(this.props.data.error)
       return (<div>An unexpected error occurred</div>)
     }
-    console.log(this.state.teamMembers);
+   // console.log(this.state.teamMembers);
     return (
       <Drawer
         docked={docked}
@@ -238,8 +267,10 @@ class DrawerHelper extends Component {
         <Dropdown
           placeholder='SELECT MEMBER'
           fluid style={style.input}
-          multiple selection
-          options={this.state.teamMembers} />
+          multiple selection search
+          name="teamMembers"
+          options={this.state.teamMembers} 
+          onChange={this.handleTeamMembers}/>
         </div>
         <div  className="position-row">
           <p className="position-label">ACCEPT APPLICATIONS FOR THE POSITION?</p>
@@ -251,8 +282,12 @@ class DrawerHelper extends Component {
           <Input
             type="number"
             fluid style={style.input}
+            value={DrawerPosition.opportunitiesByPositionId.nodes.length && DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage} 
+            name="opportunityWage"
+            onChange={this.handleWageChange}
             label={{ basic: true, content: '$ PER HOUR' }}
-            labelPosition='right' />
+            labelPosition='right'
+             />
         </div>
         <div  className="position-row" style={{textAlign:"center",marginTop:"20px"}} >
             <CircleButton
@@ -291,7 +326,4 @@ const Position_Drawer = compose(
   })
 )(DrawerHelper);
 
-//const Position_Drawer=graphql(all_team_members,{ "corporationId":"3b14782b-c220-4927-b059-f4f22d01c230" })(DrawerHelper);
 export default Position_Drawer;
-
-

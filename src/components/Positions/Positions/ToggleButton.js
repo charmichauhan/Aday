@@ -31,7 +31,7 @@ export default class ToggleButton extends Component {
         negative:false,
         label:'YES',
         labelPosition:'right',
-        isAcceptApplicationForPosition: true,
+        isAcceptApplicationForPosition: false,
       });
     }else{
       this.setState({
@@ -40,7 +40,7 @@ export default class ToggleButton extends Component {
         negative:true,
         label:'NO',
         labelPosition:'left',
-        isAcceptApplicationForPosition: false
+        isAcceptApplicationForPosition: true
       });
     }
     const newState={

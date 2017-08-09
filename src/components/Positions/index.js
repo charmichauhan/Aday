@@ -5,6 +5,7 @@ import { gql, graphql ,compose } from 'react-apollo';
 import {Loader} from 'semantic-ui-react';
 import { remove, maxBy, findIndex } from 'lodash';
 import uuidv1 from 'uuid/v1';
+import moment from 'moment';
 import Positions from './Positions';
 import { tabDesign } from '../styles';
 import './positions.css';
@@ -13,12 +14,9 @@ const styles = {
   tabDesign
 };
 
-//const brandid="5a14782b-c220-4927-b059-f4f22d01c230";
-//const workplaceid="5a01782c-c220-4927-b059-f4f22d01c230";
-//const corporationId="3b14782b-c220-4927-b059-f4f22d01c230";
-//const clientMutationId="qwertyuiop";
-
-
+const brand_id="5a14782b-c220-4927-b059-f4f22d01c230";
+const workplace_id="5a01782c-c220-4927-b059-f4f22d01c230";
+const corporation_id="3b14782b-c220-4927-b059-f4f22d01c230";
 
 
 const initState = {
@@ -36,9 +34,9 @@ export class PositionsSection extends Component {
     this.props.fetchRelevantPositions({
       variables: {
         "input": {
-          "brandid":"5a14782b-c220-4927-b059-f4f22d01c230",
-          "workplaceid":"5a01782c-c220-4927-b059-f4f22d01c230",
-          "corporationid":"3b14782b-c220-4927-b059-f4f22d01c230",
+          "brandid":brand_id,
+          "workplaceid":workplace_id,
+          "corporationid":corporation_id,
           "clientMutationId":"2513056"
         }
       }
@@ -46,7 +44,7 @@ export class PositionsSection extends Component {
     .then(({ data }) => {
       console.log(data);
       data.fetchRelevantPositions.positions.map((position)=>{
-        position.trainingTracks=0;//add a trainingtrack property to positiona and set it to zero
+        position.trainingTracks=0;//add a trainingtrack property to position and set it to zero
       });
       this.setState({positions:data.fetchRelevantPositions.positions}) ;
       console.log(this.state.positions);
@@ -72,11 +70,17 @@ export class PositionsSection extends Component {
 
   deletePosition = (id) => {
     const { positions } = this.state;
-       this.props.deletePosition({
-        variables:{
-          "input": {
-            "clientMutationId": "fdsgdhfj",
-            "id":id 
+     const positionIndex = findIndex(positions, { id:id });
+     const opportunityId=positions[positionIndex].opportunitiesByPositionId.nodes[0].id;
+      this.props.deletePosition({
+      variables:{
+        "input": {
+          "clientMutationId": "fdsgdhfj",
+          "id":id 
+        },
+        "data":{
+          "clientMutationId": "fdsgdhfjs",
+          "id":opportunityId
         }
       }
     })
@@ -93,27 +97,40 @@ export class PositionsSection extends Component {
 
   addOrUpdatePosition = (position) => {
     const { positions } = this.state;
-    const id=uuidv1();
+    const positionId=uuidv1();
+    const opportunityId=uuidv1();
+    const opportunity=position.opportunitiesByPositionId.nodes[0];
     const newData={
-      "id": id,
+      "id": positionId,
       "positionName": position.positionName,
       "positionDescription": position.positionDescription,
       "minimumLiftWeight": position.minimumLiftWeight,
       "traineeHours": position.traineeHours,
-      "positionIconUrl": "",
+      "positionIconUrl": null,
       "minimumAge": position.minimumAge,
-      "exchangeLevel": null,
-      "trainingUrl": "",
-      "brandId":"5a14782b-c220-4927-b059-f4f22d01c230",
-      "workplaceId":"5a01782c-c220-4927-b059-f4f22d01c230",
-      "corporationId":null
+      "exchangeLevel": "BRAND_WIDE",
+      "trainingUrl": null,
+      "brandId":brand_id,
+      "workplaceId":workplace_id,
+      "corporationId":corporation_id
     };
-  
+
     if (!position.id) {
+      // create a new position & opportunity
         const variables={
         "input": {
           "clientMutationId": "123456786",
           "position": newData
+        },
+        "data": {
+          "clientMutationId": "GHJKwegrt",
+            "opportunity": {
+              "workplaceId": workplace_id,
+              "positionId": positionId,
+              "opportunityWage": opportunity.opportunityWage,
+              "isPublic":opportunity.isPublic,
+              "id": opportunityId,
+            }
         }
       };
       this.props.createPosition({
@@ -121,35 +138,84 @@ export class PositionsSection extends Component {
       })
       .then(({ data }) => {
         console.log(data);
-          this.state.positions.push(data.createPosition.position);
-          this.setState({ positions});
+        const newPosition=newData;
+        newPosition.opportunitiesByPositionId=position.opportunitiesByPositionId;
+        newPosition.opportunitiesByPositionId.nodes[0].id=opportunityId;
+        // set temp data
+        newData.trainingTracks=0;
+        newData.jobsByPositionId={
+          nodes:[]
+        }; 
+        this.state.positions.push(newData);
+        this.setState({ positions});
+
+      // add team members
+      position.teamMembers.forEach(function(userId) {
+        this.createJob(userId,positionId);
+      }, this); 
       })
       .catch((error) => {
         console.error('There was an error sending the query', error);
       });
-      } else {
-        const variables={
-        "input": {
-          "id": position.id,
-          "positionPatch":newData
+    }
+    else {
+    // update a current position and opportunity
+      delete newData.id;
+
+      this.props.updatePosition({
+        variables: {
+          "data": {
+            "id": position.id,
+            "positionPatch":newData
+          },
+          "input": {
+            "id": opportunity.id,
+            "opportunityPatch": {
+              "opportunityWage": opportunity.opportunityWage,
+              "isPublic": opportunity.isPublic
+            }
+          }
         }
-      };
-        this.props.updatePosition({
-        variables: variables
+      })
+      .then(({ data }) => {
+        console.log(data);
+        const positionIndex = findIndex(positions, { id: position.id });
+        positions[positionIndex] = position;
+        this.setState({ positions });
+      })
+      .catch((error) => {
+        console.error('There was an error sending the query', error);
+      });  
+    }
+  };
+  createJob=(userId,positionId)=>{
+       this.props.createJob({
+          variables: {
+            "input": {
+              "clientMutationId": "dd",
+              "job": {
+                "userId": userId,
+                "workplaceId": workplace_id,
+                "positionId": positionId,
+                "isPositionActive": true,
+                "activatedDate":moment().format(),
+                "deactivatedDate": moment().add(10, 'day').format(),
+                "isVerified": false,
+                "isPreTrainingComplete": false,
+                "isTrainable": true,
+                "id": uuidv1(),
+                "primaryJob": false
+              }
+            }
+          }
         })
         .then(({ data }) => {
           console.log(data);
-          const positionIndex = findIndex(positions, { id: position.id });
-          positions[positionIndex] = position;
-          this.setState({ positions });
         })
         .catch((error) => {
           console.error('There was an error sending the query', error);
         });
-         
-        }
-      };
- 
+  }
   render() {
     if (!this.state.positions) {
       return  ( 
@@ -209,35 +275,59 @@ const all_positions= gql`
         }
         opportunitiesByPositionId {
           nodes{
-            workplaceId
             id
             isPublic
+            workplaceId
+            opportunityWage
           }
         }
       }
     }
   }`;
 const add_position=gql`
-  mutation createPosition($input:CreatePositionInput!){
+  mutation createPosition($input:CreatePositionInput!,$data: CreateOpportunityInput!){
     createPosition(input:$input){
       position{
         id		
       }
     }
+    createOpportunity(input: $data) {
+      opportunity {
+        id
+      }
+    }
   }
 `
+const add_job=gql`
+mutation createJob($input:CreateJobInput!){
+  createJob(input:$input){
+    job{
+      id
+    }
+  } 
+}`
 
 const update_position=gql`
-mutation updatePosition($input:UpdatePositionByIdInput!){
-    updatePositionById(input:$input){
+mutation updatePosition($input:UpdateOpportunityInput!,$data:UpdatePositionByIdInput!){
+    updateOpportunity(input:$input){
+      opportunity{
+        id
+      }
+    }
+    updatePositionById(input:$data){
       position{
         id		
       }
-    }
+    }  
   }`
 
 const delete_position=gql`
-mutation deletePosition($input: DeletePositionByIdInput!) {
+mutation deletePosition($input: DeletePositionByIdInput!,$data: DeleteOpportunityByIdInput!) {
+  deleteOpportunityById(input:$data){
+    opportunity{
+      id
+    }
+  } 
   deletePositionById(input: $input) {
     position {
       id
@@ -259,6 +349,9 @@ const AddPosition = compose(
   graphql(delete_position,{
    name:"deletePosition"
   }),
+  graphql(add_job,{
+   name:"createJob"
+  })
 )(PositionsSection);
 
 export default AddPosition

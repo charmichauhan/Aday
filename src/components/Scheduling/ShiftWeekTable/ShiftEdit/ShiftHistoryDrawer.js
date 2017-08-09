@@ -170,11 +170,9 @@ class ShiftHistoryDrawer extends Component {
               </Table.Header>
               {this.state.shiftHistory && this.state.shiftHistory.map((history, i) => (
                 <Table.Body key={i}>
-                  <Table.Row>
+                  <Table.Row onClick={() => this.showDetails(i)}>
                     <Table.Cell>
-                      <Icon
-                        name={history.showDetails ? 'chevron down' : 'chevron up'}
-                        onClick={() => this.showDetails(i)} />
+                      <Icon name={history.showDetails ? 'chevron down' : 'chevron up'} />
                     </Table.Cell>
                     <Table.Cell width={16} textAlign="left">
                       <User user={history.user} />

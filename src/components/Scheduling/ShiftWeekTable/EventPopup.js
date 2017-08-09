@@ -152,16 +152,19 @@ class EventPopupComponent extends Component {
         <div className="overlay">
           <div className="hoimg">
             <a>
-              <i><img src="/assets/Icons/close-shift.png" alt="close"
-                    onClick={() => this.onPopupOpen('deleteModalPopped')} /></i>
+              <i onClick={() => this.onPopupOpen('deleteModalPopped')}>
+                <img src="/assets/Icons/close-shift.png" alt="close" />
+              </i>
             </a>
             <a>
-              <i><img src="/assets/Icons/edit-shift.png" alt="edit"
-                    onClick={() => this.onPopupOpen('editShiftModal')} /></i>
+              <i onClick={() => this.onPopupOpen('editShiftModal')}>
+                <img src="/assets/Icons/edit-shift.png" alt="edit" />
+              </i>
             </a>
             <a>
-              <i><img src="/assets/Icons/create-shift.png" alt="create"
-                    onClick={() => this.onPopupOpen('newShiftModalPopped')} /></i>
+              <i onClick={() => this.onPopupOpen('newShiftModalPopped')}>
+                <img src="/assets/Icons/create-shift.png" alt="create" />
+              </i>
             </a>
           </div>
         </div>

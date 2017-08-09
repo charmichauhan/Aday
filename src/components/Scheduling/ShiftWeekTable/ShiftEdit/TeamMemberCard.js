@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Image, Icon, Dropdown } from 'semantic-ui-react';
+import TeamMemberOption from './TeamMemberOption';
 
 export default class TeamMemberCard extends Component {
 
@@ -76,9 +77,8 @@ export default class TeamMemberCard extends Component {
                 onChange={(e) => this.searchChange(e.target, e.target.value)} />
             </Dropdown.Item>
             {userOptions && userOptions.map((user, index) => (
-              <Dropdown.Item key={index} value={index} onClick={() => this.onSelectChange(user, id)}>
-                <img src={user.avatar} alt="avatar" className="select-dropdown-img" />
-                <span>{user.firstName + ' ' + user.otherNames}</span>
+              <Dropdown.Item className="team-member-item" key={index} value={index} onClick={() => this.onSelectChange(user, id)}>
+                <TeamMemberOption user={user} />
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>

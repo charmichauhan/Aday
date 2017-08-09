@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Menu, Icon, Image } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import EmergencyShiftButton from './KendallLearning/EmergencyShiftButton';
-import { gql, graphql } from 'react-apollo';
+import { gql, graphql,compose} from 'react-apollo';
 import './nav.css';
 const styles = {
     menuStyle:{
       width:200,
-		  height:42
+	  height:42
 	}
 };
 
@@ -28,8 +28,14 @@ class NavComponent extends Component {
   	this.props.history.push('/login')
 
   }
+
+  handleChangeBrand = () => {
+    let brandId = document.getElementById("brand").value;
+    this.props.handleChangeBrand(brandId);
+  };
+
 	render() {
-		if (this.props.data.loading) {
+		if (this.props.data.loading || this.props.allBrands.loading) {
              return (<div>Loading</div>)
          }
 
@@ -37,20 +43,23 @@ class NavComponent extends Component {
              console.log(this.props.data.error)
              return (<div>An unexpected error occurred</div>)
         }
-    const brandLogo = this.props.data.brandById.brandIconUrl
+    const brandLogo = this.props.data.brandById.brandIconUrl;
+		const brands = this.props.allBrands && this.props.allBrands.allBrands.edges;
 		return (
 			<div className="left-menu_item">
 				{/*<EmergencyShiftButton/>*/}
 				<Menu vertical fluid>
 					<Menu.Item className="menu-item left-menu-logo">
 						<Menu.Header><Image src="/images/logos_aday.png" width="102" height="31" centered={true}/></Menu.Header>
-						<Menu.Header><Image src={brandLogo} width="100" height="100" centered={true}/></Menu.Header>
+						<Menu.Header><Image src="" width="100" height="100" centered={true}/></Menu.Header>
 						<Menu.Header className="dropdown-menu-item">
-							<select>
-								<option value="volvo">CHOOSE BRAND</option>
-								<option value="saab">Brand1</option>
-								<option value="opel">Brand2</option>
-								<option value="audi">Brand3</option>
+							<select onChange={this.handleChangeBrand} id="brand">
+								<option value="">CHOOSE BRAND</option>
+                {
+                  brands.map((value,index)=>(
+                    <option value={value.node.id} key={index}>{value.node.brandName}</option>
+                  ))
+                }
 							</select>
 						</Menu.Header>
 						<Menu.Header>
@@ -107,14 +116,29 @@ const allWorkplaces = gql`
 	}
 }`
 
-const Nav = graphql(allWorkplaces, {
-   options: (ownProps) => ({
-     variables: {
-       brandid: localStorage.getItem('brandId'),
-     }
-   }),
- })(NavComponent)
+const allBrands = gql`
+  query allBrands {
+        allBrands{
+            edges{
+                node{
+                    id
+                    brandName
+                    brandIconUrl
+                }
+            }
+        }
+    }
+  `
 
+const Nav = compose(
+  graphql(allWorkplaces, {
+    options: (ownProps) => ({
+      variables: {
+        brandid: ownProps.brandId || localStorage.getItem('brandId'),
+      }
+    }),
+  }),
+  graphql(allBrands,{name:"allBrands"})
+)(NavComponent);
 
 export default Nav
-

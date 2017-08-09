@@ -52,6 +52,7 @@ export default class AddHolidayModal extends Component {
       holidayName: props.holidayData && props.holidayData.holidayName || "",
       holidayPayPremium:props.holidayData && props.holidayData.holidayPayPremium || "one",
       pyramidPayPremium:props.holidayData && props.holidayData.pyramidPayPremium || false,
+      holidayId:props.holidayData && props.holidayData.id || ""
     }
   }
   handleChange = (e) => {
@@ -76,7 +77,8 @@ export default class AddHolidayModal extends Component {
     let holidayDetails = {
       holidayName:this.state.holidayName,
       holidayPayPremium:this.state.holidayPayPremium,
-      pyramidPayPremium:this.state.pyramidPayPremium
+      pyramidPayPremium:this.state.pyramidPayPremium,
+      holidayId:this.state.holidayId
     };
     this.setState({
       holidayName:"",

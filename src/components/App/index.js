@@ -9,11 +9,15 @@ class AppComponent extends Component {
     super(props);
     this.state=({
       workplaceId:"",
+      brandId:"",
       isEmployeeview:false
     });
   }
   handleChange = (workplaceId) => {
     this.setState({workplaceId:workplaceId});
+  };
+  handleChangeBrand = (brandId) => {
+    this.setState({brandId:brandId});
   };
   setEmployeeview = (e) => {
     this.setState({isEmployeeview:true})
@@ -40,6 +44,7 @@ class AppComponent extends Component {
     route.map((value,index)=>{
       value.isEmployeeview = this.setEmployeeview;
       value.workplaceId=this.state.workplaceId;
+      value.brandId = this.state.brandId;
       routes.push(value);
     });
 
@@ -54,7 +59,7 @@ class AppComponent extends Component {
       	<Container fluid>
           <Grid>
             <Grid.Row>
-              <Grid.Column width={3} className="left-content"><Nav handleChange={this.handleChange} history={this.props.history} isemployeeview={this.state.isEmployeeview}/></Grid.Column>
+              <Grid.Column width={3} className="left-content"><Nav handleChange={this.handleChange} isemployeeview={this.state.isEmployeeview} handleChangeBrand={this.handleChangeBrand} brandId={this.state.brandId}/></Grid.Column>
               <Grid.Column width={12} className="main-content">
                 {renderRoutes(routes)}
               </Grid.Column>

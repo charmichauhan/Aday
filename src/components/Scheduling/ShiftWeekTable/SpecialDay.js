@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { concat, groupBy  } from 'lodash';
+import uuidv1 from 'uuid/v1';
+import { gql, graphql,compose} from 'react-apollo';
 import AddHolidayModal from '../../helpers/AddHolidayModal';
 import '../style.css';
 import {
@@ -18,52 +20,82 @@ const initialState = {
   holidayDate:"",
   isEdit:false,
   currentData:{},
-  specialDay:[
-  {
-    "holidayName": "Labor Day",
-    "holidayDate":"Mon Aug 07 2017",
-    "holidayPayPremium":"one",
-    "pyramidPayPremium":false
-  },
-  {
-    "holidayName": "Labor Day",
-    "holidayDate":"Wed Aug 09 2017",
-    "holidayPayPremium":"oneHalf",
-    "pyramidPayPremium":true
-  }
-]};
+  holidayId:""
+};
 
-export default class SpecialDay extends Component{
+class SpecialDayComponent extends Component{
   constructor(props){
     super(props);
     this.state=initialState;
   }
   handleOpen = (date,holidayData) => {
-    this.setState({addHoliday:true,isEdit:(holidayData?true:false),holidayDate:date["_d"],currentData:holidayData && holidayData[0]});
+    this.setState({addHoliday:true,isEdit:(holidayData?true:false),holidayDate:date["_d"],currentData:holidayData && holidayData[0],holidayId:holidayData && holidayData[0].id});
   };
   handleModalClose = () => {
     this.setState({addHoliday:false,isEdit:false})
   };
   handleAddHoliday = (holidayDetail) => {
     let that = this;
-    const {specialDay} = that.state;
     if(that.state.isEdit){
-      (Object.keys(specialDay)).map((value,index)=>{
-        if(specialDay[value]['holidayDate']){
-          if(moment(specialDay[value]['holidayDate']).format('D/MM/YYYY') == moment(that.state.holidayDate).format('D/MM/YYYY')){
-            specialDay[value].holidayDate = that.state.holidayDate;
-            specialDay[value].holidayName = holidayDetail.holidayName;
-            specialDay[value].holidayPayPremium = holidayDetail.holidayPayPremium;
-            specialDay[value].pyramidPayPremium = holidayDetail.pyramidPayPremium;
+      let payMultiplier;
+      if(holidayDetail.pyramidPayPremium == "one"){
+        payMultiplier=1
+      }else if(holidayDetail.pyramidPayPremium == "oneHalf"){
+        payMultiplier=1.5
+      }else{
+        payMultiplier=2
+      }
+      that.props.updateHolidayById({
+        variables:{
+          data:{
+            id:holidayDetail.holidayId,
+            holidayPatch: {
+              holidayDay: that.state.holidayDate,
+              holidayName: holidayDetail.holidayName,
+              isPyramid: holidayDetail.pyramidPayPremium,
+              payMultiplier: payMultiplier
+            }
           }
-        }
+        },
+      }).then(({data})=>{
+        console.log("Update Holiday Successfully");
+      }).catch((error) => {
+        console.log('there was an error sending the query', error);
+      });
+    }else{
+      let payMultiplier;
+      if(holidayDetail.pyramidPayPremium == "one"){
+        payMultiplier=1
+      }else if(holidayDetail.pyramidPayPremium == "oneHalf"){
+        payMultiplier=1.5
+      }else{
+        payMultiplier=2
+      }
+      that.props.createHoliday({
+        variables:{
+          data:{
+            holiday:{
+              id:uuidv1(),
+              holidayDay:that.state.holidayDate,
+              holidayName:holidayDetail.holidayName,
+              isPyramid:holidayDetail.pyramidPayPremium,
+              payMultiplier:payMultiplier
+            }
+          }
+        },
+        updateQueries:(previousResult,{fetchMoreResult})=>{
+          const newEdges = fetchMoreResult.allHolidays.edges;
+          return {
+            allHolidays:[...previousResult.allHolidays.edges,...newEdges],
+          }
+        },
+      }).then(({data})=>{
+        console.log("Create Holiday Successfully");
+      }).catch((error) => {
+        console.log('there was an error sending the query', error);
       });
     }
-    else{
-      holidayDetail.holidayDate=that.state.holidayDate;
-      specialDay.push(holidayDetail);
-    }
-    that.setState({specialDay:specialDay,isEdit:false,addHoliday:false,holidayDetail:""});
+    that.setState({isEdit:false,addHoliday:false,holidayDetail:""});
   };
 
   getSpecialDay = (start,specialDayData) => {
@@ -76,8 +108,39 @@ export default class SpecialDay extends Component{
   };
 
     render(){
+        if (this.props.allHoliday.loading) {
+         return (<div>Loading</div>)
+        }
+        if (this.props.allHoliday.error) {
+          console.log(this.props.data.error);
+          return (<div>An unexpected error occurred</div>)
+        }
+        let allHoliday = this.props.allHoliday && this.props.allHoliday.allHolidays.edges;
+        // this.props.deleteHolidayById({variables:{data:{id:"3876a540-7d1e-11e7-bb97-2130782b8e28"}}})
+        //   .then(({ data }) => {
+        //     console.log('Delete Data', data);
+        //   }).catch((error) => {
+        //   console.log('there was an error sending the query', error);
+        // });
+
+        let specialDay= [];
+        allHoliday.map((value,index)=>{
+          let special = {};
+          special.id=value.node.id;
+          special.workplcaeId = value.node.workplaceId;
+          special.holidayName = value.node.holidayName;
+          special.holidayDate = value.node.holidayDay;
+          special.pyramidPayPremium = value.node.isPyramid;
+          if(value.node.isPyramid == 1){
+            special.holidayPayPremium = "one";
+          }else if(value.node.isPyramid == 1.5){
+            special.holidayPayPremium = "oneHalf";
+          }else{
+            special.holidayPayPremium = "two";
+          }
+          specialDay.push(special);
+        });
         let start = this.props.dateStart;
-        let specialDay = this.state.specialDay;
         let sortedData = specialDay.map((special) => ({ ...special, specialDayData: moment(special.holidayDate).format('D')}));
         let groupedData = groupBy(sortedData, 'specialDayData');
         return(
@@ -96,3 +159,72 @@ export default class SpecialDay extends Component{
         )
     }
 }
+
+const updateHoliday = gql`
+  mutation updateHolidayById($data:UpdateHolidayByIdInput!){
+    updateHolidayById(input:$data){
+      holiday{
+          id
+          holidayDay
+          holidayName
+          workplaceId
+          isPyramid
+          payMultiplier
+     }
+    }
+  }
+`
+const createHoliday = gql`
+  mutation createHoliday($data: CreateHolidayInput!){
+    createHoliday(input:$data)
+    {
+      holiday{
+        id
+        holidayDay
+        holidayName
+        workplaceId
+        isPyramid
+        payMultiplier
+      }
+    }
+  }
+`
+const allHolidays = gql`
+  query allHolidays{
+    allHolidays{
+      edges{
+        node{
+          id
+          holidayDay
+          holidayName
+          workplaceId
+          isPyramid
+          payMultiplier
+        }
+      }
+    }
+  }
+`
+const deleteHolidaysById = gql`
+  mutation deleteHolidayById($data:DeleteHolidayByIdInput!){
+    deleteHolidayById(input:$data){
+        holiday{
+          id
+        }
+    }
+  }
+`
+const SpecialDay=compose(graphql(createHoliday, {
+  name:"createHoliday"
+}),
+graphql(allHolidays,{
+  name:"allHoliday"
+}),
+graphql(updateHoliday,{
+  name:"updateHolidayById"
+}),
+graphql(deleteHolidaysById,{
+  name:"deleteHolidayById"
+})
+)(SpecialDayComponent);
+export default SpecialDay;

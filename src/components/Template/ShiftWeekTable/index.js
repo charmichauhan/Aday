@@ -6,10 +6,11 @@ import localizer from "react-big-calendar/lib/localizer";
 import SpecialDay from './SpecialDay';
 import JobsRow from "./JobsRow";
 import jobsData from "./jobs.json";
+import {BrowserRouter as Router,Redirect} from 'react-router-dom';
 import Modal from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton';
 import "../../Scheduling/style.css";
-import { gql, graphql } from 'react-apollo';
+import { gql, graphql,compose } from 'react-apollo';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
 
 const styles = {
@@ -44,9 +45,14 @@ class ShiftWeekTableComponent extends Week {
     constructor(props){
         super(props);
         this.state={
-            deleteTemplateModal:false
+            deleteTemplateModal:false,
+            view:this.props.eventPropGetter(),
+            redirect:false
         };
     }
+    componentWillReceiveProps = () => {
+      this.setState({view:this.props.eventPropGetter()});
+    };
     modalClose = () => {
         this.setState({
             deleteTemplateModal:false
@@ -61,60 +67,101 @@ class ShiftWeekTableComponent extends Week {
         let that =this;
         that.setState({deleteTemplateModal:true})
     };
+    backToCalendarView = () => {
+      this.setState({redirect:true});
+    }
+    getTemplateDataJob = () => {
+      let calendarHash = {};
+      let userHash={};
+      let weekPublished = "";
 
+      if  (this.props.allUsers && this.props.allUsers.allUsers){
+        this.props.allUsers.allUsers.edges.map((value,index) => {
+          userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
+        });
+        let workplace="";
+        if (this.props.data.templateById){
+          weekPublished = this.props.data.templateById.templateShiftsByTemplateId.edges;
+          workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
+        }
+        if(weekPublished){
+          weekPublished.map((value, index) => {
+            const positionName = value.node.positionByPositionId.positionName;
+            const dayOfWeek = value.node.dayOfWeek;
+
+            const rowHash = {};
+            rowHash["weekday"] = dayOfWeek;
+            rowHash["workplace"] = workplace;
+            if (calendarHash[positionName]) {
+              calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node)]
+            } else {
+              calendarHash[positionName] = [Object.assign(rowHash, value.node)];
+            }
+          });
+        }
+      }
+      return calendarHash;
+    }
+
+    getTemplateDataEmployee = () => {
+      let calendarHash = {};
+      let userHash={};
+      let workplace = "";
+      if (this.props.data.templateById){
+        workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
+      }
+
+      if (this.props.data.templateById) {
+        this.props.data.templateById.templateShiftsByTemplateId.edges.map((value,index) => {
+
+          if (value.node.workerCount > value.node.templateShiftAssigneesByTemplateShiftId.edges.length){
+            const rowHash = {};
+            rowHash["user"] = ["Open", "Shifts"];
+            rowHash["workplace"] = workplace;
+            if (calendarHash["Open Shifts"]){
+              calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"],  Object.assign(rowHash, value.node)]
+            } else {
+              calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
+            }
+          }
+
+          value.node.templateShiftAssigneesByTemplateShiftId.edges.map((value2,index2) => {
+            const user = [value2.node.userByUserId.firstName, value2.node.userByUserId.lastName, value2.node.userByUserId.avatarUrl]
+            const rowHash = {};
+            rowHash["user"] = user;
+            rowHash["workplace"] = workplace;
+            if (calendarHash[user]){
+              calendarHash[user] = [...calendarHash[user],  Object.assign(rowHash, value.node)]
+            } else {
+              calendarHash[user] = [Object.assign(rowHash, value.node)]
+            }
+          })
+        });
+      }
+      return calendarHash;
+    }
     render() {
-         if (this.props.data.loading) {
+         if (this.props.id == "") {
+           if (this.props.data.error) {}
+           return (<div>  No Template Selected</div>)
+         }
+         if (this.props.data.loading || this.props.allUsers.loading) {
              return (<div>Loading</div>)
          }
-
          if (this.props.data.error) {
              console.log(this.props.data.error)
-             return (<div>An unexpected error occurred</div>)
+             return (<div>  An unexpected error occurred </div>)
         }
-
-
-        console.log(this.props.data);
-        let calendarHash = {};
-        let userHash={};
-        let workplace = "";
-        if (this.props.data.templateById){
-            workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
+        if(this.state.redirect){
+          return (
+            <Redirect to={{pathname:'/schedule/team' ,viewName:this.state.view}}/>
+          )
         }
-
-        if (this.props.data.templateById) {
-            this.props.data.templateById.templateShiftsByTemplateId.edges.map((value,index) => {
-
-                if (value.node.workerCount > value.node.templateShiftAssigneesByTemplateShiftId.edges.length){
-                            const rowHash = {};
-                            rowHash["user"] = ["Open", "Shifts"];
-                            rowHash["workplace"] = workplace;
-                            if (calendarHash["Open Shifts"]){
-                                calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"],  Object.assign(rowHash, value.node)]
-                            } else {
-                                calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
-                            }
-                }
-
-                value.node.templateShiftAssigneesByTemplateShiftId.edges.map((value2,index2) => {
-                        const user = [value2.node.userByUserId.firstName, value2.node.userByUserId.lastName, value2.node.userByUserId.avatarUrl]
-                        const rowHash = {};
-                        rowHash["user"] = user;
-                        rowHash["workplace"] = workplace;
-                        if (calendarHash[user]){
-                            calendarHash[user] = [...calendarHash[user],  Object.assign(rowHash, value.node)]
-                        } else {
-                            calendarHash[user] = [Object.assign(rowHash, value.node)]
-                        }
-                    })
-            });
-        }
-
-        console.log(calendarHash)
-        let jobData = calendarHash;
+        let jobData = this.state.view=="job" ? this.getTemplateDataJob() :this.getTemplateDataEmployee();
         let {date} = this.props;
         let {start} = ShiftWeekTable.range(date,this.props);
         let deleteTemplateAction =[{type:"white",title:"Cancel",handleClick:this.modalClose,image:false},
-            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:true}];
+            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:"/images/modal/close.png"}];
         return (
             <div>
             <div className="table-responsive table-fixed-bottom-mrb">
@@ -123,7 +170,7 @@ class ShiftWeekTableComponent extends Week {
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p><p className="hoursWorked">78%</p></TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname"></TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -150,84 +197,16 @@ class ShiftWeekTableComponent extends Week {
                     <TableBody>
                         <SpecialDay/>
                         {Object.keys(jobData).map((value, index) => (
-                                <JobsRow data={jobData[value]} key={index}/>
+                                <JobsRow data={jobData[value]} key={index} view={this.state.view}/>
                                      )
                              )
                         }
                     </TableBody>
                     <TableFooter adjustForCheckbox={false}>
-                        <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooterHeading}>
-                                <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
-                                    hours booked:</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours
-                                    booked</p><p className="sfont">185 of 236 | 78%</p></div>
-                            </TableRowColumn>
-                        </TableRow>
-                        <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="mtitle"><p className="bfont">weekly spend booked:</p><p
-                                    className="sfont">$12038 of $18293 | 66%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle"><p className="bfont">spend booked</p><p className="sfont">$1293
-                                    of $2019 | 64%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle"><p className="bfont">hours booked</p><p className="sfont">185 of
-                                    236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                            <TableRowColumn style={styles.tableFooter}>
-                                <div className="stitle "><p className="bfont">hours booked</p><p className="sfont">185
-                                    of 236 | 78%</p></div>
-                            </TableRowColumn>
-                        </TableRow>
                         <TableRow>
                             <TableRowColumn colSpan="8">
                                 <div className="text-center">
-                                    <CircleButton type="white" title="Cancel" handleClick={this.handleDeleteTemplate}/>
+                                    <CircleButton type="white" title="Cancel" handleClick={this.backToCalendarView}/>
                                     <CircleButton type="red" title="delete template" handleClick={this.handleDeleteTemplate}/>
                                     <CircleButton type="blue" title="apply template" handleClick={this.handleDeleteTemplate}/>
                                 </div>
@@ -282,20 +261,37 @@ const allTemplateShifts = gql`
                                 }
                               }
                             }
-                        } 
-                      }          
+                        }
+                      }
                     }
-            }  
+            }
     }
 }`
 
-const ShiftWeekTable = graphql(allTemplateShifts, {
-   options: (ownProps) => ({
-     variables: {
-       id: "5a03282c-c220-4927-b059-f4f22d01c230",
-     }
-   }),
- })(ShiftWeekTableComponent)
+const allUsers = gql`
+    query allUsers {
+        allUsers{
+            edges{
+                node{
+                    id
+                    firstName
+                    lastName
+                    avatarUrl
+                }
+            }
+        }
+    }
+    `
 
+const ShiftWeekTable = compose(
+  graphql(allTemplateShifts, {
+    options: (ownProps) => ({
+      variables: {
+        id: ownProps.id,
+      }
+    }),
+  }),
+  graphql(allUsers, {name: "allUsers"})
+)(ShiftWeekTableComponent);
 
 export default ShiftWeekTable;

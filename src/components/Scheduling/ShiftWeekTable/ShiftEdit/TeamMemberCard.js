@@ -2,20 +2,59 @@ import React, { Component } from 'react';
 import { Image, Icon, Dropdown } from 'semantic-ui-react';
 
 export default class TeamMemberCard extends Component {
-	render() {
-		const { avatar, firstName, id, otherNames, content, color, users, handleRemove, onSelectChange } = this.props;
-		return (
-			<div className="teamMemberCard">
-				<div className="edits">
-					<Icon name="close" onClick={handleRemove}/>
-				</div>
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchText: '',
+      users: [{
+        id: 0,
+        firstName: 'Unassigned',
+        otherNames: '',
+        avatar: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
+      }, ...props.users]
+    }
+  }
+
+  onDropDownOpen = () => {
+    this.searchField.focus();
+    this.setState({ userOptions: [...this.state.users] });
+  };
+
+  onSelectChange = (user, id) => {
+    this.props.onSelectChange(user, id);
+    this.setState({ searchText: '' });
+  };
+
+  searchChange = (event, value) => {
+    this.setState({
+      searchText: value,
+      userOptions: this.state.users.filter(user =>
+      new RegExp(value.toLowerCase(), 'g').test(user.firstName.toLowerCase()) ||
+      new RegExp(value.toLowerCase(), 'g').test(user.otherNames.toLowerCase()))
+    });
+  };
+
+  render() {
+    const { avatar, firstName, id, otherNames, content, color, handleRemove } = this.props;
+    const { userOptions, searchText } = this.state;
+    return (
+      <div className="teamMemberCard">
+        <div className="edits">
+          <Icon name="close" onClick={handleRemove} />
+        </div>
         <Dropdown
-          trigger={<div className={"content "+color}>
+          placeholder="Team Member"
+          name="team-member"
+          ref="userDropDown"
+          forceSelection={false}
+          onOpen={this.onDropDownOpen}
+          trigger={<div className={'content ' + color}>
             <div className="avatar">
-              <Image src={avatar}/>
+              <Image src={avatar} alt="avatar" />
             </div>
             <div className="label">
-              <b>{firstName}</b> {otherNames} <br/>
+              <b>{firstName}</b> {otherNames} <br />
               <span className="description">{ content }</span>
             </div>
           </div>}
@@ -24,15 +63,27 @@ export default class TeamMemberCard extends Component {
           id={id}
           className="dropdown-team">
           <Dropdown.Menu fluid>
-            {users && users.map((user, index) => (
-              <Dropdown.Item value={index} onClick={() => onSelectChange(user, id)}>
-                <img src={user.avatar} className="select-dropdown-img" />
+            <Dropdown.Item value="searchInput" onClick={(e) => {
+              e.stopPropagation();
+            }}>
+              <input
+                type="text"
+                ref={(input) => this.searchField = input}
+                autoFocus
+                value={searchText}
+                className="form-control"
+                placeholder="Search member"
+                onChange={(e) => this.searchChange(e.target, e.target.value)} />
+            </Dropdown.Item>
+            {userOptions && userOptions.map((user, index) => (
+              <Dropdown.Item key={index} value={index} onClick={() => this.onSelectChange(user, id)}>
+                <img src={user.avatar} alt="avatar" className="select-dropdown-img" />
                 <span>{user.firstName + ' ' + user.otherNames}</span>
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
         </Dropdown>
-			</div>
-		);
-	}
+      </div>
+    );
+  }
 }

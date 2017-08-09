@@ -3,14 +3,13 @@ import App from './components/App';
 import Root from './components/Root';
 import Home from './components/Home';
 import Schedule from './components/Scheduling';
-import EmployeeView from './components/EmployeeView';
 import Settings from './components/Settings';
 import Positions from './components/Positions';
 import MyWorkplace from './components/workplace/MyWorkplace'
 import Hiring from './components/Hiring'
-import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
 import Team from './components/Team'
+
 
 
 import Certificates from './components/certifications/Certificates'
@@ -51,21 +50,16 @@ const routes = [
                      //    exact: true,
                      //    component: EmployeeView
 					// },
-					{
-            path: '/schedule/employeeview',
-            exact: true,
-            component: EmployeeView
-					},
+				// 	{
+            // path: '/schedule/employeeview',
+            // exact: true,
+            // component: EmployeeView
+				// 	},
 					{
             path: '/schedule/template',
             exact: true,
             component: Template
 					},
-          {
-            path: '/schedule/team/template',
-            exact: true,
-            component: TemplateViewJob
-          },
 					{
 						path: '/schedule/manager',
 						exact: true,

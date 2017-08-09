@@ -160,7 +160,7 @@ export class AddShiftForm extends Component{
       let weekPublishedId = this.props.weekPublishedId
 
       // if it doesn't exist create and then create shifts
-      if(!weekPublishedId) {
+      if(weekPublishedId == "66666666-12c4-11e1-840d-7b25c5ee7756") {
          weekPublishedId = uuidv1();
          _this.props.createWeekPublished({
                 variables: { data: 
@@ -171,18 +171,17 @@ export class AddShiftForm extends Component{
                                     published: false, datePublished: moment().format(),
                                     brandId: brandId }
                             }},
-           /*     updateQueries: {
-                    allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-                      const returnHash = {};
-                      const weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
-                      weekPublishedHash['__typename'] = "WeekPublished"
-                      returnHash['nodes'] = [ weekPublishedHash ]
-                      returnHash['__typename'] = "WeekPublishedByDateConnection"
+               updateQueries: {
+                    allWeekPublisheds: (previousQueryResult, { mutationResult }) => {
+                      console.log(previousQueryResult)
+                      console.log(mutationResult)
+                      let weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
+                      previousQueryResult.allWeekPublisheds.nodes = [...previousQueryResult.allWeekPublisheds.nodes,  weekPublishedHash]
                       return {
-                        weekPublishedByDate: returnHash
+                        allWeekPublisheds: previousQueryResult.allWeekPublisheds
                       };
                     },
-                },*/
+                },
             })
             .then(({ data }) => {
                  days.forEach(function(day){
@@ -367,13 +366,9 @@ const createWeekPublishedMutation = gql`
     {
     weekPublished{
       id
-      shiftsByWeekPublishedId{
-          edges {
-            node {
-              id
-            }
-        }
-      }
+      start
+      end
+      published
     }
   }
 }`

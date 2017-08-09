@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import BigCalendar from 'react-big-calendar';
-import { NavLink } from 'react-router-dom'
-import { Button } from 'semantic-ui-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Toolbar from 'react-big-calendar/lib/Toolbar';
 import ShiftWeekTable from './ShiftWeekTable';
@@ -32,22 +30,53 @@ const style = {
     borderRadius: 6
   }
 };
-
+let that;
+let viewName="Employee View";
+let currentView = "job";
 class ScheduleComponent extends Component {
     constructor(props){
         super(props);
         this.state = {
             publishModalPopped: false,
-			addTemplateModalOpen: false,
-			templateName:"",
+			      addTemplateModalOpen: false,
+			      templateName:"",
             redirect:false,
+            view:"job",
             date: moment()
         }
     }
   onNavigate = (start) => {
     this.setState({date: start})
   };
-
+  customEvent  = (currentlyView) => {
+    if(currentlyView == "job"){
+      viewName="Job View";
+      currentView="employee";
+      this.setState({view:currentView});
+    }else{
+      viewName="Employee View";
+      currentView="job";
+      this.setState({view:currentView});
+    }
+  };
+  onViewChange = () =>{
+    return this.state.view;
+  };
+  componentWillMount = () => {
+    if(this.props.location && this.props.location.viewName){
+      if(this.props.location.viewName == "job"){
+        viewName="Employee View";
+        currentView="job";
+        this.setState({view:"job"});
+      }
+      else{
+        viewName="Job View";
+        currentView="employee";
+        this.setState({view:"employee"});
+      }
+    }
+    that = this
+  };
   render() {
     console.log(this.props)
     console.log("this.props.client")
@@ -58,7 +87,7 @@ class ScheduleComponent extends Component {
     }
 
     if (this.props.data.error) {
-      console.log(this.props.data.error)
+      console.log(this.props.data.error);
       return (<div>An unexpected error occurred</div>)
     }
     let events= [];
@@ -81,7 +110,7 @@ class ScheduleComponent extends Component {
 
     return (
       <div>
-        <div style={{height: '160px'}}><ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={publish_id}/></div>
+        <div style={{height: '160px'}}><ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={publish_id} view={this.state.view}/></div>
         <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                message="Are you sure that you want to delete this shift?"
                action={publishModalOptions} closeAction={this.modalClose}/>
@@ -92,11 +121,11 @@ class ScheduleComponent extends Component {
                        endAccessor='endDate'
                        defaultView='week'
                        views={{today: true, week: ShiftWeekTable, day: true}}
-                       eventPropGetter={this.onChange}
+                       eventPropGetter={this.onViewChange}
                        onNavigate={(start) => this.onNavigate(start)}
                        components={{
-                         event: Event,
-                         toolbar: CustomToolbar
+                         event: this.customEvent,
+                         toolbar:CustomToolbar
                        }}
           />
         </div>
@@ -121,7 +150,7 @@ class CustomToolbar extends Toolbar {
                         onClick={() => this.navigate("NEXT")}/>
               </div>
               <ul className="nav navbar-nav">
-                <Button as={NavLink} to="/schedule/employeeview">Employee view</Button>
+                <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
               </ul>
               <div className="maintitle">
                 {month}

@@ -46,18 +46,6 @@ class EventPopupComponent extends Component {
 
   closeEditShiftModal = () => {
     this.setState({ editShiftModalOpen: false });
-  }
-
-  handleEditShiftDrawerClose = () => {
-    this.setState({ editShiftDrawerOpen: false });
-  };
-
-  handleHistoryDrawer = () => {
-    this.setState({ shiftHistoryDrawer: !this.state.shiftHistoryDrawer });
-  };
-
-  handleNewShiftDrawerClose = () => {
-    this.setState({ newShiftModalPopped: false });
   };
 
   onPopupOpen = (modal) => {
@@ -116,19 +104,34 @@ class EventPopupComponent extends Component {
           <p className="date-time"> {startTime.replace('M', '')} {endTime.replace('M', '')}</p>
           <p className="duration">{h} HR&thinsp; {m}MIN</p>
         </div>
-        <div className="location">
+        {this.props.view=="job"?
+          <div className="location">
                     <span className="fa fa-map-marker mr5" aria-hidden="true">
                         <a onClick={() => this.onLocationClick()} />
                     </span>
-          <span>{data.workplaceByWorkplaceId.workplaceName}</span>
-        </div>
-        <div className="day-item-title">
-          {this.openShift > 0 && <span className="box-title openshift">{this.openShift}</span>}
-          {data.workersInvited.length > 0 &&
-          <span className="box-title pendingshift">{data.workersInvited.length}</span>}
-          {data.workersAssigned.length > 0 &&
-          <span className="box-title filledshift">{data.workersAssigned.length}</span>}
-        </div>
+            <span>{data.workplaceByWorkplaceId.workplaceName}</span>
+          </div>:
+          <div className="location">
+            <span><img src="/assets/Icons/cashier.png" alt="jobtype"/></span>
+            <span className="jobType">{data.positionByPositionId.positionName}</span>
+          </div>
+        }
+        {
+          this.props.view=="job"?
+            <div className="day-item-title">
+              {this.openShift > 0 && <span className="box-title openshift">{this.openShift}</span>}
+              {data.workersInvited.length > 0 &&
+              <span className="box-title pendingshift">{data.workersInvited.length}</span>}
+              {data.workersAssigned.length > 0 &&
+              <span className="box-title filledshift">{data.workersAssigned.length}</span>}
+            </div>:
+            <div className="location">
+                    <span className="fa fa-map-marker mr5" aria-hidden="true">
+                        <a onClick={()=>this.onLocationClick()}/>
+                    </span>
+              <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
+            </div>
+        }
         <Modal
           title="Confirm"
           isOpen={this.state.deleteModalPopped}
@@ -136,10 +139,12 @@ class EventPopupComponent extends Component {
           action={deleteShiftAction}
           closeAction={this.modalClose} />
         <EditShiftDrawer
+          shift={data}
           open={this.state.newShiftModalPopped}
           handlerClose={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
         <ShiftHistoryDrawer
+          shift={data}
           open={this.state.shiftHistoryDrawer}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
@@ -161,7 +166,6 @@ class EventPopupComponent extends Component {
           </div>
         </div>
       </div>
-
     )
   }
 }

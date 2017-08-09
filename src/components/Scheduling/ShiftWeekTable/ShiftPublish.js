@@ -36,6 +36,9 @@ class ShiftPublish extends Component{
             addTemplateModalOpen:false
         });
     };
+    templateView = (view) => {
+      this.setState({redirect:true})
+    };
     addTemplateName = () => {
         let that = this;
         that.setState({redirect:true});
@@ -52,11 +55,11 @@ class ShiftPublish extends Component{
     handleChange = (e) => {
         this.setState({templateName:e});
     };
+
     render(){
-        console.log(this.props)
         let is_publish = this.props.isPublish;
         let publishId = this.props.publishId
-        const startDate = this.props.date
+        const startDate = this.props.date;
 
         let status = "";
         let statusImg = "";
@@ -72,7 +75,7 @@ class ShiftPublish extends Component{
             {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
         if(this.state.redirect){
             return (
-                <Redirect to={{pathname:'/schedule/team/template' ,templateName:this.state.templateName}}/>
+              <Redirect to={{pathname:'/schedule/template' ,viewName:this.props.view}}/>
             )
         }
 
@@ -98,7 +101,7 @@ class ShiftPublish extends Component{
                   <div className="btn-action">
                     <Button className="btn-image"><CreateShiftButton brandId={"5a14782b-c220-4927-b059-f4f22d01c230"} weekPublishedId={ publishId } weekStart={ start } /></Button>
                     {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
-                    {(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/team/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
+                    {(is_publish != "none") && <Button className="btn-image flr" onClick={() => this.templateView()}><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
                     {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
                 </div>

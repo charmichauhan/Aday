@@ -42,13 +42,13 @@ export default class JobsRow extends Component{
             <TableRow className="tableh" displayBorder={false}>
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
                     <div className="user_profile" width="80%">
-                                     <div className="user_img">
-                                       <img width="55px" src={data[0].user[2]} alt="img"/>
+                                      <div className="user_img">
+                                       <img width="55px" src={this.props.view=="job"?data[0].positionByPositionId.positionIconUrl : data[0].user[2] } alt="img"/>
                                     </div>
-                                    <div className="user_desc penalheading">{data[0].user[0]}
-                                       <p className="lastName">{data[0].user[1]}</p>
+                                    <div className="user_desc penalheading">{this.props.view=="job" ? data[0].positionByPositionId.positionName.split(" ")[0] : data[0].user[0]}
+                                       <p className="lastName">{ this.props.view=="job" ? data[0].positionByPositionId.positionName.split(" ")[1] : data[0].user[1]}</p>
                                         <p className="finalHours employeeFinalHours">{finalHours || 0} hours<br/>{finalMinutes || 0} Minutes</p>
-                                  </div>
+                                    </div>
                                </div>
                 </TableRowColumn>
                      {
@@ -56,7 +56,7 @@ export default class JobsRow extends Component{
                           <TableRowColumn key={index} className="shiftbox" style={{paddingLeft:'0px',paddingRight:'0px',backgroundColor:'#F5F5F5'}}>
                                    {
                                       Object.values(hashByDay[value]).map((y, index)=>(
-                                          <EventPopup data={y} key={index}/>
+                                          <EventPopup data={y} key={index} view={this.props.view}/>
                                       ))
                                     }
                                      <button type="button" className="addshift">

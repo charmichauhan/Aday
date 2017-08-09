@@ -70,29 +70,34 @@ export class PositionsSection extends Component {
 
   deletePosition = (id) => {
     const { positions } = this.state;
-     const positionIndex = findIndex(positions, { id:id });
-     const opportunityId=positions[positionIndex].opportunitiesByPositionId.nodes[0].id;
-      this.props.deletePosition({
-      variables:{
-        "input": {
-          "clientMutationId": "fdsgdhfj",
-          "id":id 
-        },
-        "data":{
-          "clientMutationId": "fdsgdhfjs",
-          "id":opportunityId
-        }
-      }
-    })
-    .then(({ data }) => {
-      console.log(data);
-      remove(positions, {'id': id });
-      this.setState({ positions });
-    })
-    .catch((error) => {
-      console.error('There was an error sending the query', error);
-    });
+    const positionIndex = findIndex(positions, { id:id });
+    const position=positions[positionIndex];
+    if(position.jobsByPositionId.nodes.length==0){
    
+      const opportunityId=positions[positionIndex].opportunitiesByPositionId.nodes[0].id;
+        this.props.deletePosition({
+        variables:{
+          "input": {
+            "clientMutationId": "fdsgdhfj",
+            "id":id 
+          },
+          "data":{
+            "clientMutationId": "fdsgdhfjs",
+            "id":opportunityId
+          }
+        }
+      })
+      .then(({ data }) => {
+        console.log(data);
+        remove(positions, {'id': id });
+        this.setState({ positions });
+      })
+      .catch((error) => {
+        console.error('There was an error sending the query', error);
+      });
+    }else{
+      alert(`${position.jobsByPositionId.nodes.length} jobs are connected to this position. Please remove these jobs from Roster Page.`)
+    }
   };
 
   addOrUpdatePosition = (position) => {
@@ -189,33 +194,34 @@ export class PositionsSection extends Component {
     }
   };
   createJob=(userId,positionId)=>{
-       this.props.createJob({
-          variables: {
-            "input": {
-              "clientMutationId": "dd",
-              "job": {
-                "userId": userId,
-                "workplaceId": workplace_id,
-                "positionId": positionId,
-                "isPositionActive": true,
-                "activatedDate":moment().format(),
-                "deactivatedDate": moment().add(10, 'day').format(),
-                "isVerified": false,
-                "isPreTrainingComplete": false,
-                "isTrainable": true,
-                "id": uuidv1(),
-                "primaryJob": false
-              }
-            }
+    this.props.createJob({
+      variables: {
+        "input": {
+          "clientMutationId": "dd",
+          "job": {
+            "userId": userId,
+            "workplaceId": workplace_id,
+            "positionId": positionId,
+            "isPositionActive": true,
+            "activatedDate":moment().format(),
+            "deactivatedDate": moment().add(10, 'day').format(),
+            "isVerified": false,
+            "isPreTrainingComplete": false,
+            "isTrainable": true,
+            "id": uuidv1(),
+            "primaryJob": false
           }
-        })
-        .then(({ data }) => {
-          console.log(data);
-        })
-        .catch((error) => {
-          console.error('There was an error sending the query', error);
-        });
+        }
+      }
+    })
+    .then(({ data }) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error('There was an error sending the query', error);
+    });
   }
+
   render() {
     if (!this.state.positions) {
       return  ( 
@@ -308,18 +314,18 @@ mutation createJob($input:CreateJobInput!){
 }`
 
 const update_position=gql`
-mutation updatePosition($input:UpdateOpportunityInput!,$data:UpdatePositionByIdInput!){
-    updateOpportunity(input:$input){
-      opportunity{
-        id
-      }
+mutation updatePosition($input:UpdateOpportunityByIdInput!,$data:UpdatePositionByIdInput!){
+  updateOpportunityById(input:$input){
+    opportunity{
+      id
     }
-    updatePositionById(input:$data){
-      position{
-        id		
-      }
-    }  
-  }`
+  }
+  updatePositionById(input:$data){
+    position{
+      id		
+    }
+  }  
+}`
 
 const delete_position=gql`
 mutation deletePosition($input: DeletePositionByIdInput!,$data: DeleteOpportunityByIdInput!) {

@@ -31,7 +31,7 @@ class AppComponent extends Component {
 
     if (this.props.data.error) {
       console.log(this.props.data.error)
-      window.location.href = '/login';
+      this.props.history.push('/login')
       return (<div>You must login first</div>)
     }
     this.props.data.allUsers
@@ -45,19 +45,16 @@ class AppComponent extends Component {
 
 
     localStorage.setItem("userId", this.props.data.allUsers.edges[0].node.id)
-    
     const employee = this.props.data.allUsers.edges[0].node.employeesByUserId.edges[0]
     if(employee){
-
-    }else{
-      localStorage.setItem("brandId", "5a14782b-c220-4927-b059-f4f22d01c230");
-      localStorage.setItem("corporationId", "3b14782b-c220-4927-b059-f4f22d01c230");
-    }
+      localStorage.setItem("corporationId", employee.node.corporationId);
+      localStorage.setItem("brandId", employee.node.accessesByEmployeeId.nodes[0].brandId);
+   }
     return(
       	<Container fluid>
           <Grid>
             <Grid.Row>
-              <Grid.Column width={3} className="left-content"><Nav handleChange={this.handleChange} isemployeeview={this.state.isEmployeeview}/></Grid.Column>
+              <Grid.Column width={3} className="left-content"><Nav handleChange={this.handleChange} history={this.props.history} isemployeeview={this.state.isEmployeeview}/></Grid.Column>
               <Grid.Column width={12} className="main-content">
                 {renderRoutes(routes)}
               </Grid.Column>
@@ -82,7 +79,7 @@ const userInfo = gql
                         corporationId
                         accessesByEmployeeId{
                           nodes{
-                            workplaceId
+                            brandId
                           }
                         }
                       }
@@ -93,10 +90,11 @@ const userInfo = gql
     }
 }`
 
+// will be localStorage.getItem('email') with authentication
 const App = graphql(userInfo, {
   options: (ownProps) => ({
     variables: {
-      email: localStorage.getItem('email'),
+      email: 'test@example.com', 
     }
   }),
 })(AppComponent);

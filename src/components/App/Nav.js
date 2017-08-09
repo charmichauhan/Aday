@@ -25,7 +25,8 @@ class NavComponent extends Component {
 
   logout = () => {
   	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  	window.location.href = '/login';
+  	this.props.history.push('/login')
+
   }
 	render() {
 		if (this.props.data.loading) {
@@ -67,7 +68,6 @@ class NavComponent extends Component {
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
               <Menu.Item><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>DASHBOARD</span></div></Menu.Item>
-							<Menu.Item><EmergencyShiftButton/></Menu.Item>
 						</Menu.Menu>
 					</Menu.Item>
 					<Menu.Item className="menu-item">

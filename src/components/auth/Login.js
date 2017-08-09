@@ -38,7 +38,7 @@ class LoginComponent extends Component {
                   	document.cookie = "token="+ data.authenticate.jwt;
                   	console.log(document.cookie)
                   	localStorage.setItem("email", this.state.email);
-                   	window.location.href = '/schedule/team';
+                   	this.props.history.push('/schedule/team');
                   }else{
                   	 this.setState({badLogin: true});
                   }

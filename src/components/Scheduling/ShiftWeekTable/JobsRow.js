@@ -56,7 +56,7 @@ export default class JobsRow extends Component{
                             <TableRowColumn key={index} className="shiftbox" style={{paddingLeft:'0px',paddingRight:'0px',backgroundColor:'#F5F5F5'}}>
                                 {
                                     Object.values(hashByDay[value]).map((y, index)=>(
-                                        <EventPopup data={y} key={index} view={this.props.view}/>
+                                        <EventPopup users={this.props.users} data={y} key={index} view={this.props.view} />
                                     ))
                                 }
                                 <button type="button" className="addshift">

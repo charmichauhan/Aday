@@ -11,8 +11,8 @@ export default class TeamMemberCard extends Component {
       users: [{
         id: 0,
         firstName: 'Unassigned',
-        otherNames: '',
-        avatar: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
+        lastName: '',
+        avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
       }, ...props.users]
     }
   }
@@ -37,7 +37,7 @@ export default class TeamMemberCard extends Component {
   };
 
   render() {
-    const { avatar, firstName, id, otherNames, content, color, handleRemove } = this.props;
+    const { avatarUrl, firstName, id, lastName, content, color, handleRemove } = this.props;
     const { userOptions, searchText } = this.state;
     return (
       <div className="teamMemberCard">
@@ -52,10 +52,10 @@ export default class TeamMemberCard extends Component {
           onOpen={this.onDropDownOpen}
           trigger={<div className={'content ' + color}>
             <div className="avatar">
-              <Image src={avatar} alt="avatar" />
+              <Image src={avatarUrl} alt="avatar" />
             </div>
             <div className="label">
-              <b>{firstName}</b> {otherNames} <br />
+              <b>{firstName}</b> {lastName} <br />
               <span className="description">{ content }</span>
             </div>
           </div>}

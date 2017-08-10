@@ -113,9 +113,9 @@ class ShiftWeekTableComponent extends Week {
       data.allShifts.edges.map((value, index) => {
         if(workplaceId != "") {
           if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-            
+
             const dayOfWeek = moment(value.node.startTime).format("dddd");
-           
+
             let assigned = value.node.workersAssigned
             if (value.node.workersAssigned == null) {
               assigned = [];
@@ -150,9 +150,9 @@ class ShiftWeekTableComponent extends Week {
           }
         }
         else {
-         
+
           const dayOfWeek = moment(value.node.startTime).format("dddd");
-         
+
           let assigned = value.node.workersAssigned
           if (value.node.workersAssigned == null) {
             assigned = [];
@@ -307,7 +307,11 @@ class ShiftWeekTableComponent extends Week {
                             <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay}/>
 
                             {(Object.keys(jobData)).map((value, index) => (
-                                    <JobsRow data={jobData[value]} key={value} view={this.state.calendarView}/>
+                                    <JobsRow
+                                      data={jobData[value]}
+                                      key={value}
+                                      users={this.props.allUsers}
+                                      view={this.state.calendarView} />
                                 )
                             )
                             }

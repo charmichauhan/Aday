@@ -83,7 +83,7 @@ class EventPopupComponent extends Component {
   };
 
   render() {
-    let data = this.props.data;
+    let { data, users }= this.props;
     let startTime = moment(data.startTime).format('hh:mm A');
     let endTime = moment(data.endTime).format('hh:mm A');
     let h = moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('HH');
@@ -140,6 +140,7 @@ class EventPopupComponent extends Component {
           closeAction={this.modalClose} />
         <EditShiftDrawer
           shift={data}
+          users={users}
           open={this.state.newShiftModalPopped}
           handlerClose={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />

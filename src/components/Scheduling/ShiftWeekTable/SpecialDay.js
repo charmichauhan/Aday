@@ -5,6 +5,7 @@ import uuidv1 from 'uuid/v1';
 import { gql, graphql,compose} from 'react-apollo';
 import AddHolidayModal from '../../helpers/AddHolidayModal';
 import '../style.css';
+import {allHolidays,createHoliday,deleteHolidaysById,updateHoliday} from './SpecialDay.graphql';
 import {
     TableRow,
     TableRowColumn,
@@ -29,22 +30,22 @@ class SpecialDayComponent extends Component{
     this.state=initialState;
   }
   handleOpen = (date,holidayData) => {
-    this.setState({addHoliday:true,isEdit:(holidayData?true:false),holidayDate:date["_d"],currentData:holidayData && holidayData[0],holidayId:holidayData && holidayData[0].id});
+    this.setState({addHoliday:true,isEdit:(holidayData?true:false),holidayDate:date['_d'],currentData:holidayData && holidayData[0],holidayId:holidayData && holidayData[0].id});
   };
   handleModalClose = () => {
     this.setState({addHoliday:false,isEdit:false})
   };
   handleAddHoliday = (holidayDetail) => {
     let that = this;
+    let payMultiplier;
+    if(holidayDetail.holidayPayPremium == "one"){
+      payMultiplier=1
+    }else if(holidayDetail.holidayPayPremium == "oneHalf"){
+      payMultiplier=1.5
+    }else{
+      payMultiplier=2
+    }
     if(that.state.isEdit){
-      let payMultiplier;
-      if(holidayDetail.pyramidPayPremium == "one"){
-        payMultiplier=1
-      }else if(holidayDetail.pyramidPayPremium == "oneHalf"){
-        payMultiplier=1.5
-      }else{
-        payMultiplier=2
-      }
       that.props.updateHolidayById({
         variables:{
           data:{
@@ -56,21 +57,13 @@ class SpecialDayComponent extends Component{
               payMultiplier: payMultiplier
             }
           }
-        },
+        }
       }).then(({data})=>{
         console.log("Update Holiday Successfully");
       }).catch((error) => {
         console.log('there was an error sending the query', error);
       });
     }else{
-      let payMultiplier;
-      if(holidayDetail.pyramidPayPremium == "one"){
-        payMultiplier=1
-      }else if(holidayDetail.pyramidPayPremium == "oneHalf"){
-        payMultiplier=1.5
-      }else{
-        payMultiplier=2
-      }
       that.props.createHoliday({
         variables:{
           data:{
@@ -83,10 +76,13 @@ class SpecialDayComponent extends Component{
             }
           }
         },
-        updateQueries:(previousResult,{fetchMoreResult})=>{
-          const newEdges = fetchMoreResult.allHolidays.edges;
-          return {
-            allHolidays:[...previousResult.allHolidays.edges,...newEdges],
+        updateQueries:{
+          allHolidays:(previousResult,{ mutationResult })=>{
+            const newEdges = mutationResult.data.createHoliday.holiday;
+            previousResult.allHolidays.edges = [...previousResult.allHolidays.edges,{"node":newEdges,'__typename':""}]
+            return{
+              allHolidays:previousResult.allHolidays
+            }
           }
         },
       }).then(({data})=>{
@@ -101,8 +97,8 @@ class SpecialDayComponent extends Component{
   getSpecialDay = (start,specialDayData) => {
     let specialDay = [];
     for(let i=0;i<=6;i++){
-      let specialDayStyle = specialDayData[moment(start).day(i).format('D')] ? "spclDay":"special-day-blank";
-      specialDay.push(<TableRowColumn style={styles}><p className={specialDayStyle} onClick={() => this.handleOpen(moment(start).day(i),specialDayData[moment(start).day(i).format('D')])}>{specialDayData[moment(start).day(i).format('D')] && specialDayData[moment(start).day(i).format('D')][0]['holidayName']}</p></TableRowColumn>);
+      let specialDayStyle = specialDayData[moment(start).day(i).format('YYYYMMDD')] ? "spclDay":"special-day-blank";
+      specialDay.push(<TableRowColumn style={styles}><p className={specialDayStyle} onClick={() => this.handleOpen(moment(start).day(i),specialDayData[moment(start).day(i).format('YYYYMMDD')])}>{specialDayData[moment(start).day(i).format('YYYYMMDD')] && specialDayData[moment(start).day(i).format('YYYYMMDD')][0]['holidayName']}</p></TableRowColumn>);
     }
     return specialDay;
   };
@@ -116,13 +112,12 @@ class SpecialDayComponent extends Component{
           return (<div>An unexpected error occurred</div>)
         }
         let allHoliday = this.props.allHoliday && this.props.allHoliday.allHolidays.edges;
-        // this.props.deleteHolidayById({variables:{data:{id:"3876a540-7d1e-11e7-bb97-2130782b8e28"}}})
-        //   .then(({ data }) => {
-        //     console.log('Delete Data', data);
-        //   }).catch((error) => {
-        //   console.log('there was an error sending the query', error);
-        // });
-
+            // this.props.deleteHolidayById({variables:{data:{id:"24047040-7db6-11e7-8758-43844db7b008"}}})
+            //   .then(({ data }) => {
+            //     console.log('Delete Data', data);
+            //   }).catch((error) => {
+            //   console.log('there was an error sending the query', error);
+            // });
         let specialDay= [];
         allHoliday.map((value,index)=>{
           let special = {};
@@ -131,17 +126,18 @@ class SpecialDayComponent extends Component{
           special.holidayName = value.node.holidayName;
           special.holidayDate = value.node.holidayDay;
           special.pyramidPayPremium = value.node.isPyramid;
-          if(value.node.isPyramid == 1){
+          if(value.node.payMultiplier == 1){
             special.holidayPayPremium = "one";
-          }else if(value.node.isPyramid == 1.5){
+          }else if(value.node.payMultiplier == 1.5){
             special.holidayPayPremium = "oneHalf";
           }else{
             special.holidayPayPremium = "two";
           }
           specialDay.push(special);
         });
-        let start = this.props.dateStart;
-        let sortedData = specialDay.map((special) => ({ ...special, specialDayData: moment(special.holidayDate).format('D')}));
+        let start = moment(this.props.dateStart);
+        let sortedData = specialDay.map((special) => ({ ...special, specialDayData: moment(special.holidayDate).format("YYYYMMDD")}));
+
         let groupedData = groupBy(sortedData, 'specialDayData');
         return(
             <TableRow className="spday" displayBorder={false} style={{height:'auto'}}>
@@ -160,60 +156,6 @@ class SpecialDayComponent extends Component{
     }
 }
 
-const updateHoliday = gql`
-  mutation updateHolidayById($data:UpdateHolidayByIdInput!){
-    updateHolidayById(input:$data){
-      holiday{
-          id
-          holidayDay
-          holidayName
-          workplaceId
-          isPyramid
-          payMultiplier
-     }
-    }
-  }
-`
-const createHoliday = gql`
-  mutation createHoliday($data: CreateHolidayInput!){
-    createHoliday(input:$data)
-    {
-      holiday{
-        id
-        holidayDay
-        holidayName
-        workplaceId
-        isPyramid
-        payMultiplier
-      }
-    }
-  }
-`
-const allHolidays = gql`
-  query allHolidays{
-    allHolidays{
-      edges{
-        node{
-          id
-          holidayDay
-          holidayName
-          workplaceId
-          isPyramid
-          payMultiplier
-        }
-      }
-    }
-  }
-`
-const deleteHolidaysById = gql`
-  mutation deleteHolidayById($data:DeleteHolidayByIdInput!){
-    deleteHolidayById(input:$data){
-        holiday{
-          id
-        }
-    }
-  }
-`
 const SpecialDay=compose(graphql(createHoliday, {
   name:"createHoliday"
 }),

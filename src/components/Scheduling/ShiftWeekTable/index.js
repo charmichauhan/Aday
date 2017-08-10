@@ -113,9 +113,9 @@ class ShiftWeekTableComponent extends Week {
       data.allShifts.edges.map((value, index) => {
         if(workplaceId != "") {
           if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-            
+
             const dayOfWeek = moment(value.node.startTime).format("dddd");
-           
+
             let assigned = value.node.workersAssigned
             if (value.node.workersAssigned == null) {
               assigned = [];
@@ -150,9 +150,9 @@ class ShiftWeekTableComponent extends Week {
           }
         }
         else {
-         
+
           const dayOfWeek = moment(value.node.startTime).format("dddd");
-         
+
           let assigned = value.node.workersAssigned
           if (value.node.workersAssigned == null) {
             assigned = [];
@@ -333,8 +333,8 @@ class ShiftWeekTableComponent extends Week {
 
 ShiftWeekTableComponent.range = (date, { culture }) => {
     let firstOfWeek = localizer.startOfWeek(culture);
-    let start = dates.startOf(date, 'week', firstOfWeek);
-    let end = dates.endOf(date, 'week', firstOfWeek);
+    let start = moment(dates.startOf(date, 'week', firstOfWeek));
+    let end = moment(dates.endOf(date, 'week', firstOfWeek));
     return { start, end };
 };
 

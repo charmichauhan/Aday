@@ -18,6 +18,7 @@ class ShiftPublish extends Component{
             publishModalPopped: false,
             addTemplateModalOpen: false,
             templateName:"",
+            workplaceId:"",
             redirect:false
         }
     }
@@ -52,8 +53,11 @@ class ShiftPublish extends Component{
     onPublish = () => {
         this.setState({publishModalPopped:true})
     };
-    handleChange = (e) => {
-        this.setState({templateName:e});
+    handleNameChange = (e) => {
+    this.setState({templateName:e});
+    };
+    handleWorkplaceChange = (e) => {
+        this.setState({workplaceId:e});
     };
 
     render(){
@@ -90,7 +94,8 @@ class ShiftPublish extends Component{
                 {this.state.addTemplateModalOpen && <AddAsTemplateModal addTemplateModalOpen={true}
                                                                         handleClose={this.addTemplateclose}
                                                                         addTemplate={this.addTemplateName}
-                                                                        handleChange={(e) =>this.handleChange(e)} />
+                                                                        handleNameChange={this.handleNameChange}
+                                                                        handleWorkplaceChange={this.handleWorkplaceChange} />
                 }
                     <div className="col-md-12">
                         <div className="col-sm-offset-3 col-sm-5 rectangle">

@@ -5,6 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import CircleButton from '../CircleButton';
 import IconButton from 'material-ui/IconButton';
 import {Image} from 'semantic-ui-react';
+import WorkplaceSelector from '../../Scheduling/AddShift/CreateShift/workplaceSelector'
 import './addastemplate.css';
 const style = {
     titleStyle:{
@@ -29,8 +30,11 @@ export default class AddAsTemplateModal extends Component {
             isOpen:props.isOpen
         }
     }
-    handleChange = (e) => {
-        this.props.handleChange(e.target.value);
+    handleNameChange = (e) => {
+        this.props.handleNameChange(e.target.value);
+    };
+    handleWorkplaceChange = (e) => {
+        this.props.handleWorkplaceChange(e.workplace);
     };
     render() {
         const {addTemplateModalOpen,handleClose,addTemplate} = this.props;
@@ -60,9 +64,13 @@ export default class AddAsTemplateModal extends Component {
                 title={titleMessage}
                 actions={actions}
                 modal={true}
+                autoScrollBodyContent={true}
                 open={addTemplateModalOpen}>
                 <div className="confirm-popup-body">
                     <div className="add-template-popup">
+                    <div>
+                       <WorkplaceSelector formCallBack={ this.handleWorkplaceChange } />
+                    </div>
                         <label>TEMPLATE NAME</label>
                         <input type="text" onChange={(e)=>this.handleChange(e)} name="templateName"/>
                     </div>

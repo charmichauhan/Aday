@@ -32,7 +32,7 @@ export default class TeamMemberCard extends Component {
       searchText: value,
       userOptions: this.state.users.filter(user =>
       new RegExp(value.toLowerCase(), 'g').test(user.firstName.toLowerCase()) ||
-      new RegExp(value.toLowerCase(), 'g').test(user.otherNames.toLowerCase()))
+      new RegExp(value.toLowerCase(), 'g').test(user.lastName.toLowerCase()))
     });
   };
 

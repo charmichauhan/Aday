@@ -94,7 +94,7 @@ class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { ...initialState };
+    this.state = { ...initialState, teamMembers: this.getInitialData(this.props) };
   }
 
   borderColor = status => {
@@ -129,7 +129,6 @@ class DrawerHelper extends Component {
 
   removeTeamMember = (i) => {
     const { teamMembers } = this.state;
-    // teamMembers[i] = unassignedTeamMember;
     teamMembers.splice(i, 1);
     this.setState({ teamMembers });
   };
@@ -212,8 +211,7 @@ class DrawerHelper extends Component {
       open
     } = this.props;
 
-    const { jobShadowers } = this.state;
-    const teamMembers = this.getInitialData(this.props);
+    const { teamMembers, jobShadowers } = this.state;
     const users = this.getUsers();
 
     const actionTypes = [{
@@ -255,24 +253,20 @@ class DrawerHelper extends Component {
           <div className="drawer-content scroll-div">
             <div className="member-list">
               <h5>TEAM MEMBERS ({teamMembers.length})</h5>
-              {teamMembers &&
-              teamMembers.map((tm, i) => {
-                return (
-                  <TeamMemberCard
-                    avatarUrl={tm.user.avatarUrl}
-                    firstName={tm.user.firstName}
-                    lastName={tm.user.lastName}
-                    content={tm.content}
-                    key={i}
-                    id={i}
-                    users={users}
-                    color={this.borderColor(tm.status) + 'Border'}
-                    handleRemove={() => this.removeTeamMember(i)}
-                    onSelectChange={this.setTeamMember}
-                  />
-                )
-              })
-              }
+              {teamMembers && teamMembers.map((tm, i) => (
+                <TeamMemberCard
+                  avatarUrl={tm.user.avatarUrl}
+                  firstName={tm.user.firstName}
+                  lastName={tm.user.lastName}
+                  content={tm.content}
+                  key={i}
+                  id={i}
+                  users={users}
+                  color={this.borderColor(tm.status) + 'Border'}
+                  handleRemove={() => this.removeTeamMember(i)}
+                  onSelectChange={this.setTeamMember}
+                />
+              ))}
               <div className="btn-member">
                 <RaisedButton label="ADD TEAM MEMBER" onClick={this.addTeamMember} />
               </div>
@@ -280,8 +274,7 @@ class DrawerHelper extends Component {
             </div>
             <div className="member-list">
               <h5>JOB SHADOWERS ({jobShadowers.length})</h5>
-              {jobShadowers &&
-              jobShadowers.map((tm, i) => (
+              {jobShadowers && jobShadowers.map((tm, i) => (
                 <TeamMemberCard
                   avatarUrl={tm.user.avatar}
                   firstName={tm.user.firstName}
@@ -294,8 +287,7 @@ class DrawerHelper extends Component {
                   handleRemove={() => this.removeJobShadower(i)}
                   onSelectChange={this.setJobShadower}
                 />
-              ))
-              }
+              ))}
               <div className="btn-member">
                 <RaisedButton label="ADD JOB SHADOWER" onClick={this.addJobShadower} />
               </div>

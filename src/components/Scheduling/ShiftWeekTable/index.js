@@ -120,7 +120,7 @@ class ShiftWeekTableComponent extends Week {
             if (value.node.workersAssigned == null) {
               assigned = [];
             }
-            if (value.node.workersRequestedNum > assigned.length) {
+            if (!assigned.length) {
               const rowHash = {}
               rowHash["weekday"] = dayOfWeek;
               rowHash["userFirstName"] = "Open"
@@ -132,7 +132,7 @@ class ShiftWeekTableComponent extends Week {
                 calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
               }
             }
-            if (assigned.length) {
+            else{
               value.node.workersAssigned.map((v) => {
                 const rowHash = {}
                 rowHash["weekday"] = dayOfWeek;
@@ -157,7 +157,7 @@ class ShiftWeekTableComponent extends Week {
           if (value.node.workersAssigned == null) {
             assigned = [];
           }
-          if (value.node.workersRequestedNum > assigned.length) {
+          if (!assigned.length) {
             const rowHash = {}
             rowHash["weekday"] = dayOfWeek;
             rowHash["userFirstName"] = "Open"
@@ -169,7 +169,7 @@ class ShiftWeekTableComponent extends Week {
               calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
             }
           }
-          if (assigned.length) {
+          else{
             value.node.workersAssigned.map((v) => {
               const rowHash = {}
               rowHash["weekday"] = dayOfWeek;

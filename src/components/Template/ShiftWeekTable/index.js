@@ -47,7 +47,8 @@ class ShiftWeekTableComponent extends Week {
         this.state={
             deleteTemplateModal:false,
             view:this.props.eventPropGetter(),
-            redirect:false
+            redirect:false,
+            applyingTemplateModal: false
         };
     }
     componentWillReceiveProps = () => {
@@ -55,7 +56,8 @@ class ShiftWeekTableComponent extends Week {
     };
     modalClose = () => {
         this.setState({
-            deleteTemplateModal:false
+            deleteTemplateModal:false,
+            applyingTemplateModal: false
         });
     };
     handleDeleteTemplate = () => {
@@ -64,28 +66,38 @@ class ShiftWeekTableComponent extends Week {
     };
 
     handleApplyTemplate = () => {
-        let that =this;
-        that.setState({deleteTemplateModal:true})
+        this.setState({
+            applyingTemplateModal: true
+        });
+        let that =this;       
+        fetch('http://localhost:8080/templateToShift', { 
+            method: 'GET',
+            data: {
+              template_id: '5a03282c-c220-4927-b059-f4f22d01c230'
+            }
+          })
+          .then(function(response) {
+            that.setState({
+              applyingTemplateModal: false
+            });
+           window.location.href = '/schedule/team';
+          })
     };
     backToCalendarView = () => {
       this.setState({redirect:true});
     }
     getTemplateDataJob = () => {
       let calendarHash = {};
-      let userHash={};
-      let weekPublished = "";
 
-      if  (this.props.allUsers && this.props.allUsers.allUsers){
-        this.props.allUsers.allUsers.edges.map((value,index) => {
-          userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
-        });
-        let workplace="";
+      let templateShifts = "";
+
+      let workplace="";
         if (this.props.data.templateById){
-          weekPublished = this.props.data.templateById.templateShiftsByTemplateId.edges;
+          templateShifts = this.props.data.templateById.templateShiftsByTemplateId.edges;
           workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
         }
-        if(weekPublished){
-          weekPublished.map((value, index) => {
+        if(templateShifts){
+          templateShifts.map((value, index) => {
             const positionName = value.node.positionByPositionId.positionName;
             const dayOfWeek = value.node.dayOfWeek;
 
@@ -99,7 +111,6 @@ class ShiftWeekTableComponent extends Week {
             }
           });
         }
-      }
       return calendarHash;
     }
 
@@ -140,6 +151,7 @@ class ShiftWeekTableComponent extends Week {
       }
       return calendarHash;
     }
+
     render() {
          if (this.props.id == "") {
            if (this.props.data.error) {}
@@ -162,6 +174,7 @@ class ShiftWeekTableComponent extends Week {
         let {start} = ShiftWeekTable.range(date,this.props);
         let deleteTemplateAction =[{type:"white",title:"Cancel",handleClick:this.modalClose,image:false},
             {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:"/images/modal/close.png"}];
+        let applyTemplateAction =[{type:"white"}];
         return (
             <div>
             <div className="table-responsive table-fixed-bottom-mrb">
@@ -208,7 +221,7 @@ class ShiftWeekTableComponent extends Week {
                                 <div className="text-center">
                                     <CircleButton type="white" title="Cancel" handleClick={this.backToCalendarView}/>
                                     <CircleButton type="red" title="delete template" handleClick={this.handleDeleteTemplate}/>
-                                    <CircleButton type="blue" title="apply template" handleClick={this.handleDeleteTemplate}/>
+                                    <CircleButton type="blue" title="apply template" handleClick={this.handleApplyTemplate}/>
                                 </div>
                             </TableRowColumn>
                         </TableRow>
@@ -219,6 +232,12 @@ class ShiftWeekTableComponent extends Week {
                                                      message = 'Are you sure that you want to delete the "Standard $5000 Sales Week" template?'
                                                      action = {deleteTemplateAction}
                                                        closeAction={this.modalClose} />
+                    :""}
+                {this.state.applyingTemplateModal ?
+                  <Modal isOpen = {this.state.applyingTemplateModal} title="Please Wait"
+                      message="Please Wait While We Apply This Template"
+                      action={applyTemplateAction}
+                      />
                     :""}
             </div>
         );

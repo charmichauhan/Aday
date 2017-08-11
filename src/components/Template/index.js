@@ -69,7 +69,7 @@ export default class Template extends Component {
                   </div>
               </div>
               <div>
-                  <BigCalendar events={[]}
+                  <BigCalendar events={this.props.history}
                                culture='en-us'
                                startAccessor='startDate'
                                endAccessor='endDate'

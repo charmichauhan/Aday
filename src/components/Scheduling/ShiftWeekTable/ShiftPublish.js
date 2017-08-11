@@ -11,7 +11,7 @@ import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 
-class ShiftPublish extends Component{
+class ShiftPublishComponent extends Component{
     constructor(props){
         super(props);
         this.state = {
@@ -21,6 +21,7 @@ class ShiftPublish extends Component{
             redirect:false
         }
     }
+
     modalClose = () => {
         this.setState({
             publishModalPopped:false
@@ -55,6 +56,13 @@ class ShiftPublish extends Component{
     handleChange = (e) => {
         this.setState({templateName:e});
     };
+    publishWeek = () => {
+        this.props.mutate({
+            variables: {id: this.props.publishId, date: moment().format() }
+        })
+        this.modalClose()
+
+    };
 
     render(){
         let is_publish = this.props.isPublish;
@@ -72,7 +80,7 @@ class ShiftPublish extends Component{
             statusImg = "/assets/Icons/published.png";
         }
         let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
-            {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
+            {type:"blue",title:"Confirm",handleClick:this.publishWeek,image:false}];
         if(this.state.redirect){
             return (
               <Redirect to={{pathname:'/schedule/template' ,viewName:this.props.view}}/>
@@ -84,7 +92,7 @@ class ShiftPublish extends Component{
         return(
             <div>
                 {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
-                                                         message = "Are you sure that you want to delete this shift?"
+                                                         message = "Are you sure that you want to publish the week's schedule?"
                                                          action = {publishModalOptions} closeAction={this.modalClose}/>
                 }
                 {this.state.addTemplateModalOpen && <AddAsTemplateModal addTemplateModalOpen={true}
@@ -110,11 +118,27 @@ class ShiftPublish extends Component{
     }
 }
 
-ShiftPublish.range = (date, { culture }) => {
+const updateWeekPublishedNameMutation = gql` 
+mutation updateWeekPublishedById($id: Uuid!, $date: Datetime!) { 
+    updateWeekPublishedById(input:{ id: $id, weekPublishedPatch:{published: true, datePublished: $date}}){
+            weekPublished{
+                id
+                published
+                start
+                end
+            }
+        }
+}`
+
+
+ShiftPublishComponent.range = (date, { culture }) => {
     let firstOfWeek = localizer.startOfWeek(culture);
     let start = dates.startOf(date, 'week', firstOfWeek);
     let end = dates.endOf(date, 'week', firstOfWeek);
     return { start, end };
 };
+
+
+const ShiftPublish = graphql(updateWeekPublishedNameMutation)(ShiftPublishComponent);
 
 export default ShiftPublish

@@ -7,7 +7,7 @@ import { graphql, compose } from 'react-apollo';
 import moment from 'moment';
 import { find, pick } from 'lodash';
 
-import { allUsersQuery, deleteShiftMutation, updateShiftMutation } from './EditShiftDrawer.graphql';
+import { allUsersQuery, deleteShiftMutation, updateShiftMutation, allShiftMarkets } from './EditShiftDrawer.graphql';
 import TeamMemberCard from './TeamMemberCard';
 import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
@@ -118,8 +118,29 @@ class DrawerHelper extends Component {
   };
 
   handleSaveShift = () => {
-    // Shift save/update code to be done here
-  };
+      const shiftPatch = {}
+      shiftPatch['workersAssigned'] = []
+          this.state.teamMembers.map((value) => {
+              if(value.user.id != 0 && shiftPatch['workersAssigned'].indexOf(value.user.id)==-1){
+                  shiftPatch['workersAssigned'].push(value.user.id)
+              }
+          })
+
+        shiftPatch['workersRequestedNum'] = this.state.teamMembers.length
+
+        this.props.updateShift({
+          variables: { data:
+                    {id: this.props.shift.id, shiftPatch: shiftPatch }
+                }
+        })
+              .then(({ data }) => {
+                  this.handleCloseDrawer();
+                  console.log('got update data', data);
+              }).catch((error) => {
+                  console.log('there was an error sending the query', error);
+              });
+        
+    }
 
   addTeamMember = () => {
     const { teamMembers } = this.state;
@@ -345,6 +366,10 @@ const DrawerHelperComponent = compose(graphql(deleteShiftMutation, {
     })
   }),
   graphql(updateShiftMutation, { name: 'updateShift' }),
+  graphql(allShiftMarkets, {
+    name: 'shiftMarkets',
+    options: (ownProps) => ({ variables: { shiftId: ownProps.shift && ownProps.shift.id }})
+  }),
   graphql(allUsersQuery, {
     name: 'teamMembers',
     options: (ownProps) => ({ variables: { positionId: ownProps.shift && ownProps.shift.positionByPositionId.id } }),

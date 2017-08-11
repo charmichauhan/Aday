@@ -17,6 +17,34 @@ export const allUsersQuery = gql`
   }
 `;
 
+export const allShiftMarkets = gql`
+   query($shiftId: Uuid!) {
+    allMarkets(condition: { shiftId: $shiftId}) {
+      edges {
+        node {
+          id
+          workerId
+          isBooked
+        }
+      }
+    }
+  }
+`;
+
+export const updateShiftMarket = gql`
+  mutation updateMarketById($data:UpdateMarketByIdInput!){
+    updateMarketById(input:$data)
+    {
+      market{
+        id
+        workerId
+        isBooked
+      }
+    }
+  }`;
+
+  
+
 export const deleteShiftMutation = gql`
   mutation($clientMutationId: String,$id: Uuid!){
     deleteShiftById(

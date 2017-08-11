@@ -307,7 +307,11 @@ class ShiftWeekTableComponent extends Week {
                             <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay}/>
 
                             {(Object.keys(jobData)).map((value, index) => (
-                                    <JobsRow data={jobData[value]} key={value} view={this.state.calendarView}/>
+                                    <JobsRow
+                                      data={jobData[value]}
+                                      key={value}
+                                      users={this.props.allUsers}
+                                      view={this.state.calendarView} />
                                 )
                             )
                             }

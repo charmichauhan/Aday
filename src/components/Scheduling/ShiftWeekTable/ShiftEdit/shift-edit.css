@@ -81,6 +81,34 @@
   color: #ccc;
 }
 
+.teamMemberCard.option {
+  margin-bottom: 0;
+}
+
+.member-list .teamMemberOption.option .label b,
+.member-list .teamMemberOption.option .label span {
+  color: #666666;
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 20px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.member-list .teamMemberOption.option .label b {
+  font-weight: bold;
+}
+
+.member-list .teamMemberOption.option .label .description {
+  font-size: 18px;
+}
+
+.teamMemberCard .ui.dropdown .menu > .item.team-member-item {
+  margin: 0;
+  padding: 0 0 2px 10px !important;
+}
+
 .greenBorder {
   border: 2px solid #00A863;
 }
@@ -194,6 +222,7 @@
   width: 100%;
   margin-top: 31px;
 }
+
 .member-list h5, .shift-details h5 {
   color: #666666;
   font-family: "Roboto Condensed";
@@ -293,7 +322,7 @@
   top: 50%;
   right: 10px;
   opacity: 1;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
 }
 
 i.icon.dropdown-img-black {

@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
-import { Image, Input, Divider } from 'semantic-ui-react';
 import RaisedButton from 'material-ui/RaisedButton';
+import { Image, Input, Divider } from 'semantic-ui-react';
+import { graphql, compose } from 'react-apollo';
 import moment from 'moment';
+import { find, pick } from 'lodash';
 
-import TeamMemberCard from './TeamMemberCard'
+import { allUsersQuery, deleteShiftMutation, updateShiftMutation, allShiftMarkets } from './EditShiftDrawer.graphql';
+import TeamMemberCard from './TeamMemberCard';
 import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
 
@@ -13,9 +16,10 @@ import './shift-edit.css';
 
 const unassignedTeamMember = {
   user: {
+    id: 0,
     firstName: 'Unassigned',
-    otherNames: '',
-    avatar: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
+    lastName: '',
+    avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
   },
   content: 'Leave this field empty to warn app credit!',
   status: 'unassigned'
@@ -90,23 +94,14 @@ class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { ...initialState };
+    this.state = { ...initialState, teamMembers: this.getInitialData(this.props) };
   }
 
   borderColor = status => {
-    switch (status) {
-      case 'accepted':
-        return 'green';
-        break;
-      case 'unassigned':
-        return 'red';
-        break;
-      case 'pending':
-        return 'orange';
-        break;
-      default:
-        return 'orange';
-    }
+    if (status === 'accepted') return 'green';
+    if (status === 'unassigned') return 'red';
+    if (status === 'pending') return 'orange';
+    return 'orange';
   };
 
   handleCloseDrawer = () => {
@@ -123,8 +118,29 @@ class DrawerHelper extends Component {
   };
 
   handleSaveShift = () => {
-    // Shift save/update code to be done here
-  };
+      const shiftPatch = {}
+      shiftPatch['workersAssigned'] = []
+          this.state.teamMembers.map((value) => {
+              if(value.user.id != 0 && shiftPatch['workersAssigned'].indexOf(value.user.id)==-1){
+                  shiftPatch['workersAssigned'].push(value.user.id)
+              }
+          })
+
+        shiftPatch['workersRequestedNum'] = this.state.teamMembers.length
+
+        this.props.updateShift({
+          variables: { data:
+                    {id: this.props.shift.id, shiftPatch: shiftPatch }
+                }
+        })
+              .then(({ data }) => {
+                  this.handleCloseDrawer();
+                  console.log('got update data', data);
+              }).catch((error) => {
+                  console.log('there was an error sending the query', error);
+              });
+        
+    }
 
   addTeamMember = () => {
     const { teamMembers } = this.state;
@@ -134,9 +150,40 @@ class DrawerHelper extends Component {
 
   removeTeamMember = (i) => {
     const { teamMembers } = this.state;
-    // teamMembers[i] = unassignedTeamMember;
     teamMembers.splice(i, 1);
     this.setState({ teamMembers });
+  };
+
+  getUserById = (id, isAssigned) => {
+    const users = this.props.users;
+    let foundWorker = find(users.allUsers.edges, (user) => user.node.id === id);
+    if (!foundWorker) foundWorker = { node: unassignedTeamMember.user };
+    return {
+      user: pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']),
+      status: isAssigned ? 'accepted' : 'pending',
+      content: foundWorker.node.content || 'CURRENT HOURS: 37'
+    };
+  };
+
+  getUsers = () => {
+    const usersData = this.props.users;
+    return usersData.allUsers.edges.map(({ node }) => pick(node, ['id', 'avatarUrl', 'firstName', 'lastName']));
+  };
+
+  getInitialData = ({ shift: { workersAssigned = [], workersInvited = [], workersRequestedNum = 0 } }) => {
+    workersAssigned = workersAssigned.map(worker => {
+      if (typeof worker === 'string') return this.getUserById(worker, true);
+      return unassignedTeamMember;
+    });
+    workersInvited = workersInvited.map(worker => {
+      if (typeof worker === 'string') return this.getUserById(worker);
+      return unassignedTeamMember;
+    });
+    const teamMembers = [...workersAssigned, ...workersInvited];
+    while (teamMembers.length < workersRequestedNum) {
+      teamMembers.push({ ...unassignedTeamMember });
+    }
+    return teamMembers;
   };
 
   setTeamMember = (user, index) => {
@@ -185,7 +232,9 @@ class DrawerHelper extends Component {
       open
     } = this.props;
 
-    const { teamMembers, jobShadowers, users } = this.state;
+    const { teamMembers, jobShadowers } = this.state;
+    const users = this.getUsers();
+
     const actionTypes = [{
       type: 'white',
       title: 'Cancel',
@@ -225,12 +274,11 @@ class DrawerHelper extends Component {
           <div className="drawer-content scroll-div">
             <div className="member-list">
               <h5>TEAM MEMBERS ({teamMembers.length})</h5>
-              {teamMembers &&
-              teamMembers.map((tm, i) => (
+              {teamMembers && teamMembers.map((tm, i) => (
                 <TeamMemberCard
-                  avatar={tm.user.avatar}
+                  avatarUrl={tm.user.avatarUrl}
                   firstName={tm.user.firstName}
-                  otherNames={tm.user.otherNames}
+                  lastName={tm.user.lastName}
                   content={tm.content}
                   key={i}
                   id={i}
@@ -239,8 +287,7 @@ class DrawerHelper extends Component {
                   handleRemove={() => this.removeTeamMember(i)}
                   onSelectChange={this.setTeamMember}
                 />
-              ))
-              }
+              ))}
               <div className="btn-member">
                 <RaisedButton label="ADD TEAM MEMBER" onClick={this.addTeamMember} />
               </div>
@@ -248,12 +295,11 @@ class DrawerHelper extends Component {
             </div>
             <div className="member-list">
               <h5>JOB SHADOWERS ({jobShadowers.length})</h5>
-              {jobShadowers &&
-              jobShadowers.map((tm, i) => (
+              {jobShadowers && jobShadowers.map((tm, i) => (
                 <TeamMemberCard
-                  avatar={tm.user.avatar}
+                  avatarUrl={tm.user.avatar}
                   firstName={tm.user.firstName}
-                  otherNames={tm.user.otherNames}
+                  lastName={tm.user.otherNames}
                   content={tm.content}
                   key={i}
                   id={i}
@@ -262,8 +308,7 @@ class DrawerHelper extends Component {
                   handleRemove={() => this.removeJobShadower(i)}
                   onSelectChange={this.setJobShadower}
                 />
-              ))
-              }
+              ))}
               <div className="btn-member">
                 <RaisedButton label="ADD JOB SHADOWER" onClick={this.addJobShadower} />
               </div>
@@ -276,30 +321,14 @@ class DrawerHelper extends Component {
               </div>
               <Input fluid type="text" placeholder="NAME THIS SHIFT TO SAVE IT AS A TAMPLATE" />
               <div className="shiftDetails">
-                <p>
-                  <b>Work place</b>: {shift.workplaceByWorkplaceId.workplaceName}
-                </p>
-                <p>
-                  <b>Position</b>: {shift.positionByPositionId.positionName}
-                </p>
-                <p>
-                  <b>Shift Date</b>: {moment(shift.startTime).format('dddd, MMMM Do YYYY')}
-                </p>
-                <p>
-                  <b>Start Time</b>: {moment(shift.startTime).format('hh:mm A')}
-                </p>
-                <p>
-                  <b>End Time</b>: {moment(shift.endTime).format('hh:mm A')}
-                </p>
-                <p>
-                  <b>Unpaid break (minutes)</b>: {!shift.unpaidBreakTime && '0' || shift.unpaidBreakTime} minutes
-                </p>
-                <p>
-                  <b>bonus payment per hour</b>: $0.00
-                </p>
-                <p>
-                  <b>job shadowing shift</b>: No
-                </p>
+                <p><b>Work place</b>: {shift.workplaceByWorkplaceId.workplaceName}</p>
+                <p><b>Position</b>: {shift.positionByPositionId.positionName}</p>
+                <p><b>Shift Date</b>: {moment(shift.startTime).format('dddd, MMMM Do YYYY')}</p>
+                <p><b>Start Time</b>: {moment(shift.startTime).format('hh:mm A')}</p>
+                <p><b>End Time</b>: {moment(shift.endTime).format('hh:mm A')}</p>
+                <p><b>Unpaid break (minutes)</b>: {!shift.unpaidBreakTime && '0' || shift.unpaidBreakTime} minutes</p>
+                <p><b>bonus payment per hour</b>: $0.00</p>
+                <p><b>job shadowing shift</b>: No</p>
               </div>
 
               <h5>INSTRUCTIONS</h5>
@@ -317,4 +346,35 @@ class DrawerHelper extends Component {
   };
 }
 
-export default DrawerHelper;
+const DrawerHelperComponent = compose(graphql(deleteShiftMutation, {
+    props: ({ ownProps, mutate }) => ({
+      deleteShiftById: (clientMutationId, id) => mutate({
+        variables: { clientMutationId, id },
+        updateQueries: {
+          allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+            let newEdges = [];
+            previousQueryResult.allShifts.edges.map((value) => {
+              if (value.node.id !== mutationResult.data.deleteShiftById.shift.id) {
+                newEdges.push(value)
+              }
+            });
+            previousQueryResult.allShifts.edges = newEdges;
+            return { allShifts: previousQueryResult.allShifts };
+          }
+        }
+      })
+    })
+  }),
+  graphql(updateShiftMutation, { name: 'updateShift' }),
+  graphql(allShiftMarkets, {
+    name: 'shiftMarkets',
+    options: (ownProps) => ({ variables: { shiftId: ownProps.shift && ownProps.shift.id }})
+  }),
+  graphql(allUsersQuery, {
+    name: 'teamMembers',
+    options: (ownProps) => ({ variables: { positionId: ownProps.shift && ownProps.shift.positionByPositionId.id } }),
+    props: ({ teamMembers, ownProps }) => ({ teamMemberNodes: teamMembers.allJobs && teamMembers.allJobs.edges })
+  }))
+(DrawerHelper);
+
+export default DrawerHelperComponent;

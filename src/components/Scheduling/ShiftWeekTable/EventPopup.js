@@ -83,7 +83,7 @@ class EventPopupComponent extends Component {
   };
 
   render() {
-    let data = this.props.data;
+    let { data, users }= this.props;
     let startTime = moment(data.startTime).format('hh:mm A');
     let endTime = moment(data.endTime).format('hh:mm A');
     let h = moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('HH');
@@ -140,6 +140,7 @@ class EventPopupComponent extends Component {
           closeAction={this.modalClose} />
         <EditShiftDrawer
           shift={data}
+          users={users}
           open={this.state.newShiftModalPopped}
           handlerClose={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
@@ -152,16 +153,19 @@ class EventPopupComponent extends Component {
         <div className="overlay">
           <div className="hoimg">
             <a>
-              <i><img src="/assets/Icons/close-shift.png" alt="close"
-                    onClick={() => this.onPopupOpen('deleteModalPopped')} /></i>
+              <i onClick={() => this.onPopupOpen('deleteModalPopped')}>
+                <img src="/assets/Icons/close-shift.png" alt="close" />
+              </i>
             </a>
             <a>
-              <i><img src="/assets/Icons/edit-shift.png" alt="edit"
-                    onClick={() => this.onPopupOpen('editShiftModal')} /></i>
+              <i onClick={() => this.onPopupOpen('editShiftModal')}>
+                <img src="/assets/Icons/edit-shift.png" alt="edit" />
+              </i>
             </a>
             <a>
-              <i><img src="/assets/Icons/create-shift.png" alt="create"
-                    onClick={() => this.onPopupOpen('newShiftModalPopped')} /></i>
+              <i onClick={() => this.onPopupOpen('newShiftModalPopped')}>
+                <img src="/assets/Icons/create-shift.png" alt="create" />
+              </i>
             </a>
           </div>
         </div>

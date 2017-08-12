@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Image, Icon, Dropdown } from 'semantic-ui-react';
+import TeamMemberOption from './TeamMemberOption';
 
 export default class TeamMemberCard extends Component {
 
@@ -10,8 +11,8 @@ export default class TeamMemberCard extends Component {
       users: [{
         id: 0,
         firstName: 'Unassigned',
-        otherNames: '',
-        avatar: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
+        lastName: '',
+        avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
       }, ...props.users]
     }
   }
@@ -31,12 +32,12 @@ export default class TeamMemberCard extends Component {
       searchText: value,
       userOptions: this.state.users.filter(user =>
       new RegExp(value.toLowerCase(), 'g').test(user.firstName.toLowerCase()) ||
-      new RegExp(value.toLowerCase(), 'g').test(user.otherNames.toLowerCase()))
+      new RegExp(value.toLowerCase(), 'g').test(user.lastName.toLowerCase()))
     });
   };
 
   render() {
-    const { avatar, firstName, id, otherNames, content, color, handleRemove } = this.props;
+    const { avatarUrl, firstName, id, lastName, content, color, handleRemove } = this.props;
     const { userOptions, searchText } = this.state;
     return (
       <div className="teamMemberCard">
@@ -51,10 +52,10 @@ export default class TeamMemberCard extends Component {
           onOpen={this.onDropDownOpen}
           trigger={<div className={'content ' + color}>
             <div className="avatar">
-              <Image src={avatar} alt="avatar" />
+              <Image src={avatarUrl} alt="avatar" />
             </div>
             <div className="label">
-              <b>{firstName}</b> {otherNames} <br />
+              <b>{firstName}</b> {lastName} <br />
               <span className="description">{ content }</span>
             </div>
           </div>}
@@ -76,9 +77,8 @@ export default class TeamMemberCard extends Component {
                 onChange={(e) => this.searchChange(e.target, e.target.value)} />
             </Dropdown.Item>
             {userOptions && userOptions.map((user, index) => (
-              <Dropdown.Item key={index} value={index} onClick={() => this.onSelectChange(user, id)}>
-                <img src={user.avatar} alt="avatar" className="select-dropdown-img" />
-                <span>{user.firstName + ' ' + user.otherNames}</span>
+              <Dropdown.Item className="team-member-item" key={index} value={index} onClick={() => this.onSelectChange(user, id)}>
+                <TeamMemberOption user={user} />
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>

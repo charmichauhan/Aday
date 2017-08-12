@@ -11,7 +11,9 @@ import Modal from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton';
 import "../../Scheduling/style.css";
 import { gql, graphql,compose } from 'react-apollo';
+import uuidv1 from 'uuid/v1';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
+
 
 const styles = {
     bodyStyle: {
@@ -51,6 +53,11 @@ class ShiftWeekTableComponent extends Week {
             applyingTemplateModal: false
         };
     }
+
+    static propTypes = { 
+        createWeekPublished: React.PropTypes.func.isRequired
+    } 
+
     componentWillReceiveProps = () => {
       this.setState({view:this.props.eventPropGetter()});
     };
@@ -65,23 +72,62 @@ class ShiftWeekTableComponent extends Week {
         that.setState({deleteTemplateModal:true})
     };
 
-    handleApplyTemplate = () => {
+    handleApplyTemplate(start){
+        const that = this;
+
         this.setState({
             applyingTemplateModal: true
         });
-        let that =this;       
-        fetch('http://localhost:8080/templateToShift', { 
-            method: 'GET',
-            data: {
-              template_id: '5a03282c-c220-4927-b059-f4f22d01c230'
-            }
-          })
-          .then(function(response) {
-            that.setState({
-              applyingTemplateModal: false
-            });
-           window.location.href = '/schedule/team';
-          })
+        
+        let weekPublishedId = this.props.weekPublishedId
+
+        if(!weekPublishedId) {
+         weekPublishedId = uuidv1();
+         this.props.createWeekPublished({
+                variables: { data:
+                                {weekPublished:
+                                  { id: weekPublishedId,
+                                    start: moment(start).startOf('week').format(),
+                                    end: moment(start).endOf('week').format(),
+                                    published: false, datePublished: moment().format(),
+                                    brandId: localStorage.getItem('brandId') }
+                            }}
+             
+            })
+            .then(({ data }) => {
+                fetch('http://localhost:8080/templateToShift?template_id=' + this.props.id + '&' +
+                      'weekPublishedId=' +  weekPublishedId + '&' +
+                      'start=' + moment(start).startOf('week').format()+ '&' +
+                      'end=' +   moment(start).endOf('week').format()
+                  , { 
+                    method: 'POST'
+                  })
+                  .then(function(response) {
+                    that.setState({
+                      applyingTemplateModal: false
+                    });
+                   window.location.href = '/schedule/team';
+                  })
+
+              }).catch((error) => {
+                  console.log('there was an error sending the query', error);
+              });
+
+        } else{
+            fetch('http://localhost:8080/templateToShift?template_id=' + this.props.id + '&' +
+                      'weekPublishedId=' +  weekPublishedId + '&' +
+                      'start=' + moment(start).startOf('week').format() + '&' +
+                      'end=' + moment(start).endOf('week').format()
+                  , { 
+                    method: 'POST'
+                  })
+                  .then(function(response) {
+                    that.setState({
+                      applyingTemplateModal: false
+                    });
+                   window.location.href = '/schedule/team';
+                  })
+        }
     };
     backToCalendarView = () => {
       this.setState({redirect:true});
@@ -174,7 +220,7 @@ class ShiftWeekTableComponent extends Week {
         let {start} = ShiftWeekTable.range(date,this.props);
         let deleteTemplateAction =[{type:"white",title:"Cancel",handleClick:this.modalClose,image:false},
             {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:"/images/modal/close.png"}];
-        let applyTemplateAction =[{type:"white"}];
+        let applyTemplateAction =[{type:"white", title: "One Moment"}];
         return (
             <div>
             <div className="table-responsive table-fixed-bottom-mrb">
@@ -221,7 +267,7 @@ class ShiftWeekTableComponent extends Week {
                                 <div className="text-center">
                                     <CircleButton type="white" title="Cancel" handleClick={this.backToCalendarView}/>
                                     <CircleButton type="red" title="delete template" handleClick={this.handleDeleteTemplate}/>
-                                    <CircleButton type="blue" title="apply template" handleClick={this.handleApplyTemplate}/>
+                                    <CircleButton type="blue" title="apply template" handleClick={(start) => this.handleApplyTemplate(start)}/>
                                 </div>
                             </TableRowColumn>
                         </TableRow>
@@ -234,9 +280,10 @@ class ShiftWeekTableComponent extends Week {
                                                        closeAction={this.modalClose} />
                     :""}
                 {this.state.applyingTemplateModal ?
-                  <Modal isOpen = {this.state.applyingTemplateModal} title="Please Wait"
+                  <Modal isOpen = {this.state.applyingTemplateModal} title=""
                       message="Please Wait While We Apply This Template"
                       action={applyTemplateAction}
+                      closeAction={this.modalClose}
                       />
                     :""}
             </div>
@@ -302,6 +349,21 @@ const allUsers = gql`
     }
     `
 
+const createWeekPublishedMutation = gql`
+ mutation createWeekPublished($data:CreateWeekPublishedInput!){
+  createWeekPublished(input:$data)
+    {
+    weekPublished{
+      id
+      start
+      end
+      published
+    }
+  }
+}`
+
+
+
 const ShiftWeekTable = compose(
   graphql(allTemplateShifts, {
     options: (ownProps) => ({
@@ -310,7 +372,10 @@ const ShiftWeekTable = compose(
       }
     }),
   }),
-  graphql(allUsers, {name: "allUsers"})
+  graphql(allUsers, {name: "allUsers"}),
+  graphql(createWeekPublishedMutation, {
+    name : 'createWeekPublished'
+  })
 )(ShiftWeekTableComponent);
 
 export default ShiftWeekTable;

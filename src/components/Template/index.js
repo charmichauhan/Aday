@@ -8,13 +8,14 @@ import {Button, Input} from "semantic-ui-react";
 import Modal from '../helpers/Modal';
 import ShiftWeekTable from "./ShiftWeekTable";
 import "../Scheduling/style.css";
-import { gql, graphql } from 'react-apollo';
+import { gql, graphql, compose } from 'react-apollo';
 
 let templateName;
 let that;
 let viewName="Employee View";
 let currentView = "job";
-export default class Template extends Component {
+
+class TemplateComponent extends Component {
   constructor(props){
     super(props);
     this.state=({
@@ -58,9 +59,24 @@ export default class Template extends Component {
     }
   };
     render() {
-      let is_publish = true;
+      
+      if (this.props.data.loading) {
+        return (<div>Loading</div>)
+      }
+      if (this.props.data.error) {
+        console.log(this.props.data.error);
+        return (<div>An unexpected error occurred</div>)
+      }
+
       templateName = this.props.location.templateName;
       BigCalendar.momentLocalizer(moment);
+      const date = this.state.date;
+      let publishId = null;
+      this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
+      if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))) {
+        publishId = value.id;
+      }
+    });
       return (
           <div className="App row">
               <div className="col-md-12">
@@ -76,7 +92,7 @@ export default class Template extends Component {
                                defaultView='week'
                                onNavigate={(start) => this.onNavigate(start)}
                                eventPropGetter={this.onViewChange}
-                               views={{today: true, week: (props) => <ShiftWeekTable {...props} id = {this.state.selectedTemplateId}/>, day: true}}
+                               views={{today: true, week: (props) => <ShiftWeekTable {...props} id = {this.state.selectedTemplateId} weekPublishedId={publishId}/>, day: true}}
                                components={{
                                    event: Event,
                                    toolbar: (props) => <CustomToolbar {...props}
@@ -195,6 +211,19 @@ const allTemplates = gql`
     }
 }`
 
+const allWeekPublisheds = gql
+  `query allWeekPublisheds($brandid: Uuid!){ 
+        allWeekPublisheds(condition: { brandId: $brandid }){
+            nodes{
+            id
+            published
+            start
+            end
+        }
+    }
+}`
+
+
 const editTemplateNameMutation = gql`
   mutation ($id: Uuid!,  $templateName: String!){
     updateTemplateById (input: {id: $id, templatePatch: {templateName:$templateName}}){
@@ -206,4 +235,18 @@ const editTemplateNameMutation = gql`
   }`
 
 
-const CustomToolbar = graphql(allTemplates)(graphql(editTemplateNameMutation)(CustomToolbarComponent));
+const CustomToolbar = compose(
+  graphql(allTemplates),
+  graphql(editTemplateNameMutation)
+  )(CustomToolbarComponent);
+
+
+const Template = graphql(allWeekPublisheds, {
+  options: (ownProps) => ({
+    variables: {
+      brandid: localStorage.getItem('brandId') ,
+    }
+  }),
+  })(TemplateComponent)
+
+export default Template

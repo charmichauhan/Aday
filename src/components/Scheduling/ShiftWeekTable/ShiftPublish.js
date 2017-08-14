@@ -60,8 +60,6 @@ class ShiftPublishComponent extends Component{
                 }
             };
 
-
-
               rp(options)
                 .then(function(response) {
                        that.setState({redirect:true})
@@ -69,6 +67,29 @@ class ShiftPublishComponent extends Component{
                       console.log('there was an error sending the query', error);
                   });
         }
+    };
+    automateSchedule = (publishId) => {
+        console.log(publishId)
+        var uri = "https://20170808t142850-dot-forward-chess-157313.appspot.com/api/algorithm/"
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {"data": {"week_id": publishId,"sec": "QDVPZJk54364gwnviz921"}}};
+
+        rp(options)
+        .then( function ($) {
+            window.location.reload();
+        // Process html like you would with jQuery...
+        })
+        .catch(function (err) {
+        // Crawling failed or Cheerio choked...
+        });
+        /*
+        request(options, function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+          }
+         });
+         */
     };
     addTemplateModalOpen = () => {
         this.setState({addTemplateModalOpen:true})
@@ -139,7 +160,7 @@ class ShiftPublishComponent extends Component{
                   <div className="btn-action">
                     <Button className="btn-image"><CreateShiftButton brandId={localStorage.getItem('brandId')} weekPublishedId={ publishId } weekStart={ start } /></Button>
                     {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
-                    {(is_publish != "none") && <Button className="btn-image flr" onClick={() => this.templateView()}><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
+                    {(is_publish != "none") && <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
                     {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
                 </div>

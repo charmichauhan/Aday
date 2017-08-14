@@ -13,6 +13,8 @@ import "../../Scheduling/style.css";
 import { gql, graphql,compose } from 'react-apollo';
 import uuidv1 from 'uuid/v1';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
+import {allTemplateShifts, allUsers, createWeekPublishedMutation,
+        deleteTemplateMutation, allTemplates} from '../TemplateQueries';
 var rp = require('request-promise');
 
 
@@ -55,9 +57,9 @@ class ShiftWeekTableComponent extends Week {
         };
     }
 
-    static propTypes = { 
+    static propTypes = {
         createWeekPublished: React.PropTypes.func.isRequired
-    } 
+    }
 
     componentWillReceiveProps = () => {
       this.setState({view:this.props.eventPropGetter()});
@@ -70,8 +72,15 @@ class ShiftWeekTableComponent extends Week {
     };
     handleDeleteTemplate = () => {
         let that =this;
-        that.setState({deleteTemplateModal:true})
+        that.setState({deleteTemplateModal:true});
     };
+    deleteTemplate = () => {
+        this.props.deleteTemplate({
+          variables: { templateId : this.props.events[1] },
+          refetchQueries: [{query: allTemplates}]}).then(this.props.events[3])
+            .then(this.setState({deleteTemplateModal:false}));
+
+    }
 
     handleApplyTemplate(start){
         const that = this;
@@ -93,12 +102,12 @@ class ShiftWeekTableComponent extends Week {
                                     published: false, 
                                     brandId: localStorage.getItem('brandId') }
                             }}
-             
+
             })
             .then(({ data }) => {
 
                 var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/templateToShift'
-            
+
                   var options = {
                       uri: uri,
                       method: 'POST',
@@ -234,7 +243,7 @@ class ShiftWeekTableComponent extends Week {
         let {date} = this.props;
         let {start} = ShiftWeekTableComponent.range(date,this.props);
         let deleteTemplateAction =[{type:"white",title:"Cancel",handleClick:this.modalClose,image:false},
-            {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:"/images/modal/close.png"}];
+            {type:"red",title:"Delete Template",handleClick:this.deleteTemplate}];
         let applyTemplateAction =[{type:"white", title: "One Moment"}];
         return (
             <div>
@@ -290,7 +299,8 @@ class ShiftWeekTableComponent extends Week {
                 </Table>
             </div>
                 {this.state.deleteTemplateModal?<Modal isOpen = {this.state.deleteTemplateModal} title="Confirm"
-                                                     message = 'Are you sure that you want to delete the "Standard $5000 Sales Week" template?'
+                                                     message = {'Are you sure that you want to delete the \'' +
+                                                                this.props.data.templateById.templateName + '\' template?'}
                                                      action = {deleteTemplateAction}
                                                        closeAction={this.modalClose} />
                     :""}
@@ -314,72 +324,6 @@ ShiftWeekTableComponent.range = (date, {culture}) => {
     return {start, end};
 };
 
-
-const allTemplateShifts = gql`
-  query allTemplateShifts($id: Uuid!){
-    templateById(id: $id) {
-              id
-              workplaceByWorkplaceId{
-                workplaceName
-              }
-                templateShiftsByTemplateId{
-                    edges{
-                      node{
-                        id
-                        dayOfWeek
-                        startTime
-                        endTime
-                        workerCount
-                        positionByPositionId{
-                            positionName
-                        }
-                        templateShiftAssigneesByTemplateShiftId{
-                            edges{
-                              node{
-                                userByUserId {
-                                  firstName
-                                  lastName
-                                  avatarUrl
-                                }
-                              }
-                            }
-                        }
-                      }
-                    }
-            }
-    }
-}`
-
-const allUsers = gql`
-    query allUsers {
-        allUsers{
-            edges{
-                node{
-                    id
-                    firstName
-                    lastName
-                    avatarUrl
-                }
-            }
-        }
-    }
-    `
-
-const createWeekPublishedMutation = gql`
- mutation createWeekPublished($data:CreateWeekPublishedInput!){
-  createWeekPublished(input:$data)
-    {
-    weekPublished{
-      id
-      start
-      end
-      published
-    }
-  }
-}`
-
-
-
 const ShiftWeekTable = compose(
   graphql(allTemplateShifts, {
     options: (ownProps) => ({
@@ -391,6 +335,9 @@ const ShiftWeekTable = compose(
   graphql(allUsers, {name: "allUsers"}),
   graphql(createWeekPublishedMutation, {
     name : 'createWeekPublished'
+  }),
+  graphql(deleteTemplateMutation, {
+    name : 'deleteTemplate'
   })
 )(ShiftWeekTableComponent);
 

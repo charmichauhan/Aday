@@ -11,6 +11,7 @@ import Modal from '../helpers/Modal';
 import ShiftWeekTable from "./ShiftWeekTable";
 import "../Scheduling/style.css";
 import { gql, graphql, compose } from 'react-apollo';
+import { allTemplates, allWeekPublisheds, editTemplateNameMutation } from './TemplateQueries';
 
 let templateName;
 let that;
@@ -26,10 +27,14 @@ class TemplateComponent extends Component {
       date: moment()
     });
     this.handleSelectTemplate = this.handleSelectTemplate.bind(this);
+    this.handleResetTemplate = this.handleResetTemplate.bind(this);
   }
 
   handleSelectTemplate = (e) => {
     this.setState({selectedTemplateId: e.target.value})
+  }
+  handleResetTemplate = () => {
+    this.setState({selectedTemplateId: ""})
   }
   customEvent  = (currentlyView) => {
     if(currentlyView == "job"){
@@ -62,9 +67,8 @@ class TemplateComponent extends Component {
     }
   };
 
-  
-  render() {
-      
+    render() {
+
       if (this.props.data.loading) {
         return (<div>Loading</div>)
       }
@@ -72,7 +76,6 @@ class TemplateComponent extends Component {
         console.log(this.props.data.error);
         return (<div>An unexpected error occurred</div>)
       }
-
       templateName = this.props.location.templateName;
       BigCalendar.momentLocalizer(moment);
       const date = this.state.date;
@@ -90,7 +93,7 @@ class TemplateComponent extends Component {
                   </div>
               </div>
               <div>
-                  <BigCalendar events={[this.props.history, this.state.selectedTemplateId, publishId]}
+                  <BigCalendar events={[this.props.history, this.state.selectedTemplateId, publishId, this.handleResetTemplate]}
                                culture='en-us'
                                startAccessor='startDate'
                                endAccessor='endDate'
@@ -206,44 +209,6 @@ class CustomToolbarComponent extends Toolbar {
         );
     }
 }
-
-
-
-const allTemplates = gql`
-  query allTemplates {
-    allTemplates {
-        edges{
-            node{
-              id
-              templateName
-            }
-        }
-    }
-}`
-
-const allWeekPublisheds = gql
-  `query allWeekPublisheds($brandid: Uuid!){ 
-        allWeekPublisheds(condition: { brandId: $brandid }){
-            nodes{
-            id
-            published
-            start
-            end
-        }
-    }
-}`
-
-
-const editTemplateNameMutation = gql`
-  mutation ($id: Uuid!,  $templateName: String!){
-    updateTemplateById (input: {id: $id, templatePatch: {templateName:$templateName}}){
-      template{
-        id
-        templateName
-      }
-    }
-  }`
-
 
 const CustomToolbar = compose(
   graphql(allTemplates),

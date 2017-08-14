@@ -80,17 +80,17 @@ class ShiftWeekTableComponent extends Week {
             applyingTemplateModal: true
         });
         
-        let weekPublishedId = this.props.weekPublishedId
+        let weekPublishedId = this.props.events[2]
 
         if(!weekPublishedId) {
          weekPublishedId = uuidv1();
          this.props.createWeekPublished({
                 variables: { data:
-                                {weekPublished:
-                                  { id: weekPublishedId,
+                                {weekPublished: 
+                                   { id: weekPublishedId,
                                     start: moment(start).startOf('week').format(),
                                     end: moment(start).endOf('week').format(),
-                                    published: false, datePublished: moment().format(),
+                                    published: false, 
                                     brandId: localStorage.getItem('brandId') }
                             }}
              
@@ -102,11 +102,11 @@ class ShiftWeekTableComponent extends Week {
                   var options = {
                       uri: uri,
                       method: 'POST',
-                      json: {"data": {"template_id": this.props.id,
+                      json: {"data": {"template_id": this.props.events[1],
                                       "weekPublishedId": weekPublishedId ,
                                       "start": moment(start).startOf('week').format(),
                                       "end":   moment(start).endOf('week').format()
-                                    }
+                                      }
                       }
                   };
                   rp(options)
@@ -126,7 +126,7 @@ class ShiftWeekTableComponent extends Week {
                 var options = {
                       uri: uri,
                       method: 'POST',
-                      json: {"data": {"template_id": this.props.id,
+                      json: {"data": {"template_id": this.props.events[1],
                                       "weekPublishedId": weekPublishedId ,
                                       "start": moment(start).startOf('week').format(),
                                       "end":   moment(start).endOf('week').format()
@@ -214,7 +214,7 @@ class ShiftWeekTableComponent extends Week {
     }
 
     render() {
-         if (this.props.id == "") {
+         if (this.props.events[1] == "") {
            if (this.props.data.error) {}
            return (<div>  No Template Selected</div>)
          }
@@ -232,7 +232,7 @@ class ShiftWeekTableComponent extends Week {
         }
         let jobData = this.state.view=="job" ? this.getTemplateDataJob() :this.getTemplateDataEmployee();
         let {date} = this.props;
-        let {start} = ShiftWeekTable.range(date,this.props);
+        let {start} = ShiftWeekTableComponent.range(date,this.props);
         let deleteTemplateAction =[{type:"white",title:"Cancel",handleClick:this.modalClose,image:false},
             {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:"/images/modal/close.png"}];
         let applyTemplateAction =[{type:"white", title: "One Moment"}];
@@ -282,7 +282,7 @@ class ShiftWeekTableComponent extends Week {
                                 <div className="text-center">
                                     <CircleButton type="white" title="Cancel" handleClick={this.backToCalendarView}/>
                                     <CircleButton type="red" title="delete template" handleClick={this.handleDeleteTemplate}/>
-                                    <CircleButton type="blue" title="apply template" handleClick={(start) => this.handleApplyTemplate(start)}/>
+                                    <CircleButton type="blue" title="apply template" handleClick={(start) => this.handleApplyTemplate(this.props.date)}/>
                                 </div>
                             </TableRowColumn>
                         </TableRow>
@@ -305,6 +305,7 @@ class ShiftWeekTableComponent extends Week {
         );
     }
 }
+
 
 ShiftWeekTableComponent.range = (date, {culture}) => {
     let firstOfWeek = localizer.startOfWeek(culture);
@@ -383,7 +384,7 @@ const ShiftWeekTable = compose(
   graphql(allTemplateShifts, {
     options: (ownProps) => ({
       variables: {
-        id: ownProps.id,
+        id: ownProps.events[1],
       }
     }),
   }),

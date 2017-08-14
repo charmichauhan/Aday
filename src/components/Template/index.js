@@ -3,6 +3,8 @@ import moment from "moment";
 import BigCalendar from "react-big-calendar";
 import {NavLink} from "react-router-dom";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import Week from 'react-big-calendar/lib/Week';
+import dates from 'react-big-calendar/lib/utils/dates';
 import Toolbar from "react-big-calendar/lib/Toolbar";
 import {Button, Input} from "semantic-ui-react";
 import Modal from '../helpers/Modal';
@@ -25,6 +27,7 @@ class TemplateComponent extends Component {
     });
     this.handleSelectTemplate = this.handleSelectTemplate.bind(this);
   }
+
   handleSelectTemplate = (e) => {
     this.setState({selectedTemplateId: e.target.value})
   }
@@ -58,7 +61,9 @@ class TemplateComponent extends Component {
       currentView="employee";
     }
   };
-    render() {
+
+  
+  render() {
       
       if (this.props.data.loading) {
         return (<div>Loading</div>)
@@ -85,14 +90,14 @@ class TemplateComponent extends Component {
                   </div>
               </div>
               <div>
-                  <BigCalendar events={this.props.history}
+                  <BigCalendar events={[this.props.history, this.state.selectedTemplateId, publishId]}
                                culture='en-us'
                                startAccessor='startDate'
                                endAccessor='endDate'
                                defaultView='week'
-                               onNavigate={(start) => this.onNavigate(start)}
+                               onNavigate={(date) => this.onNavigate(date)}
                                eventPropGetter={this.onViewChange}
-                               views={{today: true, week: (props) => <ShiftWeekTable {...props} id = {this.state.selectedTemplateId} weekPublishedId={publishId}/>, day: true}}
+                               views={{today: true, week: ShiftWeekTable, day: true}}
                                components={{
                                    event: Event,
                                    toolbar: (props) => <CustomToolbar {...props}
@@ -106,6 +111,7 @@ class TemplateComponent extends Component {
   }
 }
 
+
 class CustomToolbarComponent extends Toolbar {
   constructor(props){
     super(props);
@@ -115,6 +121,7 @@ class CustomToolbarComponent extends Toolbar {
     });
     this.editName = this.editName.bind(this);
   }
+
   editName() {
     this.props.mutate({
      variables: {id: this.props.selectedTemplateId, templateName: this.state.newName },
@@ -139,6 +146,7 @@ class CustomToolbarComponent extends Toolbar {
           console.log(this.props.data.error)
           return (<div>An unexpected error occurred</div>)
       }
+      let { date } = this.props
       let month = moment(this.props.date).format("MMMM YYYY");
       let editNameAction =[{type:"white",title:"Cancel",handleClick:() => this.setState({editNamePopped: false}),image:false},
                            {type:"blue",title:"Rename Template",handleClick:this.editName,image:false}];
@@ -198,6 +206,8 @@ class CustomToolbarComponent extends Toolbar {
         );
     }
 }
+
+
 
 const allTemplates = gql`
   query allTemplates {

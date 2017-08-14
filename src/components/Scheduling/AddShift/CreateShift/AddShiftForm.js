@@ -173,8 +173,6 @@ export class AddShiftForm extends Component{
                             }},
                updateQueries: {
                     allWeekPublisheds: (previousQueryResult, { mutationResult }) => {
-                      console.log(previousQueryResult)
-                      console.log(mutationResult)
                       let weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
                       previousQueryResult.allWeekPublisheds.nodes = [...previousQueryResult.allWeekPublisheds.nodes,  weekPublishedHash]
                       return {

@@ -59,7 +59,7 @@ class AppComponent extends Component {
       	<Container fluid>
           <Grid>
             <Grid.Row>
-              <Grid.Column width={3} className="left-content"><Nav handleChange={this.handleChange} isemployeeview={this.state.isEmployeeview} handleChangeBrand={this.handleChangeBrand} brandId={this.state.brandId}/></Grid.Column>
+              <Grid.Column width={3} className="left-content"><Nav history={ this.props.history } handleChange={this.handleChange} isemployeeview={this.state.isEmployeeview} handleChangeBrand={this.handleChangeBrand} brandId={this.state.brandId}/></Grid.Column>
               <Grid.Column width={12} className="main-content">
                 {renderRoutes(routes)}
               </Grid.Column>
@@ -99,7 +99,7 @@ const userInfo = gql
 const App = graphql(userInfo, {
   options: (ownProps) => ({
     variables: {
-      email: 'test@example.com', 
+      email: "test@example.com"
     }
   }),
 })(AppComponent);

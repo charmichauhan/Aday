@@ -23,11 +23,6 @@ const routes = [
 				component: PublicSiteRoot,
 				routes: [
 					{
-						path: '/',
-						exact: true,
-						component: Login
-					},
-					{
 						path: '/login',
 						exact: true,
 						component: Login
@@ -35,6 +30,11 @@ const routes = [
 			{
 				component: App,
 				routes: [
+					{
+						path: '/',
+						exact: true,
+						component: Schedule
+					},
 						// {
 						// 	path: '/schedule/team/:workplaceId',
 						// 	exact: true,

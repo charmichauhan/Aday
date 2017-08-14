@@ -78,9 +78,6 @@ class ScheduleComponent extends Component {
     that = this
   };
   render() {
-    console.log(this.props)
-    console.log("this.props.client")
-    console.log(this.props.client)
     BigCalendar.momentLocalizer(moment);
     if (this.props.data.loading) {
       return (<div>Loading</div>)

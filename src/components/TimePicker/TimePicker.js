@@ -119,11 +119,9 @@ export default class TimePicker extends Component {
      const { activeField } = this.state;
      this.setState({activeField:field});
      const momentState = this.getMomentState(activeField);
-     console.log(momentState.format('h'));
      const minuteValue=momentState.add(15,'m').format('mm');
      const hourValue= (momentState.format('h') === '12') ?
        '0' : momentState.format('h')
-     console.log(hourValue);
        const updatedState = {
            [`${activeField}Hour`]: hourValue,
            [`${activeField}Minute`]: minuteValue,

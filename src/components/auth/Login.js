@@ -32,11 +32,8 @@ class LoginComponent extends Component {
 	          }
 	        }
 	      }).then(({ data }) => {
-                  console.log('got data', data);
-                  console.log(data.authenticate.jwt)
                   if (data.authenticate.jwt){
                   	document.cookie = "token="+ data.authenticate.jwt;
-                  	console.log(document.cookie)
                   	localStorage.setItem("email", this.state.email);
                    	this.props.history.push('/schedule/team');
                   }else{

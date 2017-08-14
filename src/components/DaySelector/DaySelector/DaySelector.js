@@ -37,13 +37,10 @@ export default class DaySelector extends React.Component {
 
   selectedDay(event) {
     const {callBack}=this.props;
-    console.log($(event.target));
     const cellId = $(event.target).data('cellid');
-    console.log(cellId);
     const { selected } = this.state;
     const currentValue = selected[cellId];
     const selectedDays = _.extend({}, selected, { [cellId]: !currentValue });
-    console.log(selectedDays);
     this.setState({ selected: selectedDays });
     const shiftDaysSelected={
       shiftDaysSelected:selectedDays

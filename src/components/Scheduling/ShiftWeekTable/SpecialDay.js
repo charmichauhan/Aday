@@ -104,11 +104,12 @@ class SpecialDayComponent extends Component{
   };
 
     render(){
+        console.log(this.props);
         if (this.props.allHoliday.loading) {
          return (<div>Loading</div>)
         }
         if (this.props.allHoliday.error) {
-          console.log(this.props.data.error);
+          console.log(this.props.allHoliday.error);
           return (<div>An unexpected error occurred</div>)
         }
         let allHoliday = this.props.allHoliday && this.props.allHoliday.allHolidays.edges;

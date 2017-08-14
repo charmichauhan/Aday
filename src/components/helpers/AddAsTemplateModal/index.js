@@ -72,7 +72,7 @@ export default class AddAsTemplateModal extends Component {
                        <WorkplaceSelector formCallBack={ this.handleWorkplaceChange } />
                     </div>
                         <label>TEMPLATE NAME</label>
-                        <input type="text" onChange={(e)=>this.handleChange(e)} name="templateName"/>
+                        <input type="text" onChange={(e)=>this.handleNameChange(e)} name="templateName"/>
                     </div>
                 </div>
                 </Dialog>}

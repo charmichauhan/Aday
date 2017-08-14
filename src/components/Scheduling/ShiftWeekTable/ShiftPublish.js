@@ -10,6 +10,7 @@ import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
+var rp = require('request-promise');
 
 class ShiftPublishComponent extends Component{
     constructor(props){
@@ -45,15 +46,23 @@ class ShiftPublishComponent extends Component{
         if (this.state.workplaceId && this.state.templateName){
             const that = this;
 
-            fetch('http://localhost:8080/shiftToTemplate?' +
-                          'weekPublishedId=' + this.props.publishId + '&' +
-                          'brandId=' +  localStorage.getItem('brandId') + '&' +
-                          'workplaceId=' + this.state.workplaceId + '&' +
-                          'creatorId=' +  localStorage.getItem('userId')  + '&' +
-                          'name=' +   this.state.templateName
-                      , { 
-                        method: 'POST'
-                      })
+            var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/shiftToTemplate'
+        
+             var options = {
+                uri: uri,
+                method: 'POST',
+                json: {"data": {"weekPublishedId": this.props.publishId,
+                                "brandId": localStorage.getItem('brandId'),
+                                "workplaceId": this.state.workplaceId,
+                                "creatorId":   localStorage.getItem('userId'),
+                                "name": this.state.templateName
+                            }
+                }
+            };
+
+
+
+              rp(options)
                 .then(function(response) {
                        that.setState({redirect:true})
                   }).catch((error) => {

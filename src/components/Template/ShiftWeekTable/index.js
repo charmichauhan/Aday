@@ -13,6 +13,7 @@ import "../../Scheduling/style.css";
 import { gql, graphql,compose } from 'react-apollo';
 import uuidv1 from 'uuid/v1';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
+var rp = require('request-promise');
 
 
 const styles = {
@@ -95,38 +96,52 @@ class ShiftWeekTableComponent extends Week {
              
             })
             .then(({ data }) => {
-                fetch('http://localhost:8080/templateToShift?template_id=' + this.props.id + '&' +
-                      'weekPublishedId=' +  weekPublishedId + '&' +
-                      'start=' + moment(start).startOf('week').format()+ '&' +
-                      'end=' +   moment(start).endOf('week').format()
-                  , { 
-                    method: 'POST'
-                  })
-                  .then(function(response) {
-                    that.setState({
-                      applyingTemplateModal: false
-                    });
-                   window.location.href = '/schedule/team';
-                  })
 
-              }).catch((error) => {
-                  console.log('there was an error sending the query', error);
-              });
+                var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/templateToShift'
+            
+                  var options = {
+                      uri: uri,
+                      method: 'POST',
+                      json: {"data": {"template_id": this.props.id,
+                                      "weekPublishedId": weekPublishedId ,
+                                      "start": moment(start).startOf('week').format(),
+                                      "end":   moment(start).endOf('week').format()
+                                    }
+                      }
+                  };
+                  rp(options)
+                    .then(function(response) {
+                        that.setState({
+                          applyingTemplateModal: false
+                        });
+                       window.location.href = '/schedule/team';
+                      }).catch((error) => {
+                          console.log('there was an error sending the query', error);
+                      });
+            })
 
-        } else{
-            fetch('http://localhost:8080/templateToShift?template_id=' + this.props.id + '&' +
-                      'weekPublishedId=' +  weekPublishedId + '&' +
-                      'start=' + moment(start).startOf('week').format() + '&' +
-                      'end=' + moment(start).endOf('week').format()
-                  , { 
-                    method: 'POST'
-                  })
-                  .then(function(response) {
-                    that.setState({
-                      applyingTemplateModal: false
-                    });
-                   window.location.href = '/schedule/team';
-                  })
+        } else {
+
+                var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/templateToShift'
+                var options = {
+                      uri: uri,
+                      method: 'POST',
+                      json: {"data": {"template_id": this.props.id,
+                                      "weekPublishedId": weekPublishedId ,
+                                      "start": moment(start).startOf('week').format(),
+                                      "end":   moment(start).endOf('week').format()
+                                    }
+                      }
+                  };
+                  rp(options)
+                    .then(function(response) {
+                        that.setState({
+                          applyingTemplateModal: false
+                        });
+                       window.location.href = '/schedule/team';
+                      }).catch((error) => {
+                          console.log('there was an error sending the query', error);
+                  });
         }
     };
     backToCalendarView = () => {

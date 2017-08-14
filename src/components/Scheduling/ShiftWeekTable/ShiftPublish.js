@@ -42,8 +42,24 @@ class ShiftPublishComponent extends Component{
       this.setState({redirect:true})
     };
     addTemplateName = () => {
-        let that = this;
-        that.setState({redirect:true});
+        if (this.state.workplaceId && this.state.templateName){
+            const that = this;
+
+            fetch('http://localhost:8080/shiftToTemplate?' +
+                          'weekPublishedId=' + this.props.publishId + '&' +
+                          'brandId=' +  localStorage.getItem('brandId') + '&' +
+                          'workplaceId=' + this.state.workplaceId + '&' +
+                          'creatorId=' +  localStorage.getItem('userId')  + '&' +
+                          'name=' +   this.state.templateName
+                      , { 
+                        method: 'POST'
+                      })
+                .then(function(response) {
+                       that.setState({redirect:true})
+                  }).catch((error) => {
+                      console.log('there was an error sending the query', error);
+                  });
+        }
     };
     addTemplateModalOpen = () => {
         this.setState({addTemplateModalOpen:true})

@@ -62,9 +62,6 @@ export default class JobsRow extends Component{
                                         <EventPopup users={this.props.users} data={y} key={index} view={this.props.view} />
                                     ))
                                 }
-                                <button type="button" className="addshift">
-                                    + ADD HOURS
-                                </button>
                             </TableRowColumn>
                         )
                     ))
@@ -73,3 +70,10 @@ export default class JobsRow extends Component{
         )
     }
 }
+
+/* 
+        not currently functional
+            <button type="button" className="addshift">
+               + ADD HOURS
+               </button>
+*/

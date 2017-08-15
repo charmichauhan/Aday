@@ -154,14 +154,6 @@ class CustomToolbar extends Toolbar {
               </div>
               <ul className="nav navbar-nav navbar-right">
                 <li>
-                  <button type="button" className="btn btn-default btnnav navbar-btn m8 "><strong>Today</strong>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" className="btn btn-default btnnav navbar-btn m8 "
-                          onClick={() => this.view("day")}><strong>DAY</strong></button>
-                </li>
-                <li>
                   <button type="button" className="btn btn-default btnnav navbar-btn m8 "
                           onClick={() => this.view("week")}><strong>WEEK</strong></button>
                 </li>
@@ -173,6 +165,20 @@ class CustomToolbar extends Toolbar {
     );
   }
 }
+
+/*
+  
+
+                  <li>
+                  <button type="button" className="btn btn-default btnnav navbar-btn m8 "><strong>Today</strong>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" className="btn btn-default btnnav navbar-btn m8 "
+                          onClick={() => this.view("day")}><strong>DAY</strong></button>
+                </li>
+
+*/
 
 const allWeekPublisheds = gql
   `query allWeekPublisheds($brandid: Uuid!){ 

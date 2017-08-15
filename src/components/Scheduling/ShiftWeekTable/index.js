@@ -89,6 +89,7 @@ class ShiftWeekTableComponent extends Week {
   };
 
   getSummary = (summary,start ) =>{
+    if (this.state.calendarView=="job"){
      let summaryDetail = [];
       for(let i=0;i<=6;i++){
           summaryDetail.push(<TableRowColumn style={styles.tableFooter}>
@@ -101,6 +102,7 @@ class ShiftWeekTableComponent extends Week {
           </TableRowColumn>);
       }
       return summaryDetail;
+    }
   };
   getDataEmployeeView = (workplaceId,data,allUsers) => {
     let userHash = {};
@@ -224,10 +226,7 @@ class ShiftWeekTableComponent extends Week {
       if (this.props.data.loading || this.props.allUsers.loading) {
         return (<div>Loading</div>)
       }
-      if (this.props.data.error) {
-        console.log(this.props.data.error);
-        return (<div>No Shifts For Given Week</div>)
-      }
+
       let workplaceId = this.props.events.workplaceId;
       let {data} = this.props;
       let jobData = this.state.calendarView=="job"?this.getDataJobView(workplaceId,data):this.getDataEmployeeView(workplaceId,data,this.props.allUsers);
@@ -240,29 +239,32 @@ class ShiftWeekTableComponent extends Week {
       let summary = {};
       let weeklyHoursTotal = 0;
       let weeklyHoursBooked = 0;
-      Object.keys(groupedData).forEach((shift,index) => {
-          let totalHours=0;
-          let totalBookedHours=0;
-          let shiftData = groupedData[shift];
-          Object.keys(shiftData).forEach((data,index) => {
-              let startTime = moment(shiftData[data]['startTime']).format("hh:mm A");
-              let endTime = moment(shiftData[data]['endTime']).format("hh:mm A");
-              let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
-              let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length
-              let shiftHours = parseInt(moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("H"));
-              let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned+ workerInvited );
-              let openShiftTotal = shiftHours*openShift;
-              let workersAssignedTotal = shiftHours*(workerAssigned);
-              let workersInvitedTotal = shiftHours*(workerInvited);
-              let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
-              totalHours += parseInt(workerShiftHours);
-              totalBookedHours += workersAssignedTotal;
-          });
-          summary[shift] = {'totalHours':totalHours,'totalBookedHours':totalBookedHours};
-          weeklyHoursTotal +=totalHours;
-          weeklyHoursBooked += totalBookedHours;
-      });
-      let weeklyTotalHoursBooked = Math.round((weeklyHoursBooked*100)/weeklyHoursTotal) || 0;
+      let weeklyTotalHoursBooked = 0;
+      if (this.state.calendarView=="job"){
+        Object.keys(groupedData).forEach((shift,index) => {
+            let totalHours=0;
+            let totalBookedHours=0;
+            let shiftData = groupedData[shift];
+            Object.keys(shiftData).forEach((data,index) => {
+                let startTime = moment(shiftData[data]['startTime']).format("hh:mm A");
+                let endTime = moment(shiftData[data]['endTime']).format("hh:mm A");
+                let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
+                let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length
+                let shiftHours = parseInt(moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("H"));
+                let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned+ workerInvited );
+                let openShiftTotal = shiftHours*openShift;
+                let workersAssignedTotal = shiftHours*(workerAssigned);
+                let workersInvitedTotal = shiftHours*(workerInvited);
+                let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
+                totalHours += parseInt(workerShiftHours);
+                totalBookedHours += workersAssignedTotal;
+            });
+            summary[shift] = {'totalHours':totalHours,'totalBookedHours':totalBookedHours};
+            weeklyHoursTotal +=totalHours;
+            weeklyHoursBooked += totalBookedHours;
+        });
+        weeklyTotalHoursBooked = Math.round((weeklyHoursBooked*100)/weeklyHoursTotal) || 0;
+      }
       let { date } = this.props;
       let { start } = ShiftWeekTable.range(date, this.props);
       let is_publish = true;
@@ -271,15 +273,61 @@ class ShiftWeekTableComponent extends Week {
       let unsubscribe = store.subscribe(() =>
           console.log(store.getState())
       );
+
+      const TableRowHeader = ( <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                            <TableRow displayBorder={false}>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
+                                    className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(1).format('dddd')} </p>
+                                    <p className="weekDate">{moment(start).day(1).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(2).format('dddd')} </p><p
+                                    className="weekDate">  {moment(start).day(2).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(3).format('dddd')} </p><p
+                                    className="weekDate">  {moment(start).day(3).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(4).format('dddd')} </p><p
+                                    className="weekDate">  {moment(start).day(4).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(5).format('dddd')} </p><p
+                                    className="weekDate">  {moment(start).day(5).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(6).format('dddd')} </p><p
+                                    className="weekDate">{moment(start).day(6).format('D')}</p></TableRowColumn>
+                            </TableRow>
+                        </TableHeader>)
+
+
+
+
+      if (this.props.data.error) {
         return (
+        <div className="table-responsive">
+                    <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
+                           fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
+                           className="table atable emp_view_table" style={styles.root}>
+                          { TableRowHeader }
+                      </Table>
+        </div>
+        )
+      }
+
+      return (
             <Provider store={store}>
                 <div className="table-responsive">
                     <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
                            fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
                            className="table atable emp_view_table" style={styles.root}>
-                          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow displayBorder={false}>
-                                <TableRowColumn style={styles.tableFooter} className="long dayname"><p className="weekDay">Hours Booked</p><p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="long dayname">
+                                  { this.state.calendarView=="job"? ( 
+                                   <div> <p className="weekDay">Hours Booked</p> 
+                                   <p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p> </div>) : "" }
+                                </TableRowColumn>
                                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                     className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                     className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
@@ -319,9 +367,9 @@ class ShiftWeekTableComponent extends Week {
                         <TableFooter adjustForCheckbox={false}>
                             <TableRow displayBorder={false}>
                                 <TableRowColumn style={styles.tableFooterHeading}>
-                                    <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
+                                  { this.state.calendarView=="job"? (<div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
                                         hours booked:</p><p className="sfont">{weeklyHoursBooked} of {weeklyHoursTotal}
-                                         | {weeklyTotalHoursBooked}%</p></div>
+                                         | {weeklyTotalHoursBooked}%</p></div>) : "" }
                                 </TableRowColumn>
                                 {this.getSummary(summary,start)}
                             </TableRow>
@@ -334,6 +382,8 @@ class ShiftWeekTableComponent extends Week {
         );
     }
 }
+
+
 
 ShiftWeekTableComponent.range = (date, { culture }) => {
     let firstOfWeek = localizer.startOfWeek(culture);

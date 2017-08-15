@@ -89,7 +89,7 @@ class ShiftWeekTableComponent extends Week {
   };
 
   getSummary = (summary,start ) =>{
-      let summaryDetail = [];
+     let summaryDetail = [];
       for(let i=0;i<=6;i++){
           summaryDetail.push(<TableRowColumn style={styles.tableFooter}>
               <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours booked:</p>
@@ -226,7 +226,7 @@ class ShiftWeekTableComponent extends Week {
       }
       if (this.props.data.error) {
         console.log(this.props.data.error);
-        return (<div>An unexpected error occurred</div>)
+        return (<div>No Shifts For Given Week</div>)
       }
       let workplaceId = this.props.events.workplaceId;
       let {data} = this.props;

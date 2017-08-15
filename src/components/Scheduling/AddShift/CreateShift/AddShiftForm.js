@@ -160,7 +160,9 @@ export class AddShiftForm extends Component{
       let weekPublishedId = this.props.weekPublishedId
 
       // if it doesn't exist create and then create shifts
-      if(weekPublishedId == "66666666-12c4-11e1-840d-7b25c5ee7756") {
+      console.log("weekPublishedId")
+      console.log(weekPublishedId)
+      if(!weekPublishedId || weekPublishedId=="") {
          weekPublishedId = uuidv1();
          _this.props.createWeekPublished({
                 variables: { data:

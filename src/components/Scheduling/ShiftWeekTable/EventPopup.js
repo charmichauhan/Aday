@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import Modal from '../../helpers/Modal';
-import EditShiftDrawer from './ShiftEdit/EditShiftDrawer';
+import EditShiftDrawerContainer from './ShiftEdit/EditShiftDrawerContainer';
 import EditShiftModal from './ShiftEdit/EditShiftModal';
 import ShiftHistoryDrawer from './ShiftEdit/ShiftHistoryDrawer';
 import { gql, graphql, compose } from 'react-apollo';
@@ -52,7 +52,7 @@ class EventPopupComponent extends Component {
     if (modal == 'deleteModalPopped'){
         this.setState({ deleteModalPopped: true });
     }
-    else if (modal == 'editShiftDrawer' ){
+    else if (modal == 'EditShiftDrawerContainer' ){
         this.setState({ editShiftDrawerOpen: true });
     }
     else if (modal == 'editShiftModal' ){
@@ -138,7 +138,7 @@ class EventPopupComponent extends Component {
           message="Are you sure that you want to delete this shift?"
           action={deleteShiftAction}
           closeAction={this.modalClose} />
-        <EditShiftDrawer
+        <EditShiftDrawerContainer
           shift={data}
           users={users}
           open={this.state.newShiftModalPopped}

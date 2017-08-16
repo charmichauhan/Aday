@@ -49,7 +49,7 @@ export default class JobsRow extends Component{
                       <img width="65px" src={this.props.view=="job"?data[0].positionByPositionId.positionIconUrl:data[0].userAvatar } alt="img"/>
                     </div>
                     <div className="user_desc penalheading">
-                      {this.props.view=="job"? "Super Master Sushi Chef " : data[0].userFirstName}
+                      {this.props.view=="job"? data[0].positionByPositionId.positionName : data[0].userFirstName}
                       <p className="lastName"> {this.props.view=="job"?  "" :data[0].userLastName}</p>
 
                     </div>

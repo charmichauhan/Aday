@@ -39,12 +39,14 @@ export class WorkplaceSelector extends Component{
       console.log(this.props.data.error)
       return (<div>An unexpected error occurred</div>)
     }else{
-
-
       if(!this.state.workplaces.length){
         /// add positions into state parameter
-      
+
       let workplacesArray=this.props.data.allWorkplaces.nodes;
+      let workplaceId = localStorage.getItem("workplaceId");
+      if (workplaceId != "") {
+        workplacesArray = workplacesArray.filter((w) => w.id == workplaceId);
+      }
       workplacesArray.forEach(function(workplace,index) {
         this.state.workplaces.push({
           text:workplace.workplaceName,

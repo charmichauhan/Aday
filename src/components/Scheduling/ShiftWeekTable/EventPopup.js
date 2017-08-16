@@ -208,4 +208,3 @@ const EventPopup = graphql(deleteShift, {
 })(EventPopupComponent);
 
 export default EventPopup;
-

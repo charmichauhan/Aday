@@ -395,37 +395,6 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
     return { start, end };
 };
 
-const allShifts = gql
-    `query allShifts($brandid: Uuid!, $day: Datetime!){
-        weekPublishedByDate(brandid: $brandid, day: $day){
-            nodes{
-            id
-            shiftsByWeekPublishedId{
-                    edges {
-                        node {
-                            id
-                            startTime
-                            endTime
-                            workersInvited
-                            workersAssigned
-                            workersRequestedNum
-                            positionByPositionId{
-                            positionName
-                            positionIconUrl
-                                brandByBrandId {
-                                    brandName
-                                }
-                            }
-                            workplaceByWorkplaceId{
-                                workplaceName
-                            }
-                        }
-                    }
-                }
-            }
-        }
-}`
-
 const allUsers = gql`
     query allUsers {
         allUsers{

@@ -217,7 +217,7 @@ export class UpdateShiftForm extends Component{
               <WorkplaceSelector formCallBack={ this.updateFormState } workplace={ this.state.workplace }/>
            </div>
            <div style={{marginTop:'15px'}} >
-              <PositionSelector formCallBack={ this.updateFormState } position={ this.state.position } />
+              <PositionSelector formCallBack={ this.updateFormState } workplaceId={ this.state.workplace } position={ this.state.position } />
             </div>
               {!this.props.editMode && (
                    <div style={{marginTop:'30px'}} >

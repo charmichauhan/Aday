@@ -48,8 +48,9 @@ export default class JobsRow extends Component{
                     <div className="user_img">
                       <img width="65px" src={this.props.view=="job"?data[0].positionByPositionId.positionIconUrl:data[0].userAvatar } alt="img"/>
                     </div>
-                    <div className="user_desc penalheading">{this.props.view=="job"? data[0].positionByPositionId.positionName.split(" ")[0] : data[0].userFirstName}
-                      <p className="lastName"> {this.props.view=="job"?  data[0].positionByPositionId.positionName.split(" ")[1] :data[0].userLastName}</p>
+                    <div className="user_desc penalheading">
+                      {this.props.view=="job"? "Super Master Sushi Chef " : data[0].userFirstName}
+                      <p className="lastName"> {this.props.view=="job"?  "" :data[0].userLastName}</p>
 
                     </div>
                   </div>
@@ -71,7 +72,7 @@ export default class JobsRow extends Component{
     }
 }
 
-/* 
+/*
         not currently functional
             <button type="button" className="addshift">
                + ADD HOURS

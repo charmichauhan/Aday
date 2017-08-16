@@ -95,11 +95,11 @@ export class UpdateShiftForm extends Component{
       const shiftPatch = {}
         shiftPatch['workplaceId'] = this.state.workplace;
         shiftPatch['positionId'] = this.state.position;
-        shiftPatch['startTime'] = startTime;
-        shiftPatch['endTime'] = endTime;
+        shiftPatch['startTime'] = moment(startTime).format();
+        shiftPatch['endTime'] = moment(endTime).format();
         shiftPatch['workersRequestedNum'] = this.state.numberOfTeamMembers;
         shiftPatch['instructions'] = this.state.instructions;
-        shiftPatch['managersOnShift'] = this.state.managerValue;
+        shiftPatch['managersOnShift'] = [this.state.managerValue];
         shiftPatch['unpaidBreakTime'] = this.state.unpaidBreak;
         shiftPatch['traineesRequestedNum'] = this.state.jobShadowingOpportunity;
 

@@ -267,9 +267,7 @@ class DrawerHelper extends Component {
               <Image src="/images/Icons_Red_Cross.png" size="mini" />
             </IconButton>
             <h5 className="confirm-popup">Add Team Members</h5>
-            <div className="drawer-right">
-              <RaisedButton label="History" onClick={this.handleShiftHistoryDrawer} />
-            </div>
+
           </div>
           <div className="drawer-content scroll-div">
             <div className="member-list">
@@ -293,33 +291,13 @@ class DrawerHelper extends Component {
               </div>
 
             </div>
-            <div className="member-list">
-              <h5>JOB SHADOWERS ({jobShadowers.length})</h5>
-              {jobShadowers && jobShadowers.map((tm, i) => (
-                <TeamMemberCard
-                  avatarUrl={tm.user.avatar}
-                  firstName={tm.user.firstName}
-                  lastName={tm.user.otherNames}
-                  content={tm.content}
-                  key={i}
-                  id={i}
-                  users={users}
-                  color={this.borderColor(tm.status) + 'Border'}
-                  handleRemove={() => this.removeJobShadower(i)}
-                  onSelectChange={this.setJobShadower}
-                />
-              ))}
-              <div className="btn-member">
-                <RaisedButton label="ADD JOB SHADOWER" onClick={this.addJobShadower} />
-              </div>
-            </div>
+      
             <div className="shift-details">
               <Divider />
               <div className="shift-heading">
                 <img src="/assets/Icons/copying.png" />
                 <h5>SHIFT DETAILS</h5>
               </div>
-              <Input fluid type="text" placeholder="NAME THIS SHIFT TO SAVE IT AS A TAMPLATE" />
               <div className="shiftDetails">
                 <p><b>Work place</b>: {shift.workplaceByWorkplaceId.workplaceName}</p>
                 <p><b>Position</b>: {shift.positionByPositionId.positionName}</p>
@@ -345,6 +323,35 @@ class DrawerHelper extends Component {
     );
   };
 }
+
+
+/* Hidden Components Until They Are Connected
+
+              <div className="drawer-right">
+              <RaisedButton label="History" onClick={this.handleShiftHistoryDrawer} />
+            </div>
+
+      <div className="member-list">
+              <h5>JOB SHADOWERS ({jobShadowers.length})</h5>
+              {jobShadowers && jobShadowers.map((tm, i) => (
+                <TeamMemberCard
+                  avatarUrl={tm.user.avatar}
+                  firstName={tm.user.firstName}
+                  lastName={tm.user.otherNames}
+                  content={tm.content}
+                  key={i}
+                  id={i}
+                  users={users}
+                  color={this.borderColor(tm.status) + 'Border'}
+                  handleRemove={() => this.removeJobShadower(i)}
+                  onSelectChange={this.setJobShadower}
+                />
+              ))}
+              <div className="btn-member">
+                <RaisedButton label="ADD JOB SHADOWER" onClick={this.addJobShadower} />
+              </div>
+            </div>
+*/
 
 const DrawerHelperComponent = compose(graphql(deleteShiftMutation, {
     props: ({ ownProps, mutate }) => ({

@@ -89,7 +89,7 @@ class ScheduleComponent extends Component {
     }
     let events= [];
     let is_publish = "none";
-    let publish_id = "66666666-12c4-11e1-840d-7b25c5ee7756";
+    let publish_id = "";
     const date = this.state.date;
     this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
       if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
@@ -155,14 +155,6 @@ class CustomToolbar extends Toolbar {
               </div>
               <ul className="nav navbar-nav navbar-right">
                 <li>
-                  <button type="button" className="btn btn-default btnnav navbar-btn m8 "><strong>Today</strong>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" className="btn btn-default btnnav navbar-btn m8 "
-                          onClick={() => this.view("day")}><strong>DAY</strong></button>
-                </li>
-                <li>
                   <button type="button" className="btn btn-default btnnav navbar-btn m8 "
                           onClick={() => this.view("week")}><strong>WEEK</strong></button>
                 </li>
@@ -174,6 +166,20 @@ class CustomToolbar extends Toolbar {
     );
   }
 }
+
+/*
+  
+
+                  <li>
+                  <button type="button" className="btn btn-default btnnav navbar-btn m8 "><strong>Today</strong>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" className="btn btn-default btnnav navbar-btn m8 "
+                          onClick={() => this.view("day")}><strong>DAY</strong></button>
+                </li>
+
+*/
 
 const allWeekPublisheds = gql
   `query allWeekPublisheds($brandid: Uuid!){

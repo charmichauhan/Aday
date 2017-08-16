@@ -19,6 +19,7 @@ class NavComponent extends Component {
   changeWorkplace = () => {
     let workplaceId = document.getElementById("workplace").value;
     localStorage.setItem("workplaceId", workplaceId);
+    this.forceUpdate();
     this.props.handleChange();
   };
   logout = () => {
@@ -44,6 +45,7 @@ class NavComponent extends Component {
              return (<div>An unexpected error occurred</div>)
         }
     const brandId = localStorage.getItem("brandId");
+    const workplaceId = localStorage.getItem("workplaceId");
     const brandLogo = "";
 		const brands = this.props.allBrands && this.props.allBrands.allCorporationBrands.nodes;
     const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
@@ -63,7 +65,7 @@ class NavComponent extends Component {
 							</select>
 						</Menu.Header>
 						<Menu.Header>
-							<select onChange={this.changeWorkplace} id="workplace">
+							<select onChange={this.changeWorkplace} id="workplace" value={workplaceId}>
 								<option value="">CHOOSE WORKPLACE</option>
                 {
                   filteredWorkplaces.map((v,i)=>(

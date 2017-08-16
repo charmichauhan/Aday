@@ -40,6 +40,7 @@ class LoginComponent extends Component {
                   	 this.setState({badLogin: true});
                   }
 			}).catch((error) => {
+				  document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                   console.log('there was an error sending the query', error);
               });
 	  }

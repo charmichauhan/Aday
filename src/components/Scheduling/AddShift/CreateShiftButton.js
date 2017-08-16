@@ -24,7 +24,7 @@ export default class CreateShiftButton extends Component {
       poppedOut: false,
 	  employeeCount : false,
       standard:false,
-      template:false, 
+      template:false,
       modalHeight: '350px',
       modalSize: 'small'
     };
@@ -33,15 +33,15 @@ export default class CreateShiftButton extends Component {
 		this.setState({ poppedOut: true});
 	}
     onFormClose() {
-		this.setState({ poppedOut: false, standard: false, 
-						employeeCount: false, template: false, 
+		this.setState({ poppedOut: false, standard: false,
+						employeeCount: false, template: false,
 						modalHeight:'350px', modalSize: 'small' });
 	}
-	
+
 	onEmployeeCount(){
 	    this.setState({employeeCount:false})
 	 }
-	 
+
 	 onStandard(){
 	    this.setState({modalHeight: '900px', modalSize: 'medium', standard:true})
 	 }
@@ -63,9 +63,9 @@ export default class CreateShiftButton extends Component {
 				 style={{ height: this.state.modalHeight}}
          		 onClose={ this.onFormClose }
 				>
-			     
-			        
-			        { !this.state.employeeCount && !this.state.standard && 
+
+
+			        { !this.state.employeeCount && !this.state.standard &&
 			          <Modal.Content>
 			          <Header as='h2' style={{textAlign: 'center', color: '#0022A1',fontSize: '26px',marginLeft: '10%',padding: '2px'}} >
 			           <p style={{paddingTop:'11px',float:'left',marginLeft:'30%'}}>ADD HOURS</p>
@@ -99,9 +99,9 @@ export default class CreateShiftButton extends Component {
 			                        />
 			            </Modal.Content>
 			                }
-			            
-			                { this.state.employeeCount && <AddEmployeeForm /> } 
-			                { this.state.standard && <AddShiftForm  brandId={ this.props.brandId }  weekPublishedId={ this.props.weekPublishedId } start={this.props.weekStart} closeFunc={ this.onFormClose } /> } 
+
+			                { this.state.employeeCount && <AddEmployeeForm /> }
+			                { this.state.standard && <AddShiftForm weekPublishedId={ this.props.weekPublishedId } start={this.props.weekStart} closeFunc={ this.onFormClose } /> }
 
 		  </Modal>
 		);

@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import EmergencyShiftButton from './KendallLearning/EmergencyShiftButton';
 import { gql, graphql,compose} from 'react-apollo';
 import './nav.css';
+
 const styles = {
     menuStyle:{
       width:200,
@@ -14,24 +15,23 @@ const styles = {
 class NavComponent extends Component {
   constructor(props){
     super(props);
-    this.state = {
-      workplaceId:""
-    }
   }
   changeWorkplace = () => {
     let workplaceId = document.getElementById("workplace").value;
-    this.props.handleChange(workplaceId);
+    localStorage.setItem("workplaceId", workplaceId);
+    this.props.handleChange();
   };
-
   logout = () => {
   	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   	this.props.history.push('/login')
-
   }
-
   handleChangeBrand = () => {
     let brandId = document.getElementById("brand").value;
-    this.props.handleChangeBrand(brandId);
+    localStorage.setItem("brandId", brandId);
+    localStorage.setItem("workplaceId", "");
+    document.getElementById("workplace").value = "";
+    this.forceUpdate();
+    this.props.handleChange();
   };
 
 	render() {
@@ -43,8 +43,10 @@ class NavComponent extends Component {
              console.log(this.props.data.error)
              return (<div>An unexpected error occurred</div>)
         }
-    const brandLogo = this.props.data.brandById.brandIconUrl;
-		const brands = this.props.allBrands && this.props.allBrands.allBrands.edges;
+    const brandId = localStorage.getItem("brandId");
+    const brandLogo = "";
+		const brands = this.props.allBrands && this.props.allBrands.allCorporationBrands.nodes;
+    const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
 		return (
 			<div className="left-menu_item">
 				{/*<EmergencyShiftButton/>*/}
@@ -53,11 +55,9 @@ class NavComponent extends Component {
 						<Menu.Header><Image src="/images/logos_aday.png" width="102" height="31" centered={true}/></Menu.Header>
 						<Menu.Header><Image src="" width="100" height="100" centered={true}/></Menu.Header>
 						<Menu.Header className="dropdown-menu-item">
-							<select onChange={this.handleChangeBrand} id="brand">
-								<option value="">CHOOSE BRAND</option>
-                {
-                  brands.map((value,index)=>(
-                    <option value={value.node.id} key={index}>{value.node.brandName}</option>
+							<select onChange={this.handleChangeBrand} id="brand" value={brandId}>
+                { brands.map((v,i)=>(
+                    <option value={v.brandByBrandId.id} key={i}>{v.brandByBrandId.brandName}</option>
                   ))
                 }
 							</select>
@@ -66,8 +66,8 @@ class NavComponent extends Component {
 							<select onChange={this.changeWorkplace} id="workplace">
 								<option value="">CHOOSE WORKPLACE</option>
                 {
-                  this.props.data.brandById.workplacesByBrandId.edges.map((v,i)=>(
-											<option value={v.node.id} key={i}> { v.node.workplaceName } </option>
+                  filteredWorkplaces.map((v,i)=>(
+											<option value={v.id} key={i}> { v.workplaceName } </option>
                     )
                   )}
 							</select>
@@ -101,44 +101,46 @@ class NavComponent extends Component {
 }
 
 const allWorkplaces = gql`
-  query allWorkplaces($brandid: Uuid!){ 
- 	brandById(id: $brandid){
- 	id
-  	brandIconUrl
-	workplacesByBrandId{
-	    edges{
-		    node{
-				id
-		        workplaceName
-		      }
-		    }		 
-		}
-	}
-}`
+  query getAllWorkplacesQuery ($corporationId: Uuid!) {
+    allWorkplaces (condition: {corporationId: $corporationId}) {
+      nodes{
+        workplaceName,
+        id,
+        brandId
+      }
+    }
+}
+`
 
 const allBrands = gql`
-  query allBrands {
-        allBrands{
-            edges{
-                node{
-                    id
-                    brandName
-                    brandIconUrl
-                }
-            }
+  query ($corporationId: Uuid!){
+    allCorporationBrands(condition: {corporationId: $corporationId}){
+      nodes{
+        brandByBrandId{
+          id
+          brandName
+          brandIconUrl
         }
+      }
     }
+  }
   `
 
 const Nav = compose(
   graphql(allWorkplaces, {
     options: (ownProps) => ({
       variables: {
-        brandid: ownProps.brandId || localStorage.getItem('brandId'),
+        corporationId: localStorage.getItem('corporationId') ,
       }
     }),
   }),
-  graphql(allBrands,{name:"allBrands"})
+  graphql(allBrands, { name:"allBrands",
+    options: (ownProps) => ({
+      variables: {
+        corporationId: localStorage.getItem('corporationId') ,
+      },
+    }),
+  })
 )(NavComponent);
 
 export default Nav

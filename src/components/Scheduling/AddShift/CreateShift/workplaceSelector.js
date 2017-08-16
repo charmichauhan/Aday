@@ -28,7 +28,7 @@ export class WorkplaceSelector extends Component{
   }
 
   render(){
-  
+
     if (this.props.data.loading) {
       return (
       <Loader active inline='centered' />
@@ -43,6 +43,7 @@ export class WorkplaceSelector extends Component{
 
       if(!this.state.workplaces.length){
         /// add positions into state parameter
+      
       let workplacesArray=this.props.data.allWorkplaces.nodes;
       workplacesArray.forEach(function(workplace,index) {
         this.state.workplaces.push({
@@ -53,33 +54,37 @@ export class WorkplaceSelector extends Component{
       }, this);
     }
     }
-    
+
     return(
- 
+
     <div>
-    { !this.props.workplace && <Dropdown placeholder="Select Workplace" fluid selection 
+    { !this.props.workplace && <Dropdown placeholder="Select Workplace" fluid selection
       options={this.state.workplaces} style={{ marginTop:'-2%', fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
 
-    { this.props.workplace && <Dropdown defaultValue={this.props.workplace} fluid selection 
+    { this.props.workplace && <Dropdown defaultValue={this.props.workplace} fluid selection
       options={this.state.workplaces} style={{ marginTop:'-2%', fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
 
     </div>
-           
+
     );
   }
 }
 
 const getAllWorkplaces = gql`
-  query getAllWorkplacesQuery {
-  allWorkplaces {
-    nodes{
-      workplaceName,
-      id
+  query getAllWorkplacesQuery($brandId: Uuid!, $corporationId: Uuid!) {
+    allWorkplaces (condition: {brandId: $brandId, corporationId: $corporationId}) {
+      nodes{
+        workplaceName,
+        id
+      }
     }
-  }
-}
-`
+}`
 
-
-const GetWorkplaces = graphql(getAllWorkplaces)(WorkplaceSelector)
+const GetWorkplaces = graphql(getAllWorkplaces , {
+  options: (ownProps) => ({
+    variables: {
+      brandId: localStorage.getItem('brandId'),
+      corporationId: localStorage.getItem('corporationId')
+    }
+  })})(WorkplaceSelector)
 export default GetWorkplaces

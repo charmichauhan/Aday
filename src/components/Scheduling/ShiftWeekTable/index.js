@@ -228,7 +228,7 @@ class ShiftWeekTableComponent extends Week {
         console.log(this.props.data.error);
         return (<div>An unexpected error occurred</div>)
       }
-      let workplaceId = this.props.events.workplaceId;
+      let workplaceId = localStorage.getItem("workplaceId");
       let {data} = this.props;
       let jobData = this.state.calendarView=="job"?this.getDataJobView(workplaceId,data):this.getDataEmployeeView(workplaceId,data,this.props.allUsers);
       let jobs = [];
@@ -343,7 +343,7 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
 };
 
 const allShifts = gql
-    `query allShifts($brandid: Uuid!, $day: Datetime!){ 
+    `query allShifts($brandid: Uuid!, $day: Datetime!){
         weekPublishedByDate(brandid: $brandid, day: $day){
             nodes{
             id

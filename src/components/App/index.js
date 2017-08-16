@@ -3,22 +3,16 @@ import { renderRoutes } from 'react-router-config';
 import {Grid, Container } from 'semantic-ui-react'
 import Nav from './Nav'
 import { gql, graphql } from 'react-apollo';
+const uuidv4 = require('uuid/v4');
 
 class AppComponent extends Component {
   constructor(props){
     super(props);
     this.state=({
-      workplaceId:"",
-      brandId:"",
       isEmployeeview:false
     });
+    this.handleChange = this.handleChange.bind(this);
   }
-  handleChange = (workplaceId) => {
-    this.setState({workplaceId:workplaceId});
-  };
-  handleChangeBrand = (brandId) => {
-    this.setState({brandId:brandId});
-  };
   setEmployeeview = (e) => {
     this.setState({isEmployeeview:true})
   };
@@ -26,6 +20,9 @@ class AppComponent extends Component {
     if(this.state.isEmployeeview) {
       this.setState({isEmployeeview: !this.state.isEmployeeview})
     }
+  };
+  handleChange = () => {
+    this.forceUpdate();
   };
   render(){
 
@@ -43,23 +40,26 @@ class AppComponent extends Component {
     let routes = [];
     route.map((value,index)=>{
       value.isEmployeeview = this.setEmployeeview;
-      value.workplaceId=this.state.workplaceId;
-      value.brandId = this.state.brandId;
       routes.push(value);
     });
-
-
-    localStorage.setItem("userId", this.props.data.allUsers.edges[0].node.id)
-    const employee = this.props.data.allUsers.edges[0].node.employeesByUserId.edges[0]
-    if(employee){
-      localStorage.setItem("corporationId", employee.node.corporationId);
-      localStorage.setItem("brandId", employee.node.accessesByEmployeeId.nodes[0].brandId);
-   }
+    if (localStorage.getItem("userId") != this.props.data.allUsers.edges[0].node.id){
+      localStorage.setItem("userId", this.props.data.allUsers.edges[0].node.id)
+      localStorage.setItem("workplaceId", "");
+      const employee = this.props.data.allUsers.edges[0].node.employeesByUserId.edges[0]
+      if(employee){
+        localStorage.setItem("corporationId", employee.node.corporationId);
+        localStorage.setItem("brandId", employee.node.accessesByEmployeeId.nodes[0].brandId);
+      } else {
+        throw "Kendall thinks every user who logs in must be an employee";
+      }
+    }
     return(
       	<Container fluid>
           <Grid>
             <Grid.Row>
-              <Grid.Column width={3} className="left-content"><Nav history={ this.props.history } handleChange={this.handleChange} isemployeeview={this.state.isEmployeeview} handleChangeBrand={this.handleChangeBrand} brandId={this.state.brandId}/></Grid.Column>
+              <Grid.Column width={3} className="left-content">
+                <Nav history={ this.props.history } isemployeeview={this.state.isEmployeeview} handleChange = {this.handleChange}/>
+              </Grid.Column>
               <Grid.Column width={12} className="main-content">
                 {renderRoutes(routes)}
               </Grid.Column>
@@ -72,7 +72,7 @@ class AppComponent extends Component {
 
 
 const userInfo = gql
-  `query userInfo($email: String!){ 
+  `query userInfo($email: String!){
         allUsers(condition: { userEmail: $email }){
              edges{
                 node{

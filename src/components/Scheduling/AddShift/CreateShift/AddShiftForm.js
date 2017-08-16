@@ -89,7 +89,7 @@ export class AddShiftForm extends Component{
                   {shift:
                     { id: uuidv1(), workplaceId: this.state.workplace,
                       positionId: this.state.position, workersRequestedNum: this.state.numberOfTeamMembers,
-                      creatorId: localStorage.getItem('userId'), 
+                      creatorId: localStorage.getItem('userId'),
                       managersOnShift: [this.state.managerValue],
                       startTime: startTime, endTime: endTime,
                       shiftDateCreated: moment().format(),
@@ -156,7 +156,7 @@ export class AddShiftForm extends Component{
       this.setState({loading: true})
       const days = Object.keys(this.state.shiftDaysSelected)
       const _this = this
-      const brandId = this.props.brandId
+      const brandId = localStorage.getItem('brandId');
       let weekPublishedId = this.props.weekPublishedId
 
       // if it doesn't exist create and then create shifts
@@ -249,7 +249,6 @@ export class AddShiftForm extends Component{
         </div>
       )
     }
-
     return(
       <div>
         { header }
@@ -262,7 +261,7 @@ export class AddShiftForm extends Component{
               <WorkplaceSelector formCallBack={ this.updateFormState } />
            </div>
            <div style={{marginTop:'15px'}} >
-              <PositionSelector formCallBack={ this.updateFormState } />
+              <PositionSelector workplaceId={this.state.workplace} formCallBack={ this.updateFormState } />
             </div>
               <div style={{marginTop:'30px'}} >
                   <p className="shift-form-title">SHIFT DAY(S) OF THE WEEK</p>

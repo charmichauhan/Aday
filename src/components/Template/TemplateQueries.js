@@ -7,6 +7,7 @@ const allTemplates = gql`
             node{
               id
               templateName
+              workplaceId
             }
         }
     }

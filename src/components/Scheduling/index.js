@@ -101,13 +101,14 @@ class ScheduleComponent extends Component {
       }
     });
     events.publish_id = publish_id;
-    events.workplaceId = this.props.route.workplaceId;
     let publishModalOptions = [{type: "white", title: "Go Back", handleClick: this.goBack, image: false},
       {type: "blue", title: "Confirm", handleClick: this.onConfirm, image: false}];
 
     return (
       <div>
-        <div style={{height: '160px'}}><ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={publish_id} view={this.state.view}/></div>
+        <div style={{height: '160px'}}>
+          <ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={publish_id} view={this.state.view}/>
+        </div>
         <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                message="Are you sure that you want to delete this shift?"
                action={publishModalOptions} closeAction={this.modalClose}/>
@@ -175,7 +176,7 @@ class CustomToolbar extends Toolbar {
 }
 
 const allWeekPublisheds = gql
-  `query allWeekPublisheds($brandid: Uuid!){ 
+  `query allWeekPublisheds($brandid: Uuid!){
         allWeekPublisheds(condition: { brandId: $brandid }){
             nodes{
             id
@@ -189,7 +190,7 @@ const allWeekPublisheds = gql
 const Schedule = graphql(allWeekPublisheds, {
   options: (ownProps) => ({
     variables: {
-      brandid:localStorage.getItem('brandId') ,
+      brandid:localStorage.getItem('brandId')
     }
   }),
 })(ScheduleComponent);

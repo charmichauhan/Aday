@@ -47,7 +47,7 @@ class ShiftPublishComponent extends Component{
             const that = this;
 
             var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/shiftToTemplate'
-        
+
              var options = {
                 uri: uri,
                 method: 'POST',
@@ -158,7 +158,7 @@ class ShiftPublishComponent extends Component{
                         </div>
                     </div>
                   <div className="btn-action">
-                    <Button className="btn-image"><CreateShiftButton brandId={localStorage.getItem('brandId')} weekPublishedId={ publishId } weekStart={ start } /></Button>
+                    <Button className="btn-image"><CreateShiftButton weekPublishedId={ publishId } weekStart={ start } /></Button>
                     {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
                     {(is_publish != "none") && <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
@@ -169,8 +169,8 @@ class ShiftPublishComponent extends Component{
     }
 }
 
-const updateWeekPublishedNameMutation = gql` 
-mutation updateWeekPublishedById($id: Uuid!, $date: Datetime!) { 
+const updateWeekPublishedNameMutation = gql`
+mutation updateWeekPublishedById($id: Uuid!, $date: Datetime!) {
     updateWeekPublishedById(input:{ id: $id, weekPublishedPatch:{published: true, datePublished: $date}}){
             weekPublished{
                 id

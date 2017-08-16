@@ -153,6 +153,9 @@ class CustomToolbarComponent extends Toolbar {
       let month = moment(this.props.date).format("MMMM YYYY");
       let editNameAction =[{type:"white",title:"Cancel",handleClick:() => this.setState({editNamePopped: false}),image:false},
                            {type:"blue",title:"Rename Template",handleClick:this.editName,image:false}];
+      let workplaceId = localStorage.getItem("workplaceId");
+      let templates = this.props.data.allTemplates.edges;
+      templates = templates.filter((t) => workplaceId == "" || t.node.workplaceId == workplaceId);
       return (
           <div>
               <nav className="navbar weeklynavbar weekly_nav_height">
@@ -168,7 +171,7 @@ class CustomToolbarComponent extends Toolbar {
                                   <li className="dropdownweeky">
                                       <select className="dropdown" value={this.props.selectedTemplateId} onChange={this.props.handleSelectTemplate}>
                                         <option value={""} key={0}> Select a Template </option>
-                                      { this.props.data.allTemplates.edges.map((value,index) =>
+                                      { templates.map((value,index) =>
                                           <option value={ value.node.id } key={index + 1}> { value.node.templateName }</option>
                                           )
                                       }

@@ -53,6 +53,7 @@ class ShiftWeekTableComponent extends Week {
             deleteTemplateModal:false,
             view:this.props.eventPropGetter(),
             redirect:false,
+            confirmApplyTemplateModal: false,
             applyingTemplateModal: false
         };
     }
@@ -67,7 +68,8 @@ class ShiftWeekTableComponent extends Week {
     modalClose = () => {
         this.setState({
             deleteTemplateModal:false,
-            applyingTemplateModal: false
+            applyingTemplateModal: false,
+            confirmApplyTemplateModal: false
         });
     };
     handleDeleteTemplate = () => {
@@ -79,12 +81,14 @@ class ShiftWeekTableComponent extends Week {
           variables: { templateId : this.props.events[1] },
           refetchQueries: [{query: allTemplates}]}).then(this.props.events[3])
             .then(this.setState({deleteTemplateModal:false}));
-
     }
-
-    handleApplyTemplate(start){
+    handleApplyTemplate(){
+      this.setState({
+          confirmApplyTemplateModal: true
+      });
+    }
+    applyTemplate(start){
         const that = this;
-
         this.setState({
             applyingTemplateModal: true
         });
@@ -245,8 +249,10 @@ class ShiftWeekTableComponent extends Week {
         let deleteTemplateAction =[{type:"white",title:"Cancel",handleClick:this.modalClose,image:false},
             {type:"red",title:"Delete Template",handleClick:this.deleteTemplate}];
         let applyTemplateAction =[{type:"white", title: "One Moment"}];
+        let confirmApplyTemplateAction = [{ type: 'white', title: 'Cancel', handleClick: this.modalClose, image: false },
+          { type: 'blue', title: 'Apply Template', handleClick: () => this.applyTemplate(this.props.date)}];
         return (
-            <div>
+          <div>
             <div className="table-responsive table-fixed-bottom-mrb">
                 <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle}
                        fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px" footerStyle={styles.footerStyle}
@@ -291,27 +297,28 @@ class ShiftWeekTableComponent extends Week {
                                 <div className="text-center">
                                     <CircleButton type="white" title="Cancel" handleClick={this.backToCalendarView}/>
                                     <CircleButton type="red" title="delete template" handleClick={this.handleDeleteTemplate}/>
-                                    <CircleButton type="blue" title="apply template" handleClick={(start) => this.handleApplyTemplate(this.props.date)}/>
+                                    <CircleButton type="blue" title="apply template" handleClick={(start) => this.handleApplyTemplate()}/>
                                 </div>
                             </TableRowColumn>
                         </TableRow>
                     </TableFooter>
                 </Table>
             </div>
-                {this.state.deleteTemplateModal?<Modal isOpen = {this.state.deleteTemplateModal} title="Confirm"
-                                                     message = {'Are you sure that you want to delete the \'' +
-                                                                this.props.data.templateById.templateName + '\' template?'}
-                                                     action = {deleteTemplateAction}
-                                                       closeAction={this.modalClose} />
-                    :""}
-                {this.state.applyingTemplateModal ?
-                  <Modal isOpen = {this.state.applyingTemplateModal} title=""
-                      message="Please Wait While We Apply This Template"
-                      action={applyTemplateAction}
-                      closeAction={this.modalClose}
-                      />
-                    :""}
-            </div>
+            <Modal isOpen = {this.state.deleteTemplateModal} title="Confirm"
+                  message = {'Are you sure that you want to delete the \'' +
+                              this.props.data.templateById.templateName + '\' template?'}
+                  action = {deleteTemplateAction}
+                  closeAction={this.modalClose} />
+            <Modal isOpen = {this.state.confirmApplyTemplateModal} title=""
+                   message = {"Are You Sure You Want to Apply this Template to the Week of " +
+                             moment(this.props.date).format("MMMM Do") + " ?"}
+                   action = {confirmApplyTemplateAction}
+                   closeAction={this.modalClose}/>
+            <Modal isOpen = {this.state.applyingTemplateModal} title=""
+                   message="Please Wait While We Apply This Template"
+                   action={applyTemplateAction}
+                   closeAction={this.modalClose}/>
+          </div>
         );
     }
 }

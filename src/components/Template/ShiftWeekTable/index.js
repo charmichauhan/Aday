@@ -88,18 +88,18 @@ class ShiftWeekTableComponent extends Week {
         this.setState({
             applyingTemplateModal: true
         });
-        
+
         let weekPublishedId = this.props.events[2]
 
         if(!weekPublishedId) {
          weekPublishedId = uuidv1();
          this.props.createWeekPublished({
                 variables: { data:
-                                {weekPublished: 
+                                {weekPublished:
                                    { id: weekPublishedId,
                                     start: moment(start).startOf('week').format(),
                                     end: moment(start).endOf('week').format(),
-                                    published: false, 
+                                    published: false,
                                     brandId: localStorage.getItem('brandId') }
                             }}
 

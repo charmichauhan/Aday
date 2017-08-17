@@ -105,14 +105,7 @@ const allTemplateShifts = gql`
       deleteTemplateById(input: {id: $templateId}){
         template{
     			id
-          templateName
-          templateShiftsByTemplateId{
-            nodes{
-              id
-            }
-          }
         }
-        deletedTemplateId
       }
     }`
 

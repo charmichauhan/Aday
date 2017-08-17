@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import Modal from '../../../helpers/Modal';
 import { Image, Input, Divider } from 'semantic-ui-react';
 import { graphql, compose } from 'react-apollo';
 import moment from 'moment';
@@ -13,6 +14,7 @@ import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
 
 import './shift-edit.css';
+const uuidv4 = require('uuid/v4');
 
 const unassignedTeamMember = {
   user: {
@@ -94,8 +96,16 @@ class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { ...initialState, teamMembers: this.getInitialData(this.props) };
+    this.state = {...initialState,
+                  teamMembers: this.getInitialData(this.props),
+                  deleteModalPopped: false,};
   }
+
+  deleteModalClose = () => {
+    this.setState({
+      deleteModalPopped: false
+    });
+  };
 
   borderColor = status => {
     if (status === 'accepted') return 'green';
@@ -114,7 +124,7 @@ class DrawerHelper extends Component {
   };
 
   handleDeleteShift = () => {
-    // Shift delete code to be done here
+    this.setState({deleteModalPopped: true});
   };
 
   handleSaveShift = () => {
@@ -139,7 +149,7 @@ class DrawerHelper extends Component {
               }).catch((error) => {
                   console.log('there was an error sending the query', error);
               });
-        
+
     }
 
   addTeamMember = () => {
@@ -152,6 +162,19 @@ class DrawerHelper extends Component {
     const { teamMembers } = this.state;
     teamMembers.splice(i, 1);
     this.setState({ teamMembers });
+  };
+
+  deleteShift = () => {
+    let id = this.props.shift.id;
+    let that = this;
+    that.props.deleteShiftById(uuidv4(), id)
+    .then(({ data }) => {
+      console.log('Delete Data', data);
+    }).catch((error) => {
+      console.log('there was an error sending the query', error);
+    });
+    that.setState({ deleteModalPopped: false });
+    this.handleCloseDrawer();
   };
 
   getUserById = (id, isAssigned) => {
@@ -255,7 +278,8 @@ class DrawerHelper extends Component {
       (<CircleButton key={index} type={action.type} title={action.title} handleClick={action.handleClick}
                      image={action.image} imageSize={action.imageSize} />)
     );
-
+    let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
+      { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
     return (
       <Drawer docked={docked} width={width}
               openSecondary={openSecondary}
@@ -291,7 +315,7 @@ class DrawerHelper extends Component {
               </div>
 
             </div>
-      
+
             <div className="shift-details">
               <Divider />
               <div className="shift-heading">
@@ -317,7 +341,13 @@ class DrawerHelper extends Component {
             <div className="buttons text-center">
               {actions}
             </div>
-          </div>
+            <Modal
+              title="Confirm"
+              isOpen={this.state.deleteModalPopped}
+              message="Are you sure that you want to delete this shift?"
+              action={deleteShiftAction}
+              closeAction={this.deleteModalClose} />
+            </div>
         </div>
       </Drawer>
     );

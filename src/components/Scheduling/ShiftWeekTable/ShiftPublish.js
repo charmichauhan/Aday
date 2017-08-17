@@ -139,6 +139,7 @@ class ShiftPublishComponent extends Component{
 
         let { date } = this.props;
         let { start } = ShiftPublish.range(date, this.props);
+
         return(
             <div>
                 {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
@@ -158,11 +159,19 @@ class ShiftPublishComponent extends Component{
                         </div>
                     </div>
                   <div className="btn-action">
-                    <Button className="btn-image"><CreateShiftButton weekPublishedId={ publishId } weekStart={ start } /></Button>
-                    {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
-                    {(is_publish != "none") && <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
-                    {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
-                    {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
+                    {moment(startDate).diff(moment(), 'days') > -7 ?
+                      <div>
+                        <Button className="btn-image"><CreateShiftButton weekPublishedId={ publishId } weekStart={ start } /></Button>
+                        {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
+                        {(is_publish != "none") && <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
+                        {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+                        {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
+                      </div> :
+                      <div>
+                      {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
+                      </div>
+                    }
+
                 </div>
             </div>
         )

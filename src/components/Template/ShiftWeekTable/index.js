@@ -254,12 +254,18 @@ class ShiftWeekTableComponent extends Week {
         return (
           <div>
             <div className="table-responsive table-fixed-bottom-mrb">
+
                 <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle}
                        fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px" footerStyle={styles.footerStyle}
                        className="table atable emp_view_table" style={styles.root}>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                         <TableRow displayBorder={false}>
-                            <TableRowColumn style={styles.tableFooter} className="long dayname"></TableRowColumn>
+                            <TableRowColumn style={styles.tableFooter} className="long dayname">
+                              <div className="maintitle" style={{width: '100%', alignContent: 'left'}}>
+                                {moment(start).format('MMMM\n')} <br/>
+                                <span style={{fontSize: 24}}>{moment(start).format('YYYY')}</span>
+                              </div>
+                            </TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
                                 className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>

@@ -57,10 +57,12 @@ export default class CreateShiftButton extends Component {
 		return (
 
 			<Modal
-			   	trigger={<Image src="/images/Assets/Icons/Buttons/create-shift-button.png" style={{ cursor: 'pointer' }} onClick={ this.onButtonClick } className="btn-image"/>}
+			   	trigger={<Image src="/images/Assets/Icons/Buttons/create-shift-button.png"
+					style={{ cursor: 'pointer' }} onClick={ this.onButtonClick } className="btn-image"/>}
 				 open={ this.state.poppedOut }
 				 size={ this.state.modalSize }
-				 style={{ height: this.state.modalHeight}}
+				 style={{ height: this.state.modalHeight, position:'absolute', width: 760,
+				 				  float:'none', left: '50%', right: '50%', marginLeft: -380, alignItems: 'center'}}
          		 onClose={ this.onFormClose }
 				>
 

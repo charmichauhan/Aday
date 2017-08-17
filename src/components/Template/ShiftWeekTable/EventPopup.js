@@ -106,27 +106,33 @@ class EventPopupComponent extends Component{
                   </div>
 
               }
+              {this.state.deleteModalPopped &&
                 <Modal
                   title="Confirm"
                   isOpen={this.state.deleteModalPopped}
                   message="Are you sure that you want to delete this shift?"
                   action={deleteShiftAction}
                   closeAction={this.modalClose} />
+              }
+              {this.state.newShiftModalPopped &&
                 <EditShiftDrawer
                   open={this.state.newShiftModalPopped}
                   handlerClose={this.handleNewShiftDrawerClose}
                   handleHistory={this.handleHistoryDrawer} />
+              }
+              {this.state.shiftHistoryDrawer &&
                 <ShiftHistoryDrawer
                   open={this.state.shiftHistoryDrawer}
                   handleBack={this.handleNewShiftDrawerClose}
                   handleHistory={this.handleHistoryDrawer} />
-                <div className="overlay">
+              }
+                {/*}<div className="overlay">
                     <div className="hoimg">
                         <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src="/assets/Icons/close-shift.png" alt="close"/></i></a>
                         <a onClick={()=>this.onPopupOpen("editModalPopped")}><i><img src="/assets/Icons/edit-shift.png" alt="edit"/></i></a>
                         <a onClick={()=>this.onPopupOpen("newShiftModalPopped")}><i><img src="/assets/Icons/create-shift.png" alt="create"/></i></a>
                     </div>
-                </div>
+                </div>*/}
             </div>
         )
     }

@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import moment from 'moment';
 
 import './DayCellButton.css';
 
@@ -8,6 +9,7 @@ function DayCellButton({
   cellId,
   displayMonth,
   displayDate,
+  fullDate,
   selected,
   onClick,
 }) {
@@ -16,11 +18,23 @@ function DayCellButton({
     selected,
   });
 
+  const filteredOnClick = (e) => {
+    console.log(fullDate.format());
+    console.log(moment().format());
+    console.log(moment().diff(fullDate, 'days'));
+    if (moment().diff(fullDate, 'days') <= 0){
+      onClick(e)
+    }
+  };
+
   return (
     <div className="shift-modal-day-cell">
-      <button type="button" className={buttonClasses} onClick={onClick} data-cellId={cellId}>
+      <button type="button" className={buttonClasses} data-cellId={cellId} disabled={true}
+              onClick={filteredOnClick}>
         {daySubString}
-        <p style={{  marginTop: '-13%',fontWeight: '500'}} data-cellId={cellId} onClick={onClick}>{displayMonth} {displayDate}</p>
+        <p style={{  marginTop: '-13%',fontWeight: '500'}} data-cellId={cellId} onClick={filteredOnClick}>
+          {displayMonth} {displayDate}
+        </p>
       </button>
     </div>
   );

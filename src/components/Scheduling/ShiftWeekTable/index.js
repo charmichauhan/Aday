@@ -226,10 +226,6 @@ class ShiftWeekTableComponent extends Week {
       if (this.props.data.loading || this.props.allUsers.loading) {
         return (<div>Loading</div>)
       }
-      if (this.props.data.error) {
-        console.log(this.props.data.error);
-        return (<div>An unexpected error occurred</div>)
-      }
       let workplaceId = localStorage.getItem("workplaceId");
       let {data} = this.props;
       let jobData = this.state.calendarView=="job"?this.getDataJobView(workplaceId,data):this.getDataEmployeeView(workplaceId,data,this.props.allUsers);

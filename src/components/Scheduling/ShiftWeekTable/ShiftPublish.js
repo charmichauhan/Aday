@@ -159,7 +159,7 @@ class ShiftPublishComponent extends Component{
                         </div>
                     </div>
                   <div className="btn-action">
-                    {moment(startDate).diff(moment(), 'days') > -7 ?
+                    {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
                       <div>
                         <Button className="btn-image"><CreateShiftButton weekPublishedId={ publishId } weekStart={ start } /></Button>
                         {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}

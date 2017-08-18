@@ -10,7 +10,7 @@ export default class DaySelector extends React.Component {
 
   constructor(props) {
     super(props);
-   
+
     const date = moment(this.props.startDate).format('MM-DD-YYYY');
     this.selectedDay=this.selectedDay.bind(this);
     this.stepDateRange=this.stepDateRange.bind(this);
@@ -73,6 +73,7 @@ export default class DaySelector extends React.Component {
         daySubString: getSubStringFromDayName(calDate.format('dddd')),
         displayMonth: getCapitalMonthName(calDate.format('MMM')),
         displayDate: calDate.format('D'),
+        fullDate: calDate,
         cellId: calDate.format('YYYY-MM-DD'),
       };
     });
@@ -105,7 +106,7 @@ DaySelector.propTypes = {
   //formCallback: PropTypes.func.isRequired,
 };
 
-/* Not using this right now, too many use cases 
+/* Not using this right now, too many use cases
 
         <div style={{float:'left'}}>
           <SquareButton

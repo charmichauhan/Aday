@@ -303,7 +303,8 @@ class ShiftWeekTableComponent extends Week {
                                 <div className="text-center">
                                     <CircleButton type="white" title="Cancel" handleClick={this.backToCalendarView}/>
                                     <CircleButton type="red" title="delete template" handleClick={this.handleDeleteTemplate}/>
-                                    <CircleButton type="blue" title="apply template" handleClick={(start) => this.handleApplyTemplate()}/>
+                                    <CircleButton type="blue" title="apply template" handleClick={(start) => this.handleApplyTemplate()}
+                                     disabled={moment(this.props.date).startOf('week').diff(moment().startOf('week'), 'days') < 0}/>
                                 </div>
                             </TableRowColumn>
                         </TableRow>
@@ -317,7 +318,7 @@ class ShiftWeekTableComponent extends Week {
                   closeAction={this.modalClose} />
             <Modal isOpen = {this.state.confirmApplyTemplateModal} title=""
                    message = {"Are You Sure You Want to Apply this Template to the Week of " +
-                             moment(this.props.date).format("MMMM Do") + " ?"}
+                             moment(this.props.date).startOf('week').format("MMMM Do") + " ?"}
                    action = {confirmApplyTemplateAction}
                    closeAction={this.modalClose}/>
             <Modal isOpen = {this.state.applyingTemplateModal} title=""

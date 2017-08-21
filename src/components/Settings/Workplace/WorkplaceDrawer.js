@@ -15,11 +15,10 @@ import './workplace-drawer.css';
 const initialState = {
   workplace: {
     id: '',
-    name: '',
-    brand: '',
-    image: '',
-    addressLine1: '',
-    addressLine2: '',
+    workplaceName: '',
+    brand: {},
+    workplaceImageUrl: '',
+    address: '',
     city: '',
     zip: ''
   },
@@ -48,6 +47,12 @@ class DrawerHelper extends Component {
     this.setState({ workplace });
   }
 
+  closeDrawer = () => {
+    this.setState({ ...initialState }, () => {
+      this.props.closeDrawer();
+    });
+  };
+
   handleSubmitEvent = (event) => {
     // Resetting the field values.
     this.props.handleSubmit(this.state.workplace);
@@ -74,8 +79,6 @@ class DrawerHelper extends Component {
 
   render() {
     const {
-      closeDrawer = () => {
-      },
       workplace = {},
       brands = [],
       width = 600,
@@ -88,19 +91,19 @@ class DrawerHelper extends Component {
       title: (workplaceId && 'Update Workplace') || 'Add Workplace',
       buttonText: (workplaceId && 'Update Workplace') || 'Add Workplace'
     };
-    const brandOptions = map(brands, brand => ({ key: brand.id, value: brand.name, text: brand.name }));
+    const brandOptions = map(brands, brand => ({ key: brand.id, value: brand.id, text: brand.brandName }));
     const DrawerWorkplace = this.state.workplace;
     return (
-      <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={closeDrawer}
+      <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.closeDrawer}
               open={open}>
         <div className="drawer-section workplace-drawer-section">
           <div className="drawer-heading col-md-12">
-            <IconButton style={styles.closeButton} onClick={closeDrawer}>
+            <IconButton style={styles.closeButton} onClick={this.closeDrawer}>
               <Image src='/images/Icons_Red_Cross.png' size="mini" />
             </IconButton>
             <h2 className="text-center text-uppercase">{messages.title}</h2>
           </div>
-          {!DrawerWorkplace.image && !this.state.blob &&
+          {!DrawerWorkplace.workplaceImageUrl && !this.state.blob &&
           <div className="upload-wrapper col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 text-center">
             <Dropzone
               multiple={false}
@@ -120,13 +123,13 @@ class DrawerHelper extends Component {
               </p>
             </Dropzone>
           </div>}
-          {DrawerWorkplace.image && !this.state.blob &&
-          <Image className="uploaded-image" src={DrawerWorkplace.image} size="large" />
+          {DrawerWorkplace.workplaceImageUrl && !this.state.blob &&
+          <Image className="uploaded-image" src={DrawerWorkplace.workplaceImageUrl} size="large" />
           }
           {this.state.blob &&
           <Image className="uploaded-image" src={this.state.blob.preview} size="large" />
           }
-          {(DrawerWorkplace.image || this.state.blob) && <RaisedButton
+          {(DrawerWorkplace.workplaceImageUrl || this.state.blob) && <RaisedButton
             backgroundColor={colors.primaryBlue}
             labelColor="#fafafa"
             className='upload-btn'
@@ -137,9 +140,9 @@ class DrawerHelper extends Component {
           <div className="col-md-12 form-div">
             <div className="form-group">
               <label className="text-uppercase">Workplace Name</label>
-              <input name="name"
+              <input name="workplaceName"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.name}
+                     value={DrawerWorkplace.workplaceName}
                      id="workplace-name"
                      type="text"
                      className="form-control" />
@@ -148,25 +151,25 @@ class DrawerHelper extends Component {
               <label className="text-uppercase">Brand</label>
               <Dropdown className="form-control semantic-drawer-drop-down"
                         placeholder="Brand"
-                        name="brand"
+                        name="brandId"
                         search selection
                         onChange={(e, target) => this.handleChange({ ...e, target })}
                         options={brandOptions} />
             </div>
             <div className="form-group">
               <label className="text-uppercase">Address Line1</label>
-              <input name="addressLine1"
+              <input name="address"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.addressLine1}
+                     value={DrawerWorkplace.address}
                      id="address-line1"
                      type="text"
                      className="form-control" />
             </div>
             <div className="form-group">
               <label className="text-uppercase">Address Line2</label>
-              <input name="addressLine2"
+              <input name="address"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.addressLine2}
+                     value={DrawerWorkplace.address}
                      id="address-line2"
                      type="text"
                      className="form-control" />
@@ -204,7 +207,7 @@ class DrawerHelper extends Component {
         </div>
         <div className="drawer-footer">
           <div className="buttons text-center">
-            {workplaceId && <CircleButton style={styles.circleButton} handleClick={closeDrawer} type="white"
+            {workplaceId && <CircleButton style={styles.circleButton} handleClick={this.closeDrawer} type="white"
                                           title="Cancel" />}
             <CircleButton style={styles.circleButton} handleClick={this.handleSubmitEvent} type="blue"
                           title={messages.buttonText} />

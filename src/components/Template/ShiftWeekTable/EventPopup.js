@@ -126,7 +126,7 @@ class EventPopupComponent extends Component{
                   handleBack={this.handleNewShiftDrawerClose}
                   handleHistory={this.handleHistoryDrawer} />
               }
-                {/*}<div className="overlay">
+                {/*<div className="overlay">
                     <div className="hoimg">
                         <a onClick={()=>this.onPopupOpen("deleteModalPopped")}><i><img src="/assets/Icons/close-shift.png" alt="close"/></i></a>
                         <a onClick={()=>this.onPopupOpen("editModalPopped")}><i><img src="/assets/Icons/edit-shift.png" alt="edit"/></i></a>

@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import { remove, maxBy, findIndex } from 'lodash';
+import { withApollo } from 'react-apollo';
+import pick from 'lodash/pick';
 
 import Personal from './Personal';
 import Workplace from './Workplace';
 import Brand from './Brand';
 import Company from './Company';
+import { brandResolvers } from './settings.resolvers';
 import { tabDesign } from '../styles';
 import './settings.css';
 
@@ -13,47 +16,37 @@ const styles = {
   tabDesign
 };
 
-const initState = {
-  user: {
-    id: 101,
-    firstName: 'Billy',
-    lastName: 'Buchanan',
-    email: 'billy.buchanan@gmail.com',
-    phoneNumber: '+10123465789'
-  },
+const initialState = {
   value: 'personal',
   companies: [{
     id: 1,
     name: 'Compass Group, USA',
   }],
-  brands: [{
-    id: 1,
-    name: 'Restaurant Associates',
-    image: '/images/brands/ra.png'
-  }, {
-    id: 2,
-    name: 'Flik’s Hospitality Group',
-    image: '/images/brands/compass.png'
-  }],
-  workplaces: [{
-    id: 1,
-    name: 'Chao Center',
-    brand: 'Restaurant Associates',
-    claimed: true,
-    image: '/images/workplaces/chao-center.jpg'
-  }, {
-    id: 2,
-    name: 'Spangler Center',
-    brand: 'Restaurant Associates',
-    claimed: false,
-    image: '/images/workplaces/chao-center.jpg'
-  }]
+  brands: []
 };
 
-export default class Settings extends Component {
+class Settings extends Component {
   constructor(props) {
     super(props);
-    this.state = initState;
+    this.state = initialState;
+  }
+
+  componentDidMount() {
+    this.props.client.query({
+      query: brandResolvers.allBrandsQuery
+    }).then((res) => {
+      if (res.data && res.data.allBrands && res.data.allBrands.edges) {
+        const brandNodes = res.data.allBrands.edges;
+        if (brandNodes) {
+          const brands = brandNodes.map(({ node }) => {
+            let brand = pick(node, ['id', 'brandName', 'brandIconUrl']);
+            if (!brand.brandIconUrl) brand.brandIconUrl = '/images/brands/ra.png';
+            return brand;
+          });
+          this.setState({ brands });
+        }
+      }
+    }).catch(err => console.log(err));
   }
 
   handleChange = (value) => {
@@ -119,7 +112,7 @@ export default class Settings extends Component {
             buttonStyle={this.getButtonStyle('personal')}
             label="Personal"
             value="personal">
-            <Personal user={this.state.user} />
+            <Personal />
           </Tab>
           <Tab
             buttonStyle={this.getButtonStyle('workplace')}
@@ -128,8 +121,7 @@ export default class Settings extends Component {
             <Workplace
               addOrUpdateWorkPlace={this.addOrUpdateWorkPlace}
               onDeleteWorkplace={this.deleteWorkplace}
-              brands={this.state.brands}
-              workplaces={this.state.workplaces} />
+              brands={this.state.brands} />
           </Tab>
           <Tab
             buttonStyle={this.getButtonStyle('brand')}
@@ -151,3 +143,5 @@ export default class Settings extends Component {
     );
   }
 }
+
+export default withApollo(Settings);

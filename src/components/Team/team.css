@@ -239,3 +239,108 @@ img.list-left-image {
     font-weight: bold;
     color: #333333;
 }
+
+/*Team Members Drawer CSS*/
+.green {
+  color: #00A863;
+}
+.profile-drawer-heading {
+  display: block;
+  overflow: hidden;
+  min-height: 250px;
+}
+.profile-drawer.drawer-section .drawer-content.scroll-div {
+  display: block;
+  overflow-y: scroll;
+  height: calc(100vh - 340px);
+  width: 100%;
+  overflow-x: hidden;
+}
+.profile-drawer .drawer-heading {
+  position: relative;
+  min-height: 165px;
+}
+.profile-drawer .member-list {
+  margin-top: 0;
+}
+.profile-drawer .profile-drawer-title {
+  margin-top: 20px;
+}
+.profile-drawer.drawer-section img.profile-img {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+}
+.profile-drawer.drawer-section .heading-rating .ui.star.rating {
+  display: block;
+  clear: both;
+  text-align: center;
+  margin: 0 auto;
+}
+.profile-drawer.drawer-section .heading-rating .ui.star.rating .icon {
+  display: inline-block;
+  margin-right: 5px;
+}
+.profile-drawer.drawer-section .profile-drawer-title h2 {
+  width: 75%;
+  margin: 0 auto;
+  border: 1px solid rgba(151,151,151,0.3);
+  border-radius: 10px;
+  padding: 5px;
+  height: 40px;
+  color: #4A4A4A;
+}
+.profile-drawer.drawer-section .max-hours-form {
+  margin-top: 40px;
+}
+.profile-drawer.drawer-section .max-hours-form .form-group.weekly {
+  margin: 0 10px;
+}
+.profile-drawer.drawer-section .max-hours-form label {
+  display: block;
+  font-size: 16px;
+  text-align: center;
+}
+.profile-drawer.drawer-section .profile-drawer-content {
+  font-size: 16px;
+  margin-top: 20px;
+}
+.profile-drawer.drawer-section .update-limit-btn {
+  margin-top: 20px;
+}
+.profile-drawer.drawer-section .update-limit-btn button {
+  height: 40px;
+  width: 200px;
+  border-radius: 2px;
+  background-color: #0022A1;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+  color: #FFFFFF;
+}
+.profile-drawer.drawer-section .grid-positions, .profile-drawer .grid-positions .grid  {
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.profile-drawer.drawer-section .block-limit-btn {
+  margin-top: 20px;
+}
+.profile-drawer.drawer-section .block-limit-btn button {
+  height: 40px;
+  width: 200px;
+  border-radius: 2px;
+  background-color: #E33821;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+  color: #FFFFFF;
+}
+.profile-drawer.drawer-section .cook-name {
+  margin: 0;
+  height: 30px;
+  width: 380.5px;
+  color: #4A4A4A;
+  font-family: "Roboto Condensed";
+  font-size: 24px;
+  line-height: 30px;
+}
+

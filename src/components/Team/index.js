@@ -94,7 +94,7 @@ export default class team extends Component {
 	getButtonStyle = (value) => ({
 		...styles.tabDesign.buttonStyle,
 		fontWeight: (this.state.value === value && 700) || 500
-	});	
+	});
 
 	render() {
 		return (
@@ -126,7 +126,7 @@ export default class team extends Component {
 						<InviteTeamMembers />
 					</Tab>
 
-					<Tab						
+					<Tab
 						buttonStyle={this.getButtonStyle('managers')}
 						label="Managers"
 						value="managers">

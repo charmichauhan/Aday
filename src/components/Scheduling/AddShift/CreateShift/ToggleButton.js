@@ -5,46 +5,57 @@ export default class ToggleButton extends Component {
   constructor(props){
     super(props);
     this.handleToggleButton = this.handleToggleButton.bind(this);
-    this.state = {
-      handleToggle:true,
-      positive:false,
-      negative:true,
-      label:'NO',
-      labelPosition:'left',
-      jobShadowingOppurtunity: false
+    if (this.props.trainees){
+      this.state = {
+        handleToggle: true,
+        positive: true,
+        negative: false,
+        label:'YES',
+        labelPosition:'right',
+        jobShadowingOpportunity: true
+      }
+    } else {
+      this.state = {
+        handleToggle: this.props.trainees || false,
+        positive: this.props.trainees || false,
+        negative: !this.props.trainees || true,
+        label:'NO',
+        labelPosition:'left',
+        jobShadowingOpportunity: this.props.trainees || false
+      }
     }
   }
   componentWillMount(){
     const {formCallBack}=this.props;
     const newState={
-      jobShadowingOppurtunity:this.state.jobShadowingOppurtunity
+      jobShadowingOpportunity:this.state.jobShadowingOpportunity
     }
     formCallBack(newState);
   }
   handleToggleButton(){
     const {formCallBack}=this.props;
     const {handleToggle,positive,negative,label,labelPosition}=this.state;
-    if(handleToggle){
+    if(!handleToggle){
       this.setState({
-        handleToggle:false,
+        handleToggle:true,
         positive:true,
         negative:false,
         label:'YES',
         labelPosition:'right',
-        jobShadowingOppurtunity: true,
+        jobShadowingOpportunity: true,
       });
     }else{
       this.setState({
-        handleToggle:true,
+        handleToggle:false,
         positive:false,
         negative:true,
         label:'NO',
         labelPosition:'left',
-        jobShadowingOppurtunity: false
+        jobShadowingOpportunity: false
       });
     }
     const newState={
-      jobShadowingOppurtunity:this.state.jobShadowingOppurtunity
+      jobShadowingOpportunity: !this.state.jobShadowingOpportunity
     }
     formCallBack(newState);
   }

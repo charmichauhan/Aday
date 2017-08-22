@@ -17,11 +17,31 @@ import './index.css';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
+const networkInterface =  createNetworkInterface({ uri: 'https://forward-chess-157313.appspot.com/graphql'})
+
+networkInterface.use([{
+   applyMiddleware(req, next) {
+    if (!req.options.headers) {
+      req.options.headers = {};  // Create the header object if needed.
+    }
+    // get the authentication token from local storage if it exists
+    let token = decodeURIComponent(document.cookie)
+    token = token.split("token=")[1]
+    if(token) {
+      token = token.split(';')[0]
+      req.options.headers.authorization = `Bearer ${token}`;
+    }
+    if (token == null ) {
+       req.options.headers = {};
+    }
+
+      next();
+  }
+}]);
 
 const client = new ApolloClient({
-   networkInterface: createNetworkInterface({ uri: 'https://forward-chess-157313.appspot.com/graphql'}),
+   networkInterface
 })
-
 
 
 ReactDOM.render(

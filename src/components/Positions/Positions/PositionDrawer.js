@@ -26,9 +26,9 @@ const initialState = {
       traineeHours:"",
       trainingUrl:"",
       trainingTracks:"",
-      worlplaces:"",
+      workplaces:"",
       teamMembers:[],
-      exchangeLevel:"",
+      exchangeLevel:"CORPORATION_BRAND_WIDE",
       jobsByPositionId:{
         nodes:[]
       },
@@ -37,7 +37,7 @@ const initialState = {
           {
             id:"",
             opportunityWage:0.0,
-            isPublic:false
+            isPublic: true
           }
         ]
         }
@@ -76,11 +76,13 @@ for(const i=14;i<=21;i++){
 
 class DrawerHelper extends Component {
   static propTypes = {
+    /*
     data: React.PropTypes.shape({
       loading: React.PropTypes.bool,
       error: React.PropTypes.object,
       allEmployees: React.PropTypes.object,
     }).isRequired,
+    */
   }
   constructor(props) {
     super(props);
@@ -92,37 +94,33 @@ class DrawerHelper extends Component {
     };
     // console.log(this.state.ageOptions,this.state.weightOptions);
   }
- 
- componentWillMount(){
-    
- }
+
   componentWillReceiveProps(nextProps) {
     const position = cloneDeep(nextProps.position || initialState.position);
     this.setState({ position });
-     // console.log(nextProps.data.allEmployees.nodes);
-     const options=[];
-     nextProps.data.allEmployees.nodes.map((employee)=>{
-        console.log(employee);
-        var option={
-          value:employee.userByUserId.id,
-          key:employee.id,
-          text:`${employee.userByUserId.firstName} ${employee.userByUserId.lastName}`
-        }
-        options.push(option);
-     })
-     console.log(options);
-     this.setState({teamMembers:options});
-
+    // console.log(nextProps.data.allEmployees.nodes);
+    /*
+    const options=[];
+    nextProps.data.allEmployees.nodes.map((employee)=>{
+      console.log(employee);
+      var option={
+        value:employee.userByUserId.id,
+        key:employee.id,
+        text:`${employee.userByUserId.firstName} ${employee.userByUserId.lastName}`
+      }
+      options.push(option);
+    })
+    console.log(options);
+    this.setState({teamMembers:options});
+    */
   }
 
   handleSubmitEvent = (event) => {
     // Resetting the field values.
-    console.log(this.state.position);
+    //console.log(this.state.position);
     this.props.handleSubmit(this.state.position);
     this.setState({ ...initialState });
   };
-
-
 
   handleCloseDrawer = () => {
     this.setState({ blob: undefined });
@@ -134,7 +132,7 @@ class DrawerHelper extends Component {
     const position = Object.assign(this.state.position, { [name]: value });
     this.setState({ position });
   };
-    handleDropdownChange = (event,data) => {
+  handleDropdownChange = (event,data) => {
     const { name, value } = data;
     const position = Object.assign(this.state.position, { [name]: value });
     this.setState({ position });
@@ -142,21 +140,28 @@ class DrawerHelper extends Component {
   handleTeamMembers=(e, { value })=>{
     const position = Object.assign(this.state.position, { teamMembers: value });
     this.setState({ position });
-    console.log(position.teamMembers);
+    //console.log(position.teamMembers);
   }
   handleWageChange=(event)=>{
-  const { name, value } = event.target;
-  console.log(name,value);
-  this.state.position.opportunitiesByPositionId.nodes[0][name]= parseFloat(value);
-  const position=this.state.position;
-  this.setState({ position });
+    const { name, value } = event.target;
+    //console.log(name,value);
+    this.state.position.opportunitiesByPositionId.nodes[0][name]= parseFloat(value);
+    const position=this.state.position;
+    this.setState({ position });
   }
-          
-  updateFormState=(dataValue)=>{
-  this.state.position.opportunitiesByPositionId.nodes[0].isPublic= dataValue.isAcceptApplicationForPosition;
-  const position=this.state.position;
-  this.setState({ position });
-  console.log(dataValue,position);
+
+  togglePublic=(dataValue)=>{
+    this.state.position.opportunitiesByPositionId.nodes[0].isPublic= dataValue.value;
+    const position=this.state.position;
+    this.setState({ position });
+    //console.log(dataValue,position);
+  }
+
+  toggleExchangeLevel=(dataValue)=>{
+    const cur = this.state.position.exchangeLevel;
+    const position = Object.assign(this.state.position, { exchangeLevel: cur == "CORPORATION_BRAND_WIDE" ?
+                                                          "WORKPLACE_SPECIFIC": "CORPORATION_BRAND_WIDE"});
+    this.setState({ position });
   }
 
   render() {
@@ -174,6 +179,7 @@ class DrawerHelper extends Component {
     };
 
     const DrawerPosition = this.state.position;
+    /*
     if(this.props.data.loading){
       return (
         <div>Loading..</div>
@@ -183,6 +189,7 @@ class DrawerHelper extends Component {
       console.log(this.props.data.error)
       return (<div>An unexpected error occurred</div>)
     }
+    */
    // console.log(this.state.teamMembers);
     return (
       <Drawer
@@ -206,102 +213,109 @@ class DrawerHelper extends Component {
         </div>
 
         <div className="position-form">
-        <div>
-          <p className="position-label">POSITION NAME</p>
-          <Input type="text"
-            name="positionName"
-            onChange={this.handleChange}
-            value={DrawerPosition.positionName}
-            fluid style={style.input}   />
-        </div>
-        <div>
-          <p className="position-label">DESCRIPTION</p>
-          <TextArea
-            rows="3"
-            name="positionDescription"
-            value={DrawerPosition.positionDescription}
-            onChange={this.handleChange}
-            style={style.input} />
-        </div>
-        <div className="position-row">
-          <p className="position-label">MINIMUM REQUIRED HOURS OF JOB SHADOWING TRAINING</p>
-          <Input
-            type="number"
-            name="traineeHours"
-            value={DrawerPosition.traineeHours}
-            onChange={this.handleChange}
-            label={{ basic: true, content: 'HOURS' }}
-            labelPosition='right'
-            fluid style={style.input}  />
-        </div>
-        <div>
-        <Grid columns={2}>
-            <Grid.Column>
-              <div>
-                <p className="position-label">MINIMUM WEIGHT ABILITY</p>
-                <Dropdown
-                placeholder='SELECT WEIGHT'
-                name="minimumLiftWeight"
-                value={DrawerPosition.minimumLiftWeight}
-                onChange={this.handleDropdownChange}
-                fluid style={style.input} selection
-                options={this.state.weightOptions} />
-              </div>
-            </Grid.Column>
-            <Grid.Column>
-              <div>
-                <p className="position-label">MINIMUM AGE</p>
-                <Dropdown
-                  placeholder='SELECT MINIMUM AGE'
-                  name="minimumAge"
-                  value={DrawerPosition.minimumAge}
+          <div>
+            <p className="position-label">POSITION NAME</p>
+            <Input type="text"
+              name="positionName"
+              onChange={this.handleChange}
+              value={DrawerPosition.positionName}
+              fluid style={style.input}   />
+          </div>
+          <div>
+            <p className="position-label">DESCRIPTION</p>
+            <TextArea
+              rows="3"
+              name="positionDescription"
+              value={DrawerPosition.positionDescription}
+              onChange={this.handleChange}
+              style={style.input} />
+          </div>
+          <div className="position-row">
+            <p className="position-label">MINIMUM REQUIRED HOURS OF JOB SHADOWING TRAINING</p>
+            <Input
+              type="number"
+              name="traineeHours"
+              value={DrawerPosition.traineeHours}
+              onChange={this.handleChange}
+              label={{ basic: true, content: 'HOURS' }}
+              labelPosition='right'
+              fluid style={style.input}  />
+          </div>
+          <div>
+            <Grid columns={2}>
+              <Grid.Column>
+                <div>
+                  <p className="position-label">MINIMUM WEIGHT ABILITY</p>
+                  <Dropdown
+                  placeholder='SELECT WEIGHT'
+                  name="minimumLiftWeight"
+                  value={DrawerPosition.minimumLiftWeight}
                   onChange={this.handleDropdownChange}
                   fluid style={style.input} selection
-                  options={this.state.ageOptions} />
-              </div>
-            </Grid.Column>
-        </Grid>
-        </div>
-        <div>
-        <p className="position-label">TEAM MEMBERS</p>
-        <Dropdown
-          placeholder='SELECT MEMBER'
-          fluid style={style.input}
-          multiple selection search
-          name="teamMembers"
-          options={this.state.teamMembers} 
-          onChange={this.handleTeamMembers}/>
-        </div>
-        <div  className="position-row">
-          <p className="position-label">ACCEPT APPLICATIONS FOR THE POSITION?</p>
-         <ToggleButton
-            formCallBack={ this.updateFormState } />
-        </div>
-         <div  className="position-row" style={{}}>
-          <p className="position-label">NEW APPLICANT WAGE</p>
-          <Input
-            type="number"
+                  options={this.state.weightOptions} />
+                </div>
+              </Grid.Column>
+              <Grid.Column>
+                <div>
+                  <p className="position-label">MINIMUM AGE</p>
+                  <Dropdown
+                    placeholder='SELECT MINIMUM AGE'
+                    name="minimumAge"
+                    value={DrawerPosition.minimumAge}
+                    onChange={this.handleDropdownChange}
+                    fluid style={style.input} selection
+                    options={this.state.ageOptions} />
+                </div>
+              </Grid.Column>
+            </Grid>
+          </div>
+          {/*
+          <div>
+          <p className="position-label">TEAM MEMBERS</p>
+          <Dropdown
+            placeholder='SELECT MEMBER'
             fluid style={style.input}
-            value={DrawerPosition.opportunitiesByPositionId.nodes.length && DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage} 
-            name="opportunityWage"
-            onChange={this.handleWageChange}
-            label={{ basic: true, content: '$ PER HOUR' }}
-            labelPosition='right'
-             />
-        </div>
-        <div  className="position-row" style={{textAlign:"center",marginTop:"20px"}} >
-            <CircleButton
-            type="blue"
-            handleClick={this.handleSubmitEvent}
-            title={messages.buttonText} />
-        </div>
+            multiple selection search
+            name="teamMembers"
+            options={this.state.teamMembers}
+            onChange={this.handleTeamMembers}/>
+          </div>
+          */}
+          {/*
+          <div className="position-row">
+            <div className="position-label" style={{float: 'left', width: 200}}>ACCEPT APPLICATIONS?
+              <ToggleButton formCallBack={ this.togglePublic } initial={true}/>
+            </div>
+            <div className="position-label" style={{marginLeft: 300}}>CORPORATION/BRAND WIDE?
+              <ToggleButton formCallBack={ this.toggleExchangeLevel } initial={true}/>
+            </div>
+          </div>
+          */}
 
+          <div  className="position-row" style={{marginTop: 75}}>
+            <p className="position-label">NEW APPLICANT WAGE</p>
+            <Input
+              type="number"
+              fluid style={style.input}
+              value={DrawerPosition.opportunitiesByPositionId.nodes.length && DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage}
+              name="opportunityWage"
+              onChange={this.handleWageChange}
+              label={{ basic: true, content: '$ PER HOUR' }}
+              labelPosition='right'
+               />
+          </div>
+          <div  className="position-row" style={{textAlign:"center",marginTop:"20px"}} >
+              <CircleButton
+              type="blue"
+              handleClick={this.handleSubmitEvent}
+              title={messages.buttonText} />
+          </div>
         </div>
       </Drawer>
     );
   };
 }
-
+/*
   const all_team_members=gql`
     query fetchTeamMembers($corporationId: Uuid!) {
       allEmployees(condition:{corporationId: $corporationId}){
@@ -325,5 +339,5 @@ const Position_Drawer = compose(
     })
   })
 )(DrawerHelper);
-
-export default Position_Drawer;
+*/
+export default DrawerHelper;

@@ -81,7 +81,7 @@ const initState = {
 	]
 };
 
-export default class Team extends Component {
+export default class team extends Component {
 	constructor(props) {
 		super(props);
 		this.state = initState;
@@ -94,7 +94,7 @@ export default class Team extends Component {
 	getButtonStyle = (value) => ({
 		...styles.tabDesign.buttonStyle,
 		fontWeight: (this.state.value === value && 700) || 500
-	});	
+	});
 
 	render() {
 		return (
@@ -126,7 +126,7 @@ export default class Team extends Component {
 						<InviteTeamMembers />
 					</Tab>
 
-					<Tab						
+					<Tab
 						buttonStyle={this.getButtonStyle('managers')}
 						label="Managers"
 						value="managers">

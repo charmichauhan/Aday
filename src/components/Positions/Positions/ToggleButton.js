@@ -6,18 +6,18 @@ export default class ToggleButton extends Component {
     super(props);
     this.handleToggleButton = this.handleToggleButton.bind(this);
     this.state = {
-      handleToggle:true,
-      positive:false,
-      negative:true,
-      label:'NO',
-      labelPosition:'left',
-      isAcceptApplicationForPosition: false
+      handleToggle: !this.props.initial,
+      positive: this.props.initial,
+      negative: !this.props.initial,
+      label: this.props.initial? 'YES': 'NO',
+      labelPosition: this.props.initial? 'right': 'left',
+      value: this.props.initial || false
     }
   }
   componentWillMount(){
     const {formCallBack}=this.props;
     const newState={
-      isAcceptApplicationForPosition:this.state.isAcceptApplicationForPosition
+      value: this.state.value
     }
     formCallBack(newState);
   }
@@ -31,7 +31,7 @@ export default class ToggleButton extends Component {
         negative:false,
         label:'YES',
         labelPosition:'right',
-        isAcceptApplicationForPosition: false,
+        value: false,
       });
     }else{
       this.setState({
@@ -40,18 +40,18 @@ export default class ToggleButton extends Component {
         negative:true,
         label:'NO',
         labelPosition:'left',
-        isAcceptApplicationForPosition: true
+        value: true
       });
     }
     const newState={
-      isAcceptApplicationForPosition:this.state.isAcceptApplicationForPosition
+      value:this.state.value
     }
     formCallBack(newState);
   }
   render(){
     const {positive,negative,label,labelPosition}=this.state;
   return(
-    <div>
+    <div style={{marginTop: 15}}>
       <Button
          toggle
          type="button"

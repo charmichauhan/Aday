@@ -4,3 +4,6 @@
 
     }
 
+.ui.dropdown:not(.button)>.default.text {
+    color: grey;
+}

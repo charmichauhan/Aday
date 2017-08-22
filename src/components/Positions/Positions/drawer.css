@@ -6,7 +6,11 @@
 }
 
 .position-label{
-  height: 21px;	width: 555px;	color: #666666;	font-family: "Roboto Condensed";	font-size: 18px;	line-height: 21px;
+  height: 21px;	width: 555px;
+  color: #666666;
+  font-family: "Roboto Condensed";
+  font-size: 18px;
+  line-height: 21px;
 }
 
 .position-input{

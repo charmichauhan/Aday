@@ -9,7 +9,7 @@ export default class NumberOfTeamMenmbers extends Component {
     super(props);
     this.selectValue = this.selectValue.bind(this);
     this.state = {
-      selectedValue:''
+      selectedValue: this.props.numRequested || ''
     }
   }
   componentWillMount(){
@@ -23,7 +23,6 @@ export default class NumberOfTeamMenmbers extends Component {
     const {formCallBack}=this.props
     const $target=$(event.target);
     const numberValue=$target.data('time-value');
-    console.log(numberValue);
     this.setState({selectedValue: numberValue });
     const value={
       numberOfTeamMembers:numberValue

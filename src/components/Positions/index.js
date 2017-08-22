@@ -4,7 +4,7 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import { gql, graphql ,compose } from 'react-apollo';
 import {Loader} from 'semantic-ui-react';
 import { remove, maxBy, findIndex } from 'lodash';
-import uuidv1 from 'uuid/v1';
+import uuidv4 from 'uuid/v4';
 import moment from 'moment';
 import Positions from './Positions';
 import { tabDesign } from '../styles';
@@ -14,45 +14,14 @@ const styles = {
   tabDesign
 };
 
-const brand_id="5a14782b-c220-4927-b059-f4f22d01c230";
-const workplace_id="5a01782c-c220-4927-b059-f4f22d01c230";
-const corporation_id="3b14782b-c220-4927-b059-f4f22d01c230";
-
-
-const initState = {
-  value: 'positions',
-}
 export class PositionsSection extends Component {
-  
   constructor(props) {
     super(props);
-    this.state = initState;
-    this.getPositionsFromServer();  
+    this.state = {
+      value: 'positions',
+    };
   }
 
-  getPositionsFromServer=()=>{
-    this.props.fetchRelevantPositions({
-      variables: {
-        "input": {
-          "brandid":brand_id,
-          "workplaceid":workplace_id,
-          "corporationid":corporation_id,
-          "clientMutationId":"2513056"
-        }
-      }
-    })
-    .then(({ data }) => {
-      console.log(data);
-      data.fetchRelevantPositions.positions.map((position)=>{
-        position.trainingTracks=0;//add a trainingtrack property to position and set it to zero
-      });
-      this.setState({positions:data.fetchRelevantPositions.positions}) ;
-      console.log(this.state.positions);
-    })
-    .catch((error) => {
-      console.error('There was an error sending the query', error);
-    });
-  }
   componentWillMount() {
     const { props: { match } } = this;
     const tab = match && match.params && match.params.tab;
@@ -69,28 +38,26 @@ export class PositionsSection extends Component {
   });
 
   deletePosition = (id) => {
-    const { positions } = this.state;
+    const positions = this.props.data.fetchRelevantPositions.nodes;
     const positionIndex = findIndex(positions, { id:id });
     const position=positions[positionIndex];
     if(position.jobsByPositionId.nodes.length==0){
-   
-      const opportunityId=positions[positionIndex].opportunitiesByPositionId.nodes[0].id;
         this.props.deletePosition({
         variables:{
           "input": {
-            "clientMutationId": "fdsgdhfj",
-            "id":id 
+            "id":id
           },
-          "data":{
-            "clientMutationId": "fdsgdhfjs",
-            "id":opportunityId
-          }
-        }
+        },
+        refetchQueries: [{query: all_positions,
+                          variables: {
+                            workplaceId: localStorage.getItem('workplaceId') == "" ?
+                                         null : localStorage.getItem('workplaceId'),
+                            brandId: localStorage.getItem('brandId'),
+                            corporationId: localStorage.getItem('corporationId'),
+                          }}]
       })
       .then(({ data }) => {
         console.log(data);
-        remove(positions, {'id': id });
-        this.setState({ positions });
       })
       .catch((error) => {
         console.error('There was an error sending the query', error);
@@ -101,9 +68,9 @@ export class PositionsSection extends Component {
   };
 
   addOrUpdatePosition = (position) => {
-    const { positions } = this.state;
-    const positionId=uuidv1();
-    const opportunityId=uuidv1();
+    const positions = this.props.data.fetchRelevantPositions.nodes;
+    const positionId=uuidv4();
+    const opportunityId=uuidv4();
     const opportunity=position.opportunitiesByPositionId.nodes[0];
     const newData={
       "id": positionId,
@@ -113,33 +80,35 @@ export class PositionsSection extends Component {
       "traineeHours": position.traineeHours,
       "positionIconUrl": null,
       "minimumAge": position.minimumAge,
-      "exchangeLevel": "BRAND_WIDE",
+      "exchangeLevel": "CORPORATION_BRAND_WIDE",
       "trainingUrl": null,
-      "brandId":brand_id,
-      "workplaceId":workplace_id,
-      "corporationId":corporation_id
+      "brandId": localStorage.getItem('brandId'),
+      "workplaceId": null,
+      "corporationId": localStorage.getItem('corporationId')
     };
 
     if (!position.id) {
       // create a new position & opportunity
         const variables={
         "input": {
-          "clientMutationId": "123456786",
           "position": newData
         },
         "data": {
-          "clientMutationId": "GHJKwegrt",
-            "opportunity": {
-              "workplaceId": workplace_id,
-              "positionId": positionId,
-              "opportunityWage": opportunity.opportunityWage,
-              "isPublic":opportunity.isPublic,
-              "id": opportunityId,
-            }
+          "corporationid": localStorage.getItem('corporationId'),
+          "positionid": positionId,
+          "brandid": localStorage.getItem('brandId'),
+          "opportunitywage": position.opportunitiesByPositionId.nodes[0].opportunityWage,
         }
       };
       this.props.createPosition({
-      variables: variables
+        variables: variables,
+        refetchQueries: [{query: all_positions,
+                          variables: {
+                            workplaceId: localStorage.getItem('workplaceId') == "" ?
+                                         null : localStorage.getItem('workplaceId'),
+                            brandId: localStorage.getItem('brandId'),
+                            corporationId: localStorage.getItem('corporationId'),
+                          }}]
       })
       .then(({ data }) => {
         console.log(data);
@@ -150,14 +119,13 @@ export class PositionsSection extends Component {
         newData.trainingTracks=0;
         newData.jobsByPositionId={
           nodes:[]
-        }; 
-        this.state.positions.push(newData);
-        this.setState({ positions});
-
-      // add team members
-      position.teamMembers.forEach(function(userId) {
-        this.createJob(userId,positionId);
-      }, this); 
+        };
+        /*
+        // add team members - this feature is on hold
+        position.teamMembers.forEach(function(userId) {
+          this.createJob(userId,positionId);
+        }, this);
+        */
       })
       .catch((error) => {
         console.error('There was an error sending the query', error);
@@ -171,28 +139,34 @@ export class PositionsSection extends Component {
         variables: {
           "data": {
             "id": position.id,
-            "positionPatch":newData
+            "positionPatch": newData
           },
           "input": {
             "id": opportunity.id,
             "opportunityPatch": {
-              "opportunityWage": opportunity.opportunityWage,
-              "isPublic": opportunity.isPublic
+              "opportunityWage": position.opportunitiesByPositionId.nodes[0].opportunityWage,
+              "isPublic": position.opportunitiesByPositionId.nodes[0].isPublic,
             }
           }
-        }
+        },
+        refetchQueries: [{query: all_positions,
+                          variables: {
+                            workplaceId: localStorage.getItem('workplaceId') == "" ?
+                                         null : localStorage.getItem('workplaceId'),
+                            brandId: localStorage.getItem('brandId'),
+                            corporationId: localStorage.getItem('corporationId'),
+                          }}]
       })
       .then(({ data }) => {
         console.log(data);
         const positionIndex = findIndex(positions, { id: position.id });
-        positions[positionIndex] = position;
-        this.setState({ positions });
       })
       .catch((error) => {
         console.error('There was an error sending the query', error);
-      });  
+      });
     }
   };
+  /*
   createJob=(userId,positionId)=>{
     this.props.createJob({
       variables: {
@@ -200,7 +174,7 @@ export class PositionsSection extends Component {
           "clientMutationId": "dd",
           "job": {
             "userId": userId,
-            "workplaceId": workplace_id,
+            "workplaceId": localStorage.getItem('workplaceId'),
             "positionId": positionId,
             "isPositionActive": true,
             "activatedDate":moment().format(),
@@ -208,7 +182,7 @@ export class PositionsSection extends Component {
             "isVerified": false,
             "isPreTrainingComplete": false,
             "isTrainable": true,
-            "id": uuidv1(),
+            "id": uuidv4(),
             "primaryJob": false
           }
         }
@@ -221,15 +195,16 @@ export class PositionsSection extends Component {
       console.error('There was an error sending the query', error);
     });
   }
-
+  */
   render() {
-    if (!this.state.positions) {
-      return  ( 
+    if (!this.props.data.fetchRelevantPositions) {
+      return  (
       <div style={{marginTop:"30%",marginLeft:"0"}}>
         <Loader active inline='centered' />
       </div> )
     }
-    const { positions } = this.state;
+    const positions = this.props.data.fetchRelevantPositions.nodes;
+    console.log(positions);
 
     return (
       <section className="positions">
@@ -261,9 +236,9 @@ export class PositionsSection extends Component {
 
 
 const all_positions= gql`
-  mutation fetchRelevantPositions($input:FetchRelevantPositionsInput!){
-    fetchRelevantPositions(input:$input){
-      positions{
+  query fetchRelevantPositions($corporationId: Uuid!, $brandId: Uuid!, $workplaceId: Uuid){
+    fetchRelevantPositions(corporationid: $corporationId, brandid: $brandId, workplaceid: $workplaceId){
+      nodes{
         id
         positionName
         positionDescription
@@ -291,28 +266,27 @@ const all_positions= gql`
     }
   }`;
 const add_position=gql`
-  mutation createPosition($input:CreatePositionInput!,$data: CreateOpportunityInput!){
+  mutation createPosition($input:CreatePositionInput!,$data: CreateCorporationBrandWideOpportunitiesInput!){
     createPosition(input:$input){
       position{
-        id		
-      }
-    }
-    createOpportunity(input: $data) {
-      opportunity {
         id
       }
     }
+    createCorporationBrandWideOpportunities(input: $data) {
+      string
+    }
   }
 `
+/*
 const add_job=gql`
 mutation createJob($input:CreateJobInput!){
   createJob(input:$input){
     job{
       id
     }
-  } 
+  }
 }`
-
+*/
 const update_position=gql`
 mutation updatePosition($input:UpdateOpportunityByIdInput!,$data:UpdatePositionByIdInput!){
   updateOpportunityById(input:$input){
@@ -322,18 +296,13 @@ mutation updatePosition($input:UpdateOpportunityByIdInput!,$data:UpdatePositionB
   }
   updatePositionById(input:$data){
     position{
-      id		
+      id
     }
-  }  
+  }
 }`
 
 const delete_position=gql`
-mutation deletePosition($input: DeletePositionByIdInput!,$data: DeleteOpportunityByIdInput!) {
-  deleteOpportunityById(input:$data){
-    opportunity{
-      id
-    }
-  } 
+mutation deletePosition($input: DeletePositionByIdInput!) {
   deletePositionById(input: $input) {
     position {
       id
@@ -341,10 +310,15 @@ mutation deletePosition($input: DeletePositionByIdInput!,$data: DeleteOpportunit
   }
 }
 `
-
 const AddPosition = compose(
-  graphql(all_positions,{
-   name:"fetchRelevantPositions"
+  graphql(all_positions, {
+    options: (ownProps) => ({
+      variables: {
+        workplaceId: localStorage.getItem('workplaceId') == "" ? null : localStorage.getItem('workplaceId'),
+        brandId: localStorage.getItem('brandId'),
+        corporationId: localStorage.getItem('corporationId'),
+      }
+    })
   }),
   graphql(add_position,{
    name:"createPosition"
@@ -354,9 +328,6 @@ const AddPosition = compose(
   }),
   graphql(delete_position,{
    name:"deletePosition"
-  }),
-  graphql(add_job,{
-   name:"createJob"
   })
 )(PositionsSection);
 

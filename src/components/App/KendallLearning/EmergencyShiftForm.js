@@ -5,7 +5,6 @@ import {Scrollbars} from 'react-custom-scrollbars';
 import TimePicker from '../../TimePicker/TimePicker';
 import NumberOfMemberSelector from '../../NumberOfMemberSelector/NumberOfMemberSelector';
 import ShiftDaySelector from '../../DaySelector/ShiftDaySelector';
-import PositionSelectOption from '../../Position/Position';
 import './EmergencyShiftForm.css';
 
 class EmergencyShiftForm extends Component {
@@ -84,7 +83,6 @@ class EmergencyShiftForm extends Component {
             </div>
             <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>POSITION</p>
-             <PositionSelectOption formCallBack={ this.updateFormState } />
             </div>
             <div>
              <p style={{ fontSize:'18px',letterSpacing:'-1px',color:'#666666',lineHeight:'28px' }}>SHIFT DATE(S)</p>

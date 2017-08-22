@@ -12,7 +12,6 @@ export default class Avatar extends Component {
 			first_name, 
 			last_name, 
 			description = "" } = this.props
-		console.log(this.props)
 		return (
 			<div className={type}>
 				<Image src={src} size={size} shape={shape}/>

@@ -2,18 +2,42 @@ import React, { Component } from 'react';
 import { Menu, Icon, Image } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import EmergencyShiftButton from './KendallLearning/EmergencyShiftButton';
-import { gql, graphql } from 'react-apollo';
+import { gql, graphql,compose} from 'react-apollo';
 import './nav.css';
+
 const styles = {
     menuStyle:{
-    	width:200,
-		height:42
+      width:200,
+	  height:42
 	}
 };
 
 class NavComponent extends Component {
+  constructor(props){
+    super(props);
+  }
+  changeWorkplace = () => {
+    let workplaceId = document.getElementById("workplace").value;
+    localStorage.setItem("workplaceId", workplaceId);
+    this.forceUpdate();
+    this.props.handleChange();
+  };
+  logout = () => {
+  	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    localStorage.clear();
+  	this.props.history.push('/login')
+  }
+  handleChangeBrand = () => {
+    let brandId = document.getElementById("brand").value;
+    localStorage.setItem("brandId", brandId);
+    localStorage.setItem("workplaceId", "");
+    document.getElementById("workplace").value = "";
+    this.forceUpdate();
+    this.props.handleChange();
+  };
+
 	render() {
-		  if (this.props.data.loading) {
+		if (this.props.data.loading || this.props.allBrands.loading) {
              return (<div>Loading</div>)
          }
 
@@ -21,43 +45,46 @@ class NavComponent extends Component {
              console.log(this.props.data.error)
              return (<div>An unexpected error occurred</div>)
         }
-
-        const brandLogo = this.props.data.brandById.brandIconUrl
+    const brandId = localStorage.getItem("brandId");
+    const workplaceId = localStorage.getItem("workplaceId");
+    const brandLogo = "";
+		const brands = this.props.allBrands && this.props.allBrands.allCorporationBrands.nodes;
+    const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
 		return (
 			<div className="left-menu_item">
 				{/*<EmergencyShiftButton/>*/}
 				<Menu vertical fluid>
 					<Menu.Item className="menu-item left-menu-logo">
 						<Menu.Header><Image src="/images/logos_aday.png" width="102" height="31" centered={true}/></Menu.Header>
-						<Menu.Header><Image src={brandLogo} width="100" height="100" centered={true}/></Menu.Header>
+						<Menu.Header><Image src="" width="100" height="100" centered={true}/></Menu.Header>
 						<Menu.Header className="dropdown-menu-item">
-							<select>
-								<option value="volvo">CHOOSE BRAND</option>
-								<option value="saab">Brand1</option>
-								<option value="opel">Brand2</option>
-								<option value="audi">Brand3</option>
+							<select onChange={this.handleChangeBrand} id="brand" value={brandId}>
+                { brands.map((v,i)=>(
+                    <option value={v.brandByBrandId.id} key={i}>{v.brandByBrandId.brandName}</option>
+                  ))
+                }
 							</select>
 						</Menu.Header>
 						<Menu.Header>
-							<select>
+							<select onChange={this.changeWorkplace} id="workplace" value={workplaceId}>
 								<option value="">CHOOSE WORKPLACE</option>
-                                {
-                                    this.props.data.brandById.workplacesByBrandId.edges.map((v,i)=>(
-											<option value={v.node.id} key={i}> { v.node.workplaceName } </option>
-                                        )
-									)}
+                {
+                  filteredWorkplaces.map((v,i)=>(
+											<option value={v.id} key={i}> { v.workplaceName } </option>
+                    )
+                  )}
 							</select>
 						</Menu.Header>
 					</Menu.Item>
 					<div className="left-menu-fixed">
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
-							<Menu.Item><EmergencyShiftButton/></Menu.Item>
+              <Menu.Item><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>DASHBOARD</span></div></Menu.Item>
 						</Menu.Menu>
 					</Menu.Item>
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
-							<Menu.Item className="menu-item-list" as={NavLink} to="/schedule/team"><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
+							<Menu.Item className="menu-item-list" name="schedule" as={NavLink} to="/schedule/team" active={this.props.isemployeeview}><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance/requests"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/team"><i><Image src="/images/Sidebar/team-member.png"/></i><div className="menu_item_left"><span>TEAM MEMBERS</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/hiring"><i><Image src="/images/Sidebar/hiring.png"/></i><div className="menu_item_left"><span>HIRING</span></div></Menu.Item>
@@ -67,8 +94,8 @@ class NavComponent extends Component {
 						</Menu.Menu>
 					</Menu.Item>
 					</div>
-					<Menu.Item className="menu-item-logout">
-						<Menu.Item className="menu-item-list"><i><Image src="/images/Sidebar/logout-icon.png"/></i><div className="menu_item_left"><span>LOGOUT</span></div></Menu.Item>
+  					<Menu.Item className="menu-item-logout">
+						<Menu.Item className="menu-item-list"><i><Image onClick={this.logout} src="/images/Sidebar/logout-icon.png"/></i><div className="menu_item_left"><span>LOGOUT</span></div></Menu.Item>
 					</Menu.Item>
 				</Menu>
 			</div>
@@ -76,31 +103,47 @@ class NavComponent extends Component {
 	}
 }
 
-
 const allWorkplaces = gql`
-  query allWorkplaces($brandid: Uuid!){ 
- 	brandById(id: $brandid){
- 	id
-  	brandIconUrl
-	workplacesByBrandId{
-	    edges{
-		    node{
-				id
-		        workplaceName
-		      }
-		    }		 
-		}
-	}
-}`
+  query getAllWorkplacesQuery ($corporationId: Uuid!) {
+    allWorkplaces (condition: {corporationId: $corporationId}) {
+      nodes{
+        workplaceName,
+        id,
+        brandId
+      }
+    }
+}
+`
 
-const Nav = graphql(allWorkplaces, {
-   options: (ownProps) => ({
-     variables: {
-       brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
-     }
-   }),
- })(NavComponent)
+const allBrands = gql`
+  query ($corporationId: Uuid!){
+    allCorporationBrands(condition: {corporationId: $corporationId}){
+      nodes{
+        brandByBrandId{
+          id
+          brandName
+          brandIconUrl
+        }
+      }
+    }
+  }
+  `
 
+const Nav = compose(
+  graphql(allWorkplaces, {
+    options: (ownProps) => ({
+      variables: {
+        corporationId: localStorage.getItem('corporationId') ,
+      }
+    }),
+  }),
+  graphql(allBrands, { name:"allBrands",
+    options: (ownProps) => ({
+      variables: {
+        corporationId: localStorage.getItem('corporationId') ,
+      },
+    }),
+  })
+)(NavComponent);
 
 export default Nav
-

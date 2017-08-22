@@ -1,0 +1,120 @@
+.confirm-popup {
+  color: #0022A1;
+  font-family: "Roboto Condensed";
+  font-size: 30px;
+  line-height: 35px;
+  font-weight: normal;
+  margin-bottom: 0;
+  text-align: center;
+  text-transform: uppercase;
+  margin-top: 0;
+}
+.confirm-popup-close {
+  position: absolute;
+  right: 20px;
+  width: 50px;
+  top: 17px;
+}
+.confirm-popup-copy {
+  position: absolute;
+  left: 20px;
+  width: 50px;
+  top: 17px;
+}
+.confirm-popup-body {
+  margin-top: 30px;
+}
+.confirm-popup-body p {
+  color: #4A4A4A;
+  font-family: Lato;
+  font-size: 24px;
+  line-height: 29px;
+  text-align: center
+}
+.confirm-popup-body label {
+  font-weight: normal;
+  color: #666666;
+  font-family: "Roboto Condensed";
+  font-size: 18px;
+  line-height: 21px;
+  margin: 14px 0;
+}
+.add-template-popup label {
+  display: block;
+  margin-bottom: 8px;
+}
+.add-template-popup input {
+  border: 2px solid;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  padding: 12px 20px;
+  color: #999999;
+  font-family: Roboto;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 21px;
+  width: 100%;
+  outline: 0;
+}
+.add-template-popup input:focus {
+  border: 2px solid #4990E2;
+}
+
+.confirm-popup-body .react-flexible-switch {
+  padding: 6px 8px !important;
+}
+.confirm-popup-body .react-flexible-switch--inactive {
+  background-color: #E33821 !important;
+  color:white;
+  font-family: Roboto;
+  font-weight: 900;
+}
+.confirm-popup-body .react-flexible-switch--inactive .react-flexible-switch-label{
+  font-weight: bold !important;
+  right: 25% !important;
+}
+.confirm-popup-body .react-flexible-switch--active {
+  background-color: rgb(0, 168, 99) !important;
+  color:white;
+  font-family: Roboto;
+  font-weight: 900;
+}
+.confirm-popup-body .react-flexible-switch--active .react-flexible-switch-label{
+  font-weight: bold;
+  left: 15% !important;
+}
+.confirm-popup-body .circle {
+  background-color:white !important;
+  border: 1px solid #4A4A4A;
+  height: 21px !important;
+  width: 21px !important;
+}
+.confirm-popup-body .react-flexible-switch-label {
+  right: 31% !important;
+}
+
+.btn-holiday {
+  background: transparent !important;
+  margin: auto;
+  position: relative;
+  height: 100%;
+  padding: 0 !important;
+  width: 100%;
+  border-radius: 50% !important;
+}
+
+.btn-holiday span {
+  font-size: 20px;
+  line-height: 20px;
+  font-family: Lato;
+}
+.btn-holiday small {
+  position: absolute;
+  left: 3px;
+  right: 0;
+  font-size: 11px;
+  top: 65%;
+  line-height: 15px;
+  font-weight: normal;
+  font-family: Roboto Condensed
+}

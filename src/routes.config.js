@@ -3,21 +3,18 @@ import App from './components/App';
 import Root from './components/Root';
 import Home from './components/Home';
 import Schedule from './components/Scheduling';
-import EmployeeView from './components/EmployeeView';
 import Settings from './components/Settings';
 import Positions from './components/Positions';
 import MyWorkplace from './components/workplace/MyWorkplace'
 import Hiring from './components/Hiring'
-import TemplateViewJob from "./components/TemplateViewJob";
 import Template from './components/Template';
 import Team from './components/Team'
 
+
+
 import Certificates from './components/certifications/Certificates'
-
 import AttendanceRequests from './components/attendance/AttendanceRequests'
-
 import Login from './components/auth/Login'
-
 const routes = [
 	{
 		component: Root,
@@ -26,11 +23,6 @@ const routes = [
 				component: PublicSiteRoot,
 				routes: [
 					{
-						path: '/',
-						exact: true,
-						component: Home
-					},
-					{
 						path: '/login',
 						exact: true,
 						component: Login
@@ -38,6 +30,16 @@ const routes = [
 			{
 				component: App,
 				routes: [
+						// {
+						// 	path: '/schedule/team/:workplaceId',
+						// 	exact: true,
+						// 	component: Schedule
+						// },
+					{
+						path: '/',
+						exact: true,
+						component: Schedule
+					},
 						// {
 						// 	path: '/schedule/team/:workplaceId',
 						// 	exact: true,
@@ -53,21 +55,16 @@ const routes = [
                      //    exact: true,
                      //    component: EmployeeView
 					// },
+				// 	{
+            // path: '/schedule/employeeview',
+            // exact: true,
+            // component: EmployeeView
+				// 	},
 					{
-                        path: '/schedule/employeeview',
-                        exact: true,
-                        component: EmployeeView
+            path: '/schedule/template',
+            exact: true,
+            component: Template
 					},
-					{
-                        path: '/schedule/template',
-                        exact: true,
-                        component: Template
-					},
-                    {
-                        path: '/schedule/team/template',
-                        exact: true,
-                        component: TemplateViewJob
-                    },
 					{
 						path: '/schedule/manager',
 						exact: true,
@@ -113,6 +110,5 @@ const routes = [
 		]
 	}
 ]
-
 
 export default routes

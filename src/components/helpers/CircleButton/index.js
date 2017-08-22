@@ -38,8 +38,10 @@ export default class CircleButton extends Component {
       title = 'Title',
       handleClick = () => { },
       style = {},
+      titleStyle = {},
       image = false,
-      imageSize = 'small'
+      imageSize = 'small',
+      disabled
     } = this.props;
     const classes = ['btn', 'btn-circle', 'text-uppercase', 'inline-block'];
     const buttonStyles = {
@@ -49,9 +51,10 @@ export default class CircleButton extends Component {
     };
     return (
       <div className="btn-circle-wrapper">
-        <button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}>
+        <button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}
+                disabled={disabled}>
           {image && <Image src={image} className={[imageSize, 'img-icon'].join(' ')} />}
-          <p>{title}</p>
+          <p style={titleStyle}>{title}</p>
         </button>
       </div>
     );

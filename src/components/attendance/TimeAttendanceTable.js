@@ -17,7 +17,7 @@ class TimeAttendanceTable extends Component {
 		let data = {"clientMutationId": uuidv4(),
 								"id":id,
 								"decision": state,
-								"approverId": "5b7323ac-e235-4edb-bbf9-97495d9a42a1"
+								"approverId": localStorage.getItem('userId')
 		};
 		this.props.mutate(
 			{variables: data,

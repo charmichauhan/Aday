@@ -1,11 +1,8 @@
 import React, { Component } from 'react'
 import { gql} from 'react-apollo';
 
-const allShiftsByWeeksPublished = gql `query allShiftsByWeeksPublished($brandid: Uuid!, $day: Datetime!){
-		        weekPublishedByDate(brandid: $brandid, day: $day){
-		            nodes{
-		            id
-		            shiftsByWeekPublishedId{
+const allShiftsByWeeksPublished = gql `query allShiftsByWeeksPublished($publishId: Uuid!){
+		        allShifts(condition: {weekPublishedId: $publishId}){
 		                    edges {
 		                        node {
 		                            id
@@ -14,21 +11,26 @@ const allShiftsByWeeksPublished = gql `query allShiftsByWeeksPublished($brandid:
 		                            workersInvited
 		                            workersAssigned
 		                            workersRequestedNum
+		                            managersOnShift
+		                            unpaidBreakTime
+		                            instructions
+		                            traineesRequestedNum
 		                            positionByPositionId{
-		                            positionName
-		                            positionIconUrl
-		                                brandByBrandId {
-		                                    brandName
-		                                }
+			                            id
+			                            positionName
+			                            positionIconUrl
+			                                brandByBrandId {
+			                                	id
+			                                    brandName
+			                                }
 		                            }
 		                            workplaceByWorkplaceId{
+		                            	id
 		                                workplaceName
 		                            }
 		                        }
 		                    }
-		                }
 		            }
-		        }
 		}`
 
 export default allShiftsByWeeksPublished

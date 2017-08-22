@@ -43,7 +43,7 @@ export default class Position extends Component {
   getDeleteActions = () => {
     return [
       { type: 'white', title: 'Cancel', handleClick: this.closeModal, image: false },
-      { type: 'red', title: 'Delete Position', handleClick: this.handleDelete, image: true }
+      { type: 'red', title: 'Delete Position', handleClick: this.handleDelete, image: false }
     ];
   };
 

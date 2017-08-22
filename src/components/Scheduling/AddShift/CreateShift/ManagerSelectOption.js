@@ -22,10 +22,10 @@ class ManagerSelectComponent extends Component{
   }
 
    onManagerChange(event, data){
-    this.props.formCallBack({managerValue: [data.value]});
+    this.props.formCallBack({managerValue: data.value});
   }
   render(){
-  
+
     if (this.props.data.loading) {
       return (
       <Loader active inline='centered' />
@@ -49,19 +49,22 @@ class ManagerSelectComponent extends Component{
       }, this);
     }
     }
-  
 
     return(
       <div>
-        <Dropdown  placeholder='Select Manager' fluid selection options={this.state.users} style={{ marginTop:'-2%' }} onChange={this.onManagerChange}  />
-      </div>     
+        { !this.props.manager && <Dropdown  placeholder='Select Manager' fluid selection
+            options={this.state.users} style={{ marginTop:'-2%' }} onChange={this.onManagerChange} /> }
+
+       { this.props.manager && <Dropdown defaultValue={ this.props.manager } fluid selection
+            options={this.state.users} style={{ marginTop:'-2%' }} onChange={this.onManagerChange} /> }
+      </div>
     );
   }
 }
 
 const getAllUsers = gql`
   query getAllUsersQuery{
-    allEmployees(condition:{isManager:true, corporationId: "3b14782b-c220-4927-b059-f4f22d01c230"}){
+    allEmployees(condition:{isManager:true}){
         edges{
           node{
             userByUserId{

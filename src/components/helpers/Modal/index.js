@@ -61,10 +61,10 @@ export default class Modal extends Component {
           open={this.state.isOpen}>
           <div className="confirm-popup-body">
             <p>{message}</p>
+            {this.props.children}
           </div>
         </Dialog>
       </div>
     );
   }
 }
-

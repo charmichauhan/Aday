@@ -27,8 +27,8 @@ export default class TimePicker extends Component {
 
     this.state = {
       activeField: 'start',
-      startFieldText: '12:00 am',
-      stopFieldText: '12:00 pm',
+      startFieldText: this.props.start || '12:00 am',
+      stopFieldText: this.props.stop || '12:00 pm',
       startHour: '',
       startMinute: '',
       startMeridiem: '',
@@ -119,11 +119,9 @@ export default class TimePicker extends Component {
      const { activeField } = this.state;
      this.setState({activeField:field});
      const momentState = this.getMomentState(activeField);
-     console.log(momentState.format('h'));
      const minuteValue=momentState.add(15,'m').format('mm');
      const hourValue= (momentState.format('h') === '12') ?
        '0' : momentState.format('h')
-     console.log(hourValue);
        const updatedState = {
            [`${activeField}Hour`]: hourValue,
            [`${activeField}Minute`]: minuteValue,

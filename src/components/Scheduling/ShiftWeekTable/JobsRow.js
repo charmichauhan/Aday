@@ -8,12 +8,13 @@ import {
 } from 'material-ui/Table';
 
 export default class JobsRow extends Component{
+
     render(){
         let data = this.props.data;
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
         data.map((value,index) => {
-            const day = value.weekday
+            const day =  moment(value.startTime, "YYYY-MM-DD HH:mm:ss").format("dddd");
             if (hashByDay[day]){
                 hashByDay[day] = [...hashByDay[day], value];
             } else {
@@ -22,42 +23,46 @@ export default class JobsRow extends Component{
         });
         let finalHours = 0;
         let finalMinutes = 0;
-        Object.values(data).map((value,index) => {
+      /*  Object.values(data).map((value,index) => {
             let startTime = moment(value.startTime).format("hh:mm A");
             let endTime = moment(value.endTime).format("hh:mm A");
             let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
             let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
+            let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
+            h=h*workerAssigned;
+            m=m*workerAssigned;
             finalHours += parseInt(h);
             finalMinutes += parseInt(m);
         });
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
+
+                              <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                      <p className="scheduled_tag">SCHEDULED</p>
+        */
         return(
             <TableRow className="tableh" displayBorder={false}>
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
-                    <div className="user_profile" width="80%">
-                        <div className="user_img">
-                            <img width="65px" src={ data[0].positionByPositionId.positionIconUrl } alt="img"/>
-                        </div>
-                        <div className="user_desc penalheading">{data[0].positionByPositionId.positionName.split(" ")[0]}
-                            <p className="lastName"> { data[0].positionByPositionId.positionName.split(" ")[1] }</p>
-                            <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
-                            <p className="scheduled_tag">SCHEDULED</p>
-                        </div>
+                  <div className="user_profile" width="80%">
+                    <div className="user_img">
+                      <img width="65px" src={this.props.view=="job"?data[0].positionByPositionId.positionIconUrl:data[0].userAvatar } alt="img"/>
                     </div>
+                    <div className="user_desc penalheading">
+                      {this.props.view=="job"? data[0].positionByPositionId.positionName : data[0].userFirstName}
+                      <p className="lastName"> {this.props.view=="job"?  "" :data[0].userLastName}</p>
+
+                    </div>
+                  </div>
                 </TableRowColumn>
                 {
                     daysOfWeek.map((value,index)=> ((
                             <TableRowColumn key={index} className="shiftbox" style={{paddingLeft:'0px',paddingRight:'0px',backgroundColor:'#F5F5F5'}}>
                                 {
                                     Object.values(hashByDay[value]).map((y, index)=>(
-                                        <EventPopup data={y} key={index}/>
+                                        <EventPopup users={this.props.users} data={y} key={index} view={this.props.view} />
                                     ))
                                 }
-                                <button type="button" className="addshift">
-                                    + ADD HOURS
-                                </button>
                             </TableRowColumn>
                         )
                     ))
@@ -66,3 +71,10 @@ export default class JobsRow extends Component{
         )
     }
 }
+
+/*
+        not currently functional
+            <button type="button" className="addshift">
+               + ADD HOURS
+               </button>
+*/

@@ -8,23 +8,22 @@ import { NavLink } from 'react-router-dom'
 import {BrowserRouter as Router,Redirect} from 'react-router-dom';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
-import AddAsTemplate from '../../../../public/assets/Buttons/add-as-template.png';
-import TemplateList from '../../../../public/assets/Buttons/template-list-button.png';
-import Automate from '../../../../public/assets/Buttons/automate-schedule.png';
-import Publish from '../../../../public/assets/Buttons/publish.png';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
+var rp = require('request-promise');
 
-class ShiftPublish extends Component{
+class ShiftPublishComponent extends Component{
     constructor(props){
         super(props);
         this.state = {
             publishModalPopped: false,
             addTemplateModalOpen: false,
             templateName:"",
+            workplaceId:"",
             redirect:false
         }
     }
+
     modalClose = () => {
         this.setState({
             publishModalPopped:false
@@ -40,9 +39,57 @@ class ShiftPublish extends Component{
             addTemplateModalOpen:false
         });
     };
+    templateView = (view) => {
+      this.setState({redirect:true})
+    };
     addTemplateName = () => {
-        let that = this;
-        that.setState({redirect:true});
+        if (this.state.workplaceId && this.state.templateName){
+            const that = this;
+
+            var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/shiftToTemplate'
+
+             var options = {
+                uri: uri,
+                method: 'POST',
+                json: {"data": {"weekPublishedId": this.props.publishId,
+                                "brandId": localStorage.getItem('brandId'),
+                                "workplaceId": this.state.workplaceId,
+                                "creatorId":   localStorage.getItem('userId'),
+                                "name": this.state.templateName
+                            }
+                }
+            };
+
+              rp(options)
+                .then(function(response) {
+                       that.setState({redirect:true})
+                  }).catch((error) => {
+                      console.log('there was an error sending the query', error);
+                  });
+        }
+    };
+    automateSchedule = (publishId) => {
+        console.log(publishId)
+        var uri = "https://20170808t142850-dot-forward-chess-157313.appspot.com/api/algorithm/"
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {"data": {"week_id": publishId,"sec": "QDVPZJk54364gwnviz921"}}};
+
+        rp(options)
+        .then( function ($) {
+            window.location.reload();
+        // Process html like you would with jQuery...
+        })
+        .catch(function (err) {
+        // Crawling failed or Cheerio choked...
+        });
+        /*
+        request(options, function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+          }
+         });
+         */
     };
     addTemplateModalOpen = () => {
         this.setState({addTemplateModalOpen:true})
@@ -53,14 +100,24 @@ class ShiftPublish extends Component{
     onPublish = () => {
         this.setState({publishModalPopped:true})
     };
-    handleChange = (e) => {
-        this.setState({templateName:e});
+    handleNameChange = (e) => {
+    this.setState({templateName:e});
     };
+    handleWorkplaceChange = (e) => {
+        this.setState({workplaceId:e});
+    };
+    publishWeek = () => {
+        this.props.mutate({
+            variables: {id: this.props.publishId, date: moment().format() }
+        })
+        this.modalClose()
+
+    };
+
     render(){
-        console.log(this.props)
-        
-        let is_publish = this.props.isPublish
-        const startDate = this.props.date
+        let is_publish = this.props.isPublish;
+        let publishId = this.props.publishId
+        const startDate = this.props.date;
 
         let status = "";
         let statusImg = "";
@@ -73,25 +130,27 @@ class ShiftPublish extends Component{
             statusImg = "/assets/Icons/published.png";
         }
         let publishModalOptions =[{type:"white",title:"Go Back",handleClick:this.goBack,image:false},
-            {type:"blue",title:"Confirm",handleClick:this.onConfirm,image:false}];
+            {type:"blue",title:"Confirm",handleClick:this.publishWeek,image:false}];
         if(this.state.redirect){
             return (
-                <Redirect to={{pathname:'/schedule/team/template' ,templateName:this.state.templateName}}/>
+              <Redirect to={{pathname:'/schedule/template' ,viewName:this.props.view}}/>
             )
         }
 
         let { date } = this.props;
         let { start } = ShiftPublish.range(date, this.props);
+
         return(
             <div>
                 {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
-                                                         message = "Are you sure that you want to delete this shift?"
+                                                         message = "Are you sure that you want to publish the week's schedule?"
                                                          action = {publishModalOptions} closeAction={this.modalClose}/>
                 }
                 {this.state.addTemplateModalOpen && <AddAsTemplateModal addTemplateModalOpen={true}
                                                                         handleClose={this.addTemplateclose}
                                                                         addTemplate={this.addTemplateName}
-                                                                        handleChange={(e) =>this.handleChange(e)} />
+                                                                        handleNameChange={this.handleNameChange}
+                                                                        handleWorkplaceChange={this.handleWorkplaceChange} />
                 }
                     <div className="col-md-12">
                         <div className="col-sm-offset-3 col-sm-5 rectangle">
@@ -100,22 +159,46 @@ class ShiftPublish extends Component{
                         </div>
                     </div>
                   <div className="btn-action">
-                    <Button className="btn-image"><CreateShiftButton brandId={"5a14782b-c220-4927-b059-f4f22d01c230"} weekStart={ start } /></Button>
-                    {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
-                    {(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
-                    {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
+                    {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
+                      <div>
+                        <Button className="btn-image"><CreateShiftButton weekPublishedId={ publishId } weekStart={ start } /></Button>
+                        {(is_publish == false && is_publish != "none") && <Button className="btn-image flr" onClick={this.onPublish}><img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish"/></Button>}
+                        {(is_publish != "none") && <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}
+                        {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+                        {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
+                      </div> :
+                      <div>
+                      {is_publish != "none" && <Button className="btn-image flr" onClick={this.addTemplateModalOpen}><img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template"/></Button>}
+                      </div>
+                    }
+
                 </div>
             </div>
         )
     }
 }
 
+const updateWeekPublishedNameMutation = gql`
+mutation updateWeekPublishedById($id: Uuid!, $date: Datetime!) {
+    updateWeekPublishedById(input:{ id: $id, weekPublishedPatch:{published: true, datePublished: $date}}){
+            weekPublished{
+                id
+                published
+                start
+                end
+            }
+        }
+}`
 
-ShiftPublish.range = (date, { culture }) => {
+
+ShiftPublishComponent.range = (date, { culture }) => {
     let firstOfWeek = localizer.startOfWeek(culture);
     let start = dates.startOf(date, 'week', firstOfWeek);
     let end = dates.endOf(date, 'week', firstOfWeek);
     return { start, end };
 };
+
+
+const ShiftPublish = graphql(updateWeekPublishedNameMutation)(ShiftPublishComponent);
 
 export default ShiftPublish

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
-import { remove, maxBy, findIndex } from 'lodash';
+import { remove, pick, findIndex } from 'lodash';
 import { withApollo } from 'react-apollo';
-import pick from 'lodash/pick';
+import uuidv4 from 'uuid/v4';
 
 import Personal from './Personal';
 import Workplace from './Workplace';
@@ -16,12 +16,15 @@ const styles = {
   tabDesign
 };
 
+const removeEmpty = (obj) => {
+  Object.keys(obj).forEach((key) => obj[key] === null || obj[key] === undefined || obj[key] === "" && delete obj[key]);
+  return obj;
+};
+
+const brandFields = ['id', 'brandName', 'brandIconUrl'];
+
 const initialState = {
   value: 'personal',
-  companies: [{
-    id: 1,
-    name: 'Compass Group, USA',
-  }],
   brands: []
 };
 
@@ -39,7 +42,7 @@ class Settings extends Component {
         const brandNodes = res.data.allBrands.edges;
         if (brandNodes) {
           const brands = brandNodes.map(({ node }) => {
-            let brand = pick(node, ['id', 'brandName', 'brandIconUrl']);
+            let brand = pick(node, brandFields);
             if (!brand.brandIconUrl) brand.brandIconUrl = '/images/brands/ra.png';
             return brand;
           });
@@ -53,45 +56,52 @@ class Settings extends Component {
     this.setState({ value: value });
   };
 
-  deleteWorkplace = (id) => {
-    const { workplaces } = this.state;
-    remove(workplaces, { 'id': id });
-    this.setState({ workplaces });
-  };
-
-  addOrUpdateWorkPlace = (workplace) => {
-    const { workplaces } = this.state;
-    // Just for dummy data (To be removed after actual data submission)
-    if (typeof workplace.image !== 'string') workplace.image = workplace.image.preview;
-    if (!workplace.id) {
-      workplace.id = maxBy(workplaces, 'id').id + 1;
-      workplaces.push(workplace);
-      this.setState({ workplaces });
-    } else {
-      const workplaceIndex = findIndex(workplaces, { id: workplace.id });
-      workplaces[workplaceIndex] = workplace;
-      this.setState({ workplaces });
-    }
-  };
-
   deleteBrand = (id) => {
     const { brands } = this.state;
-    remove(brands, { 'id': id });
-    this.setState({ brands });
+    this.props.client.mutate({
+      mutation: brandResolvers.deleteBrandMutation,
+      variables: { id }
+    }).then(() => {
+      remove(brands, { 'id': id });
+      this.setState({ brands });
+      // TODO: show notification for successful creation
+    }).catch(err => console.error(err));
   };
 
   addOrUpdateBrand = (brand) => {
     const { brands } = this.state;
     // Just for dummy data (To be removed after actual data submission)
-    if (typeof brand.image !== 'string') brand.image = brand.image.preview;
+    if (typeof brand.brandIconUrl !== 'string' && !!brand.brandIconUrl) brand.brandIconUrl = brand.brandIconUrl.preview;
     if (!brand.id) {
-      brand.id = maxBy(brands, 'id').id + 1;
-      brands.push(brand);
-      this.setState({ brands });
+      // Create
+      brand.id = uuidv4();
+      this.props.client.mutate({
+        mutation: brandResolvers.createBrandMutation,
+        variables: {
+          input: {
+            brand: removeEmpty(pick(brand, brandFields))
+          }
+        }
+      }).then(() => {
+        if (!brand.brandIconUrl) brand.brandIconUrl = '/images/brands/ra.png';
+        brands.push(brand);
+        this.setState({ brands });
+        // TODO: show notification for successful creation
+      }).catch(err => console.error(err));
     } else {
-      const workplaceIndex = findIndex(brands, { id: brand.id });
-      brands[workplaceIndex] = brand;
-      this.setState({ brands });
+      // Update
+      this.props.client.mutate({
+        mutation: brandResolvers.updateBrandMutation,
+        variables: {
+          id: brand.id,
+          brandInfo: removeEmpty(pick(brand, brandFields))
+        }
+      }).then(() => {
+        // TODO: show notification for successful update
+        const brandIndex = findIndex(brands, { id: brand.id });
+        brands[brandIndex] = brand;
+        this.setState({ brands });
+      }).catch(err => console.error(err));
     }
   };
 
@@ -118,10 +128,7 @@ class Settings extends Component {
             buttonStyle={this.getButtonStyle('workplace')}
             label="Workplace"
             value="workplace">
-            <Workplace
-              addOrUpdateWorkPlace={this.addOrUpdateWorkPlace}
-              onDeleteWorkplace={this.deleteWorkplace}
-              brands={this.state.brands} />
+            <Workplace brands={this.state.brands} />
           </Tab>
           <Tab
             buttonStyle={this.getButtonStyle('brand')}
@@ -136,7 +143,7 @@ class Settings extends Component {
             buttonStyle={this.getButtonStyle('company')}
             label="Company"
             value="company">
-            <Company companies={this.state.companies} />
+            <Company />
           </Tab>
         </Tabs>
       </section>

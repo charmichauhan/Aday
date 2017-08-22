@@ -12,8 +12,8 @@ import CircleButton from '../../helpers/CircleButton/index';
 const initialState = {
   brand: {
     id: '',
-    name: '',
-    image: ''
+    brandName: '',
+    brandIconUrl: ''
   },
   blob: null
 };
@@ -40,7 +40,7 @@ class DrawerHelper extends Component {
   handleImageUpload = (files) => {
     // handle image upload code here.
     console.log('Image upload code goes here');
-    const brand = Object.assign(this.state.brand, { image: files[0] });
+    const brand = Object.assign(this.state.brand, { brandIconUrl: files[0] });
     this.setState({ brand, blob: files[0] });
   };
 
@@ -84,7 +84,7 @@ class DrawerHelper extends Component {
             </IconButton>
             <h2 className="text-center text-uppercase">{messages.title}</h2>
           </div>
-          {!DrawerBrand.image && <div className="upload-wrapper col-md-8 col-md-offset-2 text-center">
+          {!DrawerBrand.brandIconUrl && <div className="upload-wrapper col-md-8 col-md-offset-2 text-center">
             <Dropzone
               multiple={false}
               accept="image/*"
@@ -103,11 +103,11 @@ class DrawerHelper extends Component {
               </p>
             </Dropzone>
           </div>}
-          {(DrawerBrand.image || this.state.blob) &&
+          {(DrawerBrand.brandIconUrl || this.state.blob) &&
           (<div>
             <Image
               className="uploaded-image"
-              src={(this.state.blob && this.state.blob.preview) || DrawerBrand.image}
+              src={(this.state.blob && this.state.blob.preview) || DrawerBrand.brandIconUrl}
               size="large" />
             <RaisedButton
               backgroundColor={colors.primaryBlue}
@@ -125,8 +125,8 @@ class DrawerHelper extends Component {
               <input
                 id="brand-name"
                 type="text"
-                name="name"
-                value={DrawerBrand.name}
+                name="brandName"
+                value={DrawerBrand.brandName}
                 onChange={this.handleChange}
                 className="form-control" />
             </div>

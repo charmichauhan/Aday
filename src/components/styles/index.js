@@ -1,6 +1,7 @@
 export const colors = {
   primaryBlue: '#0022A1',
-  primaryRed: '#E33821'
+  primaryRed: '#E33821',
+  primaryActionButtons: '#757575'
 };
 
 export const tabDesign = {

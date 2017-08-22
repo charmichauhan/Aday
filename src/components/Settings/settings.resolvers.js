@@ -80,6 +80,13 @@ export const workplaceResolvers = {
         }
       }
     }
+  `,
+  deleteWorkplaceMutation: gql`
+    mutation ($id: Uuid!) {
+      deleteWorkplaceById (input: { id: $id }) {
+        deletedWorkplaceId
+      }
+    }
   `
 };
 
@@ -94,6 +101,47 @@ export const brandResolvers = {
             brandIconUrl
           }
         }
+      }
+    }
+  `,
+  createBrandMutation: gql`
+    mutation ($input: CreateBrandInput!) {
+      createBrand (input: $input) {
+        brand {
+          id
+          brandName
+          brandIconUrl
+        }
+      }
+    }
+  `,
+  updateBrandMutation: gql`
+    mutation ($id: Uuid!, $brandInfo: BrandPatch!) {
+      updateBrandById (input: { id: $id, brandPatch: $brandInfo }) {
+        brand {
+          id
+        }
+      }
+    }
+  `,
+  deleteBrandMutation: gql`
+    mutation ($id: Uuid!) {
+      deleteBrandById (input: { id: $id }) {
+        deletedBrandId
+      }
+    }
+  `
+};
+
+export const companyResolvers = {
+  getCorporationQuery: gql`
+    query ($id: Uuid!) {
+      corporationById (id: $id  ) {
+        id
+        corporationName
+        corporationIconUrl
+        isActive
+        corporationAddress
       }
     }
   `

@@ -3,7 +3,7 @@ import { List, ListItem } from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 import Edit from 'material-ui/svg-icons/image/edit';
 import Delete from 'material-ui/svg-icons/action/delete';
-import { filter, pick, findIndex } from 'lodash';
+import { filter, pick, find, findIndex, remove } from 'lodash';
 import { withApollo } from 'react-apollo';
 import { Grid, GridColumn, Progress } from 'semantic-ui-react';
 import uuidv4 from 'uuid/v4';
@@ -13,6 +13,7 @@ import { workplaceResolvers } from '../settings.resolvers';
 import Loading from '../../helpers/Loading';
 import Modal from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton';
+import { colors } from '../../styles';
 
 const styles = {
   drawer: {
@@ -35,10 +36,21 @@ const styles = {
   }
 };
 
+const workplaceFields = [
+  'id', 'workplaceName', 'corporationId',
+  'brandId', 'isActive', 'workplaceImageUrl',
+  'isUnion', 'isRatingsPublic', 'isActive'
+];
+
+const removeEmpty = (obj) => {
+  Object.keys(obj).forEach((key) => obj[key] === null || obj[key] === undefined || obj[key] === "" && delete obj[key]);
+  return obj;
+};
+
 const initialState = {
   open: false,
   openDeleteModal: false,
-  corporationId: '3b14782b-c220-4927-b059-f4f22d01c230'
+  corporationId: localStorage.getItem('corporationId')
 };
 
 class Workplace extends Component {
@@ -50,14 +62,13 @@ class Workplace extends Component {
   componentDidMount() {
     this.props.client.query({
       query: workplaceResolvers.allWorkplacesQuery,
-      // TODO: get corporation details dynamically.
       variables: { corporationId: this.state.corporationId }
     }).then((res) => {
       if (res.data && res.data.allWorkplaces && res.data.allWorkplaces.edges) {
         const workplaceNodes = res.data.allWorkplaces.edges;
         if (workplaceNodes) {
           const workplaces = workplaceNodes.map(({ node }) => {
-            let workplace = pick(node, ['id', 'workplaceName', 'brandId', 'address', 'isActive', 'workplaceImageUrl']);
+            let workplace = pick(node, workplaceFields);
             workplace.brand = node.brandByBrandId;
             if (!workplace.workplaceImageUrl) workplace.workplaceImageUrl = '/images/workplaces/chao-center.jpg';
             return workplace;
@@ -80,8 +91,18 @@ class Workplace extends Component {
   };
 
   handleDelete = () => {
-    this.props.onDeleteWorkplace(this.state.toDeleteWorkplace);
-    this.setState({ openDeleteModal: false, toDeleteWorkplace: undefined });
+    const id = this.state.toDeleteWorkplace;
+    this.props.client.mutate({
+      mutation: workplaceResolvers.deleteWorkplaceMutation,
+      variables: {
+        id
+      }
+    }).then((res) => {
+      const { workplaces } = this.state;
+      remove(workplaces, { 'id': id });
+      this.setState({ workplaces, openDeleteModal: false, toDeleteWorkplace: undefined });
+      // TODO: show notification for successful deletion
+    }).catch(err => console.error(err));
   };
 
   closeModal = () => {
@@ -94,36 +115,37 @@ class Workplace extends Component {
     const { workplaces } = this.state;
     if (!workplace.id) {
       // Create
-      workplace = pick(workplace, ['id', 'workplaceName', 'brandId', 'address', 'isActive', 'workplaceImageUrl']);
       workplace.id = uuidv4();
       workplace.corporationId = this.state.corporationId;
-      workplace.isUnion = workplace.isUnion = workplace.isRatingsPublic = workplace.isActive = true;
+      workplace.isUnion = workplace.isRatingsPublic = workplace.isActive = true;
       this.props.client.mutate({
         mutation: workplaceResolvers.createWorkplaceMutation,
         variables: {
-          workplace
+          workplace: removeEmpty(pick(workplace, workplaceFields))
         }
       }).then((res) => {
-        debugger;
+        workplace.brand = find(this.props.brands, { 'id': workplace.brandId });
+        if (!workplace.workplaceImageUrl) workplace.workplaceImageUrl = '/images/workplaces/chao-center.jpg';
         workplaces.push(workplace);
         this.setState({ workplaces });
         // TODO: show notification for successful creation
-      }).catch(err => console.log(err));
+      }).catch(err => console.error(err));
     } else {
       // Update
       this.props.client.mutate({
         mutation: workplaceResolvers.updateWorkplaceMutation,
         variables: {
           id: workplace.id,
-          workplaceInfo: pick(workplace, ['id', 'workplaceName', 'brandId', 'address', 'isActive', 'workplaceImageUrl'])
+          workplaceInfo: removeEmpty(pick(workplace, workplaceFields))
         }
       }).then((res) => {
-        debugger;
         // TODO: show notification for successful update
+        workplace.brand = find(this.props.brands, { 'id': workplace.brandId });
+        if (!workplace.workplaceImageUrl) workplace.workplaceImageUrl = '/images/workplaces/chao-center.jpg';
         const workplaceIndex = findIndex(workplaces, { id: workplace.id });
         workplaces[workplaceIndex] = workplace;
         this.setState({ workplaces });
-      }).catch(err => console.log(err));
+      }).catch(err => console.error(err));
     }
   };
 
@@ -174,11 +196,11 @@ class Workplace extends Component {
                 >
                   <IconButton style={styles.actionButtons}
                               onClick={() => this.openWorkplaceDrawer(workplace)}>
-                    <Edit />
+                    <Edit color={colors.primaryActionButtons} />
                   </IconButton>
                   <IconButton style={styles.actionButtons}
                               onClick={() => this.handleDeleteClick(workplace.id)}>
-                    <Delete />
+                    <Delete color={colors.primaryActionButtons} />
                   </IconButton>
                 </ListItem>
               </GridColumn>

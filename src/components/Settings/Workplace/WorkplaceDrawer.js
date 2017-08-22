@@ -16,7 +16,7 @@ const initialState = {
   workplace: {
     id: '',
     workplaceName: '',
-    brand: {},
+    brandId: '',
     workplaceImageUrl: '',
     address: '',
     city: '',
@@ -152,6 +152,7 @@ class DrawerHelper extends Component {
               <Dropdown className="form-control semantic-drawer-drop-down"
                         placeholder="Brand"
                         name="brandId"
+                        value={DrawerWorkplace.brandId}
                         search selection
                         onChange={(e, target) => this.handleChange({ ...e, target })}
                         options={brandOptions} />

@@ -3,6 +3,7 @@ import Dropzone from 'react-dropzone';
 import InputMask from 'react-input-mask';
 import validator from 'validator';
 import IconButton from 'material-ui/IconButton';
+import Snackbar from 'material-ui/Snackbar';
 import { withApollo } from 'react-apollo';
 import pick from 'lodash/pick';
 
@@ -44,16 +45,16 @@ class Personal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ...initialState
+      ...initialState,
+      userId: localStorage.getItem('userId')
     };
   }
 
   componentDidMount() {
     this.props.client.query({
       query: personalResolvers.userInfoQuery,
-      // TODO: Set userId from session or local storage
       variables: {
-        id: 'ce73c920-833f-11e7-bb31-be2e44b06b34'
+        id: this.state.userId
       }
     }).then((res) => {
       if (res.data && res.data.userById) this.setState({ userInfo: res.data.userById });
@@ -229,10 +230,10 @@ class Personal extends Component {
          </div>
          ))}
          </div>*/}
-         <div className="update-info">
-           <CircleButton handleClick={this.handleUpdateInfo} type="blue"
-                         title="Update info" />
-         </div>
+        <div className="update-info">
+          <CircleButton handleClick={this.handleUpdateInfo} type="blue"
+                        title="Update info" />
+        </div>
       </div>
     )
   }

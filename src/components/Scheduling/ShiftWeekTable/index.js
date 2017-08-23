@@ -127,7 +127,7 @@ class ShiftWeekTableComponent extends Week {
               rowHash["weekday"] = dayOfWeek;
               rowHash["userFirstName"] = "Open"
               rowHash["userLastName"] = "Shifts"
-              rowHash["userAvatar"] = ""
+              rowHash["userAvatar"] = "/assets/Icons/search.png"
               if (calendarHash["Open Shifts"]) {
                 calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"], Object.assign(rowHash, value.node)]
               } else {
@@ -164,7 +164,7 @@ class ShiftWeekTableComponent extends Week {
             rowHash["weekday"] = dayOfWeek;
             rowHash["userFirstName"] = "Open"
             rowHash["userLastName"] = "Shifts"
-            rowHash["userAvatar"] = ""
+            rowHash["userAvatar"] = "/assets/Icons/search.png"
             if (calendarHash["Open Shifts"]) {
               calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"], Object.assign(rowHash, value.node)]
             } else {
@@ -229,6 +229,9 @@ class ShiftWeekTableComponent extends Week {
       let workplaceId = localStorage.getItem("workplaceId");
       let {data} = this.props;
       let jobData = this.state.calendarView=="job"?this.getDataJobView(workplaceId,data):this.getDataEmployeeView(workplaceId,data,this.props.allUsers);
+      let jobDataKeys = Object.keys(jobData)
+      let openShiftIndex = jobDataKeys.indexOf("Open Shifts")
+      jobDataKeys.splice(openShiftIndex, 1);
       let jobs = [];
       (Object.keys(jobData)).forEach((jobType,index) => {
           jobs = concat(jobs, jobData[jobType])
@@ -353,14 +356,22 @@ class ShiftWeekTableComponent extends Week {
                         <TableBody>
                             <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay}/>
 
-                            {(Object.keys(jobData)).map((value, index) => (
-                                    <JobsRow
+                            {jobDataKeys.map((value, index) => (
+                                  <JobsRow
                                       data={jobData[value]}
                                       key={value}
                                       users={this.props.allUsers}
                                       view={this.state.calendarView} />
                                 )
                             )
+                            }
+
+                            {jobData["Open Shifts"] &&
+                                   <JobsRow
+                                      data={jobData["Open Shifts"]}
+                                      key={"Open Shifts"}
+                                      users={this.props.allUsers}
+                                      view={this.state.calendarView} />
                             }
                         </TableBody>
                         <TableFooter adjustForCheckbox={false}>

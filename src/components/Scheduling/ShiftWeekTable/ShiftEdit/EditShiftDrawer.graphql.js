@@ -56,6 +56,16 @@ export const deleteShiftMutation = gql`
     }
   }`;
 
+export const createShiftMarket = gql`
+ mutation createMarket($data:CreateMarketInput!){
+  createMarket(input:$data)
+  {
+    market{
+        id
+    }
+  }
+}`
+
 export const updateShiftMutation = gql`
   mutation updateShiftById($data:UpdateShiftByIdInput!){
     updateShiftById(input:$data)

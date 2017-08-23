@@ -107,7 +107,7 @@ class ScheduleComponent extends Component {
     return (
       <div>
         <div style={{height: '160px'}}>
-          <ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={publish_id} view={this.state.view}/>
+          <ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={ publish_id } view={this.state.view}/>
         </div>
         <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                message="Are you sure that you want to delete this shift?"

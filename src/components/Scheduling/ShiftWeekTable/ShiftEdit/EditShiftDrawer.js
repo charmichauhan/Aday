@@ -21,7 +21,7 @@ const unassignedTeamMember = {
     lastName: '',
     avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
   },
-  content: 'Leave this field empty to warn app credit!',
+  content: 'There is currenlty an open position',
   status: 'unassigned'
 };
 
@@ -54,7 +54,7 @@ const initialState = {
       otherNames: 'Brown',
       avatar: 'http://devilsworkshop.org/files/2013/01/enlarged-facebook-profile-picture.jpg',
     },
-    content: 'Current hours: 20 . You\'ve earned 1 credit',
+    content: '',
     status: 'pending'
   }],
   users: [{
@@ -273,7 +273,7 @@ class DrawerHelper extends Component {
     const { teamMembers } = this.state;
     if (user.id) {
       teamMembers[index].user = user;
-      teamMembers[index].content = 'Current hours: 20 . You\'ve earned 1 credit';
+      teamMembers[index].content = '';
       teamMembers[index].status = 'accepted';
     } else {
       teamMembers[index] = { ...unassignedTeamMember };
@@ -298,7 +298,7 @@ class DrawerHelper extends Component {
     const { jobShadowers } = this.state;
     if (user.id) {
       jobShadowers[index].user = user;
-      jobShadowers[index].content = 'Current hours: 20 . You\'ve earned 1 credit';
+      jobShadowers[index].content = '';
       jobShadowers[index].status = 'accepted';
     } else {
       jobShadowers[index] = { ...unassignedTeamMember };

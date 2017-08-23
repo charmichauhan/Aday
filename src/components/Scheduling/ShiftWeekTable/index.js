@@ -226,6 +226,50 @@ class ShiftWeekTableComponent extends Week {
       if (this.props.data.loading || this.props.allUsers.loading) {
         return (<div>Loading</div>)
       }
+
+      let { date } = this.props;
+      let { start } = ShiftWeekTable.range(date, this.props);
+            const TableRowHeader = ( <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                            <TableRow displayBorder={false}>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
+                                    className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(1).format('dddd')} </p>
+                                    <p className="weekDate">{moment(start).day(1).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(2).format('dddd')} </p><p
+                                    className="weekDate">  {moment(start).day(2).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(3).format('dddd')} </p><p
+                                    className="weekDate">  {moment(start).day(3).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(4).format('dddd')} </p><p
+                                    className="weekDate">  {moment(start).day(4).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(5).format('dddd')} </p><p
+                                    className="weekDate">  {moment(start).day(5).format('D')}</p></TableRowColumn>
+                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                                    className="weekDay"> {moment(start).day(6).format('dddd')} </p><p
+                                    className="weekDate">{moment(start).day(6).format('D')}</p></TableRowColumn>
+                            </TableRow>
+                        </TableHeader>)
+
+
+
+
+      if (this.props.data.error) {
+        return (
+        <div className="table-responsive">
+                    <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
+                           fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
+                           className="table atable emp_view_table" style={styles.root}>
+                          { TableRowHeader }
+                      </Table>
+        </div>
+        )
+      }
+
       let workplaceId = localStorage.getItem("workplaceId");
       let {data} = this.props;
       let jobData = this.state.calendarView=="job"?this.getDataJobView(workplaceId,data):this.getDataEmployeeView(workplaceId,data,this.props.allUsers);
@@ -267,55 +311,12 @@ class ShiftWeekTableComponent extends Week {
         });
         weeklyTotalHoursBooked = Math.round((weeklyHoursBooked*100)/weeklyHoursTotal) || 0;
       }
-      let { date } = this.props;
-      let { start } = ShiftWeekTable.range(date, this.props);
       let is_publish = true;
       const reducer = combineReducers ({ form: formReducer, shifts: shiftReducer});
       const store = createStore(reducer, {shifts: []});
       let unsubscribe = store.subscribe(() =>
           console.log(store.getState())
       );
-
-      const TableRowHeader = ( <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                            <TableRow displayBorder={false}>
-                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                    className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
-                                    className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
-                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                    className="weekDay"> {moment(start).day(1).format('dddd')} </p>
-                                    <p className="weekDate">{moment(start).day(1).format('D')}</p></TableRowColumn>
-                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                    className="weekDay"> {moment(start).day(2).format('dddd')} </p><p
-                                    className="weekDate">  {moment(start).day(2).format('D')}</p></TableRowColumn>
-                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                    className="weekDay"> {moment(start).day(3).format('dddd')} </p><p
-                                    className="weekDate">  {moment(start).day(3).format('D')}</p></TableRowColumn>
-                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                    className="weekDay"> {moment(start).day(4).format('dddd')} </p><p
-                                    className="weekDate">  {moment(start).day(4).format('D')}</p></TableRowColumn>
-                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                    className="weekDay"> {moment(start).day(5).format('dddd')} </p><p
-                                    className="weekDate">  {moment(start).day(5).format('D')}</p></TableRowColumn>
-                                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                    className="weekDay"> {moment(start).day(6).format('dddd')} </p><p
-                                    className="weekDate">{moment(start).day(6).format('D')}</p></TableRowColumn>
-                            </TableRow>
-                        </TableHeader>)
-
-
-
-
-      if (this.props.data.error) {
-        return (
-        <div className="table-responsive">
-                    <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
-                           fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
-                           className="table atable emp_view_table" style={styles.root}>
-                          { TableRowHeader }
-                      </Table>
-        </div>
-        )
-      }
 
       return (
             <Provider store={store}>

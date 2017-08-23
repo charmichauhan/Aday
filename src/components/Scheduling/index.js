@@ -42,7 +42,7 @@ class ScheduleComponent extends Component {
 			      templateName:"",
             redirect:false,
             view:"job",
-            date: moment()
+            date: moment(this.props.match.params.date) ||  moment()
         }
     }
   onNavigate = (start) => {
@@ -118,6 +118,7 @@ class ScheduleComponent extends Component {
                        startAccessor='startDate'
                        endAccessor='endDate'
                        defaultView='week'
+                       date={this.state.date}
                        views={{today: true, week: ShiftWeekTable, day: true}}
                        eventPropGetter={this.onViewChange}
                        onNavigate={(start) => this.onNavigate(start)}

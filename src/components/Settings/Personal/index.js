@@ -3,12 +3,12 @@ import Dropzone from 'react-dropzone';
 import InputMask from 'react-input-mask';
 import validator from 'validator';
 import IconButton from 'material-ui/IconButton';
-import Snackbar from 'material-ui/Snackbar';
 import { withApollo } from 'react-apollo';
 import pick from 'lodash/pick';
 
 import Loading from '../../helpers/Loading';
 import AvatarEditor from '../../helpers/AvatarEditor';
+import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 import { personalResolvers } from '../settings.resolvers';
 import CircleButton from '../../helpers/CircleButton';
 
@@ -19,6 +19,9 @@ const initialState = {
     logo: '/images/paypal-icon.png',
     text: 'Send Payment'
   }],
+  notify: false,
+  notificationType: '',
+  notificationMessage: '',
   showPassword: {
     currentPassword: false,
     newPassword: false
@@ -58,7 +61,23 @@ class Personal extends Component {
       }
     }).then((res) => {
       if (res.data && res.data.userById) this.setState({ userInfo: res.data.userById });
-    }).catch(err => console.log(err));
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
+  }
+
+  showNotification = (message, type) => {
+    this.setState({
+      notify: true,
+      notificationType: type,
+      notificationMessage: message
+    });
+  };
+
+  hideNotification = () => {
+    this.setState({
+      notify: false,
+      notificationType: '',
+      notificationMessage: ''
+    });
   }
 
   handleUpdateInfo = () => {
@@ -70,8 +89,8 @@ class Personal extends Component {
         userInfo: userInfo
       }
     }).then((res) => {
-      // TODO: show notification for successful update
-    }).catch(err => console.log(err));
+      this.showNotification('Personal details updated successfully.', NOTIFICATION_LEVELS.SUCCESS);
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
   };
 
   handleShowPassword = (passwordType) => {
@@ -117,7 +136,7 @@ class Personal extends Component {
   };
 
   render() {
-    const { paymentOptions, userInfo, showPassword, errorFields } = this.state;
+    const { paymentOptions, userInfo, showPassword, errorFields, notify, notificationMessage, notificationType } = this.state;
     if (!userInfo) {
       return (<Loading />);
     }
@@ -234,6 +253,7 @@ class Personal extends Component {
           <CircleButton handleClick={this.handleUpdateInfo} type="blue"
                         title="Update info" />
         </div>
+        <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </div>
     )
   }

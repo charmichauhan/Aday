@@ -10,6 +10,7 @@ import Brand from './Brand';
 import Company from './Company';
 import { brandResolvers } from './settings.resolvers';
 import { tabDesign } from '../styles';
+import Notifier, { NOTIFICATION_LEVELS } from '../helpers/Notifier';
 import './settings.css';
 
 const styles = {
@@ -25,7 +26,9 @@ const brandFields = ['id', 'brandName', 'brandIconUrl'];
 
 const initialState = {
   value: 'personal',
-  brands: []
+  notify: false,
+  notificationMessage: '',
+  notificationType: ''
 };
 
 class Settings extends Component {
@@ -49,7 +52,7 @@ class Settings extends Component {
           this.setState({ brands });
         }
       }
-    }).catch(err => console.log(err));
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
   }
 
   handleChange = (value) => {
@@ -62,10 +65,10 @@ class Settings extends Component {
       mutation: brandResolvers.deleteBrandMutation,
       variables: { id }
     }).then(() => {
+      this.showNotification('Brand deleted successfully.', NOTIFICATION_LEVELS.WARNING);
       remove(brands, { 'id': id });
       this.setState({ brands });
-      // TODO: show notification for successful creation
-    }).catch(err => console.error(err));
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
   };
 
   addOrUpdateBrand = (brand) => {
@@ -83,11 +86,11 @@ class Settings extends Component {
           }
         }
       }).then(() => {
+        this.showNotification('Brand details added successfully.');
         if (!brand.brandIconUrl) brand.brandIconUrl = '/images/brands/ra.png';
         brands.push(brand);
         this.setState({ brands });
-        // TODO: show notification for successful creation
-      }).catch(err => console.error(err));
+      }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
     } else {
       // Update
       this.props.client.mutate({
@@ -97,11 +100,11 @@ class Settings extends Component {
           brandInfo: removeEmpty(pick(brand, brandFields))
         }
       }).then(() => {
-        // TODO: show notification for successful update
+        this.showNotification('Brand details updated successfully.');
         const brandIndex = findIndex(brands, { id: brand.id });
         brands[brandIndex] = brand;
         this.setState({ brands });
-      }).catch(err => console.error(err));
+      }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
     }
   };
 
@@ -110,7 +113,24 @@ class Settings extends Component {
     fontWeight: (this.state.value === value && 700) || 500
   });
 
+  showNotification = (message, type) => {
+    this.setState({
+      notify: true,
+      notificationType: type,
+      notificationMessage: message
+    });
+  };
+
+  hideNotification = () => {
+    this.setState({
+      notify: false,
+      notificationType: '',
+      notificationMessage: ''
+    });
+  }
+
   render() {
+    const { notify, notificationMessage, notificationType } = this.state;
     return (
       <section className="settings">
         <Tabs
@@ -146,6 +166,7 @@ class Settings extends Component {
             <Company />
           </Tab>
         </Tabs>
+        <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </section>
     );
   }

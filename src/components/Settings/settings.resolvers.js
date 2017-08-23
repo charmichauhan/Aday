@@ -133,7 +133,7 @@ export const brandResolvers = {
   `
 };
 
-export const companyResolvers = {
+export const corporationResolvers = {
   getCorporationQuery: gql`
     query ($id: Uuid!) {
       corporationById (id: $id  ) {
@@ -142,6 +142,15 @@ export const companyResolvers = {
         corporationIconUrl
         isActive
         corporationAddress
+      }
+    }
+  `,
+  updateCorporationMutation: gql`
+    mutation ($id: Uuid!, $corporationInfo: CorporationPatch!) {
+      updateCorporationById (input: { id: $id, corporationPatch: $corporationInfo }) {
+        corporation {
+          id
+        }
       }
     }
   `

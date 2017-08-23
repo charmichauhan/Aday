@@ -13,6 +13,7 @@ import { workplaceResolvers } from '../settings.resolvers';
 import Loading from '../../helpers/Loading';
 import Modal from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton';
+import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 import { colors } from '../../styles';
 
 const styles = {
@@ -50,6 +51,9 @@ const removeEmpty = (obj) => {
 const initialState = {
   open: false,
   openDeleteModal: false,
+  notify: false,
+  notificationMessage: '',
+  notificationType: '',
   corporationId: localStorage.getItem('corporationId')
 };
 
@@ -76,7 +80,23 @@ class Workplace extends Component {
           this.setState({ workplaces });
         }
       }
-    }).catch(err => console.log(err));
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
+  }
+
+  showNotification = (message, type) => {
+    this.setState({
+      notify: true,
+      notificationType: type,
+      notificationMessage: message
+    });
+  };
+
+  hideNotification = () => {
+    this.setState({
+      notify: false,
+      notificationType: '',
+      notificationMessage: ''
+    });
   }
 
   getDeleteActions = () => {
@@ -101,8 +121,8 @@ class Workplace extends Component {
       const { workplaces } = this.state;
       remove(workplaces, { 'id': id });
       this.setState({ workplaces, openDeleteModal: false, toDeleteWorkplace: undefined });
-      // TODO: show notification for successful deletion
-    }).catch(err => console.error(err));
+      this.showNotification('Workplace has been deleted.', NOTIFICATION_LEVELS.WARNING);
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
   };
 
   closeModal = () => {
@@ -124,12 +144,12 @@ class Workplace extends Component {
           workplace: removeEmpty(pick(workplace, workplaceFields))
         }
       }).then((res) => {
+        this.showNotification('Workplace details added successfully.', NOTIFICATION_LEVELS.SUCCESS);
         workplace.brand = find(this.props.brands, { 'id': workplace.brandId });
         if (!workplace.workplaceImageUrl) workplace.workplaceImageUrl = '/images/workplaces/chao-center.jpg';
         workplaces.push(workplace);
         this.setState({ workplaces });
-        // TODO: show notification for successful creation
-      }).catch(err => console.error(err));
+      }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
     } else {
       // Update
       this.props.client.mutate({
@@ -139,13 +159,13 @@ class Workplace extends Component {
           workplaceInfo: removeEmpty(pick(workplace, workplaceFields))
         }
       }).then((res) => {
-        // TODO: show notification for successful update
+        this.showNotification('Workplace details updated successfully.', NOTIFICATION_LEVELS.SUCCESS);
         workplace.brand = find(this.props.brands, { 'id': workplace.brandId });
         if (!workplace.workplaceImageUrl) workplace.workplaceImageUrl = '/images/workplaces/chao-center.jpg';
         const workplaceIndex = findIndex(workplaces, { id: workplace.id });
         workplaces[workplaceIndex] = workplace;
         this.setState({ workplaces });
-      }).catch(err => console.error(err));
+      }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
     }
   };
 
@@ -158,7 +178,7 @@ class Workplace extends Component {
   };
 
   render() {
-    const { workplaces } = this.state;
+    const { workplaces, notify, notificationMessage, notificationType } = this.state;
     if (!workplaces) {
       return (<Loading />);
     }
@@ -221,7 +241,7 @@ class Workplace extends Component {
           action={this.getDeleteActions()}
           closeAction={this.closeModal}
         />
-
+        <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </div>
     )
   }

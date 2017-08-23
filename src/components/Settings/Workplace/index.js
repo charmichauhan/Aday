@@ -157,14 +157,31 @@ class Workplace extends Component {
         variables: {
           id: workplace.id,
           workplaceInfo: removeEmpty(pick(workplace, workplaceFields))
-        }
-      }).then((res) => {
+        },
+       updateQueries: {
+          getAllWorkplacesQuery: (previousQueryResult, { mutationResult }) => {
+              let newEdges = []
+              previousQueryResult.allWorkplaces.nodes.map((value) => {
+                    if(value.id != mutationResult.data.updateWorkplaceById.workplace.id){
+                        newEdges.push(value)
+                    } else {
+                       newEdges.push(mutationResult.data.updateWorkplaceById.workplace)
+                    }
+              })
+              previousQueryResult.allWorkplaces.edges = newEdges
+              return {
+                allWorkplaces: previousQueryResult.allShifts
+              };
+              },
+          },
+        }).then((res) => {
         this.showNotification('Workplace details updated successfully.', NOTIFICATION_LEVELS.SUCCESS);
         workplace.brand = find(this.props.brands, { 'id': workplace.brandId });
         if (!workplace.workplaceImageUrl) workplace.workplaceImageUrl = '/images/workplaces/chao-center.jpg';
         const workplaceIndex = findIndex(workplaces, { id: workplace.id });
         workplaces[workplaceIndex] = workplace;
         this.setState({ workplaces });
+
       }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
     }
   };

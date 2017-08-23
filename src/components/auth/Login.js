@@ -25,7 +25,8 @@ class LoginComponent extends Component {
 
 
   login(){
-	      this.props.mutate({
+  		document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+	     this.props.mutate({
 	          variables: { data: {
 	          	email: this.state.email,
 	          	password: this.state.password

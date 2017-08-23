@@ -77,6 +77,8 @@ export const workplaceResolvers = {
       updateWorkplaceById (input: { id: $id, workplacePatch: $workplaceInfo }) {
         workplace {
           id
+          workplaceName
+          brandId
         }
       }
     }

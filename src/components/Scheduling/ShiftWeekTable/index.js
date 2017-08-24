@@ -275,7 +275,9 @@ class ShiftWeekTableComponent extends Week {
       let jobData = this.state.calendarView=="job"?this.getDataJobView(workplaceId,data):this.getDataEmployeeView(workplaceId,data,this.props.allUsers);
       let jobDataKeys = Object.keys(jobData)
       let openShiftIndex = jobDataKeys.indexOf("Open Shifts")
-      jobDataKeys.splice(openShiftIndex, 1);
+      if (openShiftIndex > -1){
+        jobDataKeys.splice(openShiftIndex, 1);
+      }
       let jobs = [];
       (Object.keys(jobData)).forEach((jobType,index) => {
           jobs = concat(jobs, jobData[jobType])
@@ -310,6 +312,9 @@ class ShiftWeekTableComponent extends Week {
             weeklyHoursBooked += totalBookedHours;
         });
         weeklyTotalHoursBooked = Math.round((weeklyHoursBooked*100)/weeklyHoursTotal) || 0;
+      } else {
+
+
       }
       let is_publish = true;
       const reducer = combineReducers ({ form: formReducer, shifts: shiftReducer});

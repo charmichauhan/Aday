@@ -86,7 +86,13 @@ export class PositionsSection extends Component {
       "workplaceId": null,
       "corporationId": localStorage.getItem('corporationId')
     };
-
+    function workplaceMatch(opportunity){
+      const workplaceId = localStorage.getItem('workplaceId');
+      if (workplaceId == ""){
+        return true
+      }
+      return opportunity.workplaceId == workplaceId;
+    }
     if (!position.id) {
       // create a new position & opportunity
         const variables={
@@ -142,7 +148,7 @@ export class PositionsSection extends Component {
             "positionPatch": newData
           },
           "input": {
-            "id": opportunity.id,
+            "id": position.opportunitiesByPositionId.nodes.find(workplaceMatch).id,
             "opportunityPatch": {
               "opportunityWage": position.opportunitiesByPositionId.nodes[0].opportunityWage,
               "isPublic": position.opportunitiesByPositionId.nodes[0].isPublic,

@@ -280,6 +280,7 @@ class DrawerHelper extends Component {
     );
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
       { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
+    let pastDate = moment().diff(this.props.shift.startTime) > 0;
     return (
       <Drawer docked={docked} width={width}
               openSecondary={openSecondary}
@@ -338,9 +339,12 @@ class DrawerHelper extends Component {
             </div>
           </div>
           <div className="drawer-footer">
-            <div className="buttons text-center">
-              {actions}
-            </div>
+            {!pastDate ?
+             <div className="buttons text-center">
+               {actions}
+             </div> :
+             <h5><p className="dimmedText">Editing Disabled for Past Shifts</p></h5>
+            }
             <Modal
               title="Confirm"
               isOpen={this.state.deleteModalPopped}

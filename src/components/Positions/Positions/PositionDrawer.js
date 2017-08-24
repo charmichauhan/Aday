@@ -190,7 +190,15 @@ class DrawerHelper extends Component {
       return (<div>An unexpected error occurred</div>)
     }
     */
-   // console.log(this.state.teamMembers);
+    // console.log(this.state.teamMembers);
+
+    const formValid=DrawerPosition.positionName != "" &&
+                    DrawerPosition.positionDescription != "" &&
+                    DrawerPosition.minimiumAge != "" &&
+                    DrawerPosition.minimumLeftWeight != "" &&
+                    DrawerPosition.traineeHours != "" && DrawerPosition.traineeHours >= 0 &&
+                    DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage > 0 &&
+                    !(this.props.mode == "create" && localStorage.getItem("workplaceId") != "");
     return (
       <Drawer
         docked={docked}
@@ -291,21 +299,35 @@ class DrawerHelper extends Component {
             </div>
           </div>
           */}
-
-          <div  className="position-row" style={{marginTop: 75}}>
-            <p className="position-label">NEW APPLICANT WAGE</p>
-            <Input
-              type="number"
-              fluid style={style.input}
-              value={DrawerPosition.opportunitiesByPositionId.nodes.length && DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage}
-              name="opportunityWage"
-              onChange={this.handleWageChange}
-              label={{ basic: true, content: '$ PER HOUR' }}
-              labelPosition='right'
-               />
-          </div>
+          {this.props.mode == "create" || localStorage.getItem("workplaceId") != "" ?
+           <div>
+             {this.props.mode == "create" ?
+               (localStorage.getItem("workplaceId") == "" ?
+                <div> *Creating Corporation-Brand Wide Position* </div>:
+                <div style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
+                  Workplace-Specific Positions Coming Soon,
+                  (currently can only create corporation-brand wide positions
+                  by deselecting workplace on sidebar) </div>) :
+               <div> *Below Edits Apply Only to Selected Workplace* </div>}
+              <div  className="position-row" style={{marginTop: 75}}>
+                <p className="position-label">NEW APPLICANT WAGE</p>
+                <Input
+                  type="number"
+                  fluid style={style.input}
+                  value={DrawerPosition.opportunitiesByPositionId.nodes.length && DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage}
+                  name="opportunityWage"
+                  onChange={this.handleWageChange}
+                  label={{ basic: true, content: '$ PER HOUR' }}
+                  labelPosition='right'
+                   />
+              </div>
+            </div> :
+            <div> Corporation-Brand Wide Opportunity Edits Coming Soon,
+                  (currently must select individual workplaces in sidebar to edit wages) </div>
+          }
           <div  className="position-row" style={{textAlign:"center",marginTop:"20px"}} >
               <CircleButton
+              disabled={!formValid}
               type="blue"
               handleClick={this.handleSubmitEvent}
               title={messages.buttonText} />

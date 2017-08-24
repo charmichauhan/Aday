@@ -63,35 +63,47 @@ export default class Position extends Component {
   closeModal = () => {
     this.setState({ openDeleteModal: false });
   };
-  openPositionDrawer = (position) => {
-    this.setState({ open: true, drawerPosition: position });
+  openPositionDrawer = (mode, position) => {
+    this.setState({ open: true, drawerPosition: position, drawerMode: mode });
   };
   handleDelete = () => {
     this.props.onDeletePosition(this.state.toDeletePosition);
     this.setState({ openDeleteModal: false, toDeleteWorkplace: undefined });
   };
-
   render() {
-    const { positions } = this.props;
-   // console.log(positions);
-
+    var { positions } = this.props;
+    //console.log(positions);
+    var positions_copy = JSON.parse(JSON.stringify(positions));
+    positions_copy.sort((p1, p2) => p1.traineeHours - p2.traineeHours);
+    // shows wage at first workplace if none is selected
+    function workplaceMatch(opportunity){
+      const workplaceId = localStorage.getItem('workplaceId');
+      if (workplaceId == ""){
+        return true
+      }
+      return opportunity.workplaceId == workplaceId;
+    }
     return (
       <div className="content positions-content">
         <div className="position-add-button">
-          <CircleButton type="blue" title="Add Position" handleClick={() => this.openPositionDrawer()} />
+          <CircleButton type="blue" title="Add Position" handleClick={() => this.openPositionDrawer("create")} />
         </div>
         <Table className="table list-grid">
           <TableBody displayRowCheckbox={false}>
-            {positions.map((position) => (
+            {positions_copy.map((position) => (
              <TableRow style={styles.noBorder} key={position.id}>
                 <TableRowColumn style={{border:"none",width:"70px",padding:"4px 10px"}}>
                   <i className="icon-circle-td"><Image src={position.positionIconUrl} size="mini" /></i>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
-                  <h6>{position.positionName}</h6><p>{position.jobsByPositionId.nodes.length} Team Members</p>
+                  <h6 style={{wordWrap:'break-word', whiteSpace: 'normal'}}>{position.positionName}</h6>
+                  <p>{position.jobsByPositionId.nodes.length} Team Members</p>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
-                  <h6>{position.opportunitiesByPositionId.nodes.length}</h6><span>WORKPLACES</span>
+                  {position.opportunitiesByPositionId.nodes.length > 0 && localStorage.getItem('workplaceId') != "" ?
+                   <h6>${position.opportunitiesByPositionId.nodes.find(workplaceMatch).opportunityWage.toFixed(2)}</h6>
+                   : <h6>Select Workplace</h6>}
+                  <span>TRAINEE WAGE</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
                   <h6>{position.traineeHours}</h6><span>TRAINING HOURS</span>
@@ -101,7 +113,9 @@ export default class Position extends Component {
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder} className="grid-actions">
                   <Watch style={styles.iconStyles} onClick={this.handleClick} />
-                  <Edit style={styles.iconStyles} onClick={() => this.openPositionDrawer(position)} />
+                  <Edit style={styles.iconStyles} onClick={() => {if(position.opportunitiesByPositionId.nodes.length > 0)
+                                                                    {this.openPositionDrawer("update", position)}
+                                                                 }} />
                   <Delete style={styles.iconStyles} onClick={() => this.handleDeleteClick(position.id)} />
                 </TableRowColumn>
               </TableRow>))
@@ -109,6 +123,7 @@ export default class Position extends Component {
           </TableBody>
         </Table>
         <PositionDrawer
+        mode={this.state.drawerMode}
         width={styles.drawer.width}
         open={this.state.open}
         position={this.state.drawerPosition}

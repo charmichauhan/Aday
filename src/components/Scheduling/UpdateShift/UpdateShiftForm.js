@@ -181,6 +181,7 @@ export class UpdateShiftForm extends Component{
 
     const date=moment();
     const startDate=this.props.start
+    const pastDate = date.diff(this.props.data.startTime) > 0;
     const data = this.props.data
 
     let saveImage = "/images/Assets/Icons/Buttons/save-shift-button.png";
@@ -265,10 +266,10 @@ export class UpdateShiftForm extends Component{
              onClick={ this.handleCloseFunc }
            />
            <Image
-             src={ saveImage }
-             shape="circular"
-             width="42%"
-             onClick={this.handleSave}
+              src={ saveImage }
+              shape="circular"
+              width="42%"
+              onClick={() => {if(!pastDate){this.handleSave()}}}
            />
           </Image.Group>
         </div>

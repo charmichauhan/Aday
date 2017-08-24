@@ -40,11 +40,11 @@ const routes = [
 						exact: true,
 						component: Schedule
 					},
-						// {
-						// 	path: '/schedule/team/:workplaceId',
-						// 	exact: true,
-						// 	component: Schedule
-						// },
+				    {
+					 	path: '/schedule/team/:date',
+					 	exact: true,
+					 	component: Schedule
+				 	},
 					{
 						path: '/schedule/team/',
 						exact: true,

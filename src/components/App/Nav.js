@@ -48,9 +48,10 @@ class NavComponent extends Component {
     const brandId = localStorage.getItem("brandId");
     const workplaceId = localStorage.getItem("workplaceId");
     const brandLogo = "";
-		const brands = this.props.allBrands && this.props.allBrands.allCorporationBrands.nodes;
+		const brands = this.props.allBrands.allBrands.nodes;
     const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
-		return (
+
+    return (
 			<div className="left-menu_item">
 				{/*<EmergencyShiftButton/>*/}
 				<Menu vertical fluid>
@@ -60,7 +61,7 @@ class NavComponent extends Component {
 						<Menu.Header className="dropdown-menu-item">
 							<select onChange={this.handleChangeBrand} id="brand" value={brandId}>
                 { brands.map((v,i)=>(
-                    <option value={v.brandByBrandId.id} key={i}>{v.brandByBrandId.brandName}</option>
+                    <option value={v.id} key={i}>{v.brandName}</option>
                   ))
                 }
 							</select>
@@ -105,7 +106,7 @@ class NavComponent extends Component {
 
 const allWorkplaces = gql`
   query getAllWorkplacesQuery ($corporationId: Uuid!) {
-    allWorkplaces (condition: {corporationId: $corporationId}) {
+    allWorkplaces (condition: {corporationId: $corporationId, isActive: true}) {
       nodes{
         workplaceName,
         id,
@@ -117,17 +118,19 @@ const allWorkplaces = gql`
 
 const allBrands = gql`
   query ($corporationId: Uuid!){
-    allCorporationBrands(condition: {corporationId: $corporationId}){
+    allBrands(condition: {isActive: true}){
       nodes{
-        brandByBrandId{
-          id
-          brandName
-          brandIconUrl
+        id
+        brandName
+        brandIconUrl
+        corporationBrandsByBrandId(condition:{ corporationId: $corporationId }){
+          nodes{
+            brandId
+          }
         }
       }
     }
-  }
-  `
+  }`
 
 const Nav = compose(
   graphql(allWorkplaces, {

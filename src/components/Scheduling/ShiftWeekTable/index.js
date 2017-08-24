@@ -127,7 +127,7 @@ class ShiftWeekTableComponent extends Week {
               rowHash["weekday"] = dayOfWeek;
               rowHash["userFirstName"] = "Open"
               rowHash["userLastName"] = "Shifts"
-              rowHash["userAvatar"] = ""
+              rowHash["userAvatar"] = "/assets/Icons/search.png"
               if (calendarHash["Open Shifts"]) {
                 calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"], Object.assign(rowHash, value.node)]
               } else {
@@ -164,7 +164,7 @@ class ShiftWeekTableComponent extends Week {
             rowHash["weekday"] = dayOfWeek;
             rowHash["userFirstName"] = "Open"
             rowHash["userLastName"] = "Shifts"
-            rowHash["userAvatar"] = ""
+            rowHash["userAvatar"] = "/assets/Icons/search.png"
             if (calendarHash["Open Shifts"]) {
               calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"], Object.assign(rowHash, value.node)]
             } else {
@@ -226,54 +226,10 @@ class ShiftWeekTableComponent extends Week {
       if (this.props.data.loading || this.props.allUsers.loading) {
         return (<div>Loading</div>)
       }
-      let workplaceId = localStorage.getItem("workplaceId");
-      let {data} = this.props;
-      let jobData = this.state.calendarView=="job"?this.getDataJobView(workplaceId,data):this.getDataEmployeeView(workplaceId,data,this.props.allUsers);
-      let jobs = [];
-      (Object.keys(jobData)).forEach((jobType,index) => {
-          jobs = concat(jobs, jobData[jobType])
-      });
-      let sortedData = jobs.map((job) => ({ ...job, startDate: new Date(job.startTime).getUTCDate()}));
-      let groupedData = groupBy(sortedData, 'startDate');
-      let summary = {};
-      let weeklyHoursTotal = 0;
-      let weeklyHoursBooked = 0;
-      let weeklyTotalHoursBooked = 0;
-      if (this.state.calendarView=="job"){
-        Object.keys(groupedData).forEach((shift,index) => {
-            let totalHours=0;
-            let totalBookedHours=0;
-            let shiftData = groupedData[shift];
-            Object.keys(shiftData).forEach((data,index) => {
-                let startTime = moment(shiftData[data]['startTime']).format("hh:mm A");
-                let endTime = moment(shiftData[data]['endTime']).format("hh:mm A");
-                let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
-                let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length
-                let shiftHours = parseInt(moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("H"));
-                let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned+ workerInvited );
-                let openShiftTotal = shiftHours*openShift;
-                let workersAssignedTotal = shiftHours*(workerAssigned);
-                let workersInvitedTotal = shiftHours*(workerInvited);
-                let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
-                totalHours += parseInt(workerShiftHours);
-                totalBookedHours += workersAssignedTotal;
-            });
-            summary[shift] = {'totalHours':totalHours,'totalBookedHours':totalBookedHours};
-            weeklyHoursTotal +=totalHours;
-            weeklyHoursBooked += totalBookedHours;
-        });
-        weeklyTotalHoursBooked = Math.round((weeklyHoursBooked*100)/weeklyHoursTotal) || 0;
-      }
+
       let { date } = this.props;
       let { start } = ShiftWeekTable.range(date, this.props);
-      let is_publish = true;
-      const reducer = combineReducers ({ form: formReducer, shifts: shiftReducer});
-      const store = createStore(reducer, {shifts: []});
-      let unsubscribe = store.subscribe(() =>
-          console.log(store.getState())
-      );
-
-      const TableRowHeader = ( <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+            const TableRowHeader = ( <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow displayBorder={false}>
                                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                     className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
@@ -314,6 +270,54 @@ class ShiftWeekTableComponent extends Week {
         )
       }
 
+      let workplaceId = localStorage.getItem("workplaceId");
+      let {data} = this.props;
+      let jobData = this.state.calendarView=="job"?this.getDataJobView(workplaceId,data):this.getDataEmployeeView(workplaceId,data,this.props.allUsers);
+      let jobDataKeys = Object.keys(jobData)
+      let openShiftIndex = jobDataKeys.indexOf("Open Shifts")
+      jobDataKeys.splice(openShiftIndex, 1);
+      let jobs = [];
+      (Object.keys(jobData)).forEach((jobType,index) => {
+          jobs = concat(jobs, jobData[jobType])
+      });
+      let sortedData = jobs.map((job) => ({ ...job, startDate: new Date(job.startTime).getUTCDate()}));
+      let groupedData = groupBy(sortedData, 'startDate');
+      let summary = {};
+      let weeklyHoursTotal = 0;
+      let weeklyHoursBooked = 0;
+      let weeklyTotalHoursBooked = 0;
+      if (this.state.calendarView=="job"){
+        Object.keys(groupedData).forEach((shift,index) => {
+            let totalHours=0;
+            let totalBookedHours=0;
+            let shiftData = groupedData[shift];
+            Object.keys(shiftData).forEach((data,index) => {
+                let startTime = moment(shiftData[data]['startTime']).format("hh:mm A");
+                let endTime = moment(shiftData[data]['endTime']).format("hh:mm A");
+                let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
+                let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length
+                let shiftHours = parseInt(moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("H"));
+                let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned+ workerInvited );
+                let openShiftTotal = shiftHours*openShift;
+                let workersAssignedTotal = shiftHours*(workerAssigned);
+                let workersInvitedTotal = shiftHours*(workerInvited);
+                let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
+                totalHours += parseInt(workerShiftHours);
+                totalBookedHours += workersAssignedTotal;
+            });
+            summary[shift] = {'totalHours':totalHours,'totalBookedHours':totalBookedHours};
+            weeklyHoursTotal +=totalHours;
+            weeklyHoursBooked += totalBookedHours;
+        });
+        weeklyTotalHoursBooked = Math.round((weeklyHoursBooked*100)/weeklyHoursTotal) || 0;
+      }
+      let is_publish = true;
+      const reducer = combineReducers ({ form: formReducer, shifts: shiftReducer});
+      const store = createStore(reducer, {shifts: []});
+      let unsubscribe = store.subscribe(() =>
+          console.log(store.getState())
+      );
+
       return (
             <Provider store={store}>
                 <div className="table-responsive">
@@ -353,14 +357,22 @@ class ShiftWeekTableComponent extends Week {
                         <TableBody>
                             <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay}/>
 
-                            {(Object.keys(jobData)).map((value, index) => (
-                                    <JobsRow
+                            {jobDataKeys.map((value, index) => (
+                                  <JobsRow
                                       data={jobData[value]}
                                       key={value}
                                       users={this.props.allUsers}
                                       view={this.state.calendarView} />
                                 )
                             )
+                            }
+
+                            {jobData["Open Shifts"] &&
+                                   <JobsRow
+                                      data={jobData["Open Shifts"]}
+                                      key={"Open Shifts"}
+                                      users={this.props.allUsers}
+                                      view={this.state.calendarView} />
                             }
                         </TableBody>
                         <TableFooter adjustForCheckbox={false}>

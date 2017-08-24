@@ -3,8 +3,14 @@ import Dropzone from 'react-dropzone';
 import InputMask from 'react-input-mask';
 import validator from 'validator';
 import IconButton from 'material-ui/IconButton';
+import { withApollo } from 'react-apollo';
+import pick from 'lodash/pick';
 
+import Loading from '../../helpers/Loading';
 import AvatarEditor from '../../helpers/AvatarEditor';
+import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
+import { personalResolvers } from '../settings.resolvers';
+import CircleButton from '../../helpers/CircleButton';
 
 const initialState = {
   paymentOptions: [{
@@ -13,6 +19,9 @@ const initialState = {
     logo: '/images/paypal-icon.png',
     text: 'Send Payment'
   }],
+  notify: false,
+  notificationType: '',
+  notificationMessage: '',
   showPassword: {
     currentPassword: false,
     newPassword: false
@@ -21,7 +30,7 @@ const initialState = {
 };
 
 let personalFields = {};
-const fields = ['firstName', 'lastName', 'phoneNumber', 'email', 'currentPassword', 'newPassword'];
+const fields = ['id', 'firstName', 'lastName', 'userPhoneNumber', 'userEmail', 'avatarUrl', 'currentPassword', 'newPassword'];
 fields.forEach(field => personalFields[field] = field);
 
 function hasError(field, value) {
@@ -35,14 +44,54 @@ function hasError(field, value) {
 
 }
 
-export default class Personal extends Component {
+class Personal extends Component {
   constructor(props) {
     super(props);
     this.state = {
       ...initialState,
-      user: props.user
+      userId: localStorage.getItem('userId')
     };
   }
+
+  componentDidMount() {
+    this.props.client.query({
+      query: personalResolvers.userInfoQuery,
+      variables: {
+        id: this.state.userId
+      }
+    }).then((res) => {
+      if (res.data && res.data.userById) this.setState({ userInfo: res.data.userById });
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
+  }
+
+  showNotification = (message, type) => {
+    this.setState({
+      notify: true,
+      notificationType: type,
+      notificationMessage: message
+    });
+  };
+
+  hideNotification = () => {
+    this.setState({
+      notify: false,
+      notificationType: '',
+      notificationMessage: ''
+    });
+  }
+
+  handleUpdateInfo = () => {
+    const userInfo = pick(this.state.userInfo, fields);
+    this.props.client.mutate({
+      mutation: personalResolvers.updateUserMutation,
+      variables: {
+        id: userInfo.id,
+        userInfo: userInfo
+      }
+    }).then((res) => {
+      this.showNotification('Personal details updated successfully.', NOTIFICATION_LEVELS.SUCCESS);
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
+  };
 
   handleShowPassword = (passwordType) => {
     const showPassword = this.state.showPassword;
@@ -59,25 +108,25 @@ export default class Personal extends Component {
   handleInputChange = (event) => {
     function escapeHtml(unsafe) {
       return unsafe
-      .replace(/\+/g, '')
-      .replace(/-/g, '')
-      .replace(/\(/g, '')
-      .replace(/\)/g, '')
-      .replace(/ /g, '');
+        .replace(/\+/g, '')
+        .replace(/-/g, '')
+        .replace(/\(/g, '')
+        .replace(/\)/g, '')
+        .replace(/ /g, '');
     }
 
     const { name, value } = event.target;
-    let phoneNumber = name === personalFields.phoneNumber && escapeHtml(value);
+    let phoneNumber = name === personalFields.userPhoneNumber && escapeHtml(value);
     const isValid = hasError(name, value);
-    const user = Object.assign(this.state.user, { [name]: phoneNumber || value });
-    const errorFields = Object.assign(this.state.errorFields, { [name]: isValid });
-    return this.setState({ user, errorFields });
+    const userInfo = Object.assign({}, this.state.userInfo, { [name]: phoneNumber || value });
+    const errorFields = Object.assign({}, this.state.errorFields, { [name]: isValid });
+    return this.setState({ userInfo, errorFields });
   };
 
   checkPasswords = () => {
-    const { errorFields, user } = this.state;
-    const isEqual = user[personalFields.currentPassword] === user[personalFields.newPassword];
-    if (user[personalFields.currentPassword] && !isEqual) {
+    const { errorFields, userInfo } = this.state;
+    const isEqual = userInfo[personalFields.currentPassword] === userInfo[personalFields.newPassword];
+    if (userInfo[personalFields.currentPassword] && !isEqual) {
       errorFields[personalFields.currentPassword] = errorFields[personalFields.newPassword] = true;
       return this.setState({ errorFields });
     }
@@ -87,7 +136,10 @@ export default class Personal extends Component {
   };
 
   render() {
-    const { user, paymentOptions, showPassword, errorFields } = this.state;
+    const { paymentOptions, userInfo, showPassword, errorFields, notify, notificationMessage, notificationType } = this.state;
+    if (!userInfo) {
+      return (<Loading />);
+    }
     return (
       <div className="content personal-content">
         <h2 className="heading">Personal Information</h2>
@@ -102,7 +154,7 @@ export default class Personal extends Component {
                     type="text"
                     name={personalFields.firstName}
                     onChange={this.handleInputChange}
-                    value={user.firstName} />
+                    value={userInfo.firstName} />
                 </li>
                 <li>
                   <label htmlFor={personalFields.lastName}>Last Name</label>
@@ -111,25 +163,25 @@ export default class Personal extends Component {
                     type="text"
                     name={personalFields.lastName}
                     onChange={this.handleInputChange}
-                    value={user.lastName} />
+                    value={userInfo.lastName} />
                 </li>
                 <li>
-                  <label htmlFor={personalFields.phoneNumber}>Phone Number</label>
+                  <label htmlFor={personalFields.userPhoneNumber}>Phone Number</label>
                   <InputMask
                     onChange={this.handleInputChange}
                     className="form-control"
-                    name={personalFields.phoneNumber}
-                    value={user.phoneNumber}
+                    name={personalFields.userPhoneNumber}
+                    value={userInfo.userPhoneNumber}
                     mask="+1-(999) 999 9999" maskChar=" " />
                 </li>
                 <li>
-                  <label htmlFor={personalFields.email}>Email address</label>
+                  <label htmlFor={personalFields.userEmail}>Email address</label>
                   <input
                     className="form-control"
                     type="email"
-                    name={personalFields.email}
+                    name={personalFields.userEmail}
                     onChange={this.handleInputChange}
-                    value={user.email} />
+                    value={userInfo.userEmail} />
                 </li>
                 <li className={(errorFields.currentPassword && 'has-error') || ''}>
                   <label htmlFor={personalFields.currentPassword}>Current Password</label>
@@ -163,12 +215,11 @@ export default class Personal extends Component {
                         src={(showPassword.newPassword && '/images/no-view.png') || '/images/view.png'} />
                     </IconButton>
                   </div>
-
                 </li>
               </ul>
             </form>
           </div>
-          {!this.state.blob && <div className="personal-img">
+          {!userInfo.avatarUrl && <div className="personal-img">
             <Dropzone
               multiple={false}
               accept="image/*"
@@ -179,14 +230,14 @@ export default class Personal extends Component {
               </div>
             </Dropzone>
           </div>}
-          {this.state.blob && <div className="personal-img">
+          {(userInfo.avatarUrl || this.state.blob) && <div className="personal-img">
             <AvatarEditor
               width={250}
               height={250}
               border={10}
               color={[74, 74, 74, 0.5]}
               onSave={this.handleImageSave}
-              image={this.state.blob} />
+              image={userInfo.avatarUrl || this.state.blob} />
           </div>}
         </div>
         {/*<div className="payment-option">
@@ -198,7 +249,14 @@ export default class Personal extends Component {
          </div>
          ))}
          </div>*/}
+        <div className="update-info">
+          <CircleButton handleClick={this.handleUpdateInfo} type="blue"
+                        title="Update info" />
+        </div>
+        <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </div>
     )
   }
 }
+
+export default withApollo(Personal);

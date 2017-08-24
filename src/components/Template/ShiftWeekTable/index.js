@@ -127,7 +127,7 @@ class ShiftWeekTableComponent extends Week {
                         that.setState({
                           applyingTemplateModal: false
                         });
-                       window.location.href = '/schedule/team';
+                       window.location.href = '/schedule/team/' + moment(start).format() ;
                       }).catch((error) => {
                           console.log('there was an error sending the query', error);
                       });
@@ -151,7 +151,7 @@ class ShiftWeekTableComponent extends Week {
                         that.setState({
                           applyingTemplateModal: false
                         });
-                       window.location.href = '/schedule/team';
+                       window.location.href = '/schedule/team/' + moment(start).format();
                       }).catch((error) => {
                           console.log('there was an error sending the query', error);
                   });

@@ -8,6 +8,7 @@ import { Grid, GridColumn } from 'semantic-ui-react';
 import BrandDrawer from './BrandDrawer';
 import Modal from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton/index';
+import { colors } from '../../styles';
 
 const styles = {
   drawer: {
@@ -74,18 +75,18 @@ export default class Brand extends Component {
           this.props.brands.map((brand) =>
             <Grid key={brand.id}>
               <GridColumn className="list-left-image-wrapper" width={2}>
-                <img className="list-left-image" src={brand.image} alt={brand.name} />
+                <img className="list-left-image" src={brand.brandIconUrl} alt={brand.brandName} />
               </GridColumn>
               <GridColumn width={14}>
                 <ListItem
                   key={brand.id}
-                  open={this.state.open} primaryText={brand.name}
+                  open={this.state.open} primaryText={brand.brandName}
                 >
                   <IconButton style={styles.actionButtons} onClick={() => this.openBrandDrawer(brand)}>
-                    <Edit />
+                    <Edit color={colors.primaryActionButtons} />
                   </IconButton>
                   <IconButton style={styles.actionButtons} onClick={() => this.handleDeleteClick(brand.id)}>
-                    <Delete />
+                    <Delete color={colors.primaryActionButtons} />
                   </IconButton>
                 </ListItem>
               </GridColumn>

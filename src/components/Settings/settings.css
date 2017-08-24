@@ -176,6 +176,10 @@
   margin-top: -24px;
 }
 
+.settings .personal-content .update-info {
+  text-align: center;
+}
+
 /* Brand Section */
 
 .ui.grid .two.wide.column {

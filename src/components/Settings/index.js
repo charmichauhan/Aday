@@ -1,105 +1,110 @@
 import React, { Component } from 'react';
 import { Tabs, Tab } from 'material-ui/Tabs';
-import { remove, maxBy, findIndex } from 'lodash';
+import { remove, pick, findIndex } from 'lodash';
+import { withApollo } from 'react-apollo';
+import uuidv4 from 'uuid/v4';
 
 import Personal from './Personal';
 import Workplace from './Workplace';
 import Brand from './Brand';
 import Company from './Company';
+import { brandResolvers } from './settings.resolvers';
 import { tabDesign } from '../styles';
+import Notifier, { NOTIFICATION_LEVELS } from '../helpers/Notifier';
 import './settings.css';
 
 const styles = {
   tabDesign
 };
 
-const initState = {
-  user: {
-    id: 101,
-    firstName: 'Billy',
-    lastName: 'Buchanan',
-    email: 'billy.buchanan@gmail.com',
-    phoneNumber: '+10123465789'
-  },
-  value: 'personal',
-  companies: [{
-    id: 1,
-    name: 'Compass Group, USA',
-  }],
-  brands: [{
-    id: 1,
-    name: 'Restaurant Associates',
-    image: '/images/brands/ra.png'
-  }, {
-    id: 2,
-    name: 'Flik’s Hospitality Group',
-    image: '/images/brands/compass.png'
-  }],
-  workplaces: [{
-    id: 1,
-    name: 'Chao Center',
-    brand: 'Restaurant Associates',
-    claimed: true,
-    image: '/images/workplaces/chao-center.jpg'
-  }, {
-    id: 2,
-    name: 'Spangler Center',
-    brand: 'Restaurant Associates',
-    claimed: false,
-    image: '/images/workplaces/chao-center.jpg'
-  }]
+const removeEmpty = (obj) => {
+  Object.keys(obj).forEach((key) => obj[key] === null || obj[key] === undefined || obj[key] === "" && delete obj[key]);
+  return obj;
 };
 
-export default class Settings extends Component {
+const brandFields = ['id', 'brandName', 'brandIconUrl'];
+
+const initialState = {
+  value: 'personal',
+  notify: false,
+  notificationMessage: '',
+  notificationType: ''
+};
+
+class Settings extends Component {
   constructor(props) {
     super(props);
-    this.state = initState;
+    this.state = initialState;
+  }
+
+  componentDidMount() {
+    this.props.client.query({
+      query: brandResolvers.allBrandsQuery
+    }).then((res) => {
+      if (res.data && res.data.allBrands && res.data.allBrands.edges) {
+        const brandNodes = res.data.allBrands.edges;
+        if (brandNodes) {
+          const brands = brandNodes.map(({ node }) => {
+            let brand = pick(node, brandFields);
+            if (!brand.brandIconUrl) brand.brandIconUrl = '/images/brands/ra.png';
+            return brand;
+          });
+          this.setState({ brands });
+        }
+      }
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
   }
 
   handleChange = (value) => {
     this.setState({ value: value });
   };
 
-  deleteWorkplace = (id) => {
-    const { workplaces } = this.state;
-    console.log(workplaces);
-    remove(workplaces, { 'id': id });
-    this.setState({ workplaces });
-  };
-
-  addOrUpdateWorkPlace = (workplace) => {
-    const { workplaces } = this.state;
-    // Just for dummy data (To be removed after actual data submission)
-    if (typeof workplace.image !== 'string') workplace.image = workplace.image.preview;
-    if (!workplace.id) {
-      workplace.id = maxBy(workplaces, 'id').id + 1;
-      workplaces.push(workplace);
-      this.setState({ workplaces });
-    } else {
-      const workplaceIndex = findIndex(workplaces, { id: workplace.id });
-      workplaces[workplaceIndex] = workplace;
-      this.setState({ workplaces });
-    }
-  };
-
   deleteBrand = (id) => {
     const { brands } = this.state;
-    remove(brands, { 'id': id });
-    this.setState({ brands });
+    this.props.client.mutate({
+      mutation: brandResolvers.deleteBrandMutation,
+      variables: { id }
+    }).then(() => {
+      this.showNotification('Brand deleted successfully.', NOTIFICATION_LEVELS.WARNING);
+      remove(brands, { 'id': id });
+      this.setState({ brands });
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
   };
 
   addOrUpdateBrand = (brand) => {
     const { brands } = this.state;
     // Just for dummy data (To be removed after actual data submission)
-    if (typeof brand.image !== 'string') brand.image = brand.image.preview;
+    if (typeof brand.brandIconUrl !== 'string' && !!brand.brandIconUrl) brand.brandIconUrl = brand.brandIconUrl.preview;
     if (!brand.id) {
-      brand.id = maxBy(brands, 'id').id + 1;
-      brands.push(brand);
-      this.setState({ brands });
+      // Create
+      brand.id = uuidv4();
+      this.props.client.mutate({
+        mutation: brandResolvers.createBrandMutation,
+        variables: {
+          input: {
+            brand: removeEmpty(pick(brand, brandFields))
+          }
+        }
+      }).then(() => {
+        this.showNotification('Brand details added successfully.');
+        if (!brand.brandIconUrl) brand.brandIconUrl = '/images/brands/ra.png';
+        brands.push(brand);
+        this.setState({ brands });
+      }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
     } else {
-      const workplaceIndex = findIndex(brands, { id: brand.id });
-      brands[workplaceIndex] = brand;
-      this.setState({ brands });
+      // Update
+      this.props.client.mutate({
+        mutation: brandResolvers.updateBrandMutation,
+        variables: {
+          id: brand.id,
+          brandInfo: removeEmpty(pick(brand, brandFields))
+        }
+      }).then(() => {
+        this.showNotification('Brand details updated successfully.');
+        const brandIndex = findIndex(brands, { id: brand.id });
+        brands[brandIndex] = brand;
+        this.setState({ brands });
+      }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
     }
   };
 
@@ -108,7 +113,24 @@ export default class Settings extends Component {
     fontWeight: (this.state.value === value && 700) || 500
   });
 
+  showNotification = (message, type) => {
+    this.setState({
+      notify: true,
+      notificationType: type,
+      notificationMessage: message
+    });
+  };
+
+  hideNotification = () => {
+    this.setState({
+      notify: false,
+      notificationType: '',
+      notificationMessage: ''
+    });
+  }
+
   render() {
+    const { notify, notificationMessage, notificationType } = this.state;
     return (
       <section className="settings">
         <Tabs
@@ -120,17 +142,13 @@ export default class Settings extends Component {
             buttonStyle={this.getButtonStyle('personal')}
             label="Personal"
             value="personal">
-            <Personal user={this.state.user} />
+            <Personal />
           </Tab>
           <Tab
             buttonStyle={this.getButtonStyle('workplace')}
             label="Workplace"
             value="workplace">
-            <Workplace
-              addOrUpdateWorkPlace={this.addOrUpdateWorkPlace}
-              onDeleteWorkplace={this.deleteWorkplace}
-              brands={this.state.brands}
-              workplaces={this.state.workplaces} />
+            <Workplace brands={this.state.brands} />
           </Tab>
           <Tab
             buttonStyle={this.getButtonStyle('brand')}
@@ -145,10 +163,13 @@ export default class Settings extends Component {
             buttonStyle={this.getButtonStyle('company')}
             label="Company"
             value="company">
-            <Company companies={this.state.companies} />
+            <Company />
           </Tab>
         </Tabs>
+        <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </section>
     );
   }
 }
+
+export default withApollo(Settings);

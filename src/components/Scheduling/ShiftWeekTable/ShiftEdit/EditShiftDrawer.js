@@ -7,14 +7,12 @@ import { Image, Input, Divider } from 'semantic-ui-react';
 import { graphql, compose } from 'react-apollo';
 import moment from 'moment';
 import { find, pick } from 'lodash';
-
-import { allUsersQuery, deleteShiftMutation, updateShiftMutation, allShiftMarkets } from './EditShiftDrawer.graphql';
+import { allUsersQuery, deleteShiftMutation, updateShiftMutation, allShiftMarkets, updateShiftMarket, createShiftMarket} from './EditShiftDrawer.graphql';
 import TeamMemberCard from './TeamMemberCard';
 import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
-
-import './shift-edit.css';
 const uuidv4 = require('uuid/v4');
+import './shift-edit.css';
 
 const unassignedTeamMember = {
   user: {
@@ -23,7 +21,7 @@ const unassignedTeamMember = {
     lastName: '',
     avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
   },
-  content: 'Leave this field empty to warn app credit!',
+  content: 'There is currenlty an open position',
   status: 'unassigned'
 };
 
@@ -56,7 +54,7 @@ const initialState = {
       otherNames: 'Brown',
       avatar: 'http://devilsworkshop.org/files/2013/01/enlarged-facebook-profile-picture.jpg',
     },
-    content: 'Current hours: 20 . You\'ve earned 1 credit',
+    content: '',
     status: 'pending'
   }],
   users: [{
@@ -128,29 +126,91 @@ class DrawerHelper extends Component {
   };
 
   handleSaveShift = () => {
+
       const shiftPatch = {}
       shiftPatch['workersAssigned'] = []
-          this.state.teamMembers.map((value) => {
-              if(value.user.id != 0 && shiftPatch['workersAssigned'].indexOf(value.user.id)==-1){
-                  shiftPatch['workersAssigned'].push(value.user.id)
-              }
-          })
-
-        shiftPatch['workersRequestedNum'] = this.state.teamMembers.length
-
-        this.props.updateShift({
+      shiftPatch['workersRequestedNum'] = this.state.teamMembers.length
+    
+      this.state.teamMembers.map((value) => {
+        if(value.user.id != 0 && shiftPatch['workersAssigned'].indexOf(value)==-1){
+              shiftPatch['workersAssigned'].push(value.user.id)
+        }
+      })
+      this.props.updateShift({
           variables: { data:
                     {id: this.props.shift.id, shiftPatch: shiftPatch }
                 }
-        })
-              .then(({ data }) => {
-                  this.handleCloseDrawer();
-                  console.log('got update data', data);
-              }).catch((error) => {
-                  console.log('there was an error sending the query', error);
-              });
+      }).then(({ data }) => {
+        this.props.handlerClose();
+        console.log('update shift', data);
+      }).catch((error) => {
+        console.log('there was an error sending the query', error);
+      });
 
-    }
+      let removedUsers = []
+      this.props.shift.workersAssigned.map((value) => {
+        if (shiftPatch['workersAssigned'].includes(value)){
+        } else{
+          removedUsers.push(value)
+        }
+      })
+      //UPDATE UNASSIGNED USERS
+      removedUsers.map((value) => {
+        let marketId = null
+        this.props.shiftMarkets.allMarkets.edges.map( (v,i) => {
+                if (v.node.workerId == value){
+                  marketId = v.node.id;
+                }
+        })
+        if(marketId) {         
+              this.props.updateMarket({
+                  variables: { data:
+                      { id: marketId, marketPatch: {isBooked: false, workerResponse: "NONE", clockInDate: null, clockOutDate: null} }
+                    }
+                  }).then(({ data }) => {
+                    console.log('update market', data);
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+        }
+      })  
+      //UPDATE ASSIGNED USERS
+      shiftPatch['workersAssigned'].map((value) => {
+              let marketId = null
+              //seeing if shift's markets has this user 
+              this.props.shiftMarkets.allMarkets.edges.map( (v,i) => {
+                if (v.node.workerId == value){
+                  marketId = v.node.id;
+                }
+              })
+                 
+              // market exists
+              if(marketId) {        
+              this.props.updateMarket({
+                  variables: { data:
+                      { id: marketId, marketPatch: {isBooked: true, workerResponse: "NONE"} }
+                    }
+                  })
+              } else {
+                this.props.createMarket({
+                  variables: 
+                    { data:
+                        {market:
+                          { id: uuidv4(), 
+                            shiftId: this.props.shift.id,
+                            workerId: value,
+                            isEmailed: false,
+                            isCalled: false,
+                            isTexted: false,
+                            isBooked: true,
+                            workerResponse: "NONE"
+                          }}
+                        }
+                  })
+                  
+              }
+      })
+  }
 
   addTeamMember = () => {
     const { teamMembers } = this.state;
@@ -213,7 +273,7 @@ class DrawerHelper extends Component {
     const { teamMembers } = this.state;
     if (user.id) {
       teamMembers[index].user = user;
-      teamMembers[index].content = 'Current hours: 20 . You\'ve earned 1 credit';
+      teamMembers[index].content = '';
       teamMembers[index].status = 'accepted';
     } else {
       teamMembers[index] = { ...unassignedTeamMember };
@@ -238,7 +298,7 @@ class DrawerHelper extends Component {
     const { jobShadowers } = this.state;
     if (user.id) {
       jobShadowers[index].user = user;
-      jobShadowers[index].content = 'Current hours: 20 . You\'ve earned 1 credit';
+      jobShadowers[index].content = '';
       jobShadowers[index].status = 'accepted';
     } else {
       jobShadowers[index] = { ...unassignedTeamMember };
@@ -407,6 +467,8 @@ const DrawerHelperComponent = compose(graphql(deleteShiftMutation, {
     })
   }),
   graphql(updateShiftMutation, { name: 'updateShift' }),
+  graphql(updateShiftMarket, { name: 'updateMarket' }),
+  graphql(createShiftMarket, { name: 'createMarket' }),
   graphql(allShiftMarkets, {
     name: 'shiftMarkets',
     options: (ownProps) => ({ variables: { shiftId: ownProps.shift && ownProps.shift.id }})

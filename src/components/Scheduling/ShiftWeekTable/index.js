@@ -89,7 +89,6 @@ class ShiftWeekTableComponent extends Week {
   };
 
   getSummary = (summary,start ) =>{
-    if (this.state.calendarView=="job"){
      let summaryDetail = [];
       for(let i=0;i<=6;i++){
           summaryDetail.push(<TableRowColumn style={styles.tableFooter}>
@@ -102,7 +101,6 @@ class ShiftWeekTableComponent extends Week {
           </TableRowColumn>);
       }
       return summaryDetail;
-    }
   };
   getDataEmployeeView = (workplaceId,data,allUsers) => {
     let userHash = {};
@@ -122,7 +120,7 @@ class ShiftWeekTableComponent extends Week {
             if (value.node.workersAssigned == null) {
               assigned = [];
             }
-            if (!assigned.length) {
+            if (assigned.length < value.node.workersRequestedNum) {
               const rowHash = {}
               rowHash["weekday"] = dayOfWeek;
               rowHash["userFirstName"] = "Open"
@@ -134,8 +132,7 @@ class ShiftWeekTableComponent extends Week {
                 calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
               }
             }
-            else{
-              value.node.workersAssigned.map((v) => {
+            assigned.map((v) => {
                 const rowHash = {}
                 rowHash["weekday"] = dayOfWeek;
                 const userName = userHash[v];
@@ -147,8 +144,7 @@ class ShiftWeekTableComponent extends Week {
                 } else {
                   calendarHash[userName] = [Object.assign(rowHash, value.node)];
                 }
-              })
-            }
+            })
           }
         }
         else {
@@ -159,7 +155,7 @@ class ShiftWeekTableComponent extends Week {
           if (value.node.workersAssigned == null) {
             assigned = [];
           }
-          if (!assigned.length) {
+          if (assigned.length < value.node.workersRequestedNum) {
             const rowHash = {}
             rowHash["weekday"] = dayOfWeek;
             rowHash["userFirstName"] = "Open"
@@ -171,8 +167,7 @@ class ShiftWeekTableComponent extends Week {
               calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
             }
           }
-          else{
-            value.node.workersAssigned.map((v) => {
+          assigned.map((v) => {
               const rowHash = {}
               rowHash["weekday"] = dayOfWeek;
               const userName = userHash[v];
@@ -185,7 +180,6 @@ class ShiftWeekTableComponent extends Week {
                 calendarHash[userName] = [Object.assign(rowHash, value.node)];
               }
             })
-          }
         }
       });
     }
@@ -275,7 +269,7 @@ class ShiftWeekTableComponent extends Week {
       let jobData = this.state.calendarView=="job"?this.getDataJobView(workplaceId,data):this.getDataEmployeeView(workplaceId,data,this.props.allUsers);
       let jobDataKeys = Object.keys(jobData)
       let openShiftIndex = jobDataKeys.indexOf("Open Shifts")
-      if (openShiftIndex > -1){
+      if (openShiftIndex > -1) {
         jobDataKeys.splice(openShiftIndex, 1);
       }
       let jobs = [];
@@ -288,6 +282,8 @@ class ShiftWeekTableComponent extends Week {
       let weeklyHoursTotal = 0;
       let weeklyHoursBooked = 0;
       let weeklyTotalHoursBooked = 0;
+
+      // calculating total hours 
       if (this.state.calendarView=="job"){
         Object.keys(groupedData).forEach((shift,index) => {
             let totalHours=0;
@@ -313,9 +309,31 @@ class ShiftWeekTableComponent extends Week {
         });
         weeklyTotalHoursBooked = Math.round((weeklyHoursBooked*100)/weeklyHoursTotal) || 0;
       } else {
-
-
+         Object.keys(groupedData).forEach((shift,index) => {
+            let totalHours=0;
+            let totalBookedHours=0;
+            let shiftData = groupedData[shift];
+            Object.keys(shiftData).forEach((data,index) => {
+                let startTime = moment(shiftData[data]['startTime']).format("hh:mm A");
+                let endTime = moment(shiftData[data]['endTime']).format("hh:mm A");
+                let shiftHours = parseInt(moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("H"));
+                if (shiftData[data]['userFirstName'] == "Open" && shiftData[data]['userLastName'] == "Shifts"){
+                  let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
+                  let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length
+                  let openShift =  shiftData[data]['workersRequestedNum'] - ( workerAssigned+ workerInvited ) 
+                  totalHours += shiftHours*openShift;
+                } else{ 
+                totalHours += shiftHours;
+                totalBookedHours += shiftHours;
+              }
+            });
+            summary[shift] = {'totalHours':totalHours,'totalBookedHours':totalBookedHours};
+            weeklyHoursTotal +=totalHours;
+            weeklyHoursBooked += totalBookedHours;
+        });
+        weeklyTotalHoursBooked = Math.round((weeklyHoursBooked*100)/weeklyHoursTotal) || 0;
       }
+
       let is_publish = true;
       const reducer = combineReducers ({ form: formReducer, shifts: shiftReducer});
       const store = createStore(reducer, {shifts: []});
@@ -332,9 +350,8 @@ class ShiftWeekTableComponent extends Week {
                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                             <TableRow displayBorder={false}>
                                 <TableRowColumn style={styles.tableFooter} className="long dayname">
-                                  { this.state.calendarView=="job"? (
                                    <div> <p className="weekDay">Hours Booked</p>
-                                   <p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p> </div>) : "" }
+                                   <p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p> </div>
                                 </TableRowColumn>
                                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                     className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
@@ -383,9 +400,9 @@ class ShiftWeekTableComponent extends Week {
                         <TableFooter adjustForCheckbox={false}>
                             <TableRow displayBorder={false}>
                                 <TableRowColumn style={styles.tableFooterHeading}>
-                                  { this.state.calendarView=="job"? (<div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
+                                  <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
                                         hours booked:</p><p className="sfont">{weeklyHoursBooked} of {weeklyHoursTotal}
-                                         | {weeklyTotalHoursBooked}%</p></div>) : "" }
+                                         | {weeklyTotalHoursBooked}%</p></div>
                                 </TableRowColumn>
                                 {this.getSummary(summary,start)}
                             </TableRow>

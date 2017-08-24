@@ -23,14 +23,24 @@ export default class JobsRow extends Component{
         });
         let finalHours = 0;
         let finalMinutes = 0;
-      /*  Object.values(data).map((value,index) => {
+        Object.values(data).map((value,index) => {
             let startTime = moment(value.startTime).format("hh:mm A");
             let endTime = moment(value.endTime).format("hh:mm A");
             let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
             let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
-            let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
-            h=h*workerAssigned;
-            m=m*workerAssigned;
+            if (this.props.view=="job"){
+                let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
+                h=h*workerAssigned;
+                m=m*workerAssigned;
+            }
+
+            if (value.userFirstName == "Open" && value.userLastName == "Shifts"){
+                let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
+                let workerInvited =  value['workersInvited'] &&  value['workersInvited'].length;
+                let openShift =  value['workersRequestedNum'] - ( workerAssigned+ workerInvited );
+                h=h*openShift;
+                m=m*openShift;
+            }
             finalHours += parseInt(h);
             finalMinutes += parseInt(m);
         });
@@ -38,9 +48,6 @@ export default class JobsRow extends Component{
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
 
-                              <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
-                      <p className="scheduled_tag">SCHEDULED</p>
-        */
         return(
             <TableRow className="tableh" displayBorder={false}>
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
@@ -51,7 +58,8 @@ export default class JobsRow extends Component{
                     <div className="user_desc penalheading">
                       {this.props.view=="job"? data[0].positionByPositionId.positionName : data[0].userFirstName}
                       <p className="lastName"> {this.props.view=="job"?  "" :data[0].userLastName}</p>
-
+                      <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
+                      <p className="scheduled_tag">BOOKED</p>
                     </div>
                   </div>
                 </TableRowColumn>

@@ -126,13 +126,19 @@ class EventPopupComponent extends Component {
               {data.workersAssigned.length > 0 &&
               <span className="box-title filledshift">{data.workersAssigned.length}</span>}
             </div>:
+            <div>
             <div className="location">
                     <span className="fa fa-map-marker mr5" aria-hidden="true">
                         <a onClick={() => this.onLocationClick()} />
                     </span>
               <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
             </div>
-        }
+            <div className="day-item-title">
+              {data.userFirstName == "Open" && data.userLastName == "Shifts" && this.openShift > 0 
+                  && <span className="box-title openshift">{this.openShift}</span>}
+            </div>
+            </div>
+        } 
         <Modal
           title="Confirm"
           isOpen={this.state.deleteModalPopped}

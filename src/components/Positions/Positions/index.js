@@ -102,7 +102,7 @@ export default class Position extends Component {
                 <TableRowColumn style={styles.noBorder}>
                   {position.opportunitiesByPositionId.nodes.length > 0 && localStorage.getItem('workplaceId') != "" ?
                    <h6>${position.opportunitiesByPositionId.nodes.find(workplaceMatch).opportunityWage.toFixed(2)}</h6>
-                   : <h6>Select Workplace</h6>}
+                   : <h6>N/A</h6>}
                   <span>TRAINEE WAGE</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>

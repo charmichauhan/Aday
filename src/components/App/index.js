@@ -25,7 +25,6 @@ class AppComponent extends Component {
     this.forceUpdate();
   };
   render(){
-
     if (this.props.data.loading) {
       return (<div>Loading</div>)
     }
@@ -35,7 +34,6 @@ class AppComponent extends Component {
       this.props.history.push('/login')
       return (<div>You must login first</div>)
     }
-    this.props.data.allUsers
     let route = this.props.route.routes;
     let routes = [];
     route.map((value,index)=>{

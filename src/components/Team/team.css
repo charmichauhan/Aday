@@ -1,248 +1,251 @@
 /* Content */
 .team .content {
-    padding-top: 40px;
+  padding-top: 40px;
 }
 
 /* Drawers */
 .team .drawer-heading {
-    margin: 0 0 10px 0;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #f5f5f5;
-    background-color: #2200a1;
+  margin: 0 0 10px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f5f5f5;
+  background-color: #2200a1;
 }
 
 .team .drawer-heading button {
-    box-shadow: 1px 2px 3px #000;
-    border-radius: 50%;
-    background-color: #FFFFFF;
+  box-shadow: 1px 2px 3px #000;
+  border-radius: 50%;
+  background-color: #FFFFFF;
 }
 
 .team .drawer-heading h2 {
-    display: inline-block;
-    width: 85%;
-    margin-top: 0;
-    color: #FFFFFF;
+  display: inline-block;
+  width: 85%;
+  margin-top: 0;
+  color: #FFFFFF;
 }
 
 .team .drawer-section label {
-    color: #666666;
-    font-size: 18px;
-    font-weight: 500;
+  color: #666666;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .team .drawer-section .form-div {
-    margin: 20px 0;
+  margin: 20px 0;
 }
 
 .team .drawer-section .form-div .form-group {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .team .drawer-section input[type="text"].form-control,
 .team .drawer-section select.form-control {
-    height: 45px;
+  height: 45px;
 }
 
 .team .brands-content .brand-add-button .btn-circle-wrapper,
 .team .workplaces-content .workplace-add-button .btn-circle-wrapper {
-    width: 100%;
-    margin: 15px auto;
-    text-align: center;
+  width: 100%;
+  margin: 15px auto;
+  text-align: center;
 }
 
 /* Personal tab */
 .team .personal-content .heading {
-    color: #31363D;
-    font-size: 24px;
-    text-align: left;
-    line-height: 21px;
-    margin-top: 40px;
-    margin-bottom: 40px;
-    text-transform: uppercase;
-    font-weight: normal;
+  color: #31363D;
+  font-size: 24px;
+  text-align: left;
+  line-height: 21px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+  font-weight: normal;
 }
 
 .team .personal-content .personal-info-img {
-    width: 100%;
-    float: left;
+  width: 100%;
+  float: left;
 }
 
 .team .personal-content .personal-info-img .personal-info {
-    width: 50%;
-    float: left;
+  width: 50%;
+  float: left;
 }
 
 .team .personal-content .personal-info-img .personal-img {
-    width: 50%;
-    float: left;
-    cursor: pointer;
-    padding: 20px 50px;
+  width: 50%;
+  float: left;
+  cursor: pointer;
+  padding: 20px 50px;
 }
 
 .team .personal-content .personal-info-img .personal-info ul {
-    padding: 0;
-    margin: 0 auto;
+  padding: 0;
+  margin: 0 auto;
 }
 
 .team .personal-content .personal-info-img .personal-info li {
-    list-style: none;
-    margin-bottom: 25px;
+  list-style: none;
+  margin-bottom: 25px;
 }
 
 .team .personal-content .personal-info-img .personal-info li label {
-    color: #666666;
-    font-size: 18px;
-    line-height: 21px;
-    font-weight: normal;
-    text-transform: uppercase;
+  color: #666666;
+  font-size: 18px;
+  line-height: 21px;
+  font-weight: normal;
+  text-transform: uppercase;
 
 }
 
 .team .personal-content .personal-info-img .personal-info li input {
-    border: 2px solid rgba(74, 74, 74, 0.5);
-    border-radius: 4px;
-    background-color: #FFFFFF;
-    height: 50px;
-    text-transform: uppercase;
+  border: 2px solid rgba(74, 74, 74, 0.5);
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  height: 50px;
+  text-transform: uppercase;
 }
 .team .personal-content .personal-info-img .personal-info li .field-password-view input {
-    text-transform: none;
+  text-transform: none;
 }
 
 .team .personal-content .personal-info-img .personal-info li.has-error input {
-    border: 1px solid #ee3622;
+  border: 1px solid #ee3622;
 }
 
 .team .personal-content .personal-info-img .personal-info li.has-error label {
-    color: #ee3622;
+  color: #ee3622;
 }
 
 .team .personal-content .personal-info-img .personal-info li input::placeholder {
-    color: #999999;
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 21px;
+  color: #999999;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 21px;
 }
 
 .team .personal-content .personal-info-img .personal-img .personal-img-icon {
-    box-sizing: border-box;
-    height: 254px;
-    width: 254px;
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    background-color: #FFFFFF;
-    box-shadow: 0 9px 7px 0 rgba(1, 1, 1, 0.09);
-    border-radius: 100%;
-    margin: 0 auto;
-    text-align: center;
-    line-height: 250px;
+  box-sizing: border-box;
+  height: 254px;
+  width: 254px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  background-color: #FFFFFF;
+  box-shadow: 0 9px 7px 0 rgba(1, 1, 1, 0.09);
+  border-radius: 100%;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 250px;
 }
 
 .team .personal-content .payment-option {
-    float: left;
-    width: 100%;
-    margin-top: 40px;
+  float: left;
+  width: 100%;
+  margin-top: 40px;
 }
 
 .team .personal-content .payment-option .payment-service {
-    border: 1px solid #D9D9D9;
-    background-color: #FFFFFF;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
-    width: 220px;
-    text-align: center;
-    padding: 10px 40px 20px;
-    display: inline-block;
-    margin: 0 10px;
+  border: 1px solid #D9D9D9;
+  background-color: #FFFFFF;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  width: 220px;
+  text-align: center;
+  padding: 10px 40px 20px;
+  display: inline-block;
+  margin: 0 10px;
 }
 
 .team .personal-content .payment-option .payment-service span {
-    color: #31363D;
-    font-family: Lato;
-    font-size: 14px;
-    font-weight: bold;
-    line-height: 26px;
-    text-transform: uppercase;
-    display: block;
+  color: #31363D;
+  font-family: Lato;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 26px;
+  text-transform: uppercase;
+  display: block;
 }
 
 .team .personal-content .payment-option .payment-service i {
-    width: 100px;
-    height: 50px;
-    display: inline-block;
+  width: 100px;
+  height: 50px;
+  display: inline-block;
 }
 
 .team .personal-content .payment-option .payment-service i img {
-    width: 100px;
-    margin-top: -24px;
+  width: 100px;
+  margin-top: -24px;
 }
 
 /* Brand Section */
 
 .ui.grid .two.wide.column {
-    height: 80px;
-    padding: 0 1rem;
+  height: 80px;
+  padding: 0 1rem;
 }
 
 div.list-left-image-wrapper {
-    margin: auto 0;
+  margin: auto 0;
 }
 
 img.list-left-image {
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
 }
 
 /*Uploaded Image CSS*/
 
 .uploaded-image {
-    border: 1px dashed #ccc;
-    margin: 0 auto;
+  border: 1px dashed #ccc;
+  margin: 0 auto;
 }
 
 .drawer-footer {
-    position: fixed;
-    left: 50%;
-    bottom: 10px;
-    transform: translate(-50%);
-    width: 100%;
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
+  transform: translate(-50%);
+  width: 100%;
 }
 
 .drawer-section.brand-drawer-section {
-    height: 75vh;
-    overflow-y: scroll;
+  height: 75vh;
+  overflow-y: scroll;
 }
 
 .drawer-section.workplace-drawer-section {
-    display: block;
-    overflow: hidden;
-    height: 75vh;
-    overflow-y: scroll;
+  display: block;
+  overflow: hidden;
+  height: 75vh;
+  overflow-y: scroll;
 }
 
 .field-password-view {
-    position: relative;
+  position: relative;
 }
 
 .field-password-view button {
-    position: absolute !important;
-    right: 0;
-    top: 0;
+  position: absolute !important;
+  right: 0;
+  top: 0;
 }
 
 .input-inline-icon {
-    width: 100%;
+  width: 100%;
 }
 
 .workplace-progress-bar {
-    text-align: center;
-    font-size: larger;
-    font-weight: bold;
-    color: #333333;
+  text-align: center;
+  font-size: larger;
+  font-weight: bold;
+  color: #333333;
 }
 
 /*Team Members Drawer CSS*/
 .green {
   color: #00A863;
+}
+.red {
+  color: #E33821;
 }
 .profile-drawer-heading {
   display: block;
@@ -259,12 +262,16 @@ img.list-left-image {
 .profile-drawer .drawer-heading {
   position: relative;
   min-height: 165px;
+  background: #0022A1;
 }
 .profile-drawer .member-list {
   margin-top: 0;
 }
 .profile-drawer .profile-drawer-title {
-  margin-top: 20px;
+  margin-top: 50px;
+}
+.profile-drawer .profile-drawer-title .profile-drawer-title-cross-training{
+  margin-top: 0;
 }
 .profile-drawer.drawer-section img.profile-img {
   position: absolute;
@@ -343,4 +350,66 @@ img.list-left-image {
   font-size: 24px;
   line-height: 30px;
 }
+.profile-drawer.drawer-section .grid-positions .ten.wide .ui.star.rating {
+  margin-right: 10px;
+}
 
+/*Resume Drawer*/
+.resume-drawer.drawer-section .drawer-content.scroll-div{
+  height: calc(100vh - 440px);
+}
+.resume-drawer .drawer-heading {
+  background: #f7f7f7;
+}
+.resume-drawer .drawer-heading button {
+  box-shadow: none;
+
+}
+.resume-drawer.drawer-section .drawer-heading .confirm-popup {
+  color: #0022A1;
+}
+.resume-drawer .resume-subject {
+  font-size: 14px;
+  padding: 30px 0;
+}
+.resume-drawer .resume-subject i {
+  display: inline-block;
+  width: 10%;
+  color: #4a4a4a;
+}
+.resume-drawer .resume-subject span {
+  display: inline-block;
+  width: 70%;
+  text-align: center;
+  font-size: 20px;
+}
+.resume-drawer .qualification-title {
+  position: relative;
+}
+.resume-drawer .qualification-title h2 {
+  color: #4a4a4a;
+  margin: 30px 0;
+  font-size: 30px;
+  font-weight: 300;
+  display: inline-block;
+  padding: 0 10px;
+}
+.resume-drawer .content-heading h2 {
+  padding: 0 0 0 20px;
+  display: inline-block;
+}
+.resume-drawer .brief-content {
+  background: #f7f7f7;
+  padding: 10px 20px;
+  margin: 10px 0;
+}
+.resume-drawer .address {
+  font-size: 20px;
+}
+.resume-drawer .extra-work {
+  font-style: italic;
+  font-size: 16px;
+}
+.resume-drawer .resume-qualification i.icon {
+  font-size: 2em;
+}

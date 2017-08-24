@@ -9,27 +9,43 @@ import {find, pick} from "lodash";
 import {leftCloseButton} from "../../styles";
 import "../team.css";
 const uuidv4 = require('uuid/v4');
-const styles={
-  iconStyles: {
-    margin: '5px 6px',
-    width: 36,
-    height: 36
-  }
-}
 export default class ProfileDrawer extends Component {
 
   render() {
     const {
       shift = {},
-      width = 600,
+      width = 640,
       openSecondary = true,
       docked = false,
       open
     } = this.props;
+
+    const styles = {
+      positionCheckbox: {
+        textTransform: 'uppercase',
+        color: '#4a4a4a',
+        display: 'inline-block',
+        width: '70%',
+        verticalAlign: 'middle'
+      },
+      iconStyles: {
+        margin: '5px 6px',
+        width: 42,
+        height: 42
+      },
+      trainingCheckbox: {
+        textTransform: 'uppercase',
+        color: '#4a4a4a',
+        display: 'inline-block',
+        width: '52%',
+        marginLeft: '10px',
+        verticalAlign: 'middle'
+      }
+    };
     return (
       <Drawer docked={docked} width={width}
               openSecondary={openSecondary}
-              onRequestChange={this.handleCloseDrawer}
+              onRequestChange={this.props.handleCloseDrawer}
               open={open}>
         <div className="drawer-section profile-drawer">
           <div className="profile-drawer-heading">
@@ -82,47 +98,52 @@ export default class ProfileDrawer extends Component {
               <div className="grid-positions">
                 <Grid columns={3}>
                   <Grid.Row>
-                    <Grid.Column width={3}>
+                    <Grid.Column width={2}>
                       <i className="icon-circle-td"><Image src="/images/Sidebar/positions.png" size="mini" /></i>
                     </Grid.Column>
-                    <Grid.Column width={10}>
+                    <Grid.Column width={12}>
                       <div>
                         <p className="cook-name">Second Order Cook</p>
                         <Rating icon='star' defaultRating={5} maxRating={5}/>
                         <span className="text-uppercase green">Primary Position</span>
                       </div>
                     </Grid.Column>
-                    <Grid.Column width={3}>
+                    <Grid.Column width={2}>
                       <Delete style={styles.iconStyles} color="gray" />
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row>
-                    <Grid.Column width={3}>
+                    <Grid.Column width={2}>
                       <i className="icon-circle-td"><Image src="/images/Sidebar/positions.png" size="mini"/></i>
                     </Grid.Column>
-                    <Grid.Column width={10}>
+                    <Grid.Column width={12}>
                       <div>
                         <p className="cook-name">First Order Cook</p>
                         <Rating icon='star' defaultRating={5} maxRating={5}/>
-                        <Checkbox/> <span className="text-uppercase green">Primary Position</span>
+                        <Checkbox
+                          label="Make Primary Position"
+                          style={styles.positionCheckbox}
+                          iconStyle = {{fill:'rgb(173, 173, 173)', marginRight: '0'}}
+                          labelStyle = {{fontSize: '14px', color: '#4a4a4a'}}
+                        />
                       </div>
                     </Grid.Column>
-                    <Grid.Column width={3}>
+                    <Grid.Column width={2}>
                       <Delete style={styles.iconStyles} color="gray" />
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row>
-                    <Grid.Column width={3}>
+                    <Grid.Column width={2}>
                       <i className="icon-circle-td"><Image src="/images/Sidebar/positions.png" size="mini" /></i>
                     </Grid.Column>
-                    <Grid.Column width={10}>
+                    <Grid.Column width={12}>
                       <div>
                         <p className="cook-name">Catering</p>
                         <Rating icon='star' defaultRating={5} maxRating={5}/>
                         <span className="text-uppercase green">Primary Position</span>
                       </div>
                     </Grid.Column>
-                    <Grid.Column width={3}>
+                    <Grid.Column width={2}>
                       <Delete style={styles.iconStyles} color="gray" />
                     </Grid.Column>
                   </Grid.Row>
@@ -134,42 +155,58 @@ export default class ProfileDrawer extends Component {
               <div className="grid-positions">
                 <Grid columns={3}>
                   <Grid.Row>
-                    <Grid.Column width={3}>
+                    <Grid.Column width={2}>
                       <i className="icon-circle-td"><Image src="/images/Sidebar/positions.png" size="mini" /></i>
                     </Grid.Column>
-                    <Grid.Column width={10}>
+                    <Grid.Column width={12}>
                       <div>
-                        <Rating icon='star' defaultRating={5} maxRating={5}/>
+                        <p className="cook-name">Second Order Cook</p>
+                        <span className="text-uppercase red">0 of 40 hours complete</span>
+                        <Checkbox
+                          label="Remove From Job Shadowing?"
+                          style={styles.trainingCheckbox}
+                          iconStyle = {{fill:'rgb(173, 173, 173)', marginRight: '0'}}
+                          labelStyle = {{fontSize: '12px', color: '#4a4a4a', width: 'auto'}}
+                        />
                       </div>
                     </Grid.Column>
-                    <Grid.Column width={3}>
-                      <i className="fa fa-check fa-3x" />
+                    <Grid.Column width={2}>
+                      <i className="fa fa-check fa-3x" style={{color:'gray'}} />
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row>
-                    <Grid.Column width={3}>
+                    <Grid.Column width={2}>
                       <i className="icon-circle-td"><Image src="/images/Sidebar/positions.png" size="mini" /></i>
                     </Grid.Column>
-                    <Grid.Column width={10}>
+                    <Grid.Column width={12}>
                       <div>
-                        <Rating icon='star' defaultRating={5} maxRating={5}/>
+                        <p className="cook-name">First Order Cook</p>
+                        <span className="text-uppercase red">4 of 20 hours completed</span>
+                        <span className="text-uppercase green"> Approved For Job Shadowing</span>
                       </div>
                     </Grid.Column>
-                    <Grid.Column width={3}>
-                      <i className="fa fa-check fa-3x" />
+                    <Grid.Column width={2}>
+                      <i className="fa fa-check fa-3x" style={{color:'gray'}} />
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row>
-                    <Grid.Column width={3}>
+                    <Grid.Column width={2}>
                       <i className="icon-circle-td"><Image src="/images/Sidebar/positions.png" size="mini" /></i>
                     </Grid.Column>
-                    <Grid.Column width={10}>
+                    <Grid.Column width={12}>
                       <div>
-                        <Rating icon='star' defaultRating={5} maxRating={5}/>
+                        <p className="cook-name">Catering</p>
+                        <span className="text-uppercase red">5 of 10 hours completed</span>
+                        <Checkbox
+                          label="Approve For Job Shadowing?"
+                          style={styles.trainingCheckbox}
+                          iconStyle = {{fill:'rgb(173, 173, 173)', marginRight: '0'}}
+                          labelStyle = {{fontSize: '12px', color: '#4a4a4a', width: 'auto'}}
+                        />
                       </div>
                     </Grid.Column>
-                    <Grid.Column width={3}>
-                      <i className="fa fa-check fa-3x" />
+                    <Grid.Column width={2}>
+                      <i className="fa fa-check fa-3x" style={{color:'gray'}} />
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>

@@ -32,7 +32,7 @@ export default class TeamMemberCard extends Component {
       userEmail,
 			avatarUrl,
       userPhoneNumber
-		} = this.props.member
+		} = this.props.member;
 
 		return (
 		    <Card>

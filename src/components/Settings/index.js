@@ -33,7 +33,7 @@ const initialState = {
 
 class Settings extends Component {
   constructor(props) {
-    super(pro0ps);
+    super(props);
     this.state = initialState;
   }
 

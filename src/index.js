@@ -31,8 +31,7 @@ networkInterface.use([{
     if(token) {
       token = token.split(';')[0]
       req.options.headers.authorization = `Bearer ${token}`;
-    }
-    if (token == null ) {
+    } else {
        req.options.headers = {};
     }
 

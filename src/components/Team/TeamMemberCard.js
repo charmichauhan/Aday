@@ -40,9 +40,10 @@ export default class TeamMemberCard extends Component {
             open={this.state.viewProfileDrawer}
             openResumeDrawer={this.openResumeDrawer}
             handleCloseDrawer={this.handleCloseDrawer}
+            userId={this.props.userId}
           />}
           {this.state.viewResumeDrawer &&
-          <ResumeDrawer open={this.state.viewResumeDrawer} backProfileDrawer={this.backProfileDrawer}/>}
+          <ResumeDrawer open={this.state.viewResumeDrawer} backProfileDrawer={this.backProfileDrawer} userId={this.props.userId}/>}
 		    	<Card.Content>
 			      	<center>
 					    <Image centered='true' size='small' shape='circular' src={avatarUrl} />

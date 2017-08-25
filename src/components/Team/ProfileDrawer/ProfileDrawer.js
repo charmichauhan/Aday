@@ -6,10 +6,12 @@ import {Image, Rating, Grid} from "semantic-ui-react";
 import Delete from 'material-ui/svg-icons/action/delete';
 import Checkbox from 'material-ui/Checkbox';
 import {find, pick} from "lodash";
+import { gql,graphql,compose } from 'react-apollo';
 import {leftCloseButton} from "../../styles";
 import "../team.css";
+import {userQuery} from '../Team.graphql';
 const uuidv4 = require('uuid/v4');
-export default class ProfileDrawer extends Component {
+class ProfileDrawerComponent extends Component {
 
   render() {
     const {
@@ -19,7 +21,7 @@ export default class ProfileDrawer extends Component {
       docked = false,
       open
     } = this.props;
-
+    debugger;
     const styles = {
       positionCheckbox: {
         textTransform: 'uppercase',
@@ -183,8 +185,8 @@ export default class ProfileDrawer extends Component {
                         <p className="cook-name">First Order Cook</p>
                         <span className="text-uppercase red">4 of 20 hours completed</span>
                         <span className="text-uppercase green"> Approved For Job Shadowing</span>
-                      </div>
-                    </Grid.Column>
+              </div>
+            </Grid.Column>
                     <Grid.Column width={2}>
                       <i className="fa fa-check fa-3x" style={{color:'gray'}} />
                     </Grid.Column>
@@ -221,3 +223,15 @@ export default class ProfileDrawer extends Component {
     );
   };
 }
+
+const ProfileDrawer = graphql(userQuery,{
+  options:(ownProps)=>{
+    return{
+      variables:{
+        id:ownProps.userId
+      }
+    }
+  }
+  }
+)(ProfileDrawerComponent)
+export default ProfileDrawer;

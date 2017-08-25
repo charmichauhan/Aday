@@ -45,7 +45,7 @@ class TeamMembersComponent extends Component {
 				<br/><br/>
 				<Card.Group itemsPerRow="5">
 					{
-            teamMembers.map((m, i)=> <TeamMemberCard key={i} member={m['node']}/>)
+            teamMembers.map((m, i)=> <TeamMemberCard key={i} member={m['node']} userId={m['node']['id']}/>)
 					}
 				</Card.Group>
 			</div>

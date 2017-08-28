@@ -39,13 +39,26 @@ class TeamMembersComponent extends Component {
     if (this.props.allTeamMembers.loading) {
       return (<div>Loading</div>)
     }
-    let teamMembers = this.props.allTeamMembers && this.props.allTeamMembers.allUsers.edges;
+    let teamMembers = this.props.allTeamMembers && this.props.allTeamMembers.allEmployees.edges;
+    let mappedTeamMembers = [];
+    if(localStorage.getItem("workplaceId")){
+    	teamMembers.map((value , i) => {
+			if ( value['node']['primaryWorkplace'] == localStorage.getItem("workplaceId") ) {
+				mappedTeamMembers.push(value)
+			}
+    	})
+    } else {
+		mappedTeamMembers = teamMembers;
+    }
+
 		return (
 			<div>
 				<br/><br/>
 				<Card.Group itemsPerRow="5">
 					{
-            teamMembers.map((m, i)=> <TeamMemberCard key={i} member={m['node']} userId={m['node']['id']}/>)
+            			mappedTeamMembers.map((m, i)=>
+            				    <TeamMemberCard key={i} member={m['node']['userByUserId'] } userId={m['node']['userByUserId']['id']}/>
+            			)
 					}
 				</Card.Group>
 			</div>
@@ -54,21 +67,33 @@ class TeamMembersComponent extends Component {
 }
 
 const allUsers = gql`
-    query allUsers {
-        allUsers{
+    query allEmployees($corporationId: Uuid! ){
+        allEmployees(condition: { corporationId: $corporationId, isManager: false }) {
             edges{
                 node{
+                  id
+                  primaryWorkplace
+                  userByUserId{
                     id
                     firstName
                     lastName
                     avatarUrl
                     userPhoneNumber
                     userEmail
+                  }
                 }
             }
         }
     }
     `
 
-const TeamMembers = graphql(allUsers,{name:"allTeamMembers"})(TeamMembersComponent);
+const TeamMembers = graphql(allUsers, {
+  options: (ownProps) => ({
+    variables: {
+      corporationId: localStorage.getItem('corporationId')
+    }
+  }),
+  name:"allTeamMembers"
+},
+)(TeamMembersComponent);
 export default TeamMembers

@@ -28,6 +28,14 @@ export default class JobsRow extends Component{
             let endTime = moment(value.endTime).format("hh:mm A");
             let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
             let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
+            let unpaidHours = 0;
+            let unpaidMinutes = 0;
+            if (value.unpaidBreakTime) {
+                unpaidHours = parseInt(value.unpaidBreakTime.split(':')[0])
+                unpaidMinutes = parseInt(value.unpaidBreakTime.split(':')[1])
+            }
+            h = parseInt(h) - unpaidHours;
+            m = parseInt(m) - unpaidMinutes;
             if (this.props.view=="job"){
                 let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
                 h=h*workerAssigned;
@@ -41,14 +49,9 @@ export default class JobsRow extends Component{
                 h=h*openShift;
                 m=m*openShift;
             }
-            let unpaidHours = 0;
-            let unpaidMinutes = 0;
-            if (value.unpaidBreakTime) {
-                unpaidHours = parseInt(value.unpaidBreakTime.split(':')[0])
-                unpaidMinutes = parseInt(value.unpaidBreakTime.split(':')[1])
-            }
-            finalHours += parseInt(h) - unpaidHours;
-            finalMinutes += parseInt(m) - unpaidMinutes;
+
+            finalHours += parseInt(h);
+            finalMinutes += parseInt(m);
         });
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;

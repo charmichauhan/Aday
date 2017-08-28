@@ -26,8 +26,8 @@ export default class TeamMemberCard extends Component {
     this.setState({viewProfileDrawer:true,viewResumeDrawer:false})
   };
 	render() {
-		const {
-			firstName,
+	  const {
+	  firstName,
       lastName,
       userEmail,
 			avatarUrl,

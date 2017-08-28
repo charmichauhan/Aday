@@ -389,7 +389,7 @@ class DrawerHelper extends Component {
                 <p><b>Shift Date</b>: {moment(shift.startTime).format('dddd, MMMM Do YYYY')}</p>
                 <p><b>Start Time</b>: {moment(shift.startTime).format('hh:mm A')}</p>
                 <p><b>End Time</b>: {moment(shift.endTime).format('hh:mm A')}</p>
-                <p><b>Unpaid break (minutes)</b>: {!shift.unpaidBreakTime && '0' || shift.unpaidBreakTime} minutes</p>
+                <p><b>Unpaid break</b>: {!shift.unpaidBreakTime && '00:00' || shift.unpaidBreakTime.split(":").slice(0,2).join(":")} </p>
                 <p><b>bonus payment per hour</b>: $0.00</p>
                 <p><b>job shadowing shift</b>: No</p>
               </div>

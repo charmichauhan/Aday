@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import TeamMemberCard from './../TeamMemberCard'
+import { gql,graphql,compose } from 'react-apollo';
 import { Image, Button, Icon, Card, Header, Rating } from 'semantic-ui-react'
 
 const initialState = {
 	//stub
 };
 
-export default class TeamMembers extends Component {
+class TeamMembersComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -35,15 +36,39 @@ export default class TeamMembers extends Component {
 	};
 
 	render() {
+    if (this.props.allTeamMembers.loading) {
+      return (<div>Loading</div>)
+    }
+    let teamMembers = this.props.allTeamMembers && this.props.allTeamMembers.allUsers.edges;
 		return (
 			<div>
 				<br/><br/>
 				<Card.Group itemsPerRow="5">
 					{
-						this.state.team_members.map((m, i)=> <TeamMemberCard key={i} member={m}/>)
+            teamMembers.map((m, i)=> <TeamMemberCard key={i} member={m['node']} userId={m['node']['id']}/>)
 					}
 				</Card.Group>
 			</div>
 		);
 	}
 }
+
+const allUsers = gql`
+    query allUsers {
+        allUsers{
+            edges{
+                node{
+                    id
+                    firstName
+                    lastName
+                    avatarUrl
+                    userPhoneNumber
+                    userEmail
+                }
+            }
+        }
+    }
+    `
+
+const TeamMembers = graphql(allUsers,{name:"allTeamMembers"})(TeamMembersComponent);
+export default TeamMembers

@@ -837,16 +837,15 @@ table.atable td.shiftbox {
     }
     .ui.grid>.row>[class*="twelve wide"].column.main-content {
 
-        width: -webkit-calc(100% - 19.5%) !important;
-        width: -moz-calc(100% - 19.5%) !important;
-        width: calc(100% - 19.5%) !important;
+        width: -webkit-calc(100% - 260px) !important;
+        width: -moz-calc(100% - 260px) !important;
+        width: calc(100% - 260px) !important;
     }
     .ui.grid>.row>[class*="three wide"].column.left-content {
-        width: 18% !important;
         padding-left: 0;
     }
     .left-menu_item {
-        width:18%;
+        width:260px;
     }
 }
 

@@ -93,7 +93,7 @@ class NavComponent extends Component {
 							<Menu.Item className="menu-item-list" as={NavLink} to="/workplaces/mine"><i><Image src="/images/Sidebar/my-workplace.png"/></i><div className="menu_item_left"><span>MY WORKPLACE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/settings"><i><Image src="/images/Sidebar/settings.png"/></i><div className="menu_item_left"><span>SETTINGS</span></div></Menu.Item>
 						</Menu.Menu>
-					</Menu.Item>
+					</Menu.Item>`
 					</div>
   					<Menu.Item className="menu-item-logout">
 						<Menu.Item className="menu-item-list"><i><Image onClick={this.logout} src="/images/Sidebar/logout-icon.png"/></i><div className="menu_item_left"><span>LOGOUT</span></div></Menu.Item>

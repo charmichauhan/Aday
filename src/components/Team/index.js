@@ -78,10 +78,11 @@ const initState = {
 			},
 			position: 5,
 		},
-	]
+	],
+  workplaceId:localStorage.getItem("workplaceId")
 };
 
-export default class team extends Component {
+export default class Team extends Component {
 	constructor(props) {
 		super(props);
 		this.state = initState;
@@ -96,6 +97,12 @@ export default class team extends Component {
 		fontWeight: (this.state.value === value && 700) || 500
 	});
 
+  componentWillMount(){
+    this.setState({workplaceId:localStorage.getItem("workplaceId")})
+  }
+  componentWillReceiveProps(){
+    this.setState({workplaceId:localStorage.getItem("workplaceId")})
+  }
 	render() {
 		return (
 			<section className="team">
@@ -116,7 +123,7 @@ export default class team extends Component {
 						buttonStyle={this.getButtonStyle('team_members')}
 						label="Team Members"
 						value="team_members">
-						<TeamMembers team_members={this.state.team_members}/>
+						<TeamMembers />
 					</Tab>
 
 					<Tab
@@ -130,7 +137,7 @@ export default class team extends Component {
 						buttonStyle={this.getButtonStyle('managers')}
 						label="Managers"
 						value="managers">
-						<Managers managers={this.state.team_members}/>
+						<Managers workplaceId={this.state.workplaceId}/>
 					</Tab>
 
 					<Tab

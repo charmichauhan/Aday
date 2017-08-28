@@ -35,7 +35,7 @@ export class UpdateShiftForm extends Component{
       startTime: moment(data.startTime).format("hh:mm a") || '',
       stopTime: moment(data.endTime).format("hh:mm a") || '',
       numberOfTeamMembers: data.workersRequestedNum || 0,
-      unpaidBreak: data.unpaidBreakTime || '0:00',
+      unpaidBreak: data.unpaidBreakTime || 'Enter Time In Minutes',
       managerValue: manager || null,
       instructions: data.instructions,
       jobShadowingOpportunity: data.traineesRequestedNum || 0,

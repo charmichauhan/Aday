@@ -41,8 +41,11 @@ export default class JobsRow extends Component{
                 h=h*openShift;
                 m=m*openShift;
             }
-            finalHours += parseInt(h);
-            finalMinutes += parseInt(m);
+
+            let unpaidHours = parseInt(value.unpaidBreakTime.split(':')[0])
+            let unpaidMinutes = parseInt(value.unpaidBreakTime.split(':')[1])
+            finalHours += parseInt(h) - unpaidHours;
+            finalMinutes += parseInt(m) - unpaidMinutes;
         });
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;

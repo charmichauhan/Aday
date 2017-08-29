@@ -213,6 +213,7 @@ class DrawerHelper extends Component {
     }
     */
     // console.log(this.state.teamMembers);
+    console.log(DrawerPosition);
     const formValid=DrawerPosition.positionName != "" &&
                     DrawerPosition.positionDescription != "" &&
                     DrawerPosition.minimiumAge != "" &&

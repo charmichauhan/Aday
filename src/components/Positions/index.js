@@ -80,6 +80,7 @@ export class PositionsSection extends Component {
       "traineeHours": position.traineeHours,
       "positionIconUrl": null,
       "minimumAge": position.minimumAge,
+      "partTimeWage": position.partTimeWage,
       "exchangeLevel": "CORPORATION_BRAND_WIDE",
       "trainingUrl": null,
       "brandId": localStorage.getItem('brandId'),
@@ -150,7 +151,6 @@ export class PositionsSection extends Component {
           "input": {
             "id": position.opportunitiesByPositionId.nodes.find(workplaceMatch).id,
             "opportunityPatch": {
-              "opportunityWage": position.opportunitiesByPositionId.nodes[0].opportunityWage,
               "isPublic": position.opportunitiesByPositionId.nodes[0].isPublic,
             }
           }
@@ -252,9 +252,11 @@ const all_positions= gql`
         minimumAge
         minimumLiftWeight
         traineeHours
+        partTimeWage
         trainingUrl
         exchangeLevel
-        jobsByPositionId(condition:{isPositionActive: true}) {
+        jobsByPositionId(condition:{isPositionActive: true, isTrainer: true}) {
+          totalCount
           nodes{
             userId
             workplaceId
@@ -265,7 +267,6 @@ const all_positions= gql`
             id
             isPublic
             workplaceId
-            opportunityWage
           }
         }
       }

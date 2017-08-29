@@ -8,6 +8,9 @@ const initialState={
   first_name: '',
   last_name: '',
   email: '',
+  daily_max: '',
+  weekly_max: '',
+  monthly_max: '',
   positions: '',
   submittedFirstName: '',
   submittedLastName: '',
@@ -62,6 +65,7 @@ class InviteTeamMembersComponent extends Component {
       let eid = uuidv4();
       let corporationId=localStorage.getItem("corporationId");
 
+      /*
       that.props.createEmployee({
         variables:{
           data:{
@@ -74,7 +78,7 @@ class InviteTeamMembersComponent extends Component {
         }
       }).then(({data}) => {
         console.log('createEmployee',data);
-      });
+      }); */
       that.setState({initialState})
     }).catch((error) => {
         console.log('there was an error sending the query', error);
@@ -118,37 +122,45 @@ class InviteTeamMembersComponent extends Component {
       submittedLastName,
       submittedEmail,
       submittedPositions,
+      daily_max,
+      weekly_max,
+      monthly_max
   	} = this.state
-
-    return (
-		<div>
-			<br/>
-			<Segment>
-			    <Form widths='equal'>
-			      <Form.Group>
-			        <Form.Input  size='medium' placeholder='First Name' name='first_name' value={first_name} onChange={this.handleChange} />
-			        <Form.Input  size='medium' placeholder='Last Name' name='last_name' value={last_name} onChange={this.handleChange} />
-			        <Form.Input  size='medium' placeholder='Email' name='email' value={email} onChange={this.handleChange} />
-			      </Form.Group>
-			      <Form.Dropdown
-				    multiple
-				    selection
-				    fluid
-            options={options}
-				    placeholder='Select Positions'
-				    renderLabel={renderLabel}
-				    onChange={this.handlePositionsChange}
-				  />
-			    {/*<Form.Field id='invite_team_member' control={Button} content='Invite'/>*/}
-			    <RaisedButton label="Invite Team Member" backgroundColor="#0022A1" labelColor="#FFFFFF" onClick={this.createUser}/>
-			    </Form>
-			</Segment>
-	        <strong>onChange:</strong>
-	        <pre>{JSON.stringify({ first_name, last_name, email, positions }, null, 2)}</pre>
-	        <strong>onSubmit:</strong>
-	        <pre>{JSON.stringify({ submittedFirstName, submittedLastName, submittedEmail, submittedPositions }, null, 2)}</pre>
-		</div>
-    )
+    if (!localStorage.getItem("workplaceId")){
+      return ( <div> <p/> <div> Must Select A Workplace From The Sidebar Dropdown To Add A Team Member </div> </div> )
+    } else {
+        return (
+    		  <div>
+    			<br/>
+    			<Segment>
+    			    <Form widths='equal'>
+    			      <Form.Group>
+    			        <Form.Input  label="First Name" size='medium' placeholder='First Name' name='first_name' value={first_name} onChange={this.handleChange} />
+                  <Form.Input  label="Last Name" size='medium' placeholder='Last Name' name='last_name' value={last_name} onChange={this.handleChange} />
+                  <Form.Input  label="Email" size='medium' placeholder='Email' name='email' value={email} onChange={this.handleChange} />
+    			      </Form.Group>
+                <Form.Group>
+                  <Form.Input  size='medium' label="Max Daily Hours" placeholder='Max Daily Hours' name='daily_max' value={daily_max} onChange={this.handleChange} />
+                  <Form.Input  size='medium' label="Max Weekly Hours" placeholder='Max Weekly Hours' name='weekly_max' value={weekly_max} onChange={this.handleChange} />
+                  <Form.Input  size='medium' label="Max Monthly Hours" placeholder='Max Monthly Hours' name='monthly_max' value={monthly_max} onChange={this.handleChange} />
+                </Form.Group>
+    			      <Form.Dropdown
+                label="Add Positions For This Team Member. If None, Leave Blank."
+    				    multiple
+    				    selection
+    				    fluid
+                options={options}
+    				    placeholder='Select Positions'
+    				    renderLabel={renderLabel}
+    				    onChange={this.handlePositionsChange}
+    				  />
+    			    {/*<Form.Field id='invite_team_member' control={Button} content='Invite'/>*/}
+    			    <RaisedButton label="Invite Team Member" backgroundColor="#0022A1" labelColor="#FFFFFF" onClick={this.createUser}/>
+    			    </Form>
+    			</Segment>
+    		  </div>
+        )
+    }
   }
 }
 

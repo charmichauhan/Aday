@@ -3,6 +3,9 @@ import { Segment, Input, Form, Message, Header, Button, Dropdown } from 'semanti
 import RaisedButton from 'material-ui/RaisedButton';
 import { gql,graphql,compose } from 'react-apollo';
 import uuidv4 from 'uuid/v4';
+import 'react-date-picker/index.css'
+import { DateField, Calendar } from 'react-date-picker'
+import moment from 'moment';
 
 const initialState={
   first_name: '',
@@ -16,77 +19,97 @@ const initialState={
   submittedLastName: '',
   submittedEmail: '',
   submittedPositions: '',
+  hireDate: moment().format('YYYY-DD-MM')
 }
-class InviteTeamMembersComponent extends Component {
 
+class InviteTeamMembersComponent extends Component {
+ 
   state = initialState
 
   handleChange = (e, { name, value }) => {
     this.setState({[name]: value})
   };
   handlePositionsChange = (e,{ value }) =>{
-    this.setState({positions:value[0]})
+    this.setState({positions:value})
   };
+
+  handleDateChange = (dateString, { dateMoment, timestamp }) => {
+    this.setState({hireDate: dateString})
+  };
+
   createUser = () => {
-    const { first_name, last_name, email, positions } = this.state;
+    const { first_name, last_name, email, positions, daily_max, weekly_max, monthly_max, hireDate } = this.state;
     let that = this;
+    let workplaceId=localStorage.getItem("workplaceId");
+    let password = uuidv4().substring(0,8)
+
     this.props.createUser({
       variables:{
         data:{
-          user:{
-            id:uuidv4(),
-            firstName:first_name,
-            userCreatedDate:new Date().toUTCString(),
-            lastName: last_name,
-            userEmail: email,
+            fname: first_name,
+            password: password,
+            lname: last_name,
+            email: email
           }
-        }
       }
     }).then(({data})=>{
-      console.log(positions);
-      let userId = data.createUser.user.id;
-      let workplaceId=localStorage.getItem("workplaceId");
-      let id = uuidv4();
-      that.props.createJob({
-        variables:{
-          data:{
-            job:{
-              id:id,
-              userId:userId,
-              workplaceId:workplaceId,
-              positionId:positions
+
+      // call express server emailInviteUser( email , password )
+
+      let userId = data.registerTeamMember.user.id;
+
+      positions.map((value,index)=>{
+        let positionId = uuidv4();
+        that.props.createJob({
+          variables:{
+            data:{
+              job:{
+                id: positionId,
+                userId:userId,
+                workplaceId:workplaceId,
+                positionId:value,
+                isPositionActive: false
+              }
             }
           }
-        }
-      }).then(({data})=>{
-        console.log(data);
-      });
+        }).then(({data})=>{
+          console.log("POSITION CREATED")
+        });
+      })
 
       let eid = uuidv4();
       let corporationId=localStorage.getItem("corporationId");
 
-      /*
       that.props.createEmployee({
         variables:{
           data:{
             employee:{
               id:eid,
-              userId:userId,
-              corporationId
+              userId: userId,
+              corporationId: corporationId,
+              primaryWorkplace: workplaceId,
+              dayHourLimit: daily_max,
+              weekHourLimit: weekly_max, 
+              monthHourLimit: monthly_max,
+              hireDate: moment(hireDate).format(),
+              isManager: false
             }
           }
         }
       }).then(({data}) => {
-        console.log('createEmployee',data);
-      }); */
-      that.setState({initialState})
+        console.log('createdEmployee');
+        window.location.reload();
+      }); 
+
     }).catch((error) => {
         console.log('there was an error sending the query', error);
       });
+
     this.setState({ submittedFirstName: first_name, submittedLastName: last_name, submittedEmail: email, submittedPositions: positions})
   };
 
-  render() {
+  render() {    
+
     if (this.props.allPositions.loading) {
       return (<div>Loading</div>)
     }
@@ -97,7 +120,7 @@ class InviteTeamMembersComponent extends Component {
     //   }).catch((error) => {
     //   console.log('there was an error sending the query', error);
     // });
-    //
+    ///
     let allPositions = this.props.allPositions && this.props.allPositions.allPositions.edges;
     let options = [];
     allPositions.map((value,index)=>{
@@ -126,6 +149,22 @@ class InviteTeamMembersComponent extends Component {
       weekly_max,
       monthly_max
   	} = this.state
+
+    let isUnion = ""
+    if (localStorage.getItem("isUnion") == "true") {
+     isUnion = (
+       <div className="field"> 
+        <div className="ui form field">
+          <label> Select Hire Date </label>
+          <DateField
+            dateFormat="YYYY-MM-DD"
+            date={this.hireDate}
+            onChange={this.handleDateChange}
+          />
+        </div>
+      </div>
+      );
+    }
     if (!localStorage.getItem("workplaceId")){
       return ( <div> <p/> <div> Must Select A Workplace From The Sidebar Dropdown To Add A Team Member </div> </div> )
     } else {
@@ -144,6 +183,7 @@ class InviteTeamMembersComponent extends Component {
                   <Form.Input  size='medium' label="Max Weekly Hours" placeholder='Max Weekly Hours' name='weekly_max' value={weekly_max} onChange={this.handleChange} />
                   <Form.Input  size='medium' label="Max Monthly Hours" placeholder='Max Monthly Hours' name='monthly_max' value={monthly_max} onChange={this.handleChange} />
                 </Form.Group>
+                { isUnion }
     			      <Form.Dropdown
                 label="Add Positions For This Team Member. If None, Leave Blank."
     				    multiple
@@ -164,21 +204,11 @@ class InviteTeamMembersComponent extends Component {
   }
 }
 
-const createUser = gql`
-  mutation createUser($data: CreateUserInput!){
-    createUser(input:$data)
-    {
-      user{
-        id
-      }
-    }
-  }
-`
 const allPositions = gql`
   query allPositions{
   allPositions {
-    edges{
-      node{
+    edges {
+      node {
         id
         positionName
       }
@@ -209,6 +239,15 @@ const createEmployee = gql `
   }
 `
 
+const createUser = gql`
+  mutation createUser($data: RegisterTeamMemberInput!){
+  registerTeamMember (input: $data )
+  {
+    user {
+      id
+    }
+  }
+}`
 
 const deleteUserId = gql`
   mutation deleteUserById($data:DeleteUserByIdInput!){

@@ -7,7 +7,6 @@ export const userQuery = gql `
     firstName
     lastName
     zipCode
-    homeAddress
     userPhoneConfirmed
     userPhoneNumber
     aboutMeText

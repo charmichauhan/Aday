@@ -1,5 +1,7 @@
 .workplace-map{
-	height: 150px;
+	height: 250px;
 	background-color: #f4f4f4;
 	border: 1px solid #eee;
+	float: left;
+	width: 320px;
 }

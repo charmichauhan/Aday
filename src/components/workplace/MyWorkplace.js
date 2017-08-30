@@ -40,10 +40,10 @@ class MyWorkplace extends Component {
 								 </h2>
 							 </div>
 							 {/*<div className="workplace-details">workplace details</div>*/}
-							 <div style={{clear: 'both', marginTop: 65}}>
+							 <div style={{clear: 'both', marginTop: 60}}>
 								 <WorkplaceMap address={this.props.data.workplaceById.address}/>
 								 <Image src={this.props.data.workplaceById.workplaceImageUrl} centered={true}
-								 				style={{height:'auto', width:300, float:'left', marginLeft: 10}}/>
+								 				style={{height:'auto', width: 350, float:'left', marginLeft: 15}}/>
 								 <WorkplaceReviews/>
 							 </div>
 						 </div>

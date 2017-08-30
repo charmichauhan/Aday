@@ -1,17 +1,29 @@
 import React, { Component } from 'react'
 import Drawer from 'material-ui/Drawer';
+import { find, pick } from 'lodash';
 import { Header, Icon, Table, Image, List } from 'semantic-ui-react';
 import FlatButton from 'material-ui/FlatButton';
 
 import CircleButton from '../../../helpers/CircleButton';
 
+const unassignedTeamMember = {
+  user: {
+    id: 0,
+    firstName: 'Unassigned',
+    lastName: '',
+    avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
+  },
+  content: 'There is currenlty an open position',
+  status: 'unassigned'
+};
+
 const User = ({ user }) => (
   <div className="content">
     <div className="avatar">
-      <Image avatar src={user.avatar} />
+      <Image avatar src={user.avatarUrl} />
     </div>
     <div className="label text-uppercase">
-      <b>{user.firstName}</b> {user.otherNames}
+      <b>{user.firstName}</b> {user.lastName}
     </div>
   </div>
 );
@@ -20,6 +32,7 @@ class ShiftHistoryDrawer extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      historyDetails: this.getInitialData(props),
       shiftHistory: [
         {
           user: {
@@ -117,15 +130,48 @@ class ShiftHistoryDrawer extends Component {
     }
   }
 
+  getInitialData = ({ shift: { marketsByShiftId = [] } }) => {
+    marketsByShiftId = marketsByShiftId.nodes.map((shiftMarket = {}) => {
+      const market = { ...shiftMarket };
+      if (market.workerId) {
+        market.worker = this.getUserById(market.workerId, true);
+      }
+       else {
+        market.worker = unassignedTeamMember;
+      }
+      market.showDetails = false;
+      market.notes = [
+        {
+          title: `${market.worker.firstName} did not receive this shift because:`,
+          points: [
+            'Hourly Limit Exceeded',
+            'Less Siniority'
+          ]
+        }
+      ];
+
+      return market;
+    });
+
+    return marketsByShiftId;
+  };
+
+  getUserById = (id) => {
+    const users = this.props.users;
+    let foundWorker = find(users.allUsers.edges, (user) => user.node.id === id);
+    if (!foundWorker) foundWorker = { node: unassignedTeamMember.user };
+    return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
+  };
+
   handleBack = () => {
     this.props.handleHistory();
     this.props.handleBack();
   };
 
   showDetails = (i) => {
-    const { shiftHistory } = this.state;
-    shiftHistory[i].showDetails = !shiftHistory[i].showDetails;
-    this.setState({ shiftHistory });
+    const { historyDetails } = this.state;
+    historyDetails[i].showDetails = !historyDetails[i].showDetails;
+    this.setState({ historyDetails });
   };
 
   render() {
@@ -135,7 +181,7 @@ class ShiftHistoryDrawer extends Component {
       openSecondary = true,
       docked = false
     } = this.props;
-
+    const { historyDetails } = this.state;
     return (
       <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
               open={open}>
@@ -168,38 +214,38 @@ class ShiftHistoryDrawer extends Component {
                   </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
-              {this.state.shiftHistory && this.state.shiftHistory.map((history, i) => (
+              {historyDetails && historyDetails.map((history, i) => (
                 <Table.Body key={i}>
                   <Table.Row onClick={() => this.showDetails(i)}>
                     <Table.Cell>
                       <Icon name={history.showDetails ? 'chevron down' : 'chevron up'} />
                     </Table.Cell>
                     <Table.Cell width={16} textAlign="left">
-                      <User user={history.user} />
+                      <User user={history.worker} />
                     </Table.Cell>
                     <Table.Cell width={6}>{history.seniority}</Table.Cell>
                     <Table.Cell textAlign='center' width={6}>
                       <Icon
-                        color={history.accepted === -1 ? 'black' : history.accepted ? 'green' : 'red'}
-                        name={history.accepted === -1 ? 'help' : history.accepted ? 'checkmark' : 'remove'}
+                        color={history.workerResponse === 'NONE' ? 'black' : history.workerResponse === 'YES' ? 'green' : 'red'}
+                        name={history.workerResponse === 'NONE' ? 'help' : history.workerResponse === 'YES' ? 'checkmark' : 'remove'}
                         size='large' />
                     </Table.Cell>
                     <Table.Cell width={4}>
                       <Icon
-                        color={history.emailed ? 'green' : 'red'}
-                        name={history.emailed ? 'checkmark' : 'remove'}
+                        color={history.isEmailed ? 'green' : 'red'}
+                        name={history.isEmailed ? 'checkmark' : 'remove'}
                         size='large' />
                     </Table.Cell>
                     <Table.Cell textAlign='center' width={4}>
                       <Icon
-                        color={history.texted ? 'green' : 'red'}
-                        name={history.texted ? 'checkmark' : 'remove'}
+                        color={history.isTexted ? 'green' : 'red'}
+                        name={history.isTexted ? 'checkmark' : 'remove'}
                         size='large' />
                     </Table.Cell>
                     <Table.Cell textAlign='center' width={4}>
                       <Icon
-                        color={history.called ? 'green' : 'red'}
-                        name={history.called ? 'checkmark' : 'remove'}
+                        color={history.isCalled ? 'green' : 'red'}
+                        name={history.isCalled ? 'checkmark' : 'remove'}
                         size='large' />
                     </Table.Cell>
                   </Table.Row>

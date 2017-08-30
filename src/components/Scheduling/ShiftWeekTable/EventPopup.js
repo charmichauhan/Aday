@@ -134,11 +134,11 @@ class EventPopupComponent extends Component {
               <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
             </div>
             <div className="day-item-title">
-              {data.userFirstName == "Open" && data.userLastName == "Shifts" && this.openShift > 0 
+              {data.userFirstName == "Open" && data.userLastName == "Shifts" && this.openShift > 0
                   && <span className="box-title openshift">{this.openShift}</span>}
             </div>
             </div>
-        } 
+        }
         <Modal
           title="Confirm"
           isOpen={this.state.deleteModalPopped}
@@ -153,6 +153,7 @@ class EventPopupComponent extends Component {
           handleHistory={this.handleHistoryDrawer} />
         <ShiftHistoryDrawer
           shift={data}
+          users={users}
           open={this.state.shiftHistoryDrawer}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
@@ -191,7 +192,8 @@ const deleteShift = gql`
                 id
             }
     }
-  }`
+  }`;
+
 const EventPopup = graphql(deleteShift, {
   props: ({ ownProps, mutate }) => ({
     deleteShiftById: (clientMutationId, id) => mutate({

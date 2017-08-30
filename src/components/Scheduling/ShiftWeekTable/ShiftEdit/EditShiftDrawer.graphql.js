@@ -2,7 +2,7 @@ import { gql } from 'react-apollo';
 
 export const allUsersQuery = gql`
   query($positionId: Uuid!) {
-    allJobs(condition: { positionId: $positionId}) {
+    allJobs(condition: { positionId: $positionId, isPositionActive: true}) {
       edges {
         node {
           userByUserId {

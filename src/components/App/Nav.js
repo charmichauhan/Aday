@@ -16,9 +16,13 @@ class NavComponent extends Component {
   constructor(props){
     super(props);
   }
-  changeWorkplace = () => {
-    let workplaceId = document.getElementById("workplace").value;
+
+  changeWorkplace = (e) => {
+    let workplace = e.target.value.split(",")
+    let workplaceId = workplace[0];
+    let isUnion = workplace[1];
     localStorage.setItem("workplaceId", workplaceId);
+    localStorage.setItem("isUnion", isUnion );
     this.forceUpdate();
     this.props.handleChange();
   };
@@ -31,6 +35,7 @@ class NavComponent extends Component {
     let brandId = document.getElementById("brand").value;
     localStorage.setItem("brandId", brandId);
     localStorage.setItem("workplaceId", "");
+    localStorage.setItem("isUnion", "");
     document.getElementById("workplace").value = "";
     this.forceUpdate();
     this.props.handleChange();
@@ -47,10 +52,11 @@ class NavComponent extends Component {
         }
     const brandId = localStorage.getItem("brandId");
     const workplaceId = localStorage.getItem("workplaceId");
+    const isUnion = localStorage.getItem("isUnion");
     const brandLogo = "";
 		const brands = this.props.allBrands.allBrands.nodes;
     const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
-    console.log(brands);
+    console.log(filteredWorkplaces);
     return (
 			<div className="left-menu_item">
 				{/*<EmergencyShiftButton/>*/}
@@ -67,11 +73,11 @@ class NavComponent extends Component {
 							</select>
 						</Menu.Header>
 						<Menu.Header>
-							<select onChange={this.changeWorkplace} id="workplace" value={workplaceId}>
+							<select onChange={this.changeWorkplace} id="workplace" value={workplaceId + "," + isUnion }>
 								<option value="">CHOOSE WORKPLACE</option>
                 {
                   filteredWorkplaces.map((v,i)=>(
-											<option value={v.id} key={i}> { v.workplaceName } </option>
+											<option value={ v.id + "," + v.isUnion } key={i}> { v.workplaceName } </option>
                     )
                   )}
 							</select>
@@ -110,7 +116,8 @@ const allWorkplaces = gql`
       nodes{
         workplaceName,
         id,
-        brandId
+        brandId,
+        isUnion
       }
     }
 }

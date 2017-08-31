@@ -14,7 +14,7 @@ const initialState={
   daily_max: '',
   weekly_max: '',
   monthly_max: '',
-  positions: '',
+  positions: [],
   submittedFirstName: '',
   submittedLastName: '',
   submittedEmail: '',

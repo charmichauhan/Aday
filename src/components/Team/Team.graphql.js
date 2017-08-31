@@ -6,6 +6,7 @@ export const userQuery = gql `
     id
     firstName
     lastName
+    avatarUrl
     zipCode
     userPhoneConfirmed
     userPhoneNumber
@@ -23,6 +24,22 @@ export const userQuery = gql `
         }
       }
     }
+    jobsByUserId{
+      edges{
+        node{
+          id
+          isTrainable
+          workplaceId
+          isVerified
+          isPreTrainingComplete
+          rating
+          primaryJob
+          positionByPositionId{
+                positionName
+          }
+        }
+    }
+  }
     userEmployersByUserId{
       nodes{
          id
@@ -63,5 +80,6 @@ export const userQuery = gql `
         hourRange
       }
     }
+    
   }
 }`;

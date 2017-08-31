@@ -327,7 +327,7 @@ img.list-left-image {
 .profile-drawer.drawer-section .grid-positions, .profile-drawer .grid-positions .grid  {
   display: block;
   width: 100%;
-  margin: 0 auto;
+  margin: 0 auto 10px;
 }
 
 .profile-drawer.drawer-section .block-limit-btn {
@@ -335,7 +335,7 @@ img.list-left-image {
 }
 .profile-drawer.drawer-section .block-limit-btn button {
   height: 40px;
-  width: 200px;
+  min: 200px;
   border-radius: 2px;
   background-color: #E33821;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
@@ -412,4 +412,75 @@ img.list-left-image {
 }
 .resume-drawer .resume-qualification i.icon {
   font-size: 2em;
+}
+
+.profile-drawer .ant-tabs .ui.grid .two.wide.column {
+  height: auto;
+}
+.switchStyle {
+  background: transparent;
+  border: 0.5px solid #999999;
+}
+.switchStyle.ant-switch .ant-switch-inner {
+  color: #E33821;
+}
+.switchStyle.ant-switch.ant-switch-checked .ant-switch-inner {
+  color: #00A863;
+}
+.ant-switch:after {
+  border: 1px solid #999999;
+  width: 16px;
+  height: 16px;
+  left: 2px;
+  top: 2px;
+}
+.ant-switch-checked:after {
+  left: 100%;
+  margin-left: -19px;
+}
+.ant-radio-wrapper .ant-radio .ant-radio-inner {
+  width: 20px;
+  height: 20px;
+}
+.ant-radio-wrapper:hover .ant-radio .ant-radio-inner, .ant-radio:hover .ant-radio-inner, .ant-radio-focused .ant-radio-inner {
+  border-color: #999;
+}
+.ant-radio-inner:after {
+  background-color: #00A863;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.ant-progress-circle-path {
+  stroke: #3dbd7d;
+}
+.ant-tabs .ant-tabs-content {
+  padding: 0 20px;
+}
+.text-center.profile-drawer-tab {
+  display: table;
+  margin-top: 20px;
+}
+.profile-drawer-tab h2 {
+  width: auto;
+  padding: 5px;
+  color: #0022A1;
+  display: table-cell;
+  vertical-align: middle;
+}
+.profile-drawer-tab img.ui.image {
+  display: table-cell;
+}
+.profile-drawer .drawer-content .wide .radioStyle label {
+  margin: 0;
+}
+.ant-tabs-nav-scroll {
+  height: 64px;
+}
+.ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
+  padding: 10px 20px;
+  height: 64px;
+}
+.ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-nav-container {
+  height: auto;
 }

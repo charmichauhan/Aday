@@ -11,7 +11,7 @@ export const userQuery = gql `
     userPhoneConfirmed
     userPhoneNumber
     aboutMeText
-    userReferenceNonDemosByUserId{
+    userReferencesByUserId{
       edges{
         node{
           id
@@ -73,7 +73,7 @@ export const userQuery = gql `
         languageName
       }
     }
-    userAvailabilityNonDemosByUserId {
+    userAvailabilitiesByUserId {
       nodes {
         id
         userId

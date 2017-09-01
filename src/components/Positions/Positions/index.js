@@ -74,7 +74,7 @@ export default class Position extends Component {
     var { positions } = this.props;
     //console.log(positions);
     var positions_copy = JSON.parse(JSON.stringify(positions));
-    positions_copy.sort((p1, p2) => p1.traineeHours - p2.traineeHours);
+    positions_copy.sort((p1, p2) => p2.traineeHours - p1.traineeHours);
     // shows wage at first workplace if none is selected
     function workplaceMatch(opportunity){
       const workplaceId = localStorage.getItem('workplaceId');
@@ -100,21 +100,21 @@ export default class Position extends Component {
                   <p>{position.jobsByPositionId.nodes.length} Team Members</p>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
-                  {position.opportunitiesByPositionId.nodes.length > 0 && localStorage.getItem('workplaceId') != "" ?
-                   <h6>${position.opportunitiesByPositionId.nodes.find(workplaceMatch).opportunityWage.toFixed(2)}</h6>
+                  {position.partTimeWage !== null ?
+                   <h6>${position.partTimeWage.toFixed(2)}</h6>
                    : <h6>N/A</h6>}
-                  <span>TRAINEE WAGE</span>
+                  <span>PART-TIME WAGE</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
                   <h6>{position.traineeHours}</h6><span>TRAINING HOURS</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
-                  <h6>{position.trainingTracks}</h6><span>TRAINING TRACKS</span>
+                  <h6>{position.jobsByPositionId.totalCount}</h6><span>TRAINERS</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder} className="grid-actions">
                   <Watch style={styles.iconStyles} onClick={this.handleClick} />
                   <Edit style={styles.iconStyles} onClick={() => {if(position.opportunitiesByPositionId.nodes.length > 0)
-                                                                    {this.openPositionDrawer("update", position)}
+                                                                    {this.openPositionDrawer("edit", position)}
                                                                  }} />
                   <Delete style={styles.iconStyles} onClick={() => this.handleDeleteClick(position.id)} />
                 </TableRowColumn>

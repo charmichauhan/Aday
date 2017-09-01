@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Header, Rating, Label, Grid } from 'semantic-ui-react'
+import { Rating, Label, Grid } from 'semantic-ui-react'
 import Avatar from '../helpers/Avatar'
-import { gql, graphql,compose} from 'react-apollo';
-import './workplace.css';
+import { gql, graphql} from 'react-apollo';
+import './MyWorkplace.css';
 import moment from 'moment';
 
 class WorkplaceReviews extends Component {
@@ -25,8 +25,8 @@ class WorkplaceReviews extends Component {
 					ratingDate: moment("May 23, 2017"),
 					comment: "Clean",
 					userByRateeId: {
-		        firstName: "ADELE",
-		        lastName: "TRAVIS",
+		        firstName: "ANNE",
+		        lastName: "TRINKLE",
 		        avatarUrl: "http://www.cazenovecapital.com/sysglobalassets/wmmediaassets/sng/imgs/people/angela_tan_160x160.jpg"
 		      }
 				}
@@ -38,10 +38,15 @@ class WorkplaceReviews extends Component {
 		let reviews = this.state.nodes;
 		return (
 			<div className="workplace">
-				<Header as="h4">WORKPLACE REVIEWS</Header>
+				<div className="reviews-header">WORKPLACE REVIEWS</div>
 				<br/>
 				{
+
+
+
 					reviews.map((review, i) => (
+
+						
 							<Grid
 								className="workplace-review"
 								key={i}>
@@ -51,22 +56,14 @@ class WorkplaceReviews extends Component {
 										first_name={review.userByRateeId.firstName}
 										last_name={review.userByRateeId.lastName}
 									/>
-									<small>
-									<Rating size="tiny" default={1} maxRating={1} disabled/>
-										{1} review
-									</small>
 								</Grid.Column>
+
 								<Grid.Column width={13}>
 									<Rating defaultRating={review.rating} maxRating={5} disabled/>
 									<br/>
 									<small>{review.ratingDate.format('MMMM Do YYYY')}</small>
 									<br/>
 									<div>{review.comment}</div>
-									{/*
-										review.tags.map((t,i)=>(
-											<Label size="mini" key={i}>{t}</Label>
-										))
-									*/}
 								</Grid.Column>
 							</Grid>
 

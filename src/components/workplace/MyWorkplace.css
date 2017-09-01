@@ -1,0 +1,87 @@
+.workplace{
+	padding: 15px;
+	margin-top: 100px;
+	background-color: white;
+	clear: both;
+	height: auto;
+}
+
+.workplace-review{
+    height: 143.18px;
+    width: 675px;
+    border: 0.5px solid #979797;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+}
+
+.workplace  h1 {
+	height: 30px;
+    width: 361px;
+    color: #4A4A4A;
+    font-family: "Roboto Condensed";
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 30px;
+}
+
+.workplace  h2 {
+	height: 28px;
+    width: 361px;
+    color: #4A4A4A;
+    font-family: "Roboto Condensed";
+    font-size: 28px;
+    line-height: 30px;
+	font-weight: 100;
+}
+
+.reviews-header {
+    height: 30px;
+    width: 700px;
+    color: #4A4A4A;
+    font-family: "Lato";
+    font-size: 20px;
+    line-height: 60px;
+}
+
+.choose-workplace-text {
+    height: 30px;
+    width: 700px;
+    color: #0022A1;
+    font-family: "Lato";
+    font-size: 14px;
+    line-height: 30px;
+	margin-top: 10px;
+}
+
+.page-title {
+    height: 42px;
+    width: 400px;
+    color: #4A4A4A;
+    font-family: "Roboto Condensed";
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 42px;
+    text-align: center;
+	letter-spacing: 1.5px;
+}
+
+.workplace-image {
+	height: auto;
+	width: 300px;
+
+}
+
+.select-workplace {
+	height: 400px;
+	width: 500px;
+}
+
+/*
+.page-title-rectangle {
+    height: 45px;
+    width: 500px;
+    border: 1px solid rgba(151,151,151,0.3);
+    border-radius: 10px;
+    background-color: rgba(255,255,255,0.4);
+}
+*/

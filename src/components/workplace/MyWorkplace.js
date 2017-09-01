@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import {Header, Divider, Grid, Label, Image} from 'semantic-ui-react'
+import {Grid, Label, Image} from 'semantic-ui-react'
 import '../Scheduling/style.css';
-import Avatar from '../helpers/Avatar'
+import './MyWorkplace.css';
 import WorkplaceMap from '../maps/Workplace'
 import WorkingHours from './WorkingHours'
 import WorkplaceReviews from './WorkplaceReviews'
-import { gql, graphql,compose} from 'react-apollo';
+import { gql, graphql} from 'react-apollo';
 
 class MyWorkplace extends Component {
 	render() {
@@ -19,73 +19,66 @@ class MyWorkplace extends Component {
 		}
 		return (
 			<div>
-				<div className="col-md-12">
-						<div className="col-sm-offset-3 col-sm-5 rectangle"
-								 style={{fontWeight: 'bold', fontSize: 18, color:'#4A4A4A'}}>
+				{/* Page Title*/}
+				<div className="col-md-12 page-title-rectangle">
+						<div className="col-sm-offset-3 col-sm-5 rectangle page-title">
 								MY WORKPLACE LISTING
 						</div>
 				</div>
+
+				{/* Workplace Information*/}
 				<Grid className="workplace">
-					<Grid.Column width={15}>
+
 						{localStorage.getItem("workplaceId") != "" ?
-						 <div>
-						 	 <Image src={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
-							 				width="100" height="100" centered={true} style={{float:'left', marginRight:15}}/>
+
+						<Grid.Column width={15}>
+							 <div style={{marginTop: 20}} />
 							 <div>
-							 	 <h1 style={{marginBottom:0, paddingBottom:0, marginTop: 10}}>
-								 	 {this.props.data.workplaceById.brandByBrandId.brandName}
-								</h1>
-							 	 <h2 style={{marginTop:0, paddingTop:0, color:'#4A4A4A'}}>
-								 	 {this.props.data.workplaceById.workplaceName}
-								 </h2>
+							 	{/* Brand Image*/}
+							 	 <Image src={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
+								 				width="100" height="100" centered={true} style={{float:'left', marginRight:15}}/>
+								 <div>
+
+								 	 <h1 style={{marginBottom:0, paddingBottom:0}}>
+									 	 {this.props.data.workplaceById.brandByBrandId.brandName}
+									</h1>
+
+								 	 <h2 style={{marginTop:0, paddingTop:0}}>
+									 	 {this.props.data.workplaceById.workplaceName}
+									 </h2>
+								 </div>
+
+								 {/*<div className="workplace-details">workplace details</div>*/}
+								 <div style={{clear: 'both'}}>
+									 <WorkplaceMap address={this.props.data.workplaceById.address}/>
+
+									 <Image src={this.props.data.workplaceById.workplaceImageUrl} className="workplace-image"/>
+
+									 {/*Temporary */}
+									 <div></div>
+									 <div className="workplace">
+						 				<div className="reviews-header">WORKPLACE REVIEWS</div>
+									</div>
+
+									<div style={{marginTop: 40}} />
+
+									<div>
+										<img src={require('./awaiting-review.png')} className="workplace-image" />
+									</div>
+
+									 {/*
+										 Added to next release...
+										 <WorkplaceReviews/>
+									*/}
+
+								 </div>
 							 </div>
-							 {/*<div className="workplace-details">workplace details</div>*/}
-							 <div style={{clear: 'both', marginTop: 60}}>
-								 <WorkplaceMap address={this.props.data.workplaceById.address}/>
-								 <Image src={this.props.data.workplaceById.workplaceImageUrl} centered={true}
-								 				style={{height:'auto', width: 350, float:'left', marginLeft: 15}}/>
-								 <WorkplaceReviews/>
-							 </div>
-						 </div>
-						 : <div style={{marginTop: 0}}> Please Select Workplace </div>}
-					</Grid.Column>
-					<Grid.Column width={1}>
-						{/*
-						<WorkingHours/>
-						<Header as="h4">GENERAL MANAGER</Header>
-						<Avatar
-							first_name="JOSE"
-							last_name="CORTEZ"
-							type="avatar-verticle"
-							size="tiny"
-						/>
-						<Header as="h4">ALL MANAGERs: <Label>3</Label></Header>
-						<Avatar
-							first_name="JOSE"
-							last_name="CORTEZ"
-							type="avatar-verticle"
-							size="tiny"
-						/>
-						<Header as="h4">TEAM MEMBERS: <Label>212</Label></Header>
-						<Avatar
-							first_name="JOSE"
-							last_name="CORTEZ"
-							type="avatar-verticle"
-							size="tiny"
-						/>
-						<Avatar
-							first_name="JOSE"
-							last_name="CORTEZ"
-							type="avatar-verticle"
-							size="tiny"
-						/>
-						<Avatar
-							first_name="JOSE"
-							last_name="CORTEZ"
-							type="avatar-verticle"
-							size="tiny"
-						/>
-						*/}
+						 </Grid.Column>
+							 :<div>
+									<div className="choose-workplace-text">PLEASE CHOOSE YOUR WORKPLACE FROM THE SIDEBAR</div>
+							 	<img src={require('./select-workplace.png')} className="select-workplace" />
+							</div>}
+						<Grid.Column width={1}>
 					</Grid.Column>
 				</Grid>
 			</div>

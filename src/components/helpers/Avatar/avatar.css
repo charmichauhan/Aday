@@ -1,11 +1,24 @@
-.avatar-name{
-	font-size: 11px;
-	line-height: 10px;
+.avatar-first-name{
+	font-size: 16px;
+	line-height: 18px;
 	text-transform: capitalize;
+	color: #4A4A4A;
+	font-family: "Roboto Condensed";
+	font-weight: 900;
 }
+
+.avatar-last-name{
+	font-size: 16px;
+	line-height: 18px;
+	text-transform: capitalize;
+	color: #4A4A4A;
+	font-family: "Roboto Condensed";
+	font-weight: 100;
+}
+
 .avatar-inline .avatar-title{
 	float: left;
-	margin-top: -25px;
+	margin-top: -34px;
 	margin-left: 40px;
 }
 .avatar-verticle{

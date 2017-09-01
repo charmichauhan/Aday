@@ -33,7 +33,6 @@ networkInterface.use([{
     } else {
        req.options.headers = {};
     }
-
       next();
   }
 }]);

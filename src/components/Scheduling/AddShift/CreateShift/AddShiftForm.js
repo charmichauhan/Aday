@@ -13,6 +13,7 @@ import ManagerSelectOption from './ManagerSelectOption';
 import PositionSelector  from './positionSelector'
 import WorkplaceSelector  from './workplaceSelector'
 import '../styles.css';
+var rp = require('request-promise');
 
 export class AddShiftForm extends Component{
  static propTypes = {
@@ -111,9 +112,42 @@ export class AddShiftForm extends Component{
               .then(({ data }) => {
                   this.props.closeFunc();
                   console.log('got data', data);
-              }).catch((error) => {
-                  console.log('there was an error sending the query', error);
-              });
+                    var uri = 'http://35.202.222.106/flaskapp//callin/.'
+
+                     var options = {
+                        uri: uri,
+                        method: 'POST',
+                        json: {
+                            "data": {
+                              "sec": "QDVPZJk54364gwnviz921",
+                              "userName": "Giovanni",
+                              "shiftStartHour": "8 AM",
+                              "shiftEndHour": "9 AM",
+                              "phoneNumber": "19787075363",
+                              "emailId": "giovannibconserva@gmail.com",
+                              "shiftDate": "14 Jan 1999",
+                              "brand": "Compass",
+                                "shiftLocation": "Chao",
+                                "shiftReward": "89",
+                                "managerName": "Todd",
+                                "shiftRole": "Cashier",
+                                "shiftAddress": "125 W Av.",
+                              "phoneOverride": "19787075363",
+                              "mailOverride": "madelinecchapin@gmail.com",
+                             "week_id": "dc782f6c-715a-11e7-8cf7-a6006ad3dba0",
+                            "shift_id": "5a01313c-2420-4237-6636-66674d01c230",
+                            }
+                            }
+                    };
+                      rp(options)
+                        .then(function(response) {
+                               //that.setState({redirect:true})
+                          }).catch((error) => {
+                              console.log('there was an error sending the query', error);
+                          });
+                      }).catch((error) => {
+                          console.log('there was an error sending the query', error);
+                      });
   }
 
 

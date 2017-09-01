@@ -27,6 +27,7 @@ const allShiftsByWeeksPublished = gql `query allShiftsByWeeksPublished($publishI
 		                            workplaceByWorkplaceId{
 		                            	id
 		                                workplaceName
+		                                address
 		                            }
 		                        }
 		                    }

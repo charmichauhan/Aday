@@ -6,6 +6,7 @@ import uuidv4 from 'uuid/v4';
 import 'react-date-picker/index.css'
 import { DateField, Calendar } from 'react-date-picker'
 import moment from 'moment';
+var rp = require('request-promise');
 
 const initialState={
   first_name: '',
@@ -98,7 +99,29 @@ class InviteTeamMembersComponent extends Component {
         }
       }).then(({data}) => {
         console.log('createdEmployee');
-        window.location.reload();
+        //window.location.reload();
+        var uri = 'http://8c793d9d.ngrok.io/invitation'
+
+             var options = {
+                uri: uri,
+                method: 'POST',
+                json: {
+                      "data": {
+                              "userName": first_name + " " + last_name,
+                              "emailId": email,
+                              "brandName": "Compass",
+                              "workplaceName": "Chao",
+                              "managerName": "Todd"
+                            }
+                    }
+            };
+
+              rp(options)
+                .then(function(response) {
+                       that.setState({redirect:true})
+                  }).catch((error) => {
+                      console.log('there was an error sending the query', error);
+                  });
       }); 
 
     }).catch((error) => {

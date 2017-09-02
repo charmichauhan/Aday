@@ -13,6 +13,7 @@ import ManagerSelectOption from '../AddShift/CreateShift/ManagerSelectOption';
 import PositionSelector  from '../AddShift/CreateShift/positionSelector'
 import WorkplaceSelector  from '../AddShift/CreateShift/workplaceSelector'
 import '../AddShift/CreateShift/styles.css';
+var rp = require('request-promise');
 
 export class UpdateShiftForm extends Component{
  static propTypes = {
@@ -113,6 +114,34 @@ export class UpdateShiftForm extends Component{
               }).catch((error) => {
                   console.log('there was an error sending the query', error);
               });
+
+          var uri = 'http://localhost:8080/api/updatedCall'
+          var options = {
+              uri: uri,
+              method: 'POST',
+              json: {data: {
+                  "sec": "QDVPZJk54364gwnviz921",
+                    "workersAssigned": this.props.data.workersAssigned
+                    "newWorkplaceId":  this.state.workplace
+                    "shiftDate": moment(startTime).format("Do, MMMM YYYY"),
+                    "shiftDateOld": this.props.data.startTime.format("Do, MMMM YYYY"),
+                    "shiftLocationOld": this.props.data.workplaceByWorkplaceId.workplaceName,
+                    "shiftRoleId": this.state.position,
+                    "shiftRoleOld": this.props.data.positionByPositionId.positionName,
+                    "shiftAddressOld": this.props.data.workplaceByWorkplaceId.address,
+                    "shiftStartHour":  moment(startTime).format("h:mm a"),
+                    "shiftStartHourOld": this.props.data.startTime.format("h:mm a"),
+                    "shiftEndHour":  moment(endTime).format("h:mm a"),
+                    "shiftEndHourOld": this.props.data.endTime.format("h:mm a"),
+                    "shiftReward": "",
+                    "shiftRewardOld": ""
+              }}
+          };
+          rp(options)
+            .then(function(response) {              
+            }).catch((error) => {
+               console.log('there was an error sending the query for delete cancellation call', error);
+            });
   }
 
   formatDays(day){

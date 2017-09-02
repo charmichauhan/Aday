@@ -54,8 +54,8 @@ class EventPopupComponent extends Component {
         json: {data: {
             "sec": "QDVPZJk54364gwnviz921",
             "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
-            "shiftStartHour": moment(shift.startTime).format("h:mm:ss a"),
-            "shiftEndHour": moment(shift.endTime).format("h:mm:ss a"),
+            "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+            "shiftEndHour": moment(shift.endTime).format("h:mm a"),
             "workersAssigned": shift.workersAssigned,
             "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
             "workplaceAddress": shift.workplaceByWorkplaceId.address,

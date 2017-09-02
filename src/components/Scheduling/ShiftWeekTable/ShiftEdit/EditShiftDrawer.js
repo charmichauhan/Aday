@@ -13,6 +13,7 @@ import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
 const uuidv4 = require('uuid/v4');
 import './shift-edit.css';
+var rp = require('request-promise');
 
 const unassignedTeamMember = {
   user: {
@@ -226,6 +227,7 @@ class DrawerHelper extends Component {
 
   deleteShift = () => {
     let id = this.props.shift.id;
+    let shift = this.props.shift
     let that = this;
     that.props.deleteShiftById(uuidv4(), id)
     .then(({ data }) => {
@@ -235,6 +237,30 @@ class DrawerHelper extends Component {
     });
     that.setState({ deleteModalPopped: false });
     this.handleCloseDrawer();
+
+    var uri = 'http://localhost:8080/api/cancellationCall'
+    
+    var options = {
+        uri: uri,
+        method: 'POST',
+        json: {data: {
+            "sec": "QDVPZJk54364gwnviz921",
+            "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+            "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+            "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+            "workersAssigned": shift.workersAssigned,
+            "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+            "workplaceAddress": shift.workplaceByWorkplaceId.address,
+            "position": shift.positionByPositionId.positionName,
+            "brand": shift.positionByPositionId.brandByBrandId.brandName
+        }}
+    };
+    rp(options)
+      .then(function(response) {              
+      }).catch((error) => {
+         console.log('there was an error sending the query for delete cancellation call', error);
+    });
+ 
   };
 
   getUserById = (id, isAssigned) => {

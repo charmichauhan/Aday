@@ -134,7 +134,7 @@ export default class TeamMemberPositionDetails extends Component {
 
             <Grid.Row>
               <Grid.Column width={2}>
-
+                <Progress type="circle" percent={25} width={40}/>
               </Grid.Column>
               <Grid.Column width={10}>
 
@@ -169,8 +169,6 @@ export default class TeamMemberPositionDetails extends Component {
                   </Grid.Column>
                 </Grid.Row>
             ))}
-
-
           </Grid>
         </div>
       </div>

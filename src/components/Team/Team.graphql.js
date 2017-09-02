@@ -80,6 +80,16 @@ export const userQuery = gql `
         hourRange
       }
     }
-    
+    employeesByUserId{
+    edges{
+      node{
+        workplaceByPrimaryWorkplace
+        {
+          id
+          workplaceName
+        }
+      }
+    }
+  }
   }
 }`;

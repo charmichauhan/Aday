@@ -836,10 +836,9 @@ table.atable td.shiftbox {
         width: 55%;
     }
     .ui.grid>.row>[class*="twelve wide"].column.main-content {
-
-        width: -webkit-calc(100% - 260px) !important;
-        width: -moz-calc(100% - 260px) !important;
-        width: calc(100% - 260px) !important;
+        width: -webkit-calc(100% - 280px) !important;
+        width: -moz-calc(100% - 280px) !important;
+        width: calc(100% - 280px) !important;
     }
     .ui.grid>.row>[class*="three wide"].column.left-content {
         padding-left: 0;

@@ -111,6 +111,7 @@ export class AddShiftForm extends Component{
               })
               .then(({ data }) => {
                   this.props.closeFunc();
+                  /*
                   console.log('got data', data);
                     var uri = 'http://35.202.222.106/flaskapp//callin/.'
 
@@ -148,7 +149,10 @@ export class AddShiftForm extends Component{
                       }).catch((error) => {
                           console.log('there was an error sending the query', error);
                       });
+                    */
+                })
   }
+
 
 
   formatDays(day){

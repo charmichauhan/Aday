@@ -115,33 +115,36 @@ export class UpdateShiftForm extends Component{
                   console.log('there was an error sending the query', error);
               });
 
-          var uri = 'http://localhost:8080/api/updatedCall'
-          var options = {
-              uri: uri,
-              method: 'POST',
-              json: {data: {
-                  "sec": "QDVPZJk54364gwnviz921",
-                    "workersAssigned": this.props.data.workersAssigned
-                    "newWorkplaceId":  this.state.workplace
-                    "shiftDate": moment(startTime).format("Do, MMMM YYYY"),
-                    "shiftDateOld": this.props.data.startTime.format("Do, MMMM YYYY"),
-                    "shiftLocationOld": this.props.data.workplaceByWorkplaceId.workplaceName,
-                    "shiftRoleId": this.state.position,
-                    "shiftRoleOld": this.props.data.positionByPositionId.positionName,
-                    "shiftAddressOld": this.props.data.workplaceByWorkplaceId.address,
-                    "shiftStartHour":  moment(startTime).format("h:mm a"),
-                    "shiftStartHourOld": this.props.data.startTime.format("h:mm a"),
-                    "shiftEndHour":  moment(endTime).format("h:mm a"),
-                    "shiftEndHourOld": this.props.data.endTime.format("h:mm a"),
-                    "shiftReward": "",
-                    "shiftRewardOld": ""
-              }}
-          };
-          rp(options)
-            .then(function(response) {              
-            }).catch((error) => {
-               console.log('there was an error sending the query for delete cancellation call', error);
-            });
+          // only update employees if shift is less than a week away
+          if ((moment(startTime).diff(moment().format(), 'days')) <=7 ){
+              var uri = 'http://localhost:8080/api/updatedCall'
+              var options = {
+                  uri: uri,
+                  method: 'POST',
+                  json: {data: {
+                      "sec": "QDVPZJk54364gwnviz921",
+                        "workersAssigned": this.props.data.workersAssigned,
+                        "newWorkplaceId":  this.state.workplace,
+                        "shiftDate": moment(startTime).format("Do, MMMM YYYY"),
+                        "shiftDateOld": moment(this.props.data.startTime).format("Do, MMMM YYYY"),
+                        "shiftLocationOld": this.props.data.workplaceByWorkplaceId.workplaceName,
+                        "shiftRoleId": this.state.position,
+                        "shiftRoleOld": this.props.data.positionByPositionId.positionName,
+                        "shiftAddressOld": this.props.data.workplaceByWorkplaceId.address,
+                        "shiftStartHour":  moment(startTime).format("h:mm a"),
+                        "shiftStartHourOld":  moment(this.props.data.startTime).format("h:mm a"),
+                        "shiftEndHour":  moment(endTime).format("h:mm a"),
+                        "shiftEndHourOld":  moment(this.props.data.endTime).format("h:mm a"),
+                        "shiftReward": "",
+                        "shiftRewardOld": ""
+                  }}
+              };
+              rp(options)
+                .then(function(response) {              
+                }).catch((error) => {
+                   console.log('there was an error sending the query for delete cancellation call', error);
+                });
+          }
   }
 
   formatDays(day){

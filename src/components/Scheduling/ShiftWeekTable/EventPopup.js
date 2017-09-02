@@ -45,30 +45,32 @@ class EventPopupComponent extends Component {
                               });
     that.setState({ deleteModalPopped: false });
 
+    // only update employees if shift is less than a week away
+    if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
 
-    var uri = 'http://localhost:8080/api/cancellationCall'
-    
-    var options = {
-        uri: uri,
-        method: 'POST',
-        json: {data: {
-            "sec": "QDVPZJk54364gwnviz921",
-            "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
-            "shiftStartHour": moment(shift.startTime).format("h:mm a"),
-            "shiftEndHour": moment(shift.endTime).format("h:mm a"),
-            "workersAssigned": shift.workersAssigned,
-            "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
-            "workplaceAddress": shift.workplaceByWorkplaceId.address,
-            "position": shift.positionByPositionId.positionName,
-            "brand": shift.positionByPositionId.brandByBrandId.brandName
-        }}
-    };
-    rp(options)
-      .then(function(response) {              
-      }).catch((error) => {
-         console.log('there was an error sending the query for delete cancellation call', error);
-      });
- 
+        var uri = 'http://localhost:8080/api/cancellationCall'
+        
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {data: {
+                "sec": "QDVPZJk54364gwnviz921",
+                "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                "workersAssigned": shift.workersAssigned,
+                "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+                "workplaceAddress": shift.workplaceByWorkplaceId.address,
+                "position": shift.positionByPositionId.positionName,
+                "brand": shift.positionByPositionId.brandByBrandId.brandName
+            }}
+        };
+        rp(options)
+          .then(function(response) {              
+          }).catch((error) => {
+             console.log('there was an error sending the query for delete cancellation call', error);
+          });
+      }
   };
 
   closeEditShiftModal = () => {

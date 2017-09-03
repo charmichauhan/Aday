@@ -28,12 +28,13 @@ function DayCellButton({
   };
 
   return (
-    <div className="shift-modal-day-cell">
-      <button type="button" className={buttonClasses} data-cellId={cellId} disabled={true}
-              onClick={filteredOnClick}>
-        {daySubString}
-        <p style={{  marginTop: '-13%',fontWeight: '500'}} data-cellId={cellId} onClick={filteredOnClick}>
-          {displayMonth} {displayDate}
+    <div className="shift-modal-day-cell" onClick={filteredOnClick} >
+      <button type="button" className={buttonClasses} data-cellId={cellId} disabled={true}>
+        <p data-cellId={cellId} style={{width:'100%', height:'100%'}}>
+            {daySubString}
+          <div style={{ marginTop: '-2', fontWeight: '200'}} >
+            {displayMonth} {displayDate}
+          </div>
         </p>
       </button>
     </div>

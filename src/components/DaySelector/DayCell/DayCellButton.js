@@ -32,9 +32,8 @@ function DayCellButton({
       <button type="button" className={buttonClasses} data-cellId={cellId} disabled={true}>
         <p data-cellId={cellId} style={{width:'100%', height:'100%'}}>
             {daySubString}
-          <div style={{ marginTop: '-2', fontWeight: '200'}} >
+          <br/>
             {displayMonth} {displayDate}
-          </div>
         </p>
       </button>
     </div>

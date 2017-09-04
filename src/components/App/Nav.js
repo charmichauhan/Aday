@@ -24,7 +24,7 @@ class NavComponent extends Component {
     localStorage.setItem("workplaceId", workplaceId);
     localStorage.setItem("isUnion", isUnion );
     this.forceUpdate();
-    this.props.handleChange();
+    this.props.handleChange({ workplaceId });
   };
   logout = () => {
   	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -38,7 +38,7 @@ class NavComponent extends Component {
     localStorage.setItem("isUnion", "");
     document.getElementById("workplace").value = "";
     this.forceUpdate();
-    this.props.handleChange();
+    this.props.handleChange({ brandId });
   };
 
 	render() {

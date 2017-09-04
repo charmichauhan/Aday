@@ -64,3 +64,35 @@ export const timeOffRequestResolvers = {
       }
     }`
 };
+
+export const shiftHistoryResolvers = {
+  shiftHistoryQuery: gql`
+    query ($workplaceId: Uuid!) {
+      allShifthistories (condition: { workplaceId: $workplaceId }) {
+        nodes {
+          workerId
+          positionId
+          workplaceId
+          startTime
+          endTime
+          rating
+          positionName
+          firstName
+          lastName
+          id
+          avatarUrl
+          wage
+          corporationId
+        }
+      }
+    }`,
+  updateJobRatingMutation: gql`
+    mutation ($id: Uuid!, $jobInfo: JobPatch!) {
+      updateJobById (input: { id: $id, jobPatch: $jobInfo }) {
+        job {
+          id
+        }
+      }
+    }
+  `
+};

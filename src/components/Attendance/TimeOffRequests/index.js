@@ -83,7 +83,6 @@ class TimeOffRequests extends Component {
         corporationId: this.state.corporationId
       }
     }).then((res) => {
-      debugger;
       if (res.data && res.data.allTimeOffRequests) this.setState({ allTimeOffRequests: res.data.allTimeOffRequests });
     }).catch(err => console.log(err));
   }

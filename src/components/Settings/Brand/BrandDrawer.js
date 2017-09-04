@@ -7,7 +7,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import Dropzone from 'react-dropzone';
 
 import { closeButton, colors } from '../../styles';
-import CircleButton from '../../helpers/CircleButton/index';
+import CircleButton from '../../helpers/CircleButton';
 
 const initialState = {
   brand: {

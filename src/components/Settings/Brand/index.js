@@ -8,7 +8,7 @@ import { Grid, GridColumn } from 'semantic-ui-react';
 
 import BrandDrawer from './BrandDrawer';
 import { InfoModal } from '../../helpers/Modal';
-import CircleButton from '../../helpers/CircleButton/index';
+import CircleButton from '../../helpers/CircleButton';
 import { colors } from '../../styles';
 
 const styles = {

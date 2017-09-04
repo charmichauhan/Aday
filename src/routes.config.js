@@ -5,16 +5,14 @@ import Home from './components/Home';
 import Schedule from './components/Scheduling';
 import Settings from './components/Settings';
 import Positions from './components/Positions';
-import MyWorkplace from './components/workplace/MyWorkplace'
-import Hiring from './components/Hiring'
+import MyWorkplace from './components/workplace/MyWorkplace';
+import Hiring from './components/Hiring';
 import Template from './components/Template';
-import Team from './components/Team'
+import Team from './components/Team';
+import Certificates from './components/certifications/Certificates';
+import Attendance from './components/Attendance';
+import Login from './components/auth/Login';
 
-
-
-import Certificates from './components/certifications/Certificates'
-import AttendanceRequests from './components/attendance/AttendanceRequests'
-import Login from './components/auth/Login'
 const routes = [
 	{
 		component: Root,
@@ -91,9 +89,8 @@ const routes = [
 						component: Certificates
 					},
 					{
-						path: '/attendance/requests',
-						exact: true,
-						component: AttendanceRequests
+						path: '/attendance',
+						component: Attendance
 					},
 					{
 						path: '/settings',

@@ -20,7 +20,8 @@ const styles = {
     root: {
         borderCollapse: 'separate',
         borderSpacing: '8px 8px',
-        marginBottom:0
+        marginBottom: 10,
+        maxWidth: 1750,
     },
     tableFooter: {
         paddingLeft:'0px',
@@ -33,7 +34,7 @@ const styles = {
     },
     footerStyle: {
         position:'fixed',
-        bottom:0,
+        bottom:10,
         width: 'calc(100% - 290px)',
         boxShadow:'0 1px 2px 0 rgba(74, 74, 74, 0.5)'
     }
@@ -244,11 +245,11 @@ const allUsers = gql`
         }
     }
     `
-    
+
 ///
 const ShiftWeekTable = compose(
 graphql(allShiftsByWeeksPublished, {
-   options: (ownProps) => ({ 
+   options: (ownProps) => ({
      variables: {
        brandid: "5a14782b-c220-4927-b059-f4f22d01c230",
        day: moment(ownProps.date)

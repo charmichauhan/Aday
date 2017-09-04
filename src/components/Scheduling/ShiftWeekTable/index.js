@@ -55,10 +55,11 @@ const styles = {
         borderCollapse: 'separate',
         borderSpacing: '8px 8px',
         paddingLeft:'0px',
-        marginBottom:0
+        marginBottom: 10,
+        maxWidth: 1750,
     },
     tableFooter: {
-        padding:0
+        padding:0,
     },
     headerStyle: {
         padding:0
@@ -70,7 +71,7 @@ const styles = {
     },
     footerStyle: {
         position: 'fixed',
-        bottom: 0,
+        bottom: 10,
         width:'calc(100% - 320px)',
         boxShadow:'0 1px 2px 0 rgba(74, 74, 74, 0.5)'
     }
@@ -283,7 +284,7 @@ class ShiftWeekTableComponent extends Week {
       let weeklyHoursBooked = 0;
       let weeklyTotalHoursBooked = 0;
 
-      // calculating total hours 
+      // calculating total hours
       if (this.state.calendarView=="job"){
         Object.keys(groupedData).forEach((shift,index) => {
             let totalHours=0;
@@ -320,9 +321,9 @@ class ShiftWeekTableComponent extends Week {
                 if (shiftData[data]['userFirstName'] == "Open" && shiftData[data]['userLastName'] == "Shifts"){
                   let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
                   let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length
-                  let openShift =  shiftData[data]['workersRequestedNum'] - ( workerAssigned+ workerInvited ) 
+                  let openShift =  shiftData[data]['workersRequestedNum'] - ( workerAssigned+ workerInvited )
                   totalHours += shiftHours*openShift;
-                } else{ 
+                } else{
                 totalHours += shiftHours;
                 totalBookedHours += shiftHours;
               }

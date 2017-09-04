@@ -324,15 +324,35 @@ img.list-left-image {
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
   color: #FFFFFF;
 }
+
 .profile-drawer.drawer-section .grid-positions, .profile-drawer .grid-positions .grid  {
   display: block;
   width: 100%;
   margin: 0 auto;
 }
 
+.view-profile-btn button {
+  height: 30px;
+  width: 140px;
+  border-radius: 4px;
+  background-color: #0022A1;
+  color: #FFFFFF;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+.view-profile-btn-text {
+    height: 16px;
+    width: 72px;
+    font-family: Lato;
+    font-size: 16px;
+    line-height: 16px;
+    text-align: center;
+}
+
 .profile-drawer.drawer-section .block-limit-btn {
   margin-top: 20px;
 }
+
 .profile-drawer.drawer-section .block-limit-btn button {
   height: 40px;
   width: 200px;

@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
 import TeamMemberCard from './../TeamMemberCard'
-import { gql,graphql,compose } from 'react-apollo';
-import { Image, Button, Icon, Card, Header, Rating } from 'semantic-ui-react'
+import { gql, graphql } from 'react-apollo';
+import { Card } from 'semantic-ui-react'
 
 const initialState = {
 	//stub
 };
 
+/**
+ * The TeamMembersComponent lists all team members that work at the workplace and brand combination chosen on the side menu.
+ * @author Riya Shah
+ */
 class TeamMembersComponent extends Component {
 	constructor(props) {
 		super(props);
@@ -35,21 +39,28 @@ class TeamMembersComponent extends Component {
 		this.setState({ open: true, drawerBrand: brand });
 	};
 
+	/**
+	 * @param {string} allTeamMembers - the graphql query used to retrieve team members
+	 * @return {TeamMemberCard} cards of team members for the current workplace + brand
+	 */
 	render() {
-    if (this.props.allTeamMembers.loading) {
-      return (<div>Loading</div>)
-    }
-    let teamMembers = this.props.allTeamMembers && this.props.allTeamMembers.allEmployees.edges;
-    let mappedTeamMembers = [];
-    if(localStorage.getItem("workplaceId")){
-    	teamMembers.map((value , i) => {
-			if ( value['node']['primaryWorkplace'] == localStorage.getItem("workplaceId") ) {
-				mappedTeamMembers.push(value)
-			}
-    	})
-    } else {
-		mappedTeamMembers = teamMembers;
-    }
+	    if(this.props.allTeamMembers.loading) {
+	      return (<div>Loading</div>)
+	    }
+
+	    let teamMembers = this.props.allTeamMembers && this.props.allTeamMembers.allEmployees.edges;
+
+	    let mappedTeamMembers = [];
+
+	    if(localStorage.getItem("workplaceId")){
+	    	teamMembers.map((value , i) => {
+				if ( value['node']['primaryWorkplace'] == localStorage.getItem("workplaceId") ) {
+					mappedTeamMembers.push(value)
+				}
+	    	})
+	    } else {
+			mappedTeamMembers = teamMembers;
+	    }
 
 		return (
 			<div>

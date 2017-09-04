@@ -13,26 +13,31 @@ export default class TeamMemberCard extends Component {
       viewResumeDrawer:false
     });
   }
+
   handleDrawerOpen = () => {
     this.setState({viewProfileDrawer:true});
   };
+
   handleCloseDrawer = () => {
     this.setState({viewProfileDrawer:false});
   };
+
   openResumeDrawer = () => {
     this.setState({viewProfileDrawer:false,viewResumeDrawer:true})
   };
+
   backProfileDrawer = () => {
     this.setState({viewProfileDrawer:true,viewResumeDrawer:false})
   };
+
 	render() {
 	  const {
-	  firstName,
-      lastName,
-      userEmail,
-			avatarUrl,
-      userPhoneNumber
-		} = this.props.member;
+    	  firstName,
+          lastName,
+          userEmail,
+          avatarUrl,
+          userPhoneNumber
+	} = this.props.member;
 
 		return (
 		    <Card>
@@ -67,7 +72,9 @@ export default class TeamMemberCard extends Component {
 							<br/>
 							</font>
 							<br/>
-							<Button color='blue' onClick={this.handleDrawerOpen}>View Profile</Button>
+                            <div className="view-profile-btn text-center">
+                              <button className="btn view-profile-btn-text btn-default" onClick={this.handleDrawerOpen}>View Profile</button>
+                            </div>
 							<br/>
 						</center>
 					</Card.Content>

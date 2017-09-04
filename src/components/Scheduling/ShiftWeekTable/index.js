@@ -72,7 +72,9 @@ const styles = {
     footerStyle: {
         position: 'fixed',
         bottom: 10,
+        /*
         width:'calc(100% - 320px)',
+        */
         boxShadow:'0 1px 2px 0 rgba(74, 74, 74, 0.5)'
     }
 };

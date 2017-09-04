@@ -152,6 +152,7 @@ export class AddShiftForm extends Component{
   }
 
   handleSave(){
+      console.log()
       this.setState({loading: true})
       const days = Object.keys(this.state.shiftDaysSelected)
       const _this = this
@@ -280,7 +281,7 @@ export class AddShiftForm extends Component{
             </div>
             <div style={{marginTop:'15px', height: '80px', width: '100%'}} >
               <p className="shift-form-title">UNPAID-BREAK - <span style={{ color:'RED' }}>OPTIONAL</span></p>
-              <Input type="number" min="0" fluid placeholder="0 MINUTES" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={this.onUnpaidBreak} />
+              <Input type="number" min="0" fluid placeholder="ENTER TIME IN MINUTES" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} onChange={this.onUnpaidBreak} />
             </div>
             <div style={{marginTop:'10px', height: '80px', width: '100%'}} >
               <p className="shift-form-title">MANAGER - <span style={{ color:'RED' }}>OPTIONAL</span></p>

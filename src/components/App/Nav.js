@@ -16,11 +16,15 @@ class NavComponent extends Component {
   constructor(props){
     super(props);
   }
-  changeWorkplace = () => {
-    let workplaceId = document.getElementById("workplace").value;
+
+  changeWorkplace = (e) => {
+    let workplace = e.target.value.split(",")
+    let workplaceId = workplace[0];
+    let isUnion = workplace[1];
     localStorage.setItem("workplaceId", workplaceId);
+    localStorage.setItem("isUnion", isUnion );
     this.forceUpdate();
-    this.props.handleChange();
+    this.props.handleChange({ workplaceId });
   };
   logout = () => {
   	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -31,9 +35,10 @@ class NavComponent extends Component {
     let brandId = document.getElementById("brand").value;
     localStorage.setItem("brandId", brandId);
     localStorage.setItem("workplaceId", "");
+    localStorage.setItem("isUnion", "");
     document.getElementById("workplace").value = "";
     this.forceUpdate();
-    this.props.handleChange();
+    this.props.handleChange({ brandId });
   };
 
 	render() {
@@ -47,10 +52,11 @@ class NavComponent extends Component {
         }
     const brandId = localStorage.getItem("brandId");
     const workplaceId = localStorage.getItem("workplaceId");
+    const isUnion = localStorage.getItem("isUnion");
     const brandLogo = "";
 		const brands = this.props.allBrands.allBrands.nodes;
     const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
-    console.log(brands);
+    console.log(filteredWorkplaces);
     return (
 			<div className="left-menu_item">
 				{/*<EmergencyShiftButton/>*/}
@@ -67,11 +73,11 @@ class NavComponent extends Component {
 							</select>
 						</Menu.Header>
 						<Menu.Header>
-							<select onChange={this.changeWorkplace} id="workplace" value={workplaceId}>
+							<select onChange={this.changeWorkplace} id="workplace" value={workplaceId + "," + isUnion }>
 								<option value="">CHOOSE WORKPLACE</option>
                 {
                   filteredWorkplaces.map((v,i)=>(
-											<option value={v.id} key={i}> { v.workplaceName } </option>
+											<option value={ v.id + "," + v.isUnion } key={i}> { v.workplaceName } </option>
                     )
                   )}
 							</select>
@@ -86,7 +92,7 @@ class NavComponent extends Component {
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
 							<Menu.Item className="menu-item-list" name="schedule" as={NavLink} to="/schedule/team" active={this.props.isemployeeview}><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
-							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance/requests"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
+							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/team"><i><Image src="/images/Sidebar/team-member.png"/></i><div className="menu_item_left"><span>TEAM MEMBERS</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/hiring"><i><Image src="/images/Sidebar/hiring.png"/></i><div className="menu_item_left"><span>HIRING</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/positions"><i><Image src="/images/Sidebar/positions.png"/></i><div className="menu_item_left"><span>POSITIONS</span></div></Menu.Item>
@@ -110,7 +116,8 @@ const allWorkplaces = gql`
       nodes{
         workplaceName,
         id,
-        brandId
+        brandId,
+        isUnion
       }
     }
 }

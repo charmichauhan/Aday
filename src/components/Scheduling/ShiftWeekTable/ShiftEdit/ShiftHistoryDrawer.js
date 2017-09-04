@@ -139,6 +139,7 @@ class ShiftHistoryDrawer extends Component {
        else {
         market.worker = unassignedTeamMember;
       }
+      market.rules = (market.marketRulesByMarketId && market.marketRulesByMarketId.nodes) || [];
       market.showDetails = false;
       market.notes = [
         {

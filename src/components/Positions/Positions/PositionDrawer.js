@@ -21,11 +21,11 @@ const initialState = {
       positionName:"",
       positionDescription:"",
       positionIconUrl:"",
-      minimumAge:"",
+      minimumAge:0,
       minimumLiftWeight:"",
-      traineeHours:"",
+      traineeHours: 0,
+      partTimeWage: 0,
       trainingUrl:"",
-      trainingTracks:"",
       workplaces:"",
       teamMembers:[],
       exchangeLevel:"CORPORATION_BRAND_WIDE",
@@ -86,18 +86,30 @@ class DrawerHelper extends Component {
   }
   constructor(props) {
     super(props);
+    var position = cloneDeep(props.position || initialState.position);
     this.state = {
-      position: cloneDeep(props.position || initialState.position),
+      position: position,
       ageOptions : cloneDeep(initialState.ageOptions),
       weightOptions : cloneDeep(initialState.weightOptions),
-      teamMembers:[]
+      teamMembers:[],
+      permission: !(localStorage.getItem("workplaceId") != "" &&
+                    props.mode == "edit" &&
+                    props.position.exchangeLevel != "WORKPLACE_SPECIFIC")
     };
     // console.log(this.state.ageOptions,this.state.weightOptions);
   }
 
   componentWillReceiveProps(nextProps) {
-    const position = cloneDeep(nextProps.position || initialState.position);
-    this.setState({ position });
+    var position = cloneDeep(nextProps.position || initialState.position);
+    let permission = !(localStorage.getItem("workplaceId") != "" &&
+                     nextProps.mode == "edit" &&
+                     nextProps.position.exchangeLevel != "WORKPLACE_SPECIFIC");
+    for (var key in position) {
+      if (position[key] == null){
+        position[key] = initialState.position[key];
+      }
+    }
+    this.setState({ position, permission });
     // console.log(nextProps.data.allEmployees.nodes);
     /*
     const options=[];
@@ -129,19 +141,27 @@ class DrawerHelper extends Component {
 
   handleChange = (event) => {
     const { name, value } = event.target;
-    const position = Object.assign(this.state.position, { [name]: value });
-    this.setState({ position });
+    if (this.state.permission) {
+      const position = Object.assign(this.state.position, { [name]: value });
+      this.setState({ position });
+    }
   };
   handleDropdownChange = (event,data) => {
     const { name, value } = data;
-    const position = Object.assign(this.state.position, { [name]: value });
-    this.setState({ position });
+    if (this.state.permission) {
+      const position = Object.assign(this.state.position, { [name]: value });
+      this.setState({ position });
+    }
   };
+  /*
   handleTeamMembers=(e, { value })=>{
     const position = Object.assign(this.state.position, { teamMembers: value });
     this.setState({ position });
     //console.log(position.teamMembers);
   }
+  */
+
+  /* - phasing out opportunity wage
   handleWageChange=(event)=>{
     const { name, value } = event.target;
     //console.log(name,value);
@@ -149,6 +169,7 @@ class DrawerHelper extends Component {
     const position=this.state.position;
     this.setState({ position });
   }
+  */
 
   togglePublic=(dataValue)=>{
     this.state.position.opportunitiesByPositionId.nodes[0].isPublic= dataValue.value;
@@ -157,13 +178,14 @@ class DrawerHelper extends Component {
     //console.log(dataValue,position);
   }
 
+  /* - Plan to use left dropdown to determine exchange level instead so this will be deleted
   toggleExchangeLevel=(dataValue)=>{
     const cur = this.state.position.exchangeLevel;
     const position = Object.assign(this.state.position, { exchangeLevel: cur == "CORPORATION_BRAND_WIDE" ?
                                                           "WORKPLACE_SPECIFIC": "CORPORATION_BRAND_WIDE"});
     this.setState({ position });
   }
-
+  */
   render() {
     const {
       position = {},
@@ -191,13 +213,13 @@ class DrawerHelper extends Component {
     }
     */
     // console.log(this.state.teamMembers);
-
+    console.log(DrawerPosition);
     const formValid=DrawerPosition.positionName != "" &&
                     DrawerPosition.positionDescription != "" &&
                     DrawerPosition.minimiumAge != "" &&
-                    DrawerPosition.minimumLeftWeight != "" &&
-                    DrawerPosition.traineeHours != "" && DrawerPosition.traineeHours >= 0 &&
-                    DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage > 0 &&
+                    DrawerPosition.minimumLiftWeight != "" &&
+                    DrawerPosition.partTimeWage !== "" && DrawerPosition.partTimeWage >= 0 &&
+                    DrawerPosition.traineeHours !== "" && DrawerPosition.traineeHours >= 0 &&
                     !(this.props.mode == "create" && localStorage.getItem("workplaceId") != "");
     return (
       <Drawer
@@ -277,6 +299,36 @@ class DrawerHelper extends Component {
               </Grid.Column>
             </Grid>
           </div>
+          <div className="position-row">
+            <p className="position-label">PART-TIME WAGE</p>
+            <Input
+              type="number"
+              fluid style={style.input}
+              value={DrawerPosition.partTimeWage}
+              name="partTimeWage"
+              onChange={this.handleChange}
+              label={{ basic: true, content: '$ PER HOUR' }}
+              labelPosition='right'/>
+          </div>
+          {localStorage.getItem("workplaceId") != "" &&
+             <div  className="position-row">
+               <div className="position-label"> ACCEPT APPLICATIONS? </div>
+               <ToggleButton formCallBack={ this.togglePublic } initial={true}/>
+             </div>
+             /*
+             <div  className="position-row" style={{marginTop: 75}}>
+               <p className="position-label">NEW APPLICANT WAGE</p>
+               <Input
+                type="number"
+                fluid style={style.input}
+                value={DrawerPosition.opportunitiesByPositionId.nodes.length && DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage}
+                name="opportunityWage"
+                onChange={this.handleWageChange}
+                label={{ basic: true, content: '$ PER HOUR' }}
+                labelPosition='right' />
+             </div>
+             */
+          }
           {/*
           <div>
           <p className="position-label">TEAM MEMBERS</p>
@@ -299,31 +351,24 @@ class DrawerHelper extends Component {
             </div>
           </div>
           */}
-          {this.props.mode == "create" || localStorage.getItem("workplaceId") != "" ?
-           <div>
-             {this.props.mode == "create" ?
-               (localStorage.getItem("workplaceId") == "" ?
-                <div> *Creating Corporation-Brand Wide Position* </div>:
-                <div style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
-                  Workplace-Specific Positions Coming Soon,
-                  (currently can only create corporation-brand wide positions
-                  by deselecting workplace on sidebar) </div>) :
-               <div> *Below Edits Apply Only to Selected Workplace* </div>}
-              <div  className="position-row" style={{marginTop: 75}}>
-                <p className="position-label">NEW APPLICANT WAGE</p>
-                <Input
-                  type="number"
-                  fluid style={style.input}
-                  value={DrawerPosition.opportunitiesByPositionId.nodes.length && DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage}
-                  name="opportunityWage"
-                  onChange={this.handleWageChange}
-                  label={{ basic: true, content: '$ PER HOUR' }}
-                  labelPosition='right'
-                   />
-              </div>
-            </div> :
-            <div> Corporation-Brand Wide Opportunity Edits Coming Soon,
-                  (currently must select individual workplaces in sidebar to edit wages) </div>
+          {(this.props.mode == "create" && localStorage.getItem("workplaceId") != "") &&
+            <div className="position-row" style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
+              Workplace-Specific Positions Coming Soon,
+              (currently can only create corporation-brand wide positions
+              by deselecting workplace on sidebar)
+            </div>
+          }
+          {(this.props.mode == "create" && localStorage.getItem("workplaceId") == "") &&
+            <div className="position-row"> *Creating Corporation-Brand Wide Position* </div>
+          }
+          {(this.props.mode == "edit" && localStorage.getItem("workplaceId") == "") &&
+            <div className="position-row"> To Edit Opportunity Settings, Select Workplace on Sidebar </div>
+          }
+          {!this.state.permission &&
+            <div className="position-row" style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
+              Cannot Edit Corporation-Brand Wide Position Details Under Specific Workplace,
+              (to edit, deselect workplace on sidebar)
+            </div>
           }
           <div  className="position-row" style={{textAlign:"center",marginTop:"20px"}} >
               <CircleButton

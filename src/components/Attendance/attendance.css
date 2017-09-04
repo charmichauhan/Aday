@@ -1,0 +1,73 @@
+.font300 {
+  font-weight: 300;
+}
+
+.font600 {
+  font-weight: 600;
+}
+
+section.attendance {
+  font-family: "Roboto Condensed";
+}
+
+section.attendance .title-box .rectangle {
+  color: #4A4A4A;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+section.attendance .content {
+  padding-top: 20px;
+}
+
+section.attendance .content .content-row {
+  margin-top: 25px;
+  padding-top: 12px;
+}
+
+section.attendance .content-row .ui.grid {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 5px;
+}
+
+section.attendance .content-row .ui.grid .column {
+  display: table;
+  padding: 10px;
+  text-align: center;
+  margin-top: auto;
+  height: 100%;
+}
+
+section.attendance .content-row .ui.grid .column .wrapper-element {
+  display: table-cell;
+  vertical-align: middle;
+  height: 100%;
+}
+
+section.attendance .content-row .ui.grid .column .display-inline {
+  display: inline-block;
+}
+
+section.attendance .content-row .ui.grid .column img.display-inline {
+  margin-right: 20px;
+}
+
+section.attendance .content-row .ui.grid .column span {
+  color: #4A4A4A;
+  font-size: 18px;
+}
+
+section.attendance .content-row .ui.grid .column p {
+  font-size: 11px;
+  color: #999999;
+}
+
+section.attendance .content-row .ui.grid .column .rating .fa {
+  margin-right: 4px;
+}
+
+section.attendance .modal-wrapper .confirm-popup-body {
+  color: #4A4A4A;
+  font-size: 24px;
+}

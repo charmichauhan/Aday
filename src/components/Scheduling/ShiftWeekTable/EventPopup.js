@@ -82,13 +82,15 @@ class EventPopupComponent extends Component {
     console.log('onLocationClick');
   };
 
+
+
   render() {
     let { data, users }= this.props;
     let pastDate = moment().diff(data.startTime) > 0;
-    let startTime = moment(data.startTime).format('hh:mm A');
-    let endTime = moment(data.endTime).format('hh:mm A');
-    let h = moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('HH');
-    let m = moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('mm');
+    let startTime = moment(data.startTime).format('h:mm A');
+    let endTime = moment(data.endTime).format('h:mm A');
+    let h = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('HH');
+    let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
       { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
     if (data.workersAssigned == null) {
@@ -98,47 +100,53 @@ class EventPopupComponent extends Component {
       data.workersInvited = [];
     }
     this.openShift = data.workersRequestedNum - (data.workersAssigned.length + data.workersInvited.length );
+
     return (
-      <div className="day-item hov">
+        <div className="day-item hov">
+
         <div className="start-time">
-          <span className="fa fa-clock-o" />
-          <p className="date-time"> {startTime.replace('M', '')} {endTime.replace('M', '')}</p>
-          <p className="duration">{h} HR&thinsp; {m}MIN</p>
+            <span className="fa fa-clock-o" />
+            <p className="date-time"> {startTime.replace('M', '')}  <br /> {endTime.replace('M', '')}</p>
+            <p className="duration">{h} HRS & &thinsp; <br /> {m} MINS</p>
         </div>
-        {this.props.view=="job"?
-          <div className="location">
-                    <span className="fa fa-map-marker mr5" aria-hidden="true">
+
+        {this.props.view=="job"
+            ?<div className="location">
+                <span className="fa fa-map-marker" aria-hidden="true">
+                    <a onClick={() => this.onLocationClick()} />
+                </span>
+                <span>
+                    {data.workplaceByWorkplaceId.workplaceName}
+                </span>
+            </div>
+            :<div className="location">
+                <span className="jobTypeIcon"><img src="/assets/Icons/cashier.png" alt="jobtype"/></span>
+                <span className="jobType">{data.positionByPositionId.positionName}</span>
+            </div>
+            }
+
+        {this.props.view=="job"
+            ?<div className="day-item-title">
+                    {this.openShift > 0 && <span className="box-title openshift">{this.openShift}</span>}
+                    {data.workersInvited.length > 0 &&
+                    <span className="box-title pendingshift">{data.workersInvited.length}</span>
+                    }{data.workersAssigned.length > 0 &&
+                    <span className="box-title filledshift">{data.workersAssigned.length}</span>}
+            </div>
+            :<div>
+            {/*
+                <div className="location">
+                     <span className="fa fa-map-marker mr5" aria-hidden="true">
                         <a onClick={() => this.onLocationClick()} />
-                    </span>
-            <span>{data.workplaceByWorkplaceId.workplaceName}</span>
-          </div>:
-          <div className="location">
-            <span><img src="/assets/Icons/cashier.png" alt="jobtype"/></span>
-            <span className="jobType">{data.positionByPositionId.positionName}</span>
-          </div>
-        }
-        {
-          this.props.view=="job"?
-            <div className="day-item-title">
-              {this.openShift > 0 && <span className="box-title openshift">{this.openShift}</span>}
-              {data.workersInvited.length > 0 &&
-              <span className="box-title pendingshift">{data.workersInvited.length}</span>}
-              {data.workersAssigned.length > 0 &&
-              <span className="box-title filledshift">{data.workersAssigned.length}</span>}
-            </div>:
-            <div>
-            <div className="location">
-                    <span className="fa fa-map-marker mr5" aria-hidden="true">
-                        <a onClick={() => this.onLocationClick()} />
-                    </span>
-              <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
-            </div>
-            <div className="day-item-title">
-              {data.userFirstName == "Open" && data.userLastName == "Shifts" && this.openShift > 0
-                  && <span className="box-title openshift">{this.openShift}</span>}
-            </div>
-            </div>
-        }
+                     </span>
+                     <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
+                 </div> */}
+                 <div className="day-item-title">
+                      {data.userFirstName == "Open" && data.userLastName == "Shifts" && this.openShift > 0
+                          && <span className="box-title openshift">{this.openShift}</span>}
+                 </div>
+             </div>
+         }
         <Modal
           title="Confirm"
           isOpen={this.state.deleteModalPopped}

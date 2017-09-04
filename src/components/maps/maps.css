@@ -1,5 +1,57 @@
 .workplace-map{
-	height: 150px;
-	background-color: #f4f4f4;
-	border: 1px solid #eee;
+	background-color: 'white';
+	float: left;
+	height: 363.63px;
+	width: 343.91px;
+	border-radius: 2px;
+	background-color: #FFFFFF;
+	box-shadow: 0 1px 2px 0 rgba(74,74,74,0.5);
+}
+
+.map-element {
+	box-sizing: border-box;
+	height: 100%;
+	border: 1px solid #979797;}
+
+.address {
+	height: 40px;
+	width: 324.48px;
+	color: #4A4A4A;
+	font-family: Lato;
+	font-size: 16px;
+	line-height: 20px;
+}
+
+.btn-160-primary-default {
+	height: 38.86px;
+	width: 194.3px;
+	border-radius: 2px;
+	background-color: #0022A1;
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+.button {
+    background-color: #0022A1; /*Aday Blue*/
+	border-radius: 2px;
+	margin-left: 10px;
+	margin-top: 5px;
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+    color: white;
+    padding: 8px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.btn-text {
+	height: 16px;
+	width: 110px;
+	color: #FFFFFF;
+	font-family: "Roboto Condensed";
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 16px;
+	text-align: center;
+	letter-spacing: 1.2px;
 }

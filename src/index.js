@@ -18,7 +18,6 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
 const networkInterface =  createNetworkInterface({ uri: 'https://forward-chess-157313.appspot.com/graphql'})
-localStorage.clear();
 
 networkInterface.use([{
    applyMiddleware(req, next) {
@@ -31,8 +30,7 @@ networkInterface.use([{
     if(token) {
       token = token.split(';')[0]
       req.options.headers.authorization = `Bearer ${token}`;
-    }
-    if (token == null ) {
+    } else {
        req.options.headers = {};
     }
 

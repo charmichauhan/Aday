@@ -5,7 +5,7 @@ import { Image } from 'semantic-ui-react';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { closeButton } from '../../styles';
-import CircleButton from '../../helpers/CircleButton/index';
+import CircleButton from '../../helpers/CircleButton';
 
 class DrawerHelper extends Component {
 

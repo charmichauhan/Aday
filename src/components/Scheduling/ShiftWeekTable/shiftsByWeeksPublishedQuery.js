@@ -41,6 +41,13 @@ const allShiftsByWeeksPublished = gql`
               isEmailed
               isPhoneAnswered
               workerResponse
+              marketRulesByMarketId {
+                nodes {
+                  ruleByRuleId {
+                    ruleName
+                  }
+                }
+              }
             }
           }
         }

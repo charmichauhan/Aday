@@ -51,7 +51,7 @@ export default class Modal extends Component {
       </div>
     </div>);
     return (
-      <div>
+      <div className="modal-wrapper">
         <Dialog
           titleStyle={style.titleStyle}
           contentStyle={style.contentStyle}

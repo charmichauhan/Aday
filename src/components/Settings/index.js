@@ -136,7 +136,7 @@ class Settings extends Component {
       notificationType: '',
       notificationMessage: ''
     });
-  }
+  };
 
   render() {
     const { notify, notificationMessage, notificationType } = this.state;

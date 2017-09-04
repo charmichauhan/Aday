@@ -36,7 +36,7 @@ class TimeAttendanceTable extends Component {
 		).then(this.onCloseLoading);
 		this.setState({showLoading: true});
 	}
-	render() {
+	  render() {
 		return (
 			<Table singleLine compact size="small">
 				<Table.Header>

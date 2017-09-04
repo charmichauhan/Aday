@@ -21,8 +21,9 @@ class AppComponent extends Component {
       this.setState({isEmployeeview: !this.state.isEmployeeview})
     }
   };
-  handleChange = () => {
+  handleChange = (data) => {
     this.forceUpdate();
+    if (data) this.setState({ ...data });
   };
   render(){
     if (this.props.data.loading) {

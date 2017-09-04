@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import { List, ListItem } from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import Edit from 'material-ui/svg-icons/image/edit';
 import Delete from 'material-ui/svg-icons/action/delete';
 import { Grid, GridColumn } from 'semantic-ui-react';
 
 import BrandDrawer from './BrandDrawer';
-import Modal from '../../helpers/Modal';
-import CircleButton from '../../helpers/CircleButton/index';
+import { InfoModal } from '../../helpers/Modal';
+import CircleButton from '../../helpers/CircleButton';
 import { colors } from '../../styles';
 
 const styles = {
@@ -22,7 +23,8 @@ const styles = {
 
 const initialState = {
   open: false,
-  openDeleteModal: false
+  openDeleteModal: false,
+  openInfoModal: false
 };
 
 export default class Brand extends Component {
@@ -33,13 +35,24 @@ export default class Brand extends Component {
 
   getDeleteActions = () => {
     return [
-      { type: 'white', title: 'Cancel', handleClick: this.closeModal, image: false },
-      { type: 'red', title: 'Delete Brand', handleClick: this.handleDelete, image: '/images/modal/close.png' }
+      <RaisedButton label="NO" labelColor="#FCDDDD" backgroundColor={colors.primaryRed} onClick={this.closeModal} />,
+      <RaisedButton label="YES" labelColor="#FCDDDD" backgroundColor={colors.primaryGreen} onClick={this.handleDelete} />
     ];
   };
 
-  handleDeleteClick = (id) => {
-    this.setState({ openDeleteModal: true, toDeleteBrand: id });
+  getInfoActions = () => {
+    return [
+      <RaisedButton label="OK" backgroundColor={colors.primaryGreen} onClick={this.closeModal} />
+    ];
+  };
+
+  handleDeleteClick = ({ id, brandName }, isInfo) => {
+    if (isInfo) {
+      this.setState({ openInfoModal: true, toDeleteBrand: id, toDeleteBrandName: brandName });
+    }
+    else {
+      this.setState({ openDeleteModal: true, toDeleteBrand: id, toDeleteBrandName: brandName });
+    }
   };
 
   handleDelete = () => {
@@ -53,7 +66,7 @@ export default class Brand extends Component {
   };
 
   closeModal = () => {
-    this.setState({ openDeleteModal: false });
+    this.setState({ openDeleteModal: false, openInfoModal: false });
   };
 
   closeDrawer = (event) => {
@@ -85,7 +98,7 @@ export default class Brand extends Component {
                   <IconButton style={styles.actionButtons} onClick={() => this.openBrandDrawer(brand)}>
                     <Edit color={colors.primaryActionButtons} />
                   </IconButton>
-                  <IconButton style={styles.actionButtons} onClick={() => this.handleDeleteClick(brand.id)}>
+                  <IconButton style={styles.actionButtons} onClick={() => this.handleDeleteClick(brand, brand.workplaces && !!brand.workplaces.length)}>
                     <Delete color={colors.primaryActionButtons} />
                   </IconButton>
                 </ListItem>
@@ -99,12 +112,19 @@ export default class Brand extends Component {
           brand={this.state.drawerBrand}
           handleSubmit={this.handleDrawerSubmit}
           closeDrawer={this.closeDrawer} />
-        <Modal
-          title="Confirm Delete"
+        <InfoModal
+          title="Delete Brand"
           isOpen={this.state.openDeleteModal}
-          message="Are you sure that you want to delete this brand?"
-          action={this.getDeleteActions()}
-          closeAction={this.closeModal}
+          message={`Are you sure that you want to delete the ${this.state.toDeleteBrandName} brand?`}
+          actions={this.getDeleteActions()}
+          handleClickOutside={this.closeModal}
+        />
+        <InfoModal
+          title="Warning"
+          isOpen={this.state.openInfoModal}
+          message="Before deleting a brand, you must delete all associated workplaces."
+          actions={this.getInfoActions()}
+          handleClickOutside={this.closeModal}
         />
       </div>
     )

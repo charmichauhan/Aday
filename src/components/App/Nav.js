@@ -24,7 +24,7 @@ class NavComponent extends Component {
     localStorage.setItem("workplaceId", workplaceId);
     localStorage.setItem("isUnion", isUnion );
     this.forceUpdate();
-    this.props.handleChange();
+    this.props.handleChange({ workplaceId });
   };
   logout = () => {
   	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -38,7 +38,7 @@ class NavComponent extends Component {
     localStorage.setItem("isUnion", "");
     document.getElementById("workplace").value = "";
     this.forceUpdate();
-    this.props.handleChange();
+    this.props.handleChange({ brandId });
   };
 
 	render() {
@@ -92,9 +92,9 @@ class NavComponent extends Component {
 					<Menu.Item className="menu-item">
 						<Menu.Menu>
 							<Menu.Item className="menu-item-list" name="schedule" as={NavLink} to="/schedule/team" active={this.props.isemployeeview}><i><Image src="/images/Sidebar/schedule.png"/></i><div className="menu_item_left"><span>SCHEDULE</span></div></Menu.Item>
-							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance/requests"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
+							<Menu.Item className="menu-item-list" as={NavLink} to="/attendance"><i><Image src="/images/Sidebar/time-attendance.png"/></i><div className="menu_item_left"><span>TIME & ATTENDANCE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/team"><i><Image src="/images/Sidebar/team-member.png"/></i><div className="menu_item_left"><span>TEAM MEMBERS</span></div></Menu.Item>
-							<Menu.Item className="menu-item-list" as={NavLink} to="/hiring"><i><Image src="/images/Sidebar/hiring.png"/></i><div className="menu_item_left"><span>HIRING</span></div></Menu.Item>
+							<Menu.Item className="menu-item-list" as={NavLink} to="/hiring"><i><Image src="/images/Sidebar/hiring.png"/></i><div className="menu_item_left"><span>CROSSTRAINING</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/positions"><i><Image src="/images/Sidebar/positions.png"/></i><div className="menu_item_left"><span>POSITIONS</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/workplaces/mine"><i><Image src="/images/Sidebar/my-workplace.png"/></i><div className="menu_item_left"><span>MY WORKPLACE</span></div></Menu.Item>
 							<Menu.Item className="menu-item-list" as={NavLink} to="/settings"><i><Image src="/images/Sidebar/settings.png"/></i><div className="menu_item_left"><span>SETTINGS</span></div></Menu.Item>

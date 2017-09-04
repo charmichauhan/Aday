@@ -27,7 +27,9 @@ const styles = {
     },
     root: {
         borderCollapse: 'separate',
-        borderSpacing: '8px 8px'
+        borderSpacing: '8px 8px',
+        marginBottom: 10,
+        maxWidth: 1750,
     },
     tableFooter: {
         paddingLeft:'0px',
@@ -40,7 +42,7 @@ const styles = {
     },
     footerStyle: {
         position:'fixed',
-        bottom:0,
+        bottom:10,
         width: 'calc(100% - 290px)',
         boxShadow:'0 1px 2px 0 rgba(74, 74, 74, 0.5)'
     }

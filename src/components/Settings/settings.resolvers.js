@@ -32,7 +32,7 @@ export const personalResolvers = {
 export const workplaceResolvers = {
   allWorkplacesQuery: gql`
     query allWorkplaces ($corporationId: Uuid!) {
-      allWorkplaces (condition: { corporationId: $corporationId }) {
+      allWorkplaces (condition: { corporationId: $corporationId, isActive: true }) {
         edges {
           node {
             id
@@ -40,12 +40,20 @@ export const workplaceResolvers = {
             brandId
             address
             isActive
-            workplaceImageUrl
             address
+            dateActivated
+            dateDeactivated
+            workplaceImageUrl
             brandByBrandId {
               id
               brandName
               brandIconUrl
+            }
+            shiftsByWorkplaceId {
+              nodes {
+                id
+                startTime
+              }
             }
           }
         }
@@ -82,22 +90,34 @@ export const workplaceResolvers = {
         }
       }
     }
-  `,
-  deleteWorkplaceMutation: gql`
-    mutation ($id: Uuid!) {
-      deleteWorkplaceById (input: { id: $id }) {
-        deletedWorkplaceId
-      }
-    }
   `
 };
 
 export const brandResolvers = {
   allBrandsQuery: gql`
-    query {
+    query ($corporationId: Uuid!) {
       allBrands {
         edges {
           node {
+            id
+            brandName
+            brandIconUrl
+            workplacesByBrandId {
+              edges {
+                node {
+                  id
+                  workplaceName
+                }
+              }
+            }
+          }
+        }
+      }
+      allCorporationBrands (condition: { corporationId: $corporationId }){
+        nodes {
+          corporationId
+          brandId
+          brandByBrandId {
             id
             brandName
             brandIconUrl

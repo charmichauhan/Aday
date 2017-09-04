@@ -3,15 +3,17 @@ import { List, ListItem } from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 import Edit from 'material-ui/svg-icons/image/edit';
 import Delete from 'material-ui/svg-icons/action/delete';
+import RaisedButton from 'material-ui/RaisedButton';
 import { filter, pick, find, findIndex, remove } from 'lodash';
 import { withApollo } from 'react-apollo';
 import { Grid, GridColumn, Progress } from 'semantic-ui-react';
 import uuidv4 from 'uuid/v4';
+import moment from 'moment';
 
 import WorkplaceDrawer from './WorkplaceDrawer';
 import { workplaceResolvers } from '../settings.resolvers';
 import Loading from '../../helpers/Loading';
-import Modal from '../../helpers/Modal';
+import { InfoModal } from '../../helpers/Modal';
 import CircleButton from '../../helpers/CircleButton';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 import { colors } from '../../styles';
@@ -44,13 +46,14 @@ const workplaceFields = [
 ];
 
 const removeEmpty = (obj) => {
-  Object.keys(obj).forEach((key) => obj[key] === null || obj[key] === undefined || obj[key] === "" && delete obj[key]);
+  Object.keys(obj).forEach((key) => obj[key] === null || obj[key] === undefined || obj[key] === '' && delete obj[key]);
   return obj;
 };
 
 const initialState = {
   open: false,
   openDeleteModal: false,
+  openInfoModal: false,
   notify: false,
   notificationMessage: '',
   notificationType: '',
@@ -75,6 +78,15 @@ class Workplace extends Component {
             let workplace = pick(node, workplaceFields);
             workplace.brand = node.brandByBrandId;
             if (!workplace.workplaceImageUrl) workplace.workplaceImageUrl = '/images/workplaces/chao-center.jpg';
+            const shiftNodes = node.shiftsByWorkplaceId && node.shiftsByWorkplaceId.nodes;
+            if (shiftNodes && shiftNodes.length) {
+              workplace.shifts = shiftNodes.map(({ id, startTime }) => ({ id, startTime }));
+              workplace.futureShifts = workplace.shifts.filter(({ startTime }) => {
+                return moment.utc(startTime) - moment.utc(new Date()) >= 0;
+              });
+            } else {
+              workplace.shifts = workplace.futureShifts = [];
+            }
             return workplace;
           });
           this.setState({ workplaces });
@@ -101,21 +113,32 @@ class Workplace extends Component {
 
   getDeleteActions = () => {
     return [
-      { type: 'white', title: 'Cancel', handleClick: this.closeModal, image: false },
-      { type: 'red', title: 'Delete Workplace', handleClick: this.handleDelete, image: '/images/modal/close.png' }
+      <RaisedButton label="NO" labelColor="#FCDDDD" backgroundColor={colors.primaryRed} onClick={this.closeModal} />,
+      <RaisedButton label="YES" labelColor="#FCDDDD" backgroundColor={colors.primaryGreen} onClick={this.handleDelete} />,
     ];
   };
 
-  handleDeleteClick = (id) => {
-    this.setState({ openDeleteModal: true, toDeleteWorkplace: id });
+  getInfoActions = () => {
+    return [
+      <RaisedButton label="OK" labelColor="#FCDDDD" backgroundColor={colors.primaryGreen} onClick={this.closeModal} />,
+    ];
+  };
+
+  handleDeleteClick = ({ id, workplaceName }, isInfo) => {
+    if (isInfo) {
+      this.setState({ openInfoModal: true, toDeleteWorkplace: id, toDeleteWorkplaceName: workplaceName });
+    } else {
+      this.setState({ openDeleteModal: true, toDeleteWorkplace: id, toDeleteWorkplaceName: workplaceName });
+    }
   };
 
   handleDelete = () => {
     const id = this.state.toDeleteWorkplace;
     this.props.client.mutate({
-      mutation: workplaceResolvers.deleteWorkplaceMutation,
+      mutation: workplaceResolvers.updateWorkplaceMutation,
       variables: {
-        id
+        id,
+        workplaceInfo: { isActive: false, dateDeactivated: new Date().toUTCString() }
       }
     }).then((res) => {
       const { workplaces } = this.state;
@@ -126,7 +149,7 @@ class Workplace extends Component {
   };
 
   closeModal = () => {
-    this.setState({ openDeleteModal: false });
+    this.setState({ openDeleteModal: false, openInfoModal: false });
   };
 
   handleDrawerSubmit = (workplace) => {
@@ -158,23 +181,23 @@ class Workplace extends Component {
           id: workplace.id,
           workplaceInfo: removeEmpty(pick(workplace, workplaceFields))
         },
-       updateQueries: {
+        updateQueries: {
           getAllWorkplacesQuery: (previousQueryResult, { mutationResult }) => {
-              let newEdges = []
-              previousQueryResult.allWorkplaces.nodes.map((value) => {
-                    if(value.id != mutationResult.data.updateWorkplaceById.workplace.id){
-                        newEdges.push(value)
-                    } else {
-                       newEdges.push(mutationResult.data.updateWorkplaceById.workplace)
-                    }
-              })
-              previousQueryResult.allWorkplaces.edges = newEdges
-              return {
-                allWorkplaces: previousQueryResult.allShifts
-              };
-              },
+            let newEdges = [];
+            previousQueryResult.allWorkplaces.nodes.map((value) => {
+              if (value.id != mutationResult.data.updateWorkplaceById.workplace.id) {
+                newEdges.push(value);
+              } else {
+                newEdges.push(mutationResult.data.updateWorkplaceById.workplace);
+              }
+            })
+            previousQueryResult.allWorkplaces.edges = newEdges;
+            return {
+              allWorkplaces: previousQueryResult.allShifts
+            };
           },
-        }).then((res) => {
+        },
+      }).then((res) => {
         this.showNotification('Workplace details updated successfully.', NOTIFICATION_LEVELS.SUCCESS);
         workplace.brand = find(this.props.brands, { 'id': workplace.brandId });
         if (!workplace.workplaceImageUrl) workplace.workplaceImageUrl = '/images/workplaces/chao-center.jpg';
@@ -236,7 +259,7 @@ class Workplace extends Component {
                     <Edit color={colors.primaryActionButtons} />
                   </IconButton>
                   <IconButton style={styles.actionButtons}
-                              onClick={() => this.handleDeleteClick(workplace.id)}>
+                              onClick={() => this.handleDeleteClick(workplace, workplace.futureShifts && !!workplace.futureShifts.length)}>
                     <Delete color={colors.primaryActionButtons} />
                   </IconButton>
                 </ListItem>
@@ -251,14 +274,22 @@ class Workplace extends Component {
           open={this.state.open}
           handleSubmit={this.handleDrawerSubmit}
           closeDrawer={this.closeDrawer} />
-        <Modal
-          title="Confirm Delete"
+        <InfoModal
+          title="Delete Workplace"
           isOpen={this.state.openDeleteModal}
-          message="Are you sure that you want to delete this Workplace?"
-          action={this.getDeleteActions()}
-          closeAction={this.closeModal}
+          message={`Are you sure that you want to delete the ${this.state.toDeleteWorkplaceName} workplace?`}
+          actions={this.getDeleteActions()}
+          handleClickOutside={this.closeModal}
         />
-        <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
+        <InfoModal
+          title="Warning"
+          isOpen={this.state.openInfoModal}
+          message="Before deleting a workplace, you must delete all or allow to be worked any future shifts."
+          actions={this.getInfoActions()}
+          handleClickOutside={this.closeModal}
+        />
+        <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage}
+                  notificationType={notificationType} />
       </div>
     )
   }

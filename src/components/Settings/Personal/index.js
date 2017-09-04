@@ -249,7 +249,7 @@ class Personal extends Component {
          </div>
          ))}
          </div>*/}
-        <div className="update-info">
+        <div className="btn-circle-center">
           <CircleButton handleClick={this.handleUpdateInfo} type="blue"
                         title="Update info" />
         </div>

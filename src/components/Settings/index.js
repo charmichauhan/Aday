@@ -3,7 +3,6 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import { remove, pick, findIndex } from 'lodash';
 import { withApollo } from 'react-apollo';
 import uuidv4 from 'uuid/v4';
-
 import Personal from './Personal';
 import Workplace from './Workplace';
 import Brand from './Brand';
@@ -28,7 +27,8 @@ const initialState = {
   value: 'personal',
   notify: false,
   notificationMessage: '',
-  notificationType: ''
+  notificationType: '',
+  corporationId: localStorage.getItem('corporationId')
 };
 
 class Settings extends Component {
@@ -39,7 +39,8 @@ class Settings extends Component {
 
   componentDidMount() {
     this.props.client.query({
-      query: brandResolvers.allBrandsQuery
+      query: brandResolvers.allBrandsQuery,
+      variables: { corporationId: this.state.corporationId }
     }).then((res) => {
       if (res.data && res.data.allBrands && res.data.allBrands.edges) {
         const brandNodes = res.data.allBrands.edges;
@@ -47,6 +48,14 @@ class Settings extends Component {
           const brands = brandNodes.map(({ node }) => {
             let brand = pick(node, brandFields);
             if (!brand.brandIconUrl) brand.brandIconUrl = '/images/brands/ra.png';
+            const workplaceNodes = node.workplacesByBrandId && node.workplacesByBrandId.edges;
+            if (workplaceNodes && workplaceNodes.length) {
+              brand.workplaces = workplaceNodes.map(({ node: { id, workplaceName } }) => {
+                return { id, workplaceName };
+              });
+            } else {
+              brand.workplaces = [];
+            }
             return brand;
           });
           this.setState({ brands });
@@ -127,7 +136,7 @@ class Settings extends Component {
       notificationType: '',
       notificationMessage: ''
     });
-  }
+  };
 
   render() {
     const { notify, notificationMessage, notificationType } = this.state;

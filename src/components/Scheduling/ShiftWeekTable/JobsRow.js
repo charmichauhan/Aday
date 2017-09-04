@@ -6,6 +6,7 @@ import {
     TableRow,
     TableRowColumn,
 } from 'material-ui/Table';
+import { Truncate } from 'rebass'
 
 export default class JobsRow extends Component{
 
@@ -23,6 +24,7 @@ export default class JobsRow extends Component{
         });
         let finalHours = 0;
         let finalMinutes = 0;
+
         Object.values(data).map((value,index) => {
             let startTime = moment(value.startTime).format("hh:mm A");
             let endTime = moment(value.endTime).format("hh:mm A");
@@ -62,13 +64,24 @@ export default class JobsRow extends Component{
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>
                   <div className="user_profile" width="80%">
                     <div className="user_img">
-                      <img width="65px" src={this.props.view=="job"?data[0].positionByPositionId.positionIconUrl:data[0].userAvatar } alt="img"/>
+                      <img src={this.props.view=="job"?data[0].positionByPositionId.positionIconUrl:data[0].userAvatar } alt="img"/>
                     </div>
                     <div className="user_desc penalheading">
-                      {this.props.view=="job"? data[0].positionByPositionId.positionName : data[0].userFirstName}
-                      <p className="lastName"> {this.props.view=="job"?  "" :data[0].userLastName}</p>
-                      <p className="finalHours">{finalHours} hours<br/>{finalMinutes} Minutes</p>
-                      <p className="scheduled_tag">BOOKED</p>
+
+                            {this.props.view=="job"? data[0].positionByPositionId.positionName : data[0].userFirstName}
+
+                        <p>
+                            <Truncate className="lastName">
+                                {this.props.view=="job"?  "" :data[0].userLastName}
+                            </Truncate>
+                        </p>
+
+                        <Truncate>
+                            <p className="finalHours">{finalHours} HRS & <br/>{finalMinutes} MINS </p>
+                        </Truncate>
+
+                         <p className="scheduled_tag">BOOKED</p>
+
                     </div>
                   </div>
                 </TableRowColumn>

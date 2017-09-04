@@ -7,9 +7,9 @@ const corporationTimeOffRequestQuery = gql`
         after: $cursor,
         condition: {corporationId: $corporationId},
         orderBy: START_DATE_DESC){
-      edges{
-        node{
-          userByRequestorId{
+      edges {
+        node {
+          userByRequestorId {
             firstName
             lastName
           }

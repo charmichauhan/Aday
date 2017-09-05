@@ -392,6 +392,7 @@ img.list-left-image {
 .resume-drawer .resume-subject {
   font-size: 14px;
   padding: 30px 0;
+  position: relative;
 }
 .resume-drawer .resume-subject i {
   display: inline-block;
@@ -599,4 +600,31 @@ img.list-left-image {
   width: 70%;
   display: inline-block;
   text-align: right;
+}
+
+.qualification-title {
+  display: table;
+  width: 100%;
+}
+.display-table {
+  display: table-cell;
+  width: 100%;
+}
+.display-table img, .display-table h2, .contact-info-img {
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+img.quotation-mark {
+  position: absolute;
+}
+img.quotation-mark.down {
+  top: 30%;
+  left: 10%;
+}
+img.quotation-mark.up {
+  top: 35%;
+  right: 10%;
+}
+.resume-subject .tagline {
+  padding: 0 10px;
 }

@@ -91,5 +91,25 @@ export const userQuery = gql `
       }
     }
   }
+  
+ 
+  
   }
-}`;
+}`
+
+export const releventPositionsQuery = gql`
+  query ($corporationId: Uuid, $brandId: Uuid, $workplaceId: Uuid, $userId: Uuid) {
+    fetchRelevantPositions(corporationid: $corporationId, brandid: $brandId, workplaceid: $workplaceId){
+      nodes {
+        positionName
+        jobsByPositionId (condition: { userId: $userId }) {
+          nodes {
+            isPositionActive
+            primaryJob
+            rating
+            
+          }
+        }
+      }
+    }
+  }`;

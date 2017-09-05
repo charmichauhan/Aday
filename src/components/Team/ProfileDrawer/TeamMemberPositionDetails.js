@@ -35,7 +35,9 @@ export default class TeamMemberPositionDetails extends Component {
     });
   }
 
+
   getTrainingPositions = (nodes) => nodes.filter((node) => node.isTrainable);
+
 
   onChange(checked) {
     console.log(`switch to ${checked}`);
@@ -55,16 +57,16 @@ export default class TeamMemberPositionDetails extends Component {
     };
 
     const userDetails = this.props.userDetails;
+    const releventPositionsQuery = this.props.releventPositionsQuery;
     const positionDetails = this.props.userDetails.jobsByUserId.edges;
-
     const trainingPositions = this.getTrainingPositions(positionDetails);
-
+    const releventfilteredPositions = this.props.releventfilteredPositions;
+    debugger;
     return (
 
       <div>
         <div className="text-center profile-drawer-tab">
-          <Image src="/images/Sidebar/badge.png" size="mini"/>
-          {/*<i className="">*/}
+          <Image src="/images/Sidebar/badge.png" size="mini" />
           <h2 className="text-uppercase">{userDetails.firstName}'s Positions</h2>
         </div>
         <div className="grid-positions">
@@ -88,7 +90,7 @@ export default class TeamMemberPositionDetails extends Component {
               </Grid.Column>
             </Grid.Row>
 
-            {positionDetails.map((v, index) => (
+            {releventPositionsQuery.map((v, index) => (
 
               <Grid.Row>
                 <Grid.Column width={2}>
@@ -96,8 +98,8 @@ export default class TeamMemberPositionDetails extends Component {
                 </Grid.Column>
                 <Grid.Column width={8}>
                   <div className="wrapper-element">
-                    <p className="cook-name">{v.node.positionByPositionId.positionName}</p>
-                    <Rating icon='star' defaultRating={v.node.rating} maxRating={5}/>
+                    <p className="cook-name">{v.positionName}</p>
+                    {/*<Rating icon='star' defaultRating={v.node.rating} maxRating={5}/>*/}
                     <span className="text-uppercase green">Primary Position</span>
                   </div>
                 </Grid.Column>
@@ -111,7 +113,7 @@ export default class TeamMemberPositionDetails extends Component {
                 <Grid.Column width={2}>
                   <div className="text-center wrapper-element">
                     <RadioGroup onChange={this.onRadioChange1} value={this.state.value1} className="radioStyle">
-                      <Radio value={v.node.primaryJob == true ? 1 : 0}></Radio>
+                      <Radio value={1}></Radio>
                     </RadioGroup>
                   </div>
                 </Grid.Column>
@@ -147,14 +149,14 @@ export default class TeamMemberPositionDetails extends Component {
               </Grid.Column>
             </Grid.Row>
 
-            {trainingPositions.map((v, index) => (
+            {releventfilteredPositions.map((v, index) => (
                 <Grid.Row>
                   <Grid.Column width={2}>
                     <Progress type="circle" percent={25} width={40}/>
                   </Grid.Column>
                   <Grid.Column width={10}>
                     <div>
-                      <p className="cook-name">{v.node.positionByPositionId.positionName}</p>
+                      <p className="cook-name">{v.positionName}</p>
                       <span className="text-uppercase red">4 of 20 hours completed</span>
                       <span className="text-uppercase green"> Approved For Job Shadowing</span>
                     </div>

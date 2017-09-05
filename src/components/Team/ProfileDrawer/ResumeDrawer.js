@@ -40,15 +40,18 @@ export default class ResumeDrawer extends Component {
           <div className="drawer-content scroll-div">
             <div className="member-list">
               <div className="resume-subject text-center">
-                <i className="fa fa-quote-left fa-2x"></i>
-                <span>I like to work with carefree and generouspeople because that’s who I am :) </span>
-                <i className="fa fa-quote-right fa-2x"></i>
+                <img src="/images/Sidebar/down-quotes.png" className="quotation-mark down" size="mini" />
+                <span className="tagline">I like to work with carefree and generouspeople because that’s who I am :) </span>
+                <img src="/images/Sidebar/up-quotes.png" className="quotation-mark up" size="mini" />
               </div>
               <div className="resume-qualification">
                 <div className="experience">
                   <div className="qualification-title text-center">
-                    <i className="fa fa-briefcase fa-2x" color="gray"></i>
+                    <div className="display-table">
+                    <Image centered='true' size='mini' className="heading-img"
+                           src="/images/Sidebar/briefcase.png" />
                     <h2 className="heading text-uppercase text-center">Work Experience</h2>
+                    </div>
                   </div>
                   <div className="qualification-content">
                     <div className="content-heading">
@@ -68,8 +71,11 @@ export default class ResumeDrawer extends Component {
                 </div>
                 <div className="education">
                   <div className="qualification-title text-center">
-                    <i className="icon student" color="gray"></i>
+                    <div className="display-table">
+                    <Image centered='true' size='mini' className="heading-img"
+                           src="/images/Sidebar/education.png" />
                     <h2 className="heading text-uppercase text-center">Education</h2>
+                    </div>
                   </div>
                   <div className="qualification-content">
                     <div className="content-heading">
@@ -135,8 +141,11 @@ export default class ResumeDrawer extends Component {
                 </div>
                 <div className="experience">
                   <div className="qualification-title text-center">
-                    <i className="fa fa-user fa-2x" color="gray"></i>
+                    <div className="display-table">
+                    <Image centered='true' size='mini' className="heading-img"
+                           src="/images/Sidebar/availability.png" />
                     <h2 className="heading text-uppercase text-center">Availability</h2>
+                    </div>
                   </div>
                   <div className="qualification-content">
                     <div className="brief-content">
@@ -148,8 +157,11 @@ export default class ResumeDrawer extends Component {
                 </div>
                 <div className="home-address">
                   <div className="qualification-title text-center">
-                    <i className="fa fa-home fa-2x" color="gray"></i>
+                    <div className="display-table">
+                    <Image centered='true' size='mini' className="heading-img"
+                           src="/images/Sidebar/home.png" />
                     <h2 className="heading text-uppercase text-center">Home Address</h2>
+                    </div>
                   </div>
                   <div className="qualification-content">
                     <div className="brief-content">
@@ -163,19 +175,22 @@ export default class ResumeDrawer extends Component {
                 </div>
                 <div className="contact-info">
                   <div className="qualification-title text-center">
-                    <i className="fa fa-user fa-2x" color="gray"></i>
+                    <div className="display-table">
+                    <Image centered='true' size='mini' className="heading-img"
+                           src="/images/Sidebar/contact.png" />
                     <h2 className="heading text-uppercase text-center">Contact Info</h2>
+                    </div>
                   </div>
                   <div className="qualification-content">
                     <div className="brief-content">
                       <p className="address">
-                        <i className="icon mobile"></i>
+                        <Image size='mini' src="/images/Sidebar/phone.png" className="contact-info-img" />
                         <span> 617-405-5829 </span>
                       </p>
                     </div>
                     <div className="brief-content">
                       <p className="address">
-                        <i className="fa fa-envelope-o fa-2x"></i>
+                        <Image size='mini' src="/images/Sidebar/mail.png" className="contact-info-img" />
                         <span> iwillbfresh@gmail.com </span>
                       </p>
                     </div>
@@ -183,8 +198,11 @@ export default class ResumeDrawer extends Component {
                 </div>
                 <div className="contact-info">
                   <div className="qualification-title text-center">
-                    <i className="fa fa-comments-o fa-2x" color="gray"></i>
+                    <div className="display-table">
+                    <Image centered='true' size='mini' className="heading-img"
+                           src="/images/Sidebar/language.png" />
                     <h2 className="heading text-uppercase text-center">Languages</h2>
+                    </div>
                   </div>
                   <div className="qualification-content">
                     <div className="brief-content">

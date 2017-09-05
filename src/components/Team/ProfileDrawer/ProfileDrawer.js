@@ -2,21 +2,30 @@ import React, {Component} from "react";
 import Drawer from "material-ui/Drawer";
 import IconButton from "material-ui/IconButton";
 import RaisedButton from "material-ui/RaisedButton";
-import {Image, Rating, Grid} from "semantic-ui-react";
-import Delete from 'material-ui/svg-icons/action/delete';
-import Checkbox from 'material-ui/Checkbox';
+import {Image, Rating} from "semantic-ui-react";
 import {find, pick} from "lodash";
 import {leftCloseButton} from "../../styles";
-import { gql,graphql,compose } from 'react-apollo';
-import TabPanel from './TabPanel';
-
-
-import {userQuery} from '../Team.graphql';
-
+import {graphql, compose} from "react-apollo";
+import TabPanel from "./TabPanel";
+import {userQuery, releventPositionsQuery} from "../Team.graphql";
 import "../team.css";
 const uuidv4 = require('uuid/v4');
 
 class ProfileDrawerComponent extends Component {
+
+  filterCrossTraining = (releventPositionsQuery) => {
+    releventPositionsQuery.filter((w) => {
+        if (w.jobsByPositionId.nodes.length > 0) {
+          debugger;
+          for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
+            if (!w.jobsByPositionId.nodes[i].isPositionActive) {
+              return true;
+            }
+          }
+        }
+      }
+    )
+  };
 
   render() {
     const {
@@ -26,11 +35,24 @@ class ProfileDrawerComponent extends Component {
       docked = false,
       open
     } = this.props;
-
-    if (this.props.data.loading) {
+    if (this.props.userQuery.loading || this.props.releventPositionsQuery.loading) {
       return (<div>Loading</div>)
     }
-    let userDetails = this.props.data && this.props.data.userById;
+    let userDetails = this.props.userQuery && this.props.userQuery.userById;
+
+    let releventPositionsQuery = [...this.props.releventPositionsQuery.fetchRelevantPositions.nodes];
+    debugger;
+    let releventfilteredPositions = releventPositionsQuery.filter((w) => {
+        if (w.jobsByPositionId.nodes.length > 0) {
+          debugger;
+          for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
+            if (!w.jobsByPositionId.nodes[i].isPositionActive) {
+              return true;
+            }
+          }
+        }
+      }
+    );
     debugger;
     const styles = {
       positionCheckbox: {
@@ -69,8 +91,14 @@ class ProfileDrawerComponent extends Component {
               <div className="drawer-right">
                 <RaisedButton label="RESUME" onClick={this.props.openResumeDrawer}/>
               </div>
-              <Image centered='true' size='small' shape='circular' className="profile-img"
-                     src={userDetails.avatarUrl}/>
+
+              {
+                userDetails.avatarUrl ? <Image centered='true' size='small' shape='circular' className="profile-img"
+                                               src={ userDetails.avatarUrl}/> :
+                  <Image centered='true' size='small' shape='circular' className="profile-img"
+                         src="https://s3.us-east-2.amazonaws.com/aday-website/anonymous-profile.png"/>
+              }
+
             </div>
           </div>
           <div className="heading-rating">
@@ -94,7 +122,7 @@ class ProfileDrawerComponent extends Component {
                   <label htmlFor="monthly" className="text-uppercase">Max <strong> Monthly </strong> Hours</label>
                   <input type="text" className="form-control"/>
                 </div>
-            </form>
+              </form>
               <div className="profile-drawer-content text-center">
                 <p>Team members with their maximum weekly hours set at or below 30 hours per week are not
                   included in the automated schedule</p>
@@ -105,6 +133,8 @@ class ProfileDrawerComponent extends Component {
 
               <TabPanel
                 userDetails={userDetails}
+                releventPositionsQuery={releventPositionsQuery}
+                releventfilteredPositions={releventfilteredPositions}
               />
 
 
@@ -119,13 +149,26 @@ class ProfileDrawerComponent extends Component {
   };
 }
 
-const ProfileDrawer = graphql(userQuery,{
-  options: (ownProps) => ({
+const ProfileDrawer = compose(
+  graphql(userQuery, {
+    name: "userQuery",
+    options: (ownProps) => ({
       variables: {
         id: ownProps.userId
       }
-    }),
-  }
-)(ProfileDrawerComponent)
+    })
+  }),
+  graphql(releventPositionsQuery, {
+    name: "releventPositionsQuery",
+    options: (ownProps) => ({
+      variables: {
+        corporationId: localStorage.getItem("corporationId"),
+        brandId: localStorage.getItem("brandId"),
+        workplaceId: localStorage.getItem("workplaceId"),
+        userId: localStorage.getItem("userId")
+      }
+    })
+  })
+)(ProfileDrawerComponent);
 
 export default ProfileDrawer;

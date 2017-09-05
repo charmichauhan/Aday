@@ -15,6 +15,8 @@ export default class TabPanel extends Component {
 
   render() {
     const userDetails = this.props.userDetails;
+    const releventPositionsQuery = this.props.releventPositionsQuery;
+    const releventfilteredPositions = this.props.releventfilteredPositions;
     debugger;
     return (
       <div>
@@ -23,7 +25,9 @@ export default class TabPanel extends Component {
           <Image src="/images/Sidebar/positions.png" size="mini"/>
         </span>} key="1">
             <TeamMemberPositionDetails
-              userDetails={userDetails}
+              userDetails = {userDetails}
+              releventPositionsQuery = {releventPositionsQuery}
+              releventfilteredPositions = {releventfilteredPositions}
             />
           </TabPane>
           <TabPane tab={<span>

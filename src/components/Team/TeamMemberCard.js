@@ -4,8 +4,9 @@ import ResumeDrawer from './ProfileDrawer/ResumeDrawer';
 import { Image, Button, Icon, Card, Rating, Header } from 'semantic-ui-react'
 import RaisedButton from 'material-ui/RaisedButton';
 import "./team-member-card.css"
+import { Dropdown, Menu, Select,message} from 'antd';
 
-export default class TeamMemberCard extends Component {
+class TeamMemberCardComponent extends Component {
   constructor(props){
     super(props);
     this.state = ({
@@ -29,15 +30,19 @@ export default class TeamMemberCard extends Component {
   backProfileDrawer = () => {
     this.setState({viewProfileDrawer:true,viewResumeDrawer:false})
   };
+  handleMenu1Click(e) {
+    message.info('Click on menu item.');
+    console.log('click', e);
+  }
 
-	render() {
-	  const {
-    	  firstName,
-          lastName,
-          userEmail,
-          avatarUrl,
-          userPhoneNumber
-	} = this.props.member;
+  render() {
+		const {
+			firstName,
+      lastName,
+      userEmail,
+			avatarUrl,
+      userPhoneNumber
+		} = this.props.member;
 
 		return (
 		    <Card>
@@ -46,6 +51,7 @@ export default class TeamMemberCard extends Component {
             openResumeDrawer={this.openResumeDrawer}
             handleCloseDrawer={this.handleCloseDrawer}
             userId={this.props.userId}
+
           />}
           {this.state.viewResumeDrawer &&
           <ResumeDrawer open={this.state.viewResumeDrawer} backProfileDrawer={this.backProfileDrawer} userId={this.props.userId}/>}
@@ -53,6 +59,9 @@ export default class TeamMemberCard extends Component {
 			      	<center>
 					    <Image centered='true' size='small' shape='circular' src={avatarUrl} />
 					</center>
+
+
+
 					<br/>
 		        	<Card.Description>
 						<center>
@@ -84,3 +93,6 @@ export default class TeamMemberCard extends Component {
 		);
 	}
 }
+const TeamMemberCard =  (TeamMemberCardComponent);
+
+export default TeamMemberCard;

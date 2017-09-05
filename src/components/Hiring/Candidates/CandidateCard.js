@@ -27,7 +27,7 @@ export default class CandidateCard extends Component {
 							<font size="5.5" className="last_name">{user.last_name}</font>
 						</center>
 					<Card.Content>
-						<center className='rating' className="card_body">
+						<center className='rating card_body'>
 							<br/>
 							<Rating icon='star' defaultRating={5} maxRating={5} />
 							<br/>

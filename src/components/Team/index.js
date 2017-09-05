@@ -26,9 +26,9 @@ export default class Team extends Component {
 		this.setState({	value: value });
 	};
 
-	getButtonStyle = (value) => ({
-		...styles.tabDesign.buttonStyle,
-		fontWeight: (this.state.value === value && 700) || 500
+    getButtonStyle = (value) => ({
+    ...styles.tabDesign.buttonStyle,
+    fontWeight: (this.state.value === value && 700) || 500
 	});
 
   componentWillMount(){

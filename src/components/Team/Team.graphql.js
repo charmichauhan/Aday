@@ -6,11 +6,12 @@ export const userQuery = gql `
     id
     firstName
     lastName
+    avatarUrl
     zipCode
     userPhoneConfirmed
     userPhoneNumber
     aboutMeText
-    userReferenceNonDemosByUserId{
+    userReferencesByUserId{
       edges{
         node{
           id
@@ -23,6 +24,22 @@ export const userQuery = gql `
         }
       }
     }
+    jobsByUserId{
+      edges{
+        node{
+          id
+          isTrainable
+          workplaceId
+          isVerified
+          isPreTrainingComplete
+          rating
+          primaryJob
+          positionByPositionId{
+                positionName
+          }
+        }
+    }
+  }
     userEmployersByUserId{
       nodes{
          id
@@ -56,12 +73,43 @@ export const userQuery = gql `
         languageName
       }
     }
-    userAvailabilityNonDemosByUserId {
+    userAvailabilitiesByUserId {
       nodes {
         id
         userId
         hourRange
       }
     }
+    employeesByUserId{
+    edges{
+      node{
+        workplaceByPrimaryWorkplace
+        {
+          id
+          workplaceName
+        }
+      }
+    }
   }
-}`;
+  
+ 
+  
+  }
+}`
+
+export const releventPositionsQuery = gql`
+  query ($corporationId: Uuid, $brandId: Uuid, $workplaceId: Uuid, $userId: Uuid) {
+    fetchRelevantPositions(corporationid: $corporationId, brandid: $brandId, workplaceid: $workplaceId){
+      nodes {
+        positionName
+        jobsByPositionId (condition: { userId: $userId }) {
+          nodes {
+            isPositionActive
+            primaryJob
+            rating
+            
+          }
+        }
+      }
+    }
+  }`;

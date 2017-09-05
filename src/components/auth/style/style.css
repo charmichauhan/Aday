@@ -1712,7 +1712,8 @@ table.dataTable thead .sorting:after {
 	border-radius: 15px;
 	text-align: center;
 	font-size: 12px;
-	line-height: 1.428571429
+	line-height: 1.428571429;
+	word-wrap: break-word;
 }
 
 .btn-circle.btn-lg {

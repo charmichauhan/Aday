@@ -327,7 +327,7 @@ class DrawerHelper extends Component {
     return {
       user: pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']),
       status: isAssigned ? 'accepted' : 'pending',
-      content: foundWorker.node.content || 'CURRENT HOURS: 37'
+      content: foundWorker.node.content
     };
   };
 
@@ -352,7 +352,7 @@ class DrawerHelper extends Component {
     const { teamMembers } = this.state;
     if (user.id) {
       teamMembers[index].user = user;
-      teamMembers[index].content = '';
+      teamMembers[index].content = '     ';
       teamMembers[index].status = 'accepted';
     } else {
       teamMembers[index] = { ...unassignedTeamMember };
@@ -377,7 +377,7 @@ class DrawerHelper extends Component {
     const { jobShadowers } = this.state;
     if (user.id) {
       jobShadowers[index].user = user;
-      jobShadowers[index].content = '';
+      jobShadowers[index].content = '     ';
       jobShadowers[index].status = 'accepted';
     } else {
       jobShadowers[index] = { ...unassignedTeamMember };
@@ -427,6 +427,7 @@ class DrawerHelper extends Component {
     );
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
       { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
+
     let pastDate = moment().diff(this.props.shift.startTime) > 0;
     return (
       <Drawer docked={docked} width={width}
@@ -476,8 +477,6 @@ class DrawerHelper extends Component {
               </div>
             </div>
 
-
-
              <div className="shift-details">
                 <Divider />
                 <div style={{marginLeft: 10}}>
@@ -498,8 +497,9 @@ class DrawerHelper extends Component {
                 <p><b>bonus payment per hour</b>: <span>$0.00</span></p>
                 <p><b>job shadowing shift</b>: <span>No</span></p>
                 <br />
-                <p><b>INSTRUCTIONS</b></p>
-                <p className="dimmedText">{shift.instructions}</p>
+                <p><b>SHIFT INSTRUCTIONS:</b></p>
+                <p className="dimmedText"> {!shift.instructions.length < 1? <span>{shift.instructions}</span>:<span>n/a</span>}
+                </p>
               </div>
             </div>
           </div>
@@ -508,7 +508,11 @@ class DrawerHelper extends Component {
               <div className="buttons text-center">
                 {actions}
               </div> :
-              <h5><p className="dimmedText">Editing Disabled for Past Shifts</p></h5>
+                 <div style={{ display: 'flex',  justifyContent: 'center'}}>
+                 <Image
+                      src="https://s3.us-east-2.amazonaws.com/aday-website/icons/save-update-circle-button-disabled.png"
+                 />
+                 </div>
             }
             <Modal
               title="Confirm"

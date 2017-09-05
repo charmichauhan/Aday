@@ -29,7 +29,7 @@ const initialState = {
     },
     {
       user: {
-        firstName: 'Unassigned',
+        firstName: 'Automated Shift',
         otherNames: '',
         avatar: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
       },

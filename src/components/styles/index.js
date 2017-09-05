@@ -26,7 +26,9 @@ export const leftCloseButton = {
   borderRadius: '50%',
   boxShadow: '0px 2px 9px -2px #000',
   float: 'left',
-  backgroundColor: '#fff'
+  backgroundColor: '#fff',
+  width: 43,
+  height: 43,
 };
 
 export const notificationStyles = {

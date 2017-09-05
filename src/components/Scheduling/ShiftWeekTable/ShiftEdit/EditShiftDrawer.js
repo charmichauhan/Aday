@@ -412,7 +412,7 @@ class DrawerHelper extends Component {
                 <p><b>bonus payment per hour</b>: <span>$0.00</span></p>
                 <p><b>job shadowing shift</b>: <span>No</span></p>
                 <br />
-                <p><b>INSTRUCTIONS</b></p>
+                <p><b>INSTRUCTIONS:</b></p>
                 <p className="dimmedText">{shift.instructions}</p>
               </div>
             </div>

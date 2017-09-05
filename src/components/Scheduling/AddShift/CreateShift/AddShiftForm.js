@@ -115,8 +115,8 @@ export class AddShiftForm extends Component{
                   console.log('got data', data);
 
                   var shift = data.createShift.shift 
-
-                  var uri = 'http://localhost:8080/api/callEmployee/'
+                  if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
+                  var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/callEmployee/'
 
                      var options = {
                         uri: uri,
@@ -124,7 +124,7 @@ export class AddShiftForm extends Component{
                         json: {
                             "data": {
                               "sec": "QDVPZJk54364gwnviz921",
-                              "shiftDate": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                              "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
                               "shiftStartHour": moment(shift.startTime).format("h:mm a"),
                               "shiftEndHour": moment(shift.endTime).format("h:mm a"),
                               "brand": shift.positionByPositionId.brandByBrandId.brandName,

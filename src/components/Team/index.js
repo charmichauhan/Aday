@@ -76,14 +76,17 @@ export default class Team extends Component {
 						<Managers workplaceId={this.state.workplaceId}/>
 					</Tab>
 
-					<Tab
-						buttonStyle={this.getButtonStyle('invite_managers')}
-						label="Invite Managers"
-						value="invitations_managers">
-						<InviteManagers/>
-					</Tab>
+					
 				</Tabs>
 			</section>
 		)
 	}
 }
+
+/*<Tab
+						buttonStyle={this.getButtonStyle('invite_managers')}
+						label="Invite Managers"
+						value="invitations_managers">
+						<InviteManagers/>
+					</Tab>
+*/

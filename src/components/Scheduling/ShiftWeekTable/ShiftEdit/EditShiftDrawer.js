@@ -219,7 +219,7 @@ class DrawerHelper extends Component {
 
        var shift = this.props.shift
         if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
-          var uriRemoved = 'http://localhost:8080/api/cancellationCall'
+          var uriRemoved = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
 
               var options = {
                   uri: uriRemoved,
@@ -244,7 +244,7 @@ class DrawerHelper extends Component {
         }
 
         if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
-             var uriAdded = 'http://localhost:8080/api/userAdded'
+             var uriAdded = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/userAdded'
               var options = {
                   uri: uriAdded,
                   method: 'POST',
@@ -294,7 +294,7 @@ class DrawerHelper extends Component {
     this.handleCloseDrawer();
 
     if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
-        var uri = 'http://localhost:8080/api/cancellationCall'
+        var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
 
         var options = {
             uri: uri,

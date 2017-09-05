@@ -117,7 +117,7 @@ export class UpdateShiftForm extends Component{
 
           // only update employees if shift is less than a week away
           if ((moment(startTime).diff(moment().format(), 'days')) <=7 ){
-              var uri = 'http://localhost:8080/api/updatedCall'
+              var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/updatedCall'
               var options = {
                   uri: uri,
                   method: 'POST',

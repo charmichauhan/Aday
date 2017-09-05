@@ -85,11 +85,11 @@ td.headcol, td.long {
     height: 21px;
     width: 110px;
     padding: 0 8px;
-    color: #4A4A4A;
+    color: #000;
     font-family: "Roboto Condensed";
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
-    line-height: 21px;
+    line-height: 22px;
     vertical-align: top;
     white-space: normal;
     word-wrap: break-word;
@@ -106,12 +106,19 @@ td.headcol, td.long {
 
 .user_img, .user_desc {
     display: table-cell;
+    /*
     width: 200px;
+    */
 }
 
 .user_img img {
+    max-width: 60px;
     border-radius: 50%;
+    color: #0022A1;
+    border: 0px solid;
+    box-shadow: 0 0.5px 1px 0 rgba(0, 0, 0, 0.2), 0 1.5px 5px 0 rgba(0, 0, 0, 0.19);
 }
+
 
 .table-responsive table.atable td, .table-responsive table.atable th {
     vertical-align: top;
@@ -165,10 +172,11 @@ td.shiftbox {
     text-transform: uppercase;
 }
 .weekDay {
-    font-size: 15px;
-    letter-spacing: 1px;
+    font-size: 16px;
+    margin-bottom: 25px;
+    letter-spacing: 2px;
     line-height: 18px;
-    color: #000000;
+    color: #4A4A4A;
     font-family: "Roboto Condensed";
     text-transform: uppercase;
 }
@@ -206,23 +214,28 @@ td.shiftbox {
 .spclDay {
     height: 20px;
     border: 1px solid;
+    border-color: #D9D9D9;
     border-radius: 5px;
+    /*
     width: 125px;
-    border-color: #4A4A4A;
-    color: #0022A1;
-    font-family: Roboto;
-    font-size: 12px;
     font-weight: bold;
+    */
+    color: #0021A1;
+    font-family: Lato;
+    font-size: 12px;
     line-height: 20px;
     text-align: center;
     text-transform: uppercase;
     margin:0 auto;
 }
+
 .special-day-blank{
   height: 20px;
   border: 1px solid;
   border-radius: 5px;
+  /*
   width: 125px;
+  */
   border: 1px solid rgba(153,153,153,0.2);
   font-family: Roboto;
   font-size: 12px;
@@ -230,19 +243,20 @@ td.shiftbox {
   line-height: 20px;
   text-align: center;
   text-transform: uppercase;
-  margin:0 auto;
+  margin:5 auto;
 }
+
 .maintitle {
     display: inline-block;
     text-transform: uppercase;
-    margin: 10px auto;
+    margin: 15px auto;
     height: 30px;
-    width: 55%;
+    width: 50%;
     color: #0022a1;
     font-family: "Roboto Condensed";
     font-size: 30px;
     line-height: 30px;
-    text-align: center;
+    text-align:  inherit;
 }
 
 .day-item {
@@ -255,6 +269,10 @@ td.shiftbox {
     margin: 0px auto 6px;
     background: #fff;
     white-space: pre-line;
+}
+
+.day-item-title {
+    margin-left: 30px;
 }
 
 .day-item-title a.glyphicon.glyphicon-plus {
@@ -287,40 +305,77 @@ td.shiftbox {
 .day-item .start-time {
     display: inline-flex;
     color: #4A4A4A;
-    font-family: Lato;
-    font-size: 16px;
     line-height: 0px;
-    margin-bottom: 6px;
+    font-size: 18px;
+    margin-bottom: 10px;
     height: 35px;
 }
 
 .start-time .date-time {
-    width: 60%;
-    color: #4A4A4A;
-    font-family: Lato;
-    font-size: 19px;
-    line-height: 18px;
+    width: 50%;
+    color: #0022A1;
+    font-weight: light;
+    font-family: Varela Round;
+    font-size: 22px;
+    line-height: 22px;
     margin-top: 0px;
+}
+
+.start-time {
+    margin-top: 3px;
 }
 
 .start-time p small {
     font-size: 70%;
 }
 
+.start-time .duration {
+    width: 37%;
+    font-size: 11px;
+    float: right;
+    color: #4B4B4B;
+    font-family: Varela Round;
+}
+
 .start-time span.fa.fa-clock-o {
-    margin-top: 3px;
-    margin-right: 3px;
+    width: 13%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: 4px;
+}
+
+.location .jobTypeIcon {
+    width: 13%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: 2px;
+}
+
+/**
+ * the next three selectors affect the "location" row
+ */
+.location .fa-map-marker {
+    margin-left: 2px;
+    width: 13%; /* ensures proper alignment of start/end times for the shift and the location */
+    font-size: 20px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin: 2px;
 }
 
 .day-item .location {
     text-transform: uppercase;
     display: flex;
-    color: #4A4A4A;
+    color: #4B4B4B;
     font-family: "Roboto Condensed";
     font-size: 14px;
-    font-weight: 300;
+    font-weight: 100;
     line-height: 16px;
-    margin-top: 2px;
+    margin-top: 3px;
+    align-items: center;
 }
 
 .day-item .location a {
@@ -356,13 +411,6 @@ td.shiftbox {
 
 .day-item-title .filledshift {
     background-color: #00A863;
-}
-
-.start-time .duration {
-    width: 30%;
-    font-size: 10px;
-    float: right;
-    margin-top: 0px;
 }
 
 .flr {
@@ -831,15 +879,32 @@ table.atable td.shiftbox {
     padding-bottom: 187px;
 }
 
-@media screen and (min-width: 2200px) {
+/**
+ * Changes color of duration to white once overflow begins
+ */
+@media screen and (max-width: 1875px) {
+    .start-time .duration {
+        color: #FFF;
+        width: 0%;
+        font-size: 1px;
+    }
     .start-time .date-time {
+        width: 80%;
+        font-size: 20px;
+    }
+}
+
+@media screen and (min-width: 2200px) {
+    .start-time {
+        width: 100%;
+    }
+    .date-time {
         width: 55%;
     }
     .ui.grid>.row>[class*="twelve wide"].column.main-content {
-
-        width: -webkit-calc(100% - 260px) !important;
-        width: -moz-calc(100% - 260px) !important;
-        width: calc(100% - 260px) !important;
+        width: -webkit-calc(100% - 280px) !important;
+        width: -moz-calc(100% - 280px) !important;
+        width: calc(100% - 280px) !important;
     }
     .ui.grid>.row>[class*="three wide"].column.left-content {
         padding-left: 0;
@@ -853,10 +918,14 @@ table.atable td.shiftbox {
     .bottomtext table, .textlist table {
         width: 100%;
     }
-    .start-time .date-time {
+     .date-time {
         width: 56%;
        }
+    .start-time {
+        width: 100%;
+       }
 }
+
 @media screen and (min-width: 1475px) {
     .table-responsive div[style="height: auto; overflow: auto; width: 1188px;"] {
         width: 100% !important;
@@ -865,6 +934,7 @@ table.atable td.shiftbox {
         width: 100%;
     }
 }
+
 @media screen and (max-width: 1474px) {
     .main-content .table-responsive div[style="position: fixed; bottom: 0px; width: calc(100% - 290px); box-shadow: rgba(74, 74, 74, 0.5) 0px 1px 2px 0px;"] {
         overflow-x: scroll;

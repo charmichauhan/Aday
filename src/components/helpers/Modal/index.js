@@ -3,6 +3,7 @@ import Dialog from 'material-ui/Dialog';
 import IconButton from 'material-ui/IconButton';
 import { Image } from 'semantic-ui-react';
 
+import InfoModalComponent from './InfoModal';
 import CircleButton from '../CircleButton';
 import './modal.css';
 
@@ -22,6 +23,7 @@ const style = {
     borderRadius: 6
   }
 };
+
 export default class Modal extends Component {
   constructor(props) {
     super(props);
@@ -49,7 +51,7 @@ export default class Modal extends Component {
       </div>
     </div>);
     return (
-      <div>
+      <div className="modal-wrapper">
         <Dialog
           titleStyle={style.titleStyle}
           contentStyle={style.contentStyle}
@@ -68,3 +70,5 @@ export default class Modal extends Component {
     );
   }
 }
+
+export const InfoModal = InfoModalComponent;

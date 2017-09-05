@@ -7,7 +7,14 @@ import { Image, Input, Divider } from 'semantic-ui-react';
 import { graphql, compose } from 'react-apollo';
 import moment from 'moment';
 import { find, pick } from 'lodash';
-import { allUsersQuery, deleteShiftMutation, updateShiftMutation, allShiftMarkets, updateShiftMarket, createShiftMarket} from './EditShiftDrawer.graphql';
+import {
+  allUsersQuery,
+  deleteShiftMutation,
+  updateShiftMutation,
+  allShiftMarkets,
+  updateShiftMarket,
+  createShiftMarket
+} from './EditShiftDrawer.graphql';
 import TeamMemberCard from './TeamMemberCard';
 import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
@@ -29,18 +36,6 @@ const unassignedTeamMember = {
 const unassignedJobShadower = { ...unassignedTeamMember };
 
 const initialState = {
-  teamMembers: [{
-    user: {
-      firstName: 'Eric',
-      otherNames: 'Wise',
-      avatar: 'https://pickaface.net/assets/images/slides/slide2.png',
-    },
-    content: 'Seniority: 0003',
-    status: 'accepted'
-  }, {
-    ...unassignedTeamMember
-  }],
-
   jobShadowers: [{
     user: {
       firstName: 'Eric',
@@ -95,9 +90,11 @@ class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {...initialState,
-                  teamMembers: this.getInitialData(this.props),
-                  deleteModalPopped: false,};
+    this.state = {
+      ...initialState,
+      teamMembers: this.getInitialData(this.props),
+      deleteModalPopped: false
+    };
   }
 
   deleteModalClose = () => {
@@ -123,12 +120,11 @@ class DrawerHelper extends Component {
   };
 
   handleDeleteShift = () => {
-    this.setState({deleteModalPopped: true});
+    this.setState({ deleteModalPopped: true });
   };
 
   handleSaveShift = () => {
-
-      const shiftPatch = {}
+     const shiftPatch = {}
       shiftPatch['workersAssigned'] = []
       shiftPatch['workersRequestedNum'] = this.state.teamMembers.length
       const teamMembersAdded = []
@@ -136,7 +132,7 @@ class DrawerHelper extends Component {
         if(value.user.id != 0 && shiftPatch['workersAssigned'].indexOf(value)==-1){
               shiftPatch['workersAssigned'].push(value.user.id)
               if (this.props.shift.workersAssigned.indexOf(value) ==-1 ) {
-                  teamMembersAdded.push(value)
+                  teamMembersAdded.push(value.user.id)
               }
 
         }
@@ -167,60 +163,6 @@ class DrawerHelper extends Component {
                   marketId = v.node.id;
                 }
         })
-
-
-
-        var shift = this.props.shift
-        if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
-          var uri = 'http://localhost:8080/api/cancellationCall'
-
-              var options = {
-                  uri: uri,
-                  method: 'POST',
-                  json: {data: {
-                      "sec": "QDVPZJk54364gwnviz921",
-                      "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
-                      "shiftStartHour": moment(shift.startTime).format("h:mm a"),
-                      "shiftEndHour": moment(shift.endTime).format("h:mm a"),
-                      "workersAssigned": removedUsers,
-                      "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
-                      "workplaceAddress": shift.workplaceByWorkplaceId.address,
-                      "position": shift.positionByPositionId.positionName,
-                      "brand": shift.positionByPositionId.brandByBrandId.brandName
-                  }}
-              };
-              rp(options)
-                .then(function(response) {              
-                }).catch((error) => {
-                   console.log('there was an error sending the query for delete cancellation call', error);
-              });
-        }
-
-        if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
-          var uri = 'http://localhost:8080/api/userAdded'
-
-              var options = {
-                  uri: uri,
-                  method: 'POST',
-                  json: {data: {
-                      "sec": "QDVPZJk54364gwnviz921",
-                      "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
-                      "shiftStartHour": moment(shift.startTime).format("h:mm a"),
-                      "shiftEndHour": moment(shift.endTime).format("h:mm a"),
-                      "workersAssigned": teamMembersAdded,
-                      "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
-                      "workplaceAddress": shift.workplaceByWorkplaceId.address,
-                      "position": shift.positionByPositionId.positionName,
-                      "brand": shift.positionByPositionId.brandByBrandId.brandName
-                  }}
-              };
-              rp(options)
-                .then(function(response) {              
-                }).catch((error) => {
-                   console.log('there was an error sending the query for delete cancellation call', error);
-              });
-        }
-
         if(marketId) {         
               this.props.updateMarket({
                   variables: { data:
@@ -238,11 +180,13 @@ class DrawerHelper extends Component {
       shiftPatch['workersAssigned'].map((value) => {
               let marketId = null
               //seeing if shift's markets has this user 
-              this.props.shiftMarkets.allMarkets.edges.map( (v,i) => {
-                if (v.node.workerId == value){
-                  marketId = v.node.id;
-                }
-              })
+              if (this.props.shiftMarkets.allMarkets){
+                this.props.shiftMarkets.allMarkets.edges.map( (v,i) => {
+                  if (v.node.workerId == value){
+                    marketId = v.node.id;
+                  }
+                })
+              }
                  
               // market exists
               if(marketId) {        
@@ -270,6 +214,58 @@ class DrawerHelper extends Component {
                   
               }
       })
+
+
+
+       var shift = this.props.shift
+        if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
+          var uriRemoved = 'http://localhost:8080/api/cancellationCall'
+
+              var options = {
+                  uri: uriRemoved,
+                  method: 'POST',
+                  json: {data: {
+                      "sec": "QDVPZJk54364gwnviz921",
+                      "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                      "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                      "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                      "workersAssigned": removedUsers,
+                      "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+                      "workplaceAddress": shift.workplaceByWorkplaceId.address,
+                      "position": shift.positionByPositionId.positionName,
+                      "brand": shift.positionByPositionId.brandByBrandId.brandName
+                  }}
+              };
+              rp(options)
+                .then(function(response) {              
+                }).catch((error) => {
+                   console.log('there was an error sending the query for delete cancellation call', error);
+              });
+        }
+
+        if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
+             var uriAdded = 'http://localhost:8080/api/userAdded'
+              var options = {
+                  uri: uriAdded,
+                  method: 'POST',
+                  json: {data: {
+                      "sec": "QDVPZJk54364gwnviz921",
+                      "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                      "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                      "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                      "workersAssigned": teamMembersAdded,
+                      "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+                      "workplaceAddress": shift.workplaceByWorkplaceId.address,
+                      "position": shift.positionByPositionId.positionName,
+                      "brand": shift.positionByPositionId.brandByBrandId.brandName
+                  }}
+              };
+              rp(options)
+                .then(function(response) {              
+                }).catch((error) => {
+                   console.log('there was an error sending the query for delete cancellation call', error);
+              });
+        }
   }
 
   addTeamMember = () => {
@@ -289,9 +285,9 @@ class DrawerHelper extends Component {
     let shift = this.props.shift
     let that = this;
     that.props.deleteShiftById(uuidv4(), id)
-    .then(({ data }) => {
-      console.log('Delete Data', data);
-    }).catch((error) => {
+      .then(({ data }) => {
+        console.log('Delete Data', data);
+      }).catch((error) => {
       console.log('there was an error sending the query', error);
     });
     that.setState({ deleteModalPopped: false });
@@ -443,7 +439,9 @@ class DrawerHelper extends Component {
               <Image src="/images/Icons_Red_Cross.png" size="mini" />
             </IconButton>
             <h5 className="confirm-popup">Add Team Members</h5>
-
+            <div className="drawer-right">
+              <RaisedButton label="History" onClick={this.handleShiftHistoryDrawer} />
+            </div>
           </div>
           <div className="drawer-content scroll-div">
             <div className="member-list">
@@ -491,10 +489,10 @@ class DrawerHelper extends Component {
           </div>
           <div className="drawer-footer">
             {!pastDate ?
-             <div className="buttons text-center">
-               {actions}
-             </div> :
-             <h5><p className="dimmedText">Editing Disabled for Past Shifts</p></h5>
+              <div className="buttons text-center">
+                {actions}
+              </div> :
+              <h5><p className="dimmedText">Editing Disabled for Past Shifts</p></h5>
             }
             <Modal
               title="Confirm"
@@ -502,7 +500,7 @@ class DrawerHelper extends Component {
               message="Are you sure that you want to delete this shift?"
               action={deleteShiftAction}
               closeAction={this.deleteModalClose} />
-            </div>
+          </div>
         </div>
       </Drawer>
     );
@@ -512,31 +510,31 @@ class DrawerHelper extends Component {
 
 /* Hidden Components Until They Are Connected
 
-              <div className="drawer-right">
-              <RaisedButton label="History" onClick={this.handleShiftHistoryDrawer} />
-            </div>
+ <div className="drawer-right">
+ <RaisedButton label="History" onClick={this.handleShiftHistoryDrawer} />
+ </div>
 
-      <div className="member-list">
-              <h5>JOB SHADOWERS ({jobShadowers.length})</h5>
-              {jobShadowers && jobShadowers.map((tm, i) => (
-                <TeamMemberCard
-                  avatarUrl={tm.user.avatar}
-                  firstName={tm.user.firstName}
-                  lastName={tm.user.otherNames}
-                  content={tm.content}
-                  key={i}
-                  id={i}
-                  users={users}
-                  color={this.borderColor(tm.status) + 'Border'}
-                  handleRemove={() => this.removeJobShadower(i)}
-                  onSelectChange={this.setJobShadower}
-                />
-              ))}
-              <div className="btn-member">
-                <RaisedButton label="ADD JOB SHADOWER" onClick={this.addJobShadower} />
-              </div>
-            </div>
-*/
+ <div className="member-list">
+ <h5>JOB SHADOWERS ({jobShadowers.length})</h5>
+ {jobShadowers && jobShadowers.map((tm, i) => (
+ <TeamMemberCard
+ avatarUrl={tm.user.avatar}
+ firstName={tm.user.firstName}
+ lastName={tm.user.otherNames}
+ content={tm.content}
+ key={i}
+ id={i}
+ users={users}
+ color={this.borderColor(tm.status) + 'Border'}
+ handleRemove={() => this.removeJobShadower(i)}
+ onSelectChange={this.setJobShadower}
+ />
+ ))}
+ <div className="btn-member">
+ <RaisedButton label="ADD JOB SHADOWER" onClick={this.addJobShadower} />
+ </div>
+ </div>
+ */
 
 const DrawerHelperComponent = compose(graphql(deleteShiftMutation, {
     props: ({ ownProps, mutate }) => ({
@@ -562,7 +560,7 @@ const DrawerHelperComponent = compose(graphql(deleteShiftMutation, {
   graphql(createShiftMarket, { name: 'createMarket' }),
   graphql(allShiftMarkets, {
     name: 'shiftMarkets',
-    options: (ownProps) => ({ variables: { shiftId: ownProps.shift && ownProps.shift.id }})
+    options: (ownProps) => ({ variables: { shiftId: ownProps.shift && ownProps.shift.id } })
   }),
   graphql(allUsersQuery, {
     name: 'teamMembers',

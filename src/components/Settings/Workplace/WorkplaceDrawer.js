@@ -6,7 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { cloneDeep, map } from 'lodash';
 import Dropzone from 'react-dropzone';
 
-import CircleButton from '../../helpers/CircleButton/index';
+import CircleButton from '../../helpers/CircleButton';
 import { stateOptions } from '../../helpers/common/states';
 import { closeButton, colors } from '../../styles';
 

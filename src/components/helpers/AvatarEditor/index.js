@@ -39,6 +39,7 @@ class AvatarEditor extends Component {
 
   handleSave = () => {
     const img = this.editor.getImageScaledToCanvas().toDataURL();
+    console.log(img);
     this.props.onSave(img);
   };
 

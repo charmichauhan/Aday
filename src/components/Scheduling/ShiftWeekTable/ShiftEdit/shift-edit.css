@@ -6,6 +6,24 @@
   float: left;
 }
 
+.firstName {
+    height: 28px;
+    color: #000;
+    font-family: "Roboto Condensed";
+    font-size: 20px;
+    font-weight: bolder;
+    line-height: 24px;
+}
+
+.lastName {
+    height: 28px;
+    color: #666666;
+    font-family: "Roboto Condensed";
+    font-size: 20px;
+    font-weight: lighter;
+    line-height: 24px;
+}
+
 .text-uppercase {
   text-transform: uppercase;
 }
@@ -124,6 +142,7 @@
 .shiftDetails {
   padding: 20px 20px 20px 32px;
   font-size: 13px !important;
+  margin-top: 10px;
 }
 
 .dimmedText {
@@ -182,7 +201,8 @@
 .drawer-section .drawer-heading .confirm-popup {
   color: #fff;
   font-family: "Roboto Condensed";
-  font-size: 30px;
+  font-size: 27px;
+  font-weight: lighter;
   line-height: 35px;
   text-align: center;
   width: auto;
@@ -200,6 +220,12 @@
   overflow-y: scroll;
   height: calc(100vh - 240px);
   width: 100%;
+}
+
+.shift-details-header{
+  display: table;
+  margin-left: 0px;
+  padding-bottom: 10px;
 }
 
 .shift-heading {
@@ -220,7 +246,8 @@
 .member-list, .shift-details {
   float: left;
   width: 100%;
-  margin-top: 31px;
+  margin-top: 0px;
+  margin-left: 0px;
 }
 
 .member-list h5, .shift-details h5 {
@@ -229,7 +256,8 @@
   font-size: 24px;
   font-weight: bold;
   line-height: 31px;
-  margin-left: 32px;
+  margin-left: 34px;
+  letter-spacing: 0.5px;
 }
 
 .shift-details .ui.fluid.input {
@@ -246,13 +274,21 @@
 }
 
 .shiftDetails p {
-  font-size: 24px;
+  font-size: 22px;
   color: #666666;
   margin-bottom: 5px;
 }
 
 .shiftDetails p b {
   text-transform: uppercase;
+  font-family: "Roboto Condensed";
+  font-size: 22px;
+}
+
+.shiftDetails p span {
+  font-family: "Lato";
+  font-weight: lighter;
+  font-size: 22px;
 }
 
 .dimmedText {
@@ -275,7 +311,7 @@
   font-family: "Roboto Condensed";
   font-size: 24px;
   font-weight: normal;
-  line-height: 28px;
+  line-height: 24px;
   text-align: left;
   text-transform: uppercase;
   display: inline-block;
@@ -284,14 +320,14 @@
 .member-list .teamMemberCard .description {
   color: #999999;
   font-family: Lato;
-  font-size: 16px;
-  line-height: 19px;
+  font-size: 15px;
+  line-height: 15px;
 }
 
 .member-list .teamMemberCard .avatar {
-  width: 55px;
+  width: 47px;
   border-radius: 50%;
-  height: 55px;
+  height: 47px;
   overflow: hidden;
   display: inline-block;
 }
@@ -310,7 +346,7 @@
 
 .member-list .content {
   position: relative;
-  padding: 10px 5px;
+  padding: 5px 5px;
   border-radius: 4px;
   width: 100%;
   text-transform: uppercase;

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "antd": "^2.12.8",
+    "antd": "^2.13.0",
     "apollo-client": "^1.9.0-0",
     "classnames": "^2.2.5",
     "cldr": "^4.3.0",

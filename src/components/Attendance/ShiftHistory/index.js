@@ -30,25 +30,36 @@ class ShiftHistory extends Component {
 
   componentDidMount() {
     if (this.state.workplaceId) {
-      this.getShiftHistoryDetails(this.state.workplaceId);
+      this.getShiftHistoryDetails(this.state.workplaceId, this.state.corporationId);
     }
   }
 
   componentWillReceiveProps() {
     const workplaceId = localStorage.getItem('workplaceId');
+    const corporationId = localStorage.getItem('corporationId');
     if (workplaceId && this.state.workplaceId !== workplaceId) {
-      this.setState({ workplaceId });
-      this.getShiftHistoryDetails(workplaceId);
+      this.setState({ workplaceId, corporationId });
+      this.getShiftHistoryDetails(workplaceId, corporationId);
     }
   }
 
-  getShiftHistoryDetails = (workplaceId) => {
+  getShiftHistoryDetails = (workplaceId, corporationId) => {
     this.props.client.query({
       query: shiftHistoryResolvers.shiftHistoryQuery,
-      variables: { workplaceId }
+      variables: { workplaceId, corporationId}
     }).then((res) => {
       if (res.data && res.data.allShifthistories && res.data.allShifthistories.nodes) {
-        this.setState({ shiftHistory: res.data.allShifthistories.nodes });
+          var shiftHistory = res.data.allShifthistories.nodes
+          var ShiftHistoryFinal = [];
+          if (shiftHistory) {
+            shiftHistory.map(function(v,i){
+              if (ShiftHistoryFinal[v.workerId + v.positionId]){
+              } else {
+                ShiftHistoryFinal[v.workerId + v.positionId] = v
+              }
+            })
+          }
+        this.setState({ shiftHistory: Object.values(ShiftHistoryFinal) });
       }
     }).catch(err => console.log('Error loading shift history'));
   };

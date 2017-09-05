@@ -131,10 +131,14 @@ class DrawerHelper extends Component {
       const shiftPatch = {}
       shiftPatch['workersAssigned'] = []
       shiftPatch['workersRequestedNum'] = this.state.teamMembers.length
-    
+      const teamMembersAdded = []
       this.state.teamMembers.map((value) => {
         if(value.user.id != 0 && shiftPatch['workersAssigned'].indexOf(value)==-1){
               shiftPatch['workersAssigned'].push(value.user.id)
+              if (this.props.shift.workersAssigned.indexOf(value) ==-1 ) {
+                  teamMembersAdded.push(value)
+              }
+
         }
       })
       this.props.updateShift({
@@ -163,6 +167,60 @@ class DrawerHelper extends Component {
                   marketId = v.node.id;
                 }
         })
+
+
+
+        var shift = this.props.shift
+        if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
+          var uri = 'http://localhost:8080/api/cancellationCall'
+
+              var options = {
+                  uri: uri,
+                  method: 'POST',
+                  json: {data: {
+                      "sec": "QDVPZJk54364gwnviz921",
+                      "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                      "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                      "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                      "workersAssigned": removedUsers,
+                      "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+                      "workplaceAddress": shift.workplaceByWorkplaceId.address,
+                      "position": shift.positionByPositionId.positionName,
+                      "brand": shift.positionByPositionId.brandByBrandId.brandName
+                  }}
+              };
+              rp(options)
+                .then(function(response) {              
+                }).catch((error) => {
+                   console.log('there was an error sending the query for delete cancellation call', error);
+              });
+        }
+
+        if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
+          var uri = 'http://localhost:8080/api/userAdded'
+
+              var options = {
+                  uri: uri,
+                  method: 'POST',
+                  json: {data: {
+                      "sec": "QDVPZJk54364gwnviz921",
+                      "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                      "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                      "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                      "workersAssigned": teamMembersAdded,
+                      "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+                      "workplaceAddress": shift.workplaceByWorkplaceId.address,
+                      "position": shift.positionByPositionId.positionName,
+                      "brand": shift.positionByPositionId.brandByBrandId.brandName
+                  }}
+              };
+              rp(options)
+                .then(function(response) {              
+                }).catch((error) => {
+                   console.log('there was an error sending the query for delete cancellation call', error);
+              });
+        }
+
         if(marketId) {         
               this.props.updateMarket({
                   variables: { data:
@@ -174,7 +232,8 @@ class DrawerHelper extends Component {
                     console.log('there was an error sending the query', error);
                   });
         }
-      })  
+      }) 
+
       //UPDATE ASSIGNED USERS
       shiftPatch['workersAssigned'].map((value) => {
               let marketId = null

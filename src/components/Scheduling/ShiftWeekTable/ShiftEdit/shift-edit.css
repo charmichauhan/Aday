@@ -195,24 +195,25 @@
 .drawer-section .drawer-heading {
   background-color: #0022A1;
   text-align: center;
-  padding: 15px;
+  padding: 10px;
 }
 
 .drawer-section .drawer-heading .confirm-popup {
   color: #fff;
   font-family: "Roboto Condensed";
-  font-size: 27px;
+  font-size: 28px !important;
   font-weight: lighter;
-  line-height: 35px;
+  line-height: 28px !important;
   text-align: center;
   width: auto;
   display: inline-block;
-  margin-top: 6px;
+  margin-top: 10px !important;
 }
 
 .drawer-right {
   float: right;
-  padding-top: 6px;
+  padding-top: 0px;
+  margin-right: 1px;
 }
 
 .drawer-section .drawer-content.scroll-div {
@@ -246,7 +247,7 @@
 .member-list, .shift-details {
   float: left;
   width: 100%;
-  margin-top: 0px;
+  margin-top: 5px !important;
   margin-left: 0px;
 }
 
@@ -297,10 +298,11 @@
   font-family: "Lato";
   font-weight: lighter;
   font-size: 19px !important;
-  font-style: italic;
+  padding-left: 0px !important;
 }
 
 .btn-member {
+  margin-top: 15px;
   margin-left: 32px;
 }
 

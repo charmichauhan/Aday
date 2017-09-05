@@ -38,7 +38,10 @@ export default class CircleButton extends Component {
       title = 'Title',
       handleClick = () => { },
       style = {},
-      titleStyle = {},
+      titleStyle = {
+          marginLeft: 8,
+          lineHeight: 1.2
+      },
       image = false,
       imageSize = 'small',
       disabled

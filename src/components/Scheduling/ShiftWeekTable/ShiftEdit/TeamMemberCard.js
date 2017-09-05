@@ -10,9 +10,9 @@ export default class TeamMemberCard extends Component {
       searchText: '',
       users: [{
         id: 0,
-        firstName: 'Unassigned',
+        firstName: 'Automate Shift',
         lastName: '',
-        avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
+        avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/icons/time-lapse-red.png',
       }, ...props.users]
     }
   }
@@ -64,8 +64,10 @@ export default class TeamMemberCard extends Component {
               <Image src={avatarUrl} alt="avatar" />
             </div>
             <div className="label">
-              <span span className="firstName">{firstName} </span><span className="lastName">{lastName}</span><br />
+              <span className="firstName">{firstName} </span><span className="lastName">{lastName}</span><br />
               <span className="description">{ content }</span>
+              {/* the break below puts the employee's name near top of card */}
+              <br />
             </div>
           </div>}
           icon='dropdown-img-black'

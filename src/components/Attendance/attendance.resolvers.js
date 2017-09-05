@@ -67,8 +67,8 @@ export const timeOffRequestResolvers = {
 
 export const shiftHistoryResolvers = {
   shiftHistoryQuery: gql`
-    query ($workplaceId: Uuid!) {
-      allShifthistories (condition: { workplaceId: $workplaceId }) {
+    query ($workplaceId: Uuid!, $corporationId: Uuid!) {
+      allShifthistories (condition: { workplaceId: $workplaceId, corporationId: $corporationId }) {
         nodes {
           workerId
           positionId

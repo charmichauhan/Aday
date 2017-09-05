@@ -10,7 +10,7 @@ import Hiring from './components/Hiring';
 import Template from './components/Template';
 import Team from './components/Team';
 import Certificates from './components/certifications/Certificates';
-import Attendance from './components/attendance';
+import Attendance from './components/Attendance';
 import Login from './components/auth/Login';
 
 const routes = [

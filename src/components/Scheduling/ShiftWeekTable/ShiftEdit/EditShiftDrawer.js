@@ -276,10 +276,6 @@ class DrawerHelper extends Component {
     };
   };
 
-  getUsers = () => {
-    const usersData = this.props.users;
-    return usersData.allUsers.edges.map(({ node }) => pick(node, ['id', 'avatarUrl', 'firstName', 'lastName']));
-  };
 
   getInitialData = ({ shift: { workersAssigned = [], workersInvited = [], workersRequestedNum = 0 } }) => {
     workersAssigned = workersAssigned.map(worker => {
@@ -335,6 +331,11 @@ class DrawerHelper extends Component {
   };
 
   render() {
+    console.log(this.props.teamMembers)
+    if (this.props.teamMembers.loading) {
+                return (<div>Loading</div>) 
+    }
+
     const {
       shift = {},
       width = 600,
@@ -342,9 +343,12 @@ class DrawerHelper extends Component {
       docked = false,
       open
     } = this.props;
+     
+
 
     const { teamMembers, jobShadowers } = this.state;
-    const users = this.getUsers();
+
+    const users = this.props.teamMembers.allJobs.edges.map(({ node }) => pick(node.userByUserId, ['id', 'avatarUrl', 'firstName', 'lastName']));
 
     const actionTypes = [{
       type: 'white',
@@ -503,8 +507,7 @@ const DrawerHelperComponent = compose(graphql(deleteShiftMutation, {
   }),
   graphql(allUsersQuery, {
     name: 'teamMembers',
-    options: (ownProps) => ({ variables: { positionId: ownProps.shift && ownProps.shift.positionByPositionId.id } }),
-    props: ({ teamMembers, ownProps }) => ({ teamMemberNodes: teamMembers.allJobs && teamMembers.allJobs.edges })
+    options: (ownProps) => ({ variables: { positionId: ownProps.shift && ownProps.shift.positionByPositionId.id } }) 
   }))
 (DrawerHelper);
 

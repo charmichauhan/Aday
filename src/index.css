@@ -6,6 +6,8 @@ body {
   font-family: Roboto,'Helvetica Neue',Helvetica,Arial,sans-serif !important;
 }
 
+@import url('https://fonts.googleapis.com/css?family=Varela+Round:regular,bold,italic&subset=latin,latin-ext');
+
 .logo{
 	min-width: 80px;
 }

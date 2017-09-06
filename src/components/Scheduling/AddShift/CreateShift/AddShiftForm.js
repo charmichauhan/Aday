@@ -144,7 +144,7 @@ export class AddShiftForm extends Component{
                               console.log('there was an error sending the query', error);
                           });
                     */
-                    }
+                    });
                   /*
                   }).catch((error) => {
                           console.log('there was an error sending the query', error);

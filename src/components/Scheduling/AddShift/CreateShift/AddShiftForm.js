@@ -113,7 +113,7 @@ export class AddShiftForm extends Component{
                   this.props.closeFunc();
  
                   console.log('got data', data);
-
+                  /*
                   var shift = data.createShift.shift 
                   if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
                   var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/callEmployee/'
@@ -143,10 +143,13 @@ export class AddShiftForm extends Component{
                           }).catch((error) => {
                               console.log('there was an error sending the query', error);
                           });
+                    */
                     }
+                  /*
                   }).catch((error) => {
                           console.log('there was an error sending the query', error);
-                  });
+                  }); */
+
   }
 
 

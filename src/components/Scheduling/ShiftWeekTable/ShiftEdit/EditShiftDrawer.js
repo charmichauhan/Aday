@@ -218,6 +218,7 @@ class DrawerHelper extends Component {
 
 
        var shift = this.props.shift
+        /*
         if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
           var uriRemoved = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
 
@@ -242,7 +243,8 @@ class DrawerHelper extends Component {
                    console.log('there was an error sending the query for delete cancellation call', error);
               });
         }
-
+        */
+        /*
         if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
              var uriAdded = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/userAdded'
               var options = {
@@ -265,7 +267,7 @@ class DrawerHelper extends Component {
                 }).catch((error) => {
                    console.log('there was an error sending the query for delete cancellation call', error);
               });
-        }
+        }*/
   }
 
   addTeamMember = () => {
@@ -292,7 +294,7 @@ class DrawerHelper extends Component {
     });
     that.setState({ deleteModalPopped: false });
     this.handleCloseDrawer();
-
+    /*
     if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
         var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
 
@@ -316,7 +318,7 @@ class DrawerHelper extends Component {
           }).catch((error) => {
              console.log('there was an error sending the query for delete cancellation call', error);
         });
-    }
+    } */
  
   };
 

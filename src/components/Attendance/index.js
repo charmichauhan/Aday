@@ -4,6 +4,7 @@ import { withApollo } from 'react-apollo';
 
 import ShiftHistory from './ShiftHistory';
 import TimeOffRequests from './TimeOffRequests';
+import AttendanceRequests from './AttendanceRequests';
 import { tabDesign } from '../styles';
 
 import './attendance.css';
@@ -55,7 +56,7 @@ class Attendance extends Component {
             buttonStyle={this.getButtonStyle('timeOfRequests')}
             label="TIME OFF REQUESTS"
             value="timeOfRequests">
-            <TimeOffRequests />
+            <AttendanceRequests />
           </Tab>
         </Tabs>
       </section>

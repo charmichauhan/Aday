@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, Icon, Dropdown } from 'semantic-ui-react';
+import { Image, Dropdown } from 'semantic-ui-react';
 import TeamMemberOption from './TeamMemberOption';
 
 export default class TeamMemberCard extends Component {
@@ -10,9 +10,9 @@ export default class TeamMemberCard extends Component {
       searchText: '',
       users: [{
         id: 0,
-        firstName: 'Unassigned',
+        firstName: 'Automate Shift',
         lastName: '',
-        avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
+        avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/icons/time-lapse-red.png',
       }, ...props.users]
     }
   }
@@ -42,8 +42,17 @@ export default class TeamMemberCard extends Component {
     return (
       <div className="teamMemberCard">
         <div className="edits">
-          <Icon name="close" onClick={handleRemove} />
+        <Image
+             src="https://s3.us-east-2.amazonaws.com/aday-website/icons/exit-x.png"
+             height="15"
+             width="15"
+             floated='left'
+             onClick={handleRemove}
+             style={{marginLeft:7, cursor:'pointer'}}
+
+        />
         </div>
+
         <Dropdown
           placeholder="Team Member"
           name="team-member"
@@ -55,8 +64,10 @@ export default class TeamMemberCard extends Component {
               <Image src={avatarUrl} alt="avatar" />
             </div>
             <div className="label">
-              <b>{firstName}</b> {lastName} <br />
+              <span className="firstName">{firstName} </span><span className="lastName">{lastName}</span><br />
               <span className="description">{ content }</span>
+              {/* the break below puts the employee's name near top of card */}
+              <br />
             </div>
           </div>}
           icon='dropdown-img-black'

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
-import { Grid, GridColumn, Image, Rating } from 'semantic-ui-react';
+import { Grid, GridColumn, Image } from 'semantic-ui-react';
+import Rating from 'react-rating';
 import moment from 'moment';
 import { withApollo } from 'react-apollo';
 import { findLastIndex, cloneDeep } from 'lodash';
@@ -30,48 +31,63 @@ class ShiftHistory extends Component {
 
   componentDidMount() {
     if (this.state.workplaceId) {
-      this.getShiftHistoryDetails(this.state.workplaceId);
+      this.getShiftHistoryDetails(this.state.workplaceId, this.state.corporationId);
     }
   }
 
   componentWillReceiveProps() {
     const workplaceId = localStorage.getItem('workplaceId');
+    const corporationId = localStorage.getItem('corporationId');
+    this.setState({ workplaceId, corporationId });
     if (workplaceId && this.state.workplaceId !== workplaceId) {
-      this.setState({ workplaceId });
-      this.getShiftHistoryDetails(workplaceId);
+      this.getShiftHistoryDetails(workplaceId, corporationId);
     }
   }
 
-  getShiftHistoryDetails = (workplaceId) => {
+  getShiftHistoryDetails = (workplaceId, corporationId) => {
     this.props.client.query({
       query: shiftHistoryResolvers.shiftHistoryQuery,
-      variables: { workplaceId }
+      variables: { workplaceId, corporationId }
     }).then((res) => {
       if (res.data && res.data.allShifthistories && res.data.allShifthistories.nodes) {
-        this.setState({ shiftHistory: res.data.allShifthistories.nodes });
+        const shiftHistory = res.data.allShifthistories.nodes;
+        const ShiftHistoryFinal = [];
+        if (shiftHistory) {
+          shiftHistory.map((v) => {
+            if (ShiftHistoryFinal[v.workerId + v.positionId]) {
+            } else {
+              ShiftHistoryFinal[v.workerId + v.positionId] = v
+            }
+          });
+        }
+        const shiftValues = Object.values(ShiftHistoryFinal);
+        this.setState({ shiftHistoryAll: shiftValues, shiftHistory: this.filterUnratedShifts(shiftValues) });
       }
     }).catch(err => console.log('Error loading shift history'));
   };
 
   showMoreHistory = () => {
-    console.log('Show more button clicked');
-    const remainingRatings = this.state.shiftHistory.filter((shift) => shift.rating < 1);
+    const remainingRatings = this.state.shiftHistoryAll.filter((shift) => shift.rating < 1);
     if (remainingRatings.length) this.setState({ showMorePopup: true });
   };
 
-  onRatingChange = (shift, data) => {
+  filterUnratedShifts = (shifts) => {
+    return shifts.filter(shift => (!shift.rating || shift.rating < 1));
+  };
+
+  onRatingChange = (shift, rating) => {
     this.props.client.mutate({
       mutation: shiftHistoryResolvers.updateJobRatingMutation,
       variables: {
         id: shift.id,
-        jobInfo: { id: shift.id, rating: data.rating }
+        jobInfo: { id: shift.id, rating }
       }
     }).then(() => {
-      const shiftHistory = cloneDeep(this.state.shiftHistory);
-      const shiftIndex = findLastIndex(this.state.shiftHistory, { id: shift.id });
+      const shiftHistoryAll = cloneDeep(this.state.shiftHistoryAll);
+      const shiftIndex = findLastIndex(shiftHistoryAll, { id: shift.id });
       if (shiftIndex !== -1) {
-        shiftHistory[shiftIndex].rating = data.rating;
-        this.setState({ shiftHistory });
+        shiftHistoryAll[shiftIndex].rating = rating;
+        this.setState({ shiftHistoryAll, shiftHistory: this.filterUnratedShifts(shiftHistoryAll) });
       }
     }).catch(err => console.log(err));
   };
@@ -82,7 +98,7 @@ class ShiftHistory extends Component {
 
   render() {
 
-    const { shiftHistory, workplaceId } = this.state;
+    const { shiftHistoryAll, shiftHistory, workplaceId } = this.state;
 
     if (!workplaceId) {
       return (
@@ -94,7 +110,7 @@ class ShiftHistory extends Component {
     if (!shiftHistory) {
       return <Loading />;
     }
-    if (!shiftHistory.length) {
+    if (!shiftHistory.length && !shiftHistoryAll.length) {
       return (
         <div>
           <h3>No History for selected workplace.</h3>
@@ -106,7 +122,7 @@ class ShiftHistory extends Component {
 
       <div className="content shift-history-content">
         {shiftHistory.map((shift, index) => <Paper style={styles.paperStyle}
-          zDepth={1} key={index} className="content-row">
+                                                   zDepth={1} key={index} className="content-row">
           <Grid>
             <GridColumn width={4}>
               <div className="wrapper-element text-left">
@@ -143,22 +159,24 @@ class ShiftHistory extends Component {
             </GridColumn>
             <GridColumn width={3}>
               <div className="wrapper-element">
-              <span className="rating">
-                <Rating
-                  icon='star'
-                  size='massive'
-                  clearable
-                  defaultRating={shift.rating}
-                  maxRating={5}
-                  onRate={(_, data) => this.onRatingChange(shift, data)} />
-              </span>
+                <span className="rating">
+                  <Rating
+                    empty="fa fa-star-o fa-3x star-rating"
+                    full="fa fa-star fa-3x star-rating yellow-star"
+                    fractions={2}
+                    initialRate={shift.rating || 0}
+                    onChange={(rate) => this.onRatingChange(shift, rate)} />
+                </span>
                 <p className="text-uppercase">{shift.positionName}</p>
               </div>
             </GridColumn>
           </Grid>
         </Paper>)}
+        {!shiftHistory.length && shiftHistoryAll.length && <div className="no-shifts">
+          <h3 className="alert alert-warning">"There are no unrated shifts for the selected workplace."</h3>
+        </div>}
         <div className="btn-circle-center content-row">
-          <CircleButton type="blue" title="SEE MORE" handleClick={() => this.showMoreHistory()} />
+          <CircleButton disabled={shiftHistory.length < 1} type="blue" title="SEE MORE" handleClick={() => this.showMoreHistory()} />
         </div>
         <Modal
           title="SUBMIT RATINGS"

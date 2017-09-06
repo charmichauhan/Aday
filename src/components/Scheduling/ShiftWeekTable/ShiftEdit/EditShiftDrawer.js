@@ -21,14 +21,15 @@ import CircleButton from '../../../helpers/CircleButton';
 const uuidv4 = require('uuid/v4');
 import './shift-edit.css';
 
+
 const unassignedTeamMember = {
   user: {
     id: 0,
-    firstName: 'Unassigned',
+    firstName: 'Automated Shift',
     lastName: '',
-    avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
+    avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/icons/time-lapse-red.png',
   },
-  content: 'There is currenlty an open position',
+  content: 'Assign shift to override automation',
   status: 'unassigned'
 };
 
@@ -86,7 +87,6 @@ const initialState = {
 };
 
 class DrawerHelper extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -245,7 +245,7 @@ class DrawerHelper extends Component {
     return {
       user: pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']),
       status: isAssigned ? 'accepted' : 'pending',
-      content: foundWorker.node.content || 'CURRENT HOURS: 37'
+      content: foundWorker.node.content
     };
   };
 
@@ -274,7 +274,7 @@ class DrawerHelper extends Component {
     const { teamMembers } = this.state;
     if (user.id) {
       teamMembers[index].user = user;
-      teamMembers[index].content = '';
+      teamMembers[index].content = '     ';
       teamMembers[index].status = 'accepted';
     } else {
       teamMembers[index] = { ...unassignedTeamMember };
@@ -299,7 +299,7 @@ class DrawerHelper extends Component {
     const { jobShadowers } = this.state;
     if (user.id) {
       jobShadowers[index].user = user;
-      jobShadowers[index].content = '';
+      jobShadowers[index].content = '     ';
       jobShadowers[index].status = 'accepted';
     } else {
       jobShadowers[index] = { ...unassignedTeamMember };
@@ -341,6 +341,7 @@ class DrawerHelper extends Component {
     );
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
       { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
+
     let pastDate = moment().diff(this.props.shift.startTime) > 0;
     return (
       <Drawer docked={docked} width={width}
@@ -359,7 +360,18 @@ class DrawerHelper extends Component {
           </div>
           <div className="drawer-content scroll-div">
             <div className="member-list">
-              <h5>TEAM MEMBERS ({teamMembers.length})</h5>
+            <div style={{marginLeft:10}}>
+                <Image
+                     src="https://s3.us-east-2.amazonaws.com/aday-website/icons/team-members.png"
+                     size="mini"
+                     floated='left'
+                />
+                 <h5 style={{color:'#0021A1'}}>
+                        TEAM MEMBERS ({teamMembers.length})
+                 </h5>
+            </div>
+            <br />
+
               {teamMembers && teamMembers.map((tm, i) => (
                 <TeamMemberCard
                   avatarUrl={tm.user.avatarUrl}
@@ -377,28 +389,32 @@ class DrawerHelper extends Component {
               <div className="btn-member">
                 <RaisedButton label="ADD TEAM MEMBER" onClick={this.addTeamMember} />
               </div>
-
             </div>
 
-            <div className="shift-details">
-              <Divider />
-              <div className="shift-heading">
-                <img src="/assets/Icons/copying.png" />
-                <h5>SHIFT DETAILS</h5>
-              </div>
+             <div className="shift-details">
+                <Divider />
+                <div style={{marginLeft: 10}}>
+                    <Image
+                       src="https://s3.us-east-2.amazonaws.com/aday-website/icons/copying-blue.png"
+                       floated='left'
+                       style={{width:40}}
+                    />
+                    <h5 style={{color:'#0021A1', paddingTop: 5}}>SHIFT DETAILS</h5>
+                </div>
               <div className="shiftDetails">
-                <p><b>Work place</b>: {shift.workplaceByWorkplaceId.workplaceName}</p>
-                <p><b>Position</b>: {shift.positionByPositionId.positionName}</p>
-                <p><b>Shift Date</b>: {moment(shift.startTime).format('dddd, MMMM Do YYYY')}</p>
-                <p><b>Start Time</b>: {moment(shift.startTime).format('hh:mm A')}</p>
-                <p><b>End Time</b>: {moment(shift.endTime).format('hh:mm A')}</p>
-                <p><b>Unpaid break</b>: {!shift.unpaidBreakTime && '00:00' || shift.unpaidBreakTime.split(":").slice(0,2).join(":")} </p>
-                <p><b>bonus payment per hour</b>: $0.00</p>
-                <p><b>job shadowing shift</b>: No</p>
+                <p><b>Workplace</b>: <span>{shift.workplaceByWorkplaceId.workplaceName}</span></p>
+                <p><b>Position</b>: <span>{shift.positionByPositionId.positionName}</span></p>
+                <p><b>Shift Date</b>: <span>{moment(shift.startTime).format('dddd, MMMM Do YYYY')}</span></p>
+                <p><b>Start Time</b>: <span>{moment(shift.startTime).format('hh:mm A')}</span></p>
+                <p><b>End Time</b>: <span>{moment(shift.endTime).format('hh:mm A')}</span></p>
+                <p><b>Unpaid break</b>: <span>{!shift.unpaidBreakTime && '00:00' || shift.unpaidBreakTime.split(":").slice(0,2).join(":")}</span></p>
+                <p><b>bonus payment per hour</b>: <span>$0.00</span></p>
+                <p><b>job shadowing shift</b>: <span>No</span></p>
+                <br />
+                <p><b>SHIFT INSTRUCTIONS:</b></p>
+                <p className="dimmedText"> {!shift.instructions.length < 1? <span>{shift.instructions}</span>:<span>n/a</span>}
+                </p>
               </div>
-
-              <h5>INSTRUCTIONS</h5>
-              <p className="dimmedText">{shift.instructions}</p>
             </div>
           </div>
           <div className="drawer-footer">
@@ -406,7 +422,11 @@ class DrawerHelper extends Component {
               <div className="buttons text-center">
                 {actions}
               </div> :
-              <h5><p className="dimmedText">Editing Disabled for Past Shifts</p></h5>
+                 <div style={{ display: 'flex',  justifyContent: 'center'}}>
+                 <Image
+                      src="https://s3.us-east-2.amazonaws.com/aday-website/icons/save-update-circle-button-disabled.png"
+                 />
+                 </div>
             }
             <Modal
               title="Confirm"

@@ -11,6 +11,7 @@ import AvatarEditor from '../../helpers/AvatarEditor';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 import { personalResolvers } from '../settings.resolvers';
 import CircleButton from '../../helpers/CircleButton';
+import SuperAgent from 'superagent';
 
 const initialState = {
   paymentOptions: [{
@@ -99,9 +100,24 @@ class Personal extends Component {
     this.setState({ showPassword });
   };
 
+  handleDrop = (files) => {
+    this.setState({ blob: files[0] });
+  };
+
   handleImageUpload = (files) => {
-    // Image uploading code to be done here
-    console.log('Image upload code goes here');
+    console.log(files);
+    //when api feature added to prod: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
+    SuperAgent.post('http://localhost:8080/api/uploadImage')
+    .field('bucket', 'aday-user')
+    .field('filename', localStorage.getItem('userId'))
+    .field('id', localStorage.getItem('userId'))
+    .field('table', 'user')
+    .field('column', 'avatar_url')
+    .attach("theseNamesMustMatch", files[0])
+    .end((err, res) => {
+      if (err) console.log(err);
+      alert('File uploaded!');
+    })
     this.setState({ blob: files[0] });
   };
 
@@ -133,6 +149,7 @@ class Personal extends Component {
   };
 
   handleImageSave = (img) => {
+    this.handleImageUpload(img);
   };
 
   render() {
@@ -223,7 +240,7 @@ class Personal extends Component {
             <Dropzone
               multiple={false}
               accept="image/*"
-              onDrop={this.handleImageUpload}
+              onDrop={this.handleImageDrop}
               style={{}}>
               <div className="personal-img-icon">
                 <i><img src="/images/camera-icon.png" alt="Upload Image" /></i>

@@ -67,7 +67,20 @@ section.attendance .content-row .ui.grid .column .rating .fa {
   margin-right: 4px;
 }
 
+section.attendance .content-row .ui.grid .column .rating .fa.star-rating {
+  font-size: 30px;
+}
+
+section.attendance .content-row .ui.grid .column .rating .fa.yellow-star {
+  color: #ffe12f;
+}
+
 section.attendance .modal-wrapper .confirm-popup-body {
   color: #4A4A4A;
   font-size: 24px;
+}
+
+section.attendance .no-shifts h3.alert.alert-warning {
+  border-radius: 5px;
+  color: #a26000;
 }

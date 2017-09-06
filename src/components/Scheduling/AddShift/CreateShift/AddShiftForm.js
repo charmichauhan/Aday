@@ -13,6 +13,7 @@ import ManagerSelectOption from './ManagerSelectOption';
 import PositionSelector  from './positionSelector'
 import WorkplaceSelector  from './workplaceSelector'
 import '../styles.css';
+var rp = require('request-promise');
 
 export class AddShiftForm extends Component{
  static propTypes = {
@@ -110,11 +111,47 @@ export class AddShiftForm extends Component{
               })
               .then(({ data }) => {
                   this.props.closeFunc();
+ 
                   console.log('got data', data);
-              }).catch((error) => {
-                  console.log('there was an error sending the query', error);
-              });
+                  /*
+                  var shift = data.createShift.shift 
+                  if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
+                  var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/callEmployee/'
+
+                     var options = {
+                        uri: uri,
+                        method: 'POST',
+                        json: {
+                            "data": {
+                              "sec": "QDVPZJk54364gwnviz921",
+                              "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
+                              "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                              "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                              "brand": shift.positionByPositionId.brandByBrandId.brandName,
+                              "shiftLocation": shift.workplaceByWorkplaceId.workplaceName,
+                              "shiftReward": "",
+                              "shiftRole": shift.positionByPositionId.positionName,
+                              "shiftAddress": shift.workplaceByWorkplaceId.address,
+                              "weekPublishedId": shift.weekPublishedId,
+                              "shiftId": shift.id,
+                            }
+                        }
+                    };
+                      rp(options)
+                        .then(function(response) {
+                               //that.setState({redirect:true})
+                          }).catch((error) => {
+                              console.log('there was an error sending the query', error);
+                          });
+                    */
+                    }
+                  /*
+                  }).catch((error) => {
+                          console.log('there was an error sending the query', error);
+                  }); */
+
   }
+
 
 
   formatDays(day){
@@ -342,6 +379,7 @@ const createShiftMutation = gql`
         managersOnShift
         traineesRequestedNum
         unpaidBreakTime
+        weekPublishedId
         positionByPositionId{
           id
           positionName
@@ -354,7 +392,29 @@ const createShiftMutation = gql`
         workplaceByWorkplaceId{
           id
             workplaceName
+            address
         }
+        marketsByShiftId {
+            nodes {
+              id
+              workerId
+              shiftId
+              shiftExpirationDate
+              isTexted
+              isCalled
+              isBooked
+              isEmailed
+              isPhoneAnswered
+              workerResponse
+              marketRulesByMarketId {
+                nodes {
+                  ruleByRuleId {
+                    ruleName
+                  }
+                }
+              }
+            }
+          }
     }
   }
 }`

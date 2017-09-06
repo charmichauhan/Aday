@@ -28,6 +28,7 @@ const allShiftsByWeeksPublished = gql`
           workplaceByWorkplaceId {
             id
             workplaceName
+            address
           }
           marketsByShiftId {
             nodes {

@@ -62,7 +62,7 @@ class ShiftPublishComponent extends Component{
 
               rp(options)
                 .then(function(response) {
-                       that.setState({redirect:true})
+                       window.location.href = '/schedule/template/'
                   }).catch((error) => {
                       console.log('there was an error sending the query', error);
                   });

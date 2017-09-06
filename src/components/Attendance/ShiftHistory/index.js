@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
-import { Grid, GridColumn, Image, Rating } from 'semantic-ui-react';
+import { Grid, GridColumn, Image } from 'semantic-ui-react';
+import Rating from 'react-rating';
 import moment from 'moment';
 import { withApollo } from 'react-apollo';
 import { findLastIndex, cloneDeep } from 'lodash';
@@ -74,21 +75,19 @@ class ShiftHistory extends Component {
     return shifts.filter(shift => (!shift.rating || shift.rating < 1));
   };
 
-  onRatingChange = (shift, data) => {
+  onRatingChange = (shift, rating) => {
     this.props.client.mutate({
       mutation: shiftHistoryResolvers.updateJobRatingMutation,
       variables: {
         id: shift.id,
-        jobInfo: { id: shift.id, rating: data.rating }
+        jobInfo: { id: shift.id, rating }
       }
     }).then(() => {
       const shiftHistoryAll = cloneDeep(this.state.shiftHistoryAll);
       const shiftIndex = findLastIndex(shiftHistoryAll, { id: shift.id });
       if (shiftIndex !== -1) {
-        shiftHistoryAll[shiftIndex].rating = data.rating;
-        setTimeout(() => {
-          this.setState({ shiftHistoryAll, shiftHistory: this.filterUnratedShifts(shiftHistoryAll) });
-        }, 200);
+        shiftHistoryAll[shiftIndex].rating = rating;
+        this.setState({ shiftHistoryAll, shiftHistory: this.filterUnratedShifts(shiftHistoryAll) });
       }
     }).catch(err => console.log(err));
   };
@@ -111,14 +110,7 @@ class ShiftHistory extends Component {
     if (!shiftHistory) {
       return <Loading />;
     }
-    if (!shiftHistory.length && shiftHistoryAll.length) {
-      return (
-        <div>
-          <h3>There are no unrated shifts for the selected workplace.</h3>
-        </div>
-      );
-    }
-    if (!shiftHistory.length) {
+    if (!shiftHistory.length && !shiftHistoryAll.length) {
       return (
         <div>
           <h3>No History for selected workplace.</h3>
@@ -167,20 +159,22 @@ class ShiftHistory extends Component {
             </GridColumn>
             <GridColumn width={3}>
               <div className="wrapper-element">
-              <span className="rating">
-                <Rating
-                  icon='star'
-                  size='massive'
-                  clearable
-                  defaultRating={shift.rating || 0}
-                  maxRating={5}
-                  onRate={(_, data) => this.onRatingChange(shift, data)} />
-              </span>
+                <span className="rating">
+                  <Rating
+                    empty="fa fa-star-o fa-3x star-rating"
+                    full="fa fa-star fa-3x star-rating yellow-star"
+                    fractions={2}
+                    initialRate={shift.rating || 0}
+                    onChange={(rate) => this.onRatingChange(shift, rate)} />
+                </span>
                 <p className="text-uppercase">{shift.positionName}</p>
               </div>
             </GridColumn>
           </Grid>
         </Paper>)}
+        {!shiftHistory.length && shiftHistoryAll.length && <div className="no-shifts">
+          <h3 className="alert alert-warning">"There are no unrated shifts for the selected workplace."</h3>
+        </div>}
         <div className="btn-circle-center content-row">
           <CircleButton disabled={shiftHistory.length < 1} type="blue" title="SEE MORE" handleClick={() => this.showMoreHistory()} />
         </div>

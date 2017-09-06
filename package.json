@@ -32,6 +32,7 @@
     "react-mdl": "^1.10.3",
     "react-modal-dialog": "^4.0.7",
     "react-moment-proptypes": "^1.5.0",
+    "react-rating": "^0.8.1",
     "react-redux": "^5.0.5",
     "react-router": "^4.1.1",
     "react-router-config": "^1.0.0-beta.3",

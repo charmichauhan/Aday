@@ -100,6 +100,10 @@ class Personal extends Component {
     this.setState({ showPassword });
   };
 
+  handleDrop = (files) => {
+    this.setState({ blob: files[0] });
+  };
+
   handleImageUpload = (files) => {
     console.log(files);
     //when api feature added to prod: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
@@ -114,7 +118,6 @@ class Personal extends Component {
       if (err) console.log(err);
       alert('File uploaded!');
     })
-    // Image uploading code to be done here
     this.setState({ blob: files[0] });
   };
 
@@ -237,7 +240,7 @@ class Personal extends Component {
             <Dropzone
               multiple={false}
               accept="image/*"
-              onDrop={this.handleImageUpload}
+              onDrop={this.handleImageDrop}
               style={{}}>
               <div className="personal-img-icon">
                 <i><img src="/images/camera-icon.png" alt="Upload Image" /></i>

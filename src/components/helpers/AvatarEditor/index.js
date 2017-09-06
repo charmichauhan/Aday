@@ -29,7 +29,7 @@ class AvatarEditor extends Component {
     super(props);
     this.state = {
       ...initialState,
-      ...props
+      ...props,
     }
   }
 
@@ -38,8 +38,8 @@ class AvatarEditor extends Component {
   };
 
   handleSave = () => {
-    const img = this.editor.getImageScaledToCanvas().toDataURL();
-    this.props.onSave(img);
+    const img = this.editor.getImageScaledToCanvas();
+    const img_file = img.toBlob((b) => this.props.onSave([b]));
   };
 
   handleScale = (e, value) => {
@@ -75,6 +75,7 @@ class AvatarEditor extends Component {
       <div className="avatar-editor">
         <ReactAvatarEditor
           ref={this.setEditorRef}
+          crossOrigin="anonymous"
           scale={parseFloat(scale)}
           width={width}
           height={height}

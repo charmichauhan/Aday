@@ -169,8 +169,6 @@ class Workplace extends Component {
   handleDrawerSubmit = (workplace) => {
     // Make request to server to add workplace
     this.setState({ open: false });
-    console.log(this.state)
-    console.log(workplace)
     const { workplaces } = this.state;
     if (!workplace.id) {
       // Create
@@ -211,7 +209,6 @@ class Workplace extends Component {
         updateQueries: {
           getAllWorkplacesQuery: (previousQueryResult, { mutationResult }) => {
             let newEdges = [];
-            console.log(mutationResult)
             previousQueryResult.allWorkplaces.nodes.map((value) => {
               if (value.id != mutationResult.data.updateWorkplaceById.workplace.id) {
                 newEdges.push(value);

@@ -3,6 +3,7 @@ import { Menu, Icon, Image } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import EmergencyShiftButton from './KendallLearning/EmergencyShiftButton';
 import { gql, graphql,compose} from 'react-apollo';
+import { renderRoutes } from 'react-router-config';
 import './nav.css';
 
 const styles = {
@@ -29,7 +30,7 @@ class NavComponent extends Component {
   logout = () => {
   	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     localStorage.clear();
-  	this.props.history.push('/login')
+  	window.location.href = '/login'
   }
   handleChangeBrand = () => {
     let brandId = document.getElementById("brand").value;

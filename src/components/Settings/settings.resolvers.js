@@ -26,13 +26,7 @@ export const personalResolvers = {
         }
       }
     }
-  `,
-  updatePasswordMutation: gql`
-  mutation ($data: UpdatePasswordInput!){
-        updatePassword(input: $data ) {
-          boolean
-        }
-  }`
+  `
 };
 
 export const workplaceResolvers = {

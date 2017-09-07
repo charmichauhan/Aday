@@ -7,47 +7,24 @@ import {find, pick} from "lodash";
 import {leftCloseButton} from "../../styles";
 import {graphql, compose} from "react-apollo";
 import TabPanel from "./TabPanel";
-import {userQuery, releventPositionsQuery, updateEmployeeById} from "../Team.graphql";
+import {userQuery, releventPositionsQuery} from "../Team.graphql";
 import "../team.css";
 const uuidv4 = require('uuid/v4');
 
 class ProfileDrawerComponent extends Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      dayHour: 0,
-      weekHour: 0,
-      monthHour: 0,
-      updated: false
-      }
-    }
 
-    dayHour = (event) => {
-      this.setState({ dayHour: event.target.value });
-    } 
-
-    weekHour = (event) => {
-      this.setState({ weekHour: event.target.value });
-    } 
-
-    monthHour = (event) => {
-      this.setState({ monthHour: event.target.value });
-    }
-
-    saveLimits(v){
-      this.props.updateEmployee({
-      variables: {
-        id: v, 
-        employeeInfo: { dayHourLimit: this.state.dayHour,
-                     weekHourLimit:  this.state.weekHour,
-                     monthHourLimit: this.state.monthHour  }
+  filterCrossTraining = (releventPositionsQuery) => {
+    releventPositionsQuery.filter((w) => {
+        if (w.jobsByPositionId.nodes.length > 0) {
+          for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
+            if (!w.jobsByPositionId.nodes[i].isPositionActive) {
+              return true;
+            }
           }
-        }).then(({ data }) => {
-              this.setState({ updated: true });
-              console.log(data)
-        })
+        }
       }
-
+    )
+  };
 
   render() {
     const {
@@ -60,15 +37,15 @@ class ProfileDrawerComponent extends Component {
     if (this.props.userQuery.loading || this.props.releventPositionsQuery.loading) {
       return (<div>Loading</div>)
     }
-    let positions = [];
-    let training = [];
     let userDetails = this.props.userQuery && this.props.userQuery.userById;
     let releventPositionsQuery = [...this.props.releventPositionsQuery.allPositions.nodes];
     let releventfilteredPositions = releventPositionsQuery.filter((w) => {
         if (w.jobsByPositionId.nodes.length > 0) {
-             positions.push(w)
-        } else {
-          training.push(w)
+          for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
+            if (!w.jobsByPositionId.nodes[i].isPositionActive) {
+              return true;
+            }
+          }
         }
       }
     );
@@ -130,20 +107,18 @@ class ProfileDrawerComponent extends Component {
                  <div className="text-center profile-drawer-title">
                      <h2 className="text-uppercase">Hourly Limits</h2>
                  </div>
-
                  <form className="form-inline max-hours-form">
-                  {this.state.updated? <div style={{ fontSize: "16px", color: "black" }}> Hourly Limits Updated. </div>:"" }
                      <div className="form-group daily">
                          <label htmlFor="daily" className="text-uppercase">Max <span style={{color:'darkred'}}> Daily </span> Hours</label>
-                         <input type="text" className="form-control" onChange={this.dayHour} placeholder={userDetails.employeesByUserId.edges[0].node.dayHourLimit}/>
+                         <input type="text" className="form-control"/>
                      </div>
                      <div className="form-group weekly">
                          <label htmlFor="weekly" className="text-uppercase">Max <span style={{color:'darkred'}}> Weekly </span> Hours</label>
-                         <input type="text" className="form-control" onChange={this.weekHour} placeholder={userDetails.employeesByUserId.edges[0].node.weekHourLimit}/>
+                         <input type="text" className="form-control"/>
                      </div>
                      <div className="form-group monthly">
                          <label htmlFor="monthly" className="text-uppercase">Max <span style={{color:'darkred'}}> Monthly </span> Hours</label>
-                         <input type="text" className="form-control" onChange={this.monthHour}placeholder={userDetails.employeesByUserId.edges[0].node.monthHourLimit}/>
+                         <input type="text" className="form-control"/>
                     </div>
                  </form>
              <div className="profile-drawer-content text-center">
@@ -151,7 +126,6 @@ class ProfileDrawerComponent extends Component {
              </div>
              <div className="update-limit-btn text-center">
                  <RaisedButton
-                     onClick={() => this.saveLimits(userDetails.employeesByUserId.edges[0].node.id)}
                      label="Update Limits"
                      backgroundColor="#0022A1"
                      labelColor="#FFFFFF"
@@ -159,8 +133,8 @@ class ProfileDrawerComponent extends Component {
              </div>
               <TabPanel
                 userDetails={userDetails}
-                releventPositionsQuery={positions}
-                releventfilteredPositions={training}
+                releventPositionsQuery={releventPositionsQuery}
+                releventfilteredPositions={releventfilteredPositions}
               />
          </div>
      </div>
@@ -195,11 +169,10 @@ const ProfileDrawer = compose(
       variables: {
         corporationId: localStorage.getItem("corporationId"),
         brandId: localStorage.getItem("brandId"),
-        userId:  ownProps.userId
+        userId: localStorage.getItem("userId")
       }
     })
-  }),
-  graphql(updateEmployeeById, {name: "updateEmployee"})
+  })
 )(ProfileDrawerComponent);
 
 export default ProfileDrawer;

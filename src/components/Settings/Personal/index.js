@@ -31,25 +31,19 @@ const initialState = {
 };
 
 let personalFields = {};
-const fields = ['id', 'firstName', 'lastName', 'userPhoneNumber', 'userEmail', 'avatarUrl']
+const fields = ['id', 'firstName', 'lastName', 'userPhoneNumber', 'userEmail', 'avatarUrl', 'currentPassword', 'newPassword'];
 fields.forEach(field => personalFields[field] = field);
-
-let encyptedFields = {};
-const eFields = ['id', 'newPassword', 'currentPassword'];
-eFields.forEach(field => encyptedFields[field] = field);
-
 
 function hasError(field, value) {
   switch (field) {
-    case encyptedFields.newPassword:
-    case encyptedFields.currentPassword:
+    case personalFields.newPassword:
+    case personalFields.currentPassword:
       return !validator.isAlphanumeric(value);
     default:
       return true;
   }
 
 }
-
 
 class Personal extends Component {
   constructor(props) {
@@ -87,34 +81,17 @@ class Personal extends Component {
     });
   }
 
-
   handleUpdateInfo = () => {
     const userInfo = pick(this.state.userInfo, fields);
-    const passwordInfo = pick(this.state.userInfo, eFields);
     this.props.client.mutate({
       mutation: personalResolvers.updateUserMutation,
       variables: {
-
-          id: userInfo.id,
-          userInfo: userInfo
-    
+        id: userInfo.id,
+        userInfo: userInfo
       }
     }).then((res) => {
-      this.props.client.mutate({
-          mutation: personalResolvers.updatePasswordMutation,
-          variables: {
-            data:{
-              arg0: passwordInfo.id,
-              arg1: passwordInfo.newPassword
-            }
-          }
-        }).then((res) => {
-          this.showNotification('Personal details updated successfully.', NOTIFICATION_LEVELS.SUCCESS);
-        }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
+      this.showNotification('Personal details updated successfully.', NOTIFICATION_LEVELS.SUCCESS);
     }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
-
-
-
   };
 
   handleShowPassword = (passwordType) => {
@@ -164,9 +141,9 @@ class Personal extends Component {
 
   checkPasswords = () => {
     const { errorFields, userInfo } = this.state;
-    const isEqual = userInfo[encyptedFields.currentPassword] === userInfo[encyptedFields.newPassword];
-    if (userInfo[encyptedFields.currentPassword] && !isEqual) {
-      errorFields[encyptedFields.currentPassword] = errorFields[encyptedFields.newPassword] = true;
+    const isEqual = userInfo[personalFields.currentPassword] === userInfo[personalFields.newPassword];
+    if (userInfo[personalFields.currentPassword] && !isEqual) {
+      errorFields[personalFields.currentPassword] = errorFields[personalFields.newPassword] = true;
       return this.setState({ errorFields });
     }
   };
@@ -224,11 +201,11 @@ class Personal extends Component {
                     value={userInfo.userEmail} />
                 </li>
                 <li className={(errorFields.currentPassword && 'has-error') || ''}>
-                  <label htmlFor={encyptedFields.currentPassword}>Current Password</label>
+                  <label htmlFor={personalFields.currentPassword}>Current Password</label>
                   <div className="field-password-view">
                     <input
                       className="form-control"
-                      name={encyptedFields.currentPassword}
+                      name={personalFields.currentPassword}
                       onChange={this.handleInputChange}
                       type={(showPassword.currentPassword && 'text') || 'password'} />
                     <IconButton onClick={() => this.handleShowPassword('currentPassword')}>
@@ -240,11 +217,11 @@ class Personal extends Component {
                   </div>
                 </li>
                 <li className={(errorFields.newPassword && 'has-error') || ''}>
-                  <label htmlFor={encyptedFields.newPassword}>New Password</label>
+                  <label htmlFor={personalFields.newPassword}>New Password</label>
                   <div className="field-password-view">
                     <input
                       className="form-control"
-                      name={encyptedFields.newPassword}
+                      name={personalFields.newPassword}
                       onChange={this.handleInputChange}
                       onBlur={this.checkPasswords}
                       type={(showPassword.newPassword && 'text') || 'password'} />

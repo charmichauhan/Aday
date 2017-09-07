@@ -15,6 +15,10 @@ const buttonColors = {
   red: {
     backgroundColor: '#e33821',
     color: '#ffffff'
+  },
+  green: {
+    backgroundColor: '#00A863',
+    color: '#ffffff'
   }
 };
 

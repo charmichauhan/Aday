@@ -101,15 +101,28 @@ export const releventPositionsQuery = gql`
   query ($corporationId: Uuid, $brandId: Uuid, $workplaceId: Uuid, $userId: Uuid) {
     fetchRelevantPositions(corporationid: $corporationId, brandid: $brandId, workplaceid: $workplaceId){
       nodes {
+        id
         positionName
+        traineeHours
         jobsByPositionId (condition: { userId: $userId }) {
           nodes {
+            id
             isPositionActive
             primaryJob
             rating
-            
+            numTraineeHoursCompleted
           }
         }
       }
     }
   }`;
+
+export const updateJobPrimaryPosition = gql`
+  mutation ($id: Uuid!, $jobInfo: JobPatch!) {
+    updateJobById (input: { id: $id, jobPatch: $jobInfo }) {
+      job {
+        id
+      }
+    }
+  }
+`

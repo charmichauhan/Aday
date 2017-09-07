@@ -3,7 +3,7 @@ import Drawer from "material-ui/Drawer";
 import IconButton from "material-ui/IconButton";
 import RaisedButton from "material-ui/RaisedButton";
 import {Image, Rating} from "semantic-ui-react";
-import {find, pick} from "lodash";
+import { find, pick, cloneDeep } from "lodash";
 import {leftCloseButton} from "../../styles";
 import {graphql, compose} from "react-apollo";
 import TabPanel from "./TabPanel";
@@ -27,6 +27,35 @@ class ProfileDrawerComponent extends Component {
     )
   };
 
+  getActiveInactive = (positions) => {
+    debugger;
+    const active = {};
+    const inactive = {};
+    positions.forEach((position) => {
+      if (position.jobsByPositionId.nodes.length > 0) {
+
+        position.jobsByPositionId.nodes.forEach((job) => {
+          if (job.isPositionActive) {
+            if (active[position.id]) {
+              active[position.id].jobsByPositionId.nodes.push(job);
+            } else {
+              active[position.id] =  cloneDeep(position);
+              active[position.id].jobsByPositionId.nodes = [job];
+            }
+          } else {
+            if (inactive[position.id]) {
+              inactive[position.id].jobsByPositionId.nodes.push(job);
+            } else {
+              inactive[position.id] =  cloneDeep(position);
+              inactive[position.id].jobsByPositionId.nodes = [job];
+            }
+          }
+        });
+      }
+    });
+    return { active: Object.values(active), inactive: Object.values(inactive) };
+  };
+
   render() {
     const {
       shift = {},
@@ -41,18 +70,10 @@ class ProfileDrawerComponent extends Component {
     let userDetails = this.props.userQuery && this.props.userQuery.userById;
 
     let releventPositionsQuery = [...this.props.releventPositionsQuery.fetchRelevantPositions.nodes];
-    debugger;
-    let releventfilteredPositions = releventPositionsQuery.filter((w) => {
-        if (w.jobsByPositionId.nodes.length > 0) {
-          debugger;
-          for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
-            if (!w.jobsByPositionId.nodes[i].isPositionActive) {
-              return true;
-            }
-          }
-        }
-      }
-    );
+    const { active, inactive } = this.getActiveInactive(releventPositionsQuery);
+    const releventfilteredPositions = inactive;
+    releventPositionsQuery = active;
+
     debugger;
     const styles = {
       positionCheckbox: {
@@ -139,9 +160,6 @@ class ProfileDrawerComponent extends Component {
 
 
             </div>
-          </div>
-          <div className="block-limit-btn text-center">
-            <button className="btn text-uppercase btn-default">Block {userDetails.firstName}</button>
           </div>
         </div>
       </Drawer>

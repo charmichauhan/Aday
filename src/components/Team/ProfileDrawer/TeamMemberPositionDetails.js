@@ -4,6 +4,7 @@ import {Image, Rating, Grid} from "semantic-ui-react";
 import 'antd/dist/antd.css';
 import { Radio, Progress, Switch, Icon } from 'antd';
 import Delete from 'material-ui/svg-icons/action/delete';
+import { updateJobPrimaryPosition } from "../Team.graphql";
 import {leftCloseButton} from "../../styles";
 import Checkbox from 'material-ui/Checkbox';
 
@@ -90,7 +91,8 @@ export default class TeamMemberPositionDetails extends Component {
               </Grid.Column>
             </Grid.Row>
 
-            {releventPositionsQuery.map((v, index) => (
+            {releventPositionsQuery.map((v, index) => {
+              return (
 
               <Grid.Row>
                 <Grid.Column width={2}>
@@ -99,8 +101,8 @@ export default class TeamMemberPositionDetails extends Component {
                 <Grid.Column width={8}>
                   <div className="wrapper-element">
                     <p className="cook-name">{v.positionName}</p>
-                    {/*<Rating icon='star' defaultRating={v.node.rating} maxRating={5}/>*/}
-                    <span className="text-uppercase green">Primary Position</span>
+                    <Rating icon='star' defaultRating={1} maxRating={5}/>
+
                   </div>
                 </Grid.Column>
                 <Grid.Column width={2}>
@@ -113,7 +115,8 @@ export default class TeamMemberPositionDetails extends Component {
                 <Grid.Column width={2}>
                   <div className="text-center wrapper-element">
                     <RadioGroup onChange={this.onRadioChange1} value={this.state.value1} className="radioStyle">
-                      <Radio value={1}></Radio>
+                      <Radio value={v.jobsByPositionId.nodes[0].primaryJob ? 1  : 0 }></Radio>
+
                     </RadioGroup>
                   </div>
                 </Grid.Column>
@@ -123,7 +126,8 @@ export default class TeamMemberPositionDetails extends Component {
                   </div>
                 </Grid.Column>
               </Grid.Row>
-            ))
+            )
+            })
             }
           </Grid>
         </div>
@@ -136,7 +140,7 @@ export default class TeamMemberPositionDetails extends Component {
 
             <Grid.Row>
               <Grid.Column width={2}>
-                <Progress type="circle" percent={25} width={40}/>
+                {/*<Progress type="circle" percent={25} width={40}/>*/}
               </Grid.Column>
               <Grid.Column width={10}>
 
@@ -152,26 +156,33 @@ export default class TeamMemberPositionDetails extends Component {
             {releventfilteredPositions.map((v, index) => (
                 <Grid.Row>
                   <Grid.Column width={2}>
-                    <Progress type="circle" percent={25} width={40}/>
+                    <Progress type="circle" percent={(v.jobsByPositionId.nodes[0].numTraineeHoursCompleted ? v.jobsByPositionId.nodes[0].numTraineeHoursCompleted : 0) * 100/ v.traineeHours } width={40}/>
                   </Grid.Column>
                   <Grid.Column width={10}>
                     <div>
                       <p className="cook-name">{v.positionName}</p>
-                      <span className="text-uppercase red">4 of 20 hours completed</span>
+                      <span className="text-uppercase red">{v.jobsByPositionId.nodes[0].numTraineeHoursCompleted ? v.jobsByPositionId.nodes[0].numTraineeHoursCompleted : 0} of {v.traineeHours} hours completed</span>
                       <span className="text-uppercase green"> Approved For Job Shadowing</span>
                     </div>
                   </Grid.Column>
                   <Grid.Column width={2}>
-                    <RadioGroup onChange={this.onCrossRadioChange} value={this.state.crossValue}>
-                      <Radio value={2}></Radio>
-                    </RadioGroup>
+                    <div className="wrapper-element">
+                      <Switch defaultChecked={false} onChange={this.onChange}
+                              className="switchStyle" circleStyles={{border: '1px solid #000', background: '#f00'}}
+                              checkedChildren="YES" unCheckedChildren="NO"/>
+                    </div>
                   </Grid.Column>
                   <Grid.Column width={2}>
-                    <i className="fa fa-check fa-3x" style={{color: 'gray'}}/>
+                    <div className="text-center wrapper-element">
+                      <Icon type="down-circle" style={{fontSize: '20px'}} />
+                    </div>
                   </Grid.Column>
                 </Grid.Row>
             ))}
           </Grid>
+        </div>
+        <div className="text-center block-limit-btn text-center">
+          <button className="btn text-uppercase btn-default">Block {userDetails.firstName}</button>
         </div>
       </div>
 

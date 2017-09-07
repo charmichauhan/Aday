@@ -7,6 +7,7 @@
     "apollo-client": "^1.9.0-0",
     "classnames": "^2.2.5",
     "cldr": "^4.3.0",
+    "draft-js": "^0.10.1",
     "fullcalendar": "^3.4.0",
     "fullcalendar-scheduler": "^1.6.2",
     "globalize": "^1.2.3",

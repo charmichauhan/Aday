@@ -16,7 +16,6 @@ class ProfileDrawerComponent extends Component {
   filterCrossTraining = (releventPositionsQuery) => {
     releventPositionsQuery.filter((w) => {
         if (w.jobsByPositionId.nodes.length > 0) {
-          debugger;
           for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
             if (!w.jobsByPositionId.nodes[i].isPositionActive) {
               return true;
@@ -40,11 +39,9 @@ class ProfileDrawerComponent extends Component {
     }
     let userDetails = this.props.userQuery && this.props.userQuery.userById;
 
-    let releventPositionsQuery = [...this.props.releventPositionsQuery.fetchRelevantPositions.nodes];
-    debugger;
+    let releventPositionsQuery = [...this.props.releventPositionsQuery.allPositions.nodes];
     let releventfilteredPositions = releventPositionsQuery.filter((w) => {
         if (w.jobsByPositionId.nodes.length > 0) {
-          debugger;
           for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
             if (!w.jobsByPositionId.nodes[i].isPositionActive) {
               return true;
@@ -53,7 +50,6 @@ class ProfileDrawerComponent extends Component {
         }
       }
     );
-    debugger;
     const styles = {
       positionCheckbox: {
         textTransform: 'uppercase',
@@ -88,9 +84,6 @@ class ProfileDrawerComponent extends Component {
                 <Image src="/images/Icons_Red_Cross.png" size="mini"/>
               </IconButton>
               <h5 className="confirm-popup"> {userDetails.firstName} {userDetails.lastName} </h5>
-              <div className="drawer-right">
-                <RaisedButton label="RESUME" onClick={this.props.openResumeDrawer}/>
-              </div>
 
               {
                 userDetails.avatarUrl ? <Image centered='true' size='small' shape='circular' className="profile-img"
@@ -149,6 +142,12 @@ class ProfileDrawerComponent extends Component {
   };
 }
 
+/* 
+<div className="drawer-right">
+                <RaisedButton label="RESUME" onClick={this.props.openResumeDrawer}/>
+              </div>
+*/
+
 const ProfileDrawer = compose(
   graphql(userQuery, {
     name: "userQuery",
@@ -164,7 +163,6 @@ const ProfileDrawer = compose(
       variables: {
         corporationId: localStorage.getItem("corporationId"),
         brandId: localStorage.getItem("brandId"),
-        workplaceId: localStorage.getItem("workplaceId"),
         userId: localStorage.getItem("userId")
       }
     })

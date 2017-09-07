@@ -83,6 +83,7 @@ export const userQuery = gql `
     employeesByUserId{
     edges{
       node{
+        primaryWorkplace
         workplaceByPrimaryWorkplace
         {
           id
@@ -97,14 +98,16 @@ export const userQuery = gql `
   }
 }`
 
+
+
 export const releventPositionsQuery = gql`
-  query ($corporationId: Uuid, $brandId: Uuid, $userId: Uuid) {
+  query releventPositionsQuery($corporationId: Uuid, $brandId: Uuid, $userId: Uuid) {
     allPositions(condition: { corporationId: $corporationId, brandId: $brandId} ){
       nodes {
         id
         positionName
         traineeHours
-        jobsByPositionId (condition: { userId: $userId }) {
+        jobsByPositionId (condition: { userId: $userId, isPositionActive: true }) {
           nodes {
             id
             isPositionActive

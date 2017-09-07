@@ -13,19 +13,6 @@ const uuidv4 = require('uuid/v4');
 
 class ProfileDrawerComponent extends Component {
 
-  filterCrossTraining = (releventPositionsQuery) => {
-    releventPositionsQuery.filter((w) => {
-        if (w.jobsByPositionId.nodes.length > 0) {
-          for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
-            if (!w.jobsByPositionId.nodes[i].isPositionActive) {
-              return true;
-            }
-          }
-        }
-      }
-    )
-  };
-
   render() {
     const {
       shift = {},
@@ -37,15 +24,17 @@ class ProfileDrawerComponent extends Component {
     if (this.props.userQuery.loading || this.props.releventPositionsQuery.loading) {
       return (<div>Loading</div>)
     }
+    let positions = [];
+    let training = [];
     let userDetails = this.props.userQuery && this.props.userQuery.userById;
+    console.log(this.props.releventPositionsQuery)
     let releventPositionsQuery = [...this.props.releventPositionsQuery.allPositions.nodes];
+    console.log(this.props.releventPositionsQuery.allPositions.nodes)
     let releventfilteredPositions = releventPositionsQuery.filter((w) => {
         if (w.jobsByPositionId.nodes.length > 0) {
-          for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
-            if (!w.jobsByPositionId.nodes[i].isPositionActive) {
-              return true;
-            }
-          }
+             positions.push(w)
+        } else {
+          training.push(w)
         }
       }
     );
@@ -133,8 +122,8 @@ class ProfileDrawerComponent extends Component {
              </div>
               <TabPanel
                 userDetails={userDetails}
-                releventPositionsQuery={releventPositionsQuery}
-                releventfilteredPositions={releventfilteredPositions}
+                releventPositionsQuery={positions}
+                releventfilteredPositions={training}
               />
          </div>
      </div>
@@ -169,7 +158,7 @@ const ProfileDrawer = compose(
       variables: {
         corporationId: localStorage.getItem("corporationId"),
         brandId: localStorage.getItem("brandId"),
-        userId: localStorage.getItem("userId")
+        userId:  ownProps.userId
       }
     })
   })

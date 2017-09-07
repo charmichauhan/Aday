@@ -55,7 +55,10 @@ class NavComponent extends Component {
     const workplaceId = localStorage.getItem("workplaceId");
     const isUnion = localStorage.getItem("isUnion");
     const brand = this.props.allBrands.allBrands.nodes.filter((w) => w.id == brandId);
-    const brandLogo = brand[0].brandIconUrl;
+    let brandLogo = ""
+    if (brand[0] && brand[0].brandIconUrl){
+      brandLogo = brand[0].brandIconUrl;
+    }
 		const brands = this.props.allBrands.allBrands.nodes;
     const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
     console.log(filteredWorkplaces);

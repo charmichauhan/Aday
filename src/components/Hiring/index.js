@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
 import Candidates from './Candidates';
-import { Header, Button, Segment, Form, Dropdown, Menu, Checkbox } from 'semantic-ui-react'
+import { Segment, Rating } from 'semantic-ui-react'
 import RaisedButton from 'material-ui/RaisedButton';
-import { tabDesign } from '../styles';
-import Switch from 'react-flexible-switch';
-
+//import { tabDesign } from '../styles';
+import { Input, Select, Switch } from 'antd';
+/*import StarRating from '../helpers/StarRating';*/
 import './hiring.css';
+import CircleButton from '../helpers/CircleButton';
 
+const InputGroup = Input.Group;
+const Option = Select.Option;
 const styles = {
-  tabDesign
+  circleButton: {
+    fontSize: 18,
+    padding: '6px 5px',
+    fontWeight: 'bold',
+    color:'#0022A1'
+  }
 };
 
 const initState = {
@@ -73,50 +81,107 @@ const initState = {
       },
       position: 5,
     },
-  ],
-	tabDesign
+] /*,
+	tabDesign, */
 };
+
+
 
 export default class Hiring extends Component {
   constructor(props) {
     super(props);
-    this.state = initState;
+    this.state = initState
   }
 
-  render() {
+handleChange = e => this.setState({ rating: e.target.value })
 
-    const options = [
-      {key: 1, text: 'By Position Title', value: 1},
-      {key: 2, text: 'By Name', value: 2},
-      {key: 3, text: 'Your Rating', value: 3},
-    ]
-    return (
-      <div>
-        <br/>
-        <center>
-          <Button basic fluid active='false'>
-            <Header as='h1'>Find Talent</Header>
-          </Button>
-        </center>
-        <br/>
-        <Segment>
-          <Form>
-            <Form.Group>
-              <Form.Input size='big' placeholder='Cashier, Cook'/>
-              <Dropdown placeholder='By Position' selection simple options={options}/>
-              <Form.Field id='invite_team_member' control={Button} size='big' content='Search'/>
-            </Form.Group>
-            <div>
-              <Header as='h4'>Return Only Completed Profiles?</Header>
-              <Switch value={false} labels={{on: 'YES', off: 'NO'}}
-                      circleStyles={{onColor: 'green', offColor: 'red', diameter: 20}}/>
-            </div>
-          </Form>
-        </Segment>
-        <div>
-          <Candidates candidates={this.state.candidates}/>
-        </div>
-      </div>
-    )
-  }
+    render() {
+
+        return (
+            <div style={{maxWidth:1650, minWidth: 1000}}>
+                <br/>
+                    <div className="col-md-12 page-title-rectangle">
+                            <div className="col-sm-offset-3 col-sm-5 rectangle page-title">
+                                    CROSSTRAINING
+                            </div>
+                    </div>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <Segment>
+                    <div style={{flexDirection: "row", display:"flex", width:'100%'}}>
+                         <div style={{ width: '50%' }}>
+                             <div style={{flexDirection: "row", display:"flex", justifyContent: "space-between"}}>
+                                 <div style={{flexDirection: "column", width:"105%"}}>
+                                    <span>FIRST NAME</span><br />
+                                    <Input  placeholder="First Name"/>
+                                 </div>
+                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                 <div style={{flexDirection: "column", width:"105%"}}>
+                                     <span>LAST NAME</span><br />
+                                     <Input  placeholder="Last Name"/>
+                                 </div>
+                             </div>
+                             <br />
+                             <InputGroup compact style={{width:"100%"}}>
+                                 <span>ZIP CODE</span><br />
+                                 <Select defaultValue="Home" style={{ width: '20%' }} >
+                                     <Option value="Home">HOME</Option>
+                                     <Option value="Now">NOW</Option>
+                                 </Select>
+                                 <Input style={{ width: '50%' }} placeholder="Zip Code" />
+                                 <Select defaultValue="twenty-five" style={{ width: '30%' }}>
+                                     <Option value="twenty-five">25 miles away</Option>
+                                     <Option value="fifteen">15 miles away</Option>
+                                     <Option value="ten">10 miles away</Option>
+                                     <Option value="five">5 miles away</Option>
+                                     <Option value="one">1 miles away</Option>
+                                 </Select>
+                             </InputGroup>
+                             <br />
+                             <InputGroup size="large" style={{ width: '100%' }} >
+                                 <span>POSITION</span><br />
+                                 <Input  placeholder="Position" style={{ width: '100%' }}/>
+                              </InputGroup>
+                             <br />
+                         </div>
+                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                         <div style={{ width: '25%' }}>
+                            <div>
+                                <span>INCLUDE EXTERNAL PROFILES</span><br />
+                                <div style={{height:5}} />
+                                <Switch defaultChecked={false} onChange={this.onChange}
+                                     className="switchStyle" checkedChildren="YES" unCheckedChildren="NO"/>
+                             </div>
+                             <div style={{height:21}} />
+                             <div>
+                                 <span style={{marginBottom:5}}>COMPLETED PROFILES ONLY?</span><br />
+                                 <div style={{height:5}} />
+                                 <Switch defaultChecked={false} onChange={this.onChange}
+                                      className="switchStyle" checkedChildren="YES" unCheckedChildren="NO"/>
+                              </div>
+                              <div style={{height:21}} />
+                             <div style={{width: '60%'}}>
+                                    {/*See https://react.semantic-ui.com/modules/rating for proper implementation*/}
+                                    <div>YOUR RATING: >1 STARS</div>
+                                     <div style={{height:6}} />
+                                    <input type='range' min={0} max={5} value={0} onChange={this.handleChange} />
+                                     <div style={{height:6}} />
+                                    <Rating rating={0} maxRating={5} />
+                             </div>
+                         </div>
+                         <div style={{width: '25%'}}>
+                         <CircleButton style={styles.circleButton} handleClick={this.closeDrawer} type="blue"   title="Search" />
+                         </div>
+                     </div>
+                     </Segment>
+                     <div>
+                        {/*
+                         <Candidates candidates={this.state.candidates}/>
+                         */}
+                     </div>
+             </div>
+        )
+     }
 }

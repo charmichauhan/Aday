@@ -1,17 +1,23 @@
-.last_name {
-	color: #000000;
-	font-weight: 400;
-	font-family: 'roboto condensed';
+._first-name {
+    color: #2F2F2F !important;
+    font-family: "Roboto Condensed";
+    font-size: 24px;
+    font-weight: bold !important;
 }
 
-.first_name{
-	color: #000000;
-	font-weight: 400;
-	font-family: 'roboto condensed';
+._last-name {
+    color: #2F2F2F !important;
+    font-family: "Roboto Condensed";
+    font-size: 24px;
+    font-weight: 100 !important;
 }
 
 .card_body{
 	color: #000000;
 	font-weight: 400;
 	font-family: 'lato';
+}
+
+.profile-card{
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
 }

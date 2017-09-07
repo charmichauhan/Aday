@@ -38,55 +38,55 @@ class TeamMemberCardComponent extends Component {
   render() {
 		const {
 			firstName,
-      lastName,
-      userEmail,
+            lastName,
+            userEmail,
 			avatarUrl,
-      userPhoneNumber
+            userPhoneNumber
 		} = this.props.member;
 
+        const phoneNumber = () => {
+             let s2 = (""+this.props.children).replace(/\D/g, '');
+             let m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
+             return (
+                 <Card.Meta>
+                     (!m) ? null : "(" + m[1] + ") " + m[2] + "-" + m[3];
+                </Card.Meta>
+            )
+        }
+
 		return (
-		    <Card>
-          {this.state.viewProfileDrawer && <ProfileDrawer
-            open={this.state.viewProfileDrawer}
-            openResumeDrawer={this.openResumeDrawer}
-            handleCloseDrawer={this.handleCloseDrawer}
-            userId={this.props.userId}
-
-          />}
-          {this.state.viewResumeDrawer &&
-          <ResumeDrawer open={this.state.viewResumeDrawer} backProfileDrawer={this.backProfileDrawer} userId={this.props.userId}/>}
-		    	<Card.Content>
-			      	<center>
-					    <Image centered='true' size='small' shape='circular' src={avatarUrl} />
-					</center>
-
-
-
-					<br/>
+		    <Card style={{width:250}}>
+                 {this.state.viewProfileDrawer && <ProfileDrawer
+                                                                                open={this.state.viewProfileDrawer}
+                                                                                openResumeDrawer={this.openResumeDrawer}
+                                                                                handleCloseDrawer={this.handleCloseDrawer}
+                                                                                userId={this.props.userId}
+                                                                            />}
+                {this.state.viewResumeDrawer && <ResumeDrawer
+                                                                                open={this.state.viewResumeDrawer} backProfileDrawer={this.backProfileDrawer} userId={this.props.userId}/>}
+                <Image src={avatarUrl} />
+		    	<Card.Content className='profile-card'>
+                     <Card.Header style={{textAlign:"center"}}>
+                         <font size="5.5" className="_first-name">{firstName}</font>
+                             <br />
+                         <font size="5.5" className="_last-name">{lastName}</font>
+                     </Card.Header>
 		        	<Card.Description>
-						<center>
-							<font size="5.5" className="first_name">{firstName}</font>
-							<span> </span>
-							<font size="5.5" className="last_name">{lastName}</font>
-						</center>
-					<Card.Content>
-						<center className='rating card_body'>
-							<Rating icon='star' defaultRating={5} maxRating={5} />
-							<br/>
-							<br/>
-							<font size="3">
-							{userPhoneNumber}
-							<br/>
-							{userEmail}
-							<br/>
-							</font>
-							<br/>
-                            <div className="view-profile-btn text-center">
-                              <button className="btn view-profile-btn-text btn-default" onClick={this.handleDrawerOpen}>View Profile</button>
+						<center className='card_body'>
+                            <div>
+							    <Rating icon='star' defaultRating={5} maxRating={5}/>
                             </div>
+                            <Card.Meta>
+    							<font size="2">
+    							{userEmail}
+    							<br/>
+                                <phoneNumber>{userPhoneNumber}</phoneNumber>
+    							<br/>
+    							</font>
+                            </Card.Meta>
+                            <RaisedButton label="View Profile" backgroundColor="#0022A1" labelColor="#FFFFFF" onClick={this.handleDrawerOpen} style={{marginTop:3}}/>
 							<br/>
 						</center>
-					</Card.Content>
 		        	</Card.Description>
 		    	</Card.Content>
 		    </Card>
@@ -96,3 +96,9 @@ class TeamMemberCardComponent extends Component {
 const TeamMemberCard =  (TeamMemberCardComponent);
 
 export default TeamMemberCard;
+/*
+  * deprecated: circle avatar for header of the card
+<center>
+    <Image centered='true' size='small' shape='circular' src={avatarUrl} />
+</center>
+*/

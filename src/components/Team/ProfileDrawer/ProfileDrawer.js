@@ -16,7 +16,6 @@ class ProfileDrawerComponent extends Component {
   filterCrossTraining = (releventPositionsQuery) => {
     releventPositionsQuery.filter((w) => {
         if (w.jobsByPositionId.nodes.length > 0) {
-          debugger;
           for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
             if (!w.jobsByPositionId.nodes[i].isPositionActive) {
               return true;
@@ -39,12 +38,9 @@ class ProfileDrawerComponent extends Component {
       return (<div>Loading</div>)
     }
     let userDetails = this.props.userQuery && this.props.userQuery.userById;
-
-    let releventPositionsQuery = [...this.props.releventPositionsQuery.fetchRelevantPositions.nodes];
-    debugger;
+        let releventPositionsQuery = [...this.props.releventPositionsQuery.fetchRelevantPositions.nodes];
     let releventfilteredPositions = releventPositionsQuery.filter((w) => {
         if (w.jobsByPositionId.nodes.length > 0) {
-          debugger;
           for (let i = 0; i < w.jobsByPositionId.nodes.length ; i++) {
             if (!w.jobsByPositionId.nodes[i].isPositionActive) {
               return true;
@@ -53,7 +49,6 @@ class ProfileDrawerComponent extends Component {
         }
       }
     );
-    debugger;
     const styles = {
       positionCheckbox: {
         textTransform: 'uppercase',

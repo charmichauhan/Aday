@@ -65,7 +65,7 @@ class TeamMembersComponent extends Component {
 		return (
 			<div>
 				<br/><br/>
-				<Card.Group itemsPerRow="5">
+				<Card.Group itemsPerRow="8">
 					{
             			mappedTeamMembers.map((m, i)=>
             				    <TeamMemberCard key={i} member={m['node']['userByUserId'] } userId={m['node']['userByUserId']['id']}/>

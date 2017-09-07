@@ -6,15 +6,19 @@ import { Radio, Progress, Switch, Icon } from 'antd';
 import Delete from 'material-ui/svg-icons/action/delete';
 import {leftCloseButton} from "../../styles";
 import Checkbox from 'material-ui/Checkbox';
+import { gql, graphql, compose } from 'react-apollo';
+const uuidv1 = require('uuid/v1');
+import {releventPositionsQuery} from "../Team.graphql";
 
 const RadioGroup = Radio.Group;
 
-export default class TeamMemberPositionDetails extends Component {
-
+class TeamMemberPositionDetailsComponent extends Component {
+  
   state = {
     value: 1,
     value1: 1,
     crossValue: 1,
+    primaryWorkplaceWarning: false
   }
   onRadioChange = (e) => {
     console.log('radio checked', e.target.value);
@@ -33,6 +37,77 @@ export default class TeamMemberPositionDetails extends Component {
     this.setState({
       crossValue: e.target.value,
     });
+  }
+
+  removePosition = (p, v) =>{
+    this.props.update({
+      variables: {
+        id: v, 
+        jobInfo: { primaryJob: false, isPositionActive: false  }
+      },
+      updateQueries: {
+          releventPositionsQuery: (previousQueryResult, { mutationResult }) => { 
+                      previousQueryResult.allPositions.nodes.map((value,i) =>{
+                          if (value.id == p.id) {      
+                              value.jobsByPositionId.nodes = [] 
+                              return value.jobsByPositionId.nodes
+                          } else{
+                              return value
+                          }
+                       })
+                      return {
+                        allPositions: previousQueryResult.allPositions
+                      };
+                    },
+         },
+    }).then(({ data }) => {
+          console.log(data)
+    })
+    
+  }
+
+  addPosition  = (v) =>{
+
+    if (!this.props.userDetails.employeesByUserId.edges[0].node.primaryWorkplace){
+      this.setState({ primaryWorkplaceWarning: true })
+    } else { 
+      this.setState({ primaryWorkplaceWarning: false })
+      console.log(this)
+
+    this.props.create({
+        variables: { data:
+            { job:
+              { id: uuidv1(), 
+                positionId: v,
+                userId: this.props.userDetails.id,
+                workplaceId: this.props.userDetails.employeesByUserId.edges[0].node.primaryWorkplace,
+                primaryJob: false,
+                isPositionActive: true, 
+                numTraineeHoursCompleted: 0
+              }
+            } 
+          },
+          updateQueries: {
+            releventPositionsQuery: (previousQueryResult, { mutationResult }) => {
+                      const newPrevious = previousQueryResult.allPositions
+                      previousQueryResult.allPositions.nodes.map((value,i) =>{
+                          if (value.id == v) {
+                              return value.jobsByPositionId.nodes.push(mutationResult.data.createJob.job)
+                          } else{
+                              return value
+                          }
+                       })
+                      return {
+                        allPositions: previousQueryResult.allPositions
+                      };
+                    },
+                },
+        })
+        .then(({ data }) => {
+          console.log(data)
+        })
+    
+      }
   }
 
 
@@ -118,7 +193,7 @@ export default class TeamMemberPositionDetails extends Component {
                 </Grid.Column>
                 <Grid.Column width={2}>
                   <div className="text-center wrapper-element">
-                  <Icon type="down-circle" style={{fontSize: '20px'}} />
+                  <Icon type="down-circle" onClick={() => this.removePosition(v, v.jobsByPositionId.nodes[0].id)} style={{fontSize: '20px'}} />
                   </div>
                 </Grid.Column>
               </Grid.Row>
@@ -131,11 +206,12 @@ export default class TeamMemberPositionDetails extends Component {
           <h2 className="text-uppercase">Cross-Training Progress</h2>
         </div>
         <div className="grid-positions">
+         {this.state.primaryWorkplaceWarning? <p style={{ fontSize: "18px", color: "red" }}> BEFORE YOU CAN GRANT A POSITION, MUST FIRST SET TEAM MEMBER'S PRIMARY LOCATION </p> : ""}
           <Grid columns={3}>
 
             <Grid.Row>
               <Grid.Column width={2}>
-                <Progress type="circle" percent={25} width={40}/>
+                
               </Grid.Column>
               <Grid.Column width={10}>
 
@@ -151,22 +227,20 @@ export default class TeamMemberPositionDetails extends Component {
             {releventfilteredPositions.map((v, index) => (
                 <Grid.Row>
                   <Grid.Column width={2}>
-                    <Progress type="circle" percent={25} width={40}/>
                   </Grid.Column>
                   <Grid.Column width={10}>
                     <div>
                       <p className="cook-name">{v.positionName}</p>
-                      <span className="text-uppercase red">4 of 20 hours completed</span>
+
                       <span className="text-uppercase green"> Approved For Job Shadowing</span>
                     </div>
                   </Grid.Column>
                   <Grid.Column width={2}>
-                    <RadioGroup onChange={this.onCrossRadioChange} value={this.state.crossValue}>
-                      <Radio value={2}></Radio>
-                    </RadioGroup>
+
                   </Grid.Column>
                   <Grid.Column width={2}>
-                    <i className="fa fa-check fa-3x" style={{color: 'gray'}}/>
+                    <i onClick={() => this.addPosition(v.id)} 
+                    className="fa fa-check fa-3x" style={{color: 'gray'}}/>
                   </Grid.Column>
                 </Grid.Row>
             ))}
@@ -178,3 +252,38 @@ export default class TeamMemberPositionDetails extends Component {
   }
 }
 
+const updateJobActive = gql
+    `mutation updatejob($id: Uuid!, $jobInfo: JobPatch!){
+        updateJobById(input: { id: $id, jobPatch: $jobInfo }) {
+          job{
+            id
+          }
+        }
+  }`
+
+const createJob = gql
+    `mutation createjob($data: CreateJobInput!){
+        createJob(input:$data) {
+          job {
+            id
+            isPositionActive
+            primaryJob
+            rating
+            numTraineeHoursCompleted
+          }
+        }
+  }`
+
+
+const TeamMemberPositionDetails= compose( graphql(updateJobActive, {name: "update"}),
+   graphql(createJob, {name: "create"}))(TeamMemberPositionDetailsComponent)
+export default TeamMemberPositionDetails
+
+
+/* <Progress type="circle" percent={25} width={40}/> */
+/* <Progress type="circle" percent={25} width={40}/> */
+
+/*                     <RadioGroup onChange={this.onCrossRadioChange} value={this.state.crossValue}>
+                      <Radio value={2}></Radio>
+                    </RadioGroup> */
+/*                      <span className="text-uppercase red">4 of 20 hours completed</span> */

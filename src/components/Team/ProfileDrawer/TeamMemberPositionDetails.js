@@ -13,7 +13,7 @@ import {releventPositionsQuery} from "../Team.graphql";
 const RadioGroup = Radio.Group;
 
 class TeamMemberPositionDetailsComponent extends Component {
-
+  
   state = {
     value: 1,
     value1: 1,

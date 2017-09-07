@@ -83,7 +83,11 @@ export const userQuery = gql `
     employeesByUserId{
     edges{
       node{
+        id
         primaryWorkplace
+        weekHourLimit
+        monthHourLimit
+        dayHourLimit
         workplaceByPrimaryWorkplace
         {
           id
@@ -119,6 +123,20 @@ export const releventPositionsQuery = gql`
       }
     }
   }`;
+
+
+export const updateEmployeeById = gql`
+  mutation ($id: Uuid!, $employeeInfo: EmployeePatch!) {
+    updateEmployeeById (input: { id: $id, employeePatch: $employeeInfo }) {
+      employee {
+        id
+        weekHourLimit
+        dayHourLimit
+        monthHourLimit
+      }
+    }
+  }
+`
 
 export const updateJobPrimaryPosition = gql`
   mutation ($id: Uuid!, $jobInfo: JobPatch!) {

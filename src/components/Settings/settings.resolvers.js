@@ -71,6 +71,7 @@ export const workplaceResolvers = {
           isActive
           workplaceImageUrl
           address
+          isUnion
           brandByBrandId {
             id
             brandName

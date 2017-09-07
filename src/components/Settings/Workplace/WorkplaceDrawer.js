@@ -19,6 +19,7 @@ const initialState = {
     brandId: '',
     workplaceImageUrl: '',
     address: '',
+    address2: '',
     city: '',
     zip: ''
   },
@@ -168,9 +169,9 @@ class DrawerHelper extends Component {
             </div>
             <div className="form-group">
               <label className="text-uppercase">Address Line2</label>
-              <input name="address"
+              <input name="address2"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.address}
+                     value={DrawerWorkplace.address2}
                      id="address-line2"
                      type="text"
                      className="form-control" />

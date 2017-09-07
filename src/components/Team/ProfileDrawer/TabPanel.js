@@ -21,7 +21,7 @@ export default class TabPanel extends Component {
       <div>
         <Tabs type="card" defaultActiveKey="1">
           <TabPane tab={<span>
-          <Image src="/images/Sidebar/positions.png" size="mini"/>
+          <Image src="/images/Sidebar/positions.png" style={{width:21}}/>
         </span>} key="1">
             <TeamMemberPositionDetails
               userDetails = {userDetails}
@@ -30,14 +30,14 @@ export default class TabPanel extends Component {
             />
           </TabPane>
           <TabPane tab={<span>
-          <Image src="/images/Sidebar/tab-user.png" size="mini"/>
+          <Image src="/images/Sidebar/tab-user.png" style={{width:21}}/>
         </span>} key="2">
             <MemberPersonelInformation
               userDetails={userDetails}
             />
           </TabPane>
           <TabPane tab={<span>
-          <Image src="/images/Sidebar/graph.png" size="mini"/>
+          <Image src="/images/Sidebar/graph.png" style={{width:21}}/>
         </span>} key="3">
             <MemberPerformance/>
           </TabPane>

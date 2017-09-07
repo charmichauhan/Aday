@@ -17,6 +17,24 @@
   width: 100%;
 }
 
+.profile-title {
+    height: 35px;
+    color: #FFFFFF;
+    font-family: "Roboto Condensed";
+    font-size: 30px;
+    line-height: 35px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.first-name-title {
+    font-weight: bold;
+}
+
+.last-name-title {
+    font-weight: 100;
+}
+
 .form-control.form-control-sm {
   height: 30px;
   padding: 5px 10px;
@@ -60,6 +78,9 @@
 .team .drawer-section .max-hours-form input[type="text"].form-control,
 .team .drawer-section .max-hours-form select.form-control {
   height: 45px;
+  text-align: center;
+  width: 100%;
+  font-size: 18px;
 }
 
 .team .brands-content .brand-add-button .btn-circle-wrapper,
@@ -287,7 +308,7 @@ img.list-left-image {
   margin-top: 0;
 }
 .profile-drawer .profile-drawer-title {
-  margin-top: 50px;
+  margin-top: 10px;
 }
 .profile-drawer .profile-drawer-title .profile-drawer-title-cross-training{
   margin-top: 0;
@@ -316,6 +337,7 @@ img.list-left-image {
   padding: 5px;
   height: 40px;
   color: #4A4A4A;
+  font-family: "Roboto Condensed";
 }
 .profile-drawer.drawer-section .max-hours-form {
   margin-top: 40px;
@@ -332,14 +354,6 @@ img.list-left-image {
 .profile-drawer.drawer-section .update-limit-btn {
   margin: 20px 0;
 }
-.profile-drawer.drawer-section .update-limit-btn button {
-  height: 40px;
-  width: 200px;
-  border-radius: 2px;
-  background-color: #0022A1;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
-  color: #FFFFFF;
-}
 
 .profile-drawer.drawer-section .grid-positions, .profile-drawer .grid-positions .grid  {
   display: block;
@@ -354,6 +368,9 @@ img.list-left-image {
   background-color: #0022A1;
   color: #FFFFFF;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+.hourly-limits-title {
 }
 
 .view-profile-btn-text {
@@ -499,10 +516,24 @@ img.list-left-image {
 .ant-tabs .ant-tabs-content {
   padding: 0 20px;
 }
+
 .text-center.profile-drawer-tab {
   display: table;
   margin: 20px 0;
 }
+
+.meta-info {
+  display: table;
+  margin: 0px 50px;
+  color: #808080;
+  font-family: Lato;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 100;
+  line-height: 20px;
+  text-align: center;
+}
+
 .profile-drawer-tab h2 {
   width: auto;
   padding: 5px;

@@ -38,7 +38,6 @@ class ProfileDrawerComponent extends Component {
       return (<div>Loading</div>)
     }
     let userDetails = this.props.userQuery && this.props.userQuery.userById;
-
     let releventPositionsQuery = [...this.props.releventPositionsQuery.allPositions.nodes];
     let releventfilteredPositions = releventPositionsQuery.filter((w) => {
         if (w.jobsByPositionId.nodes.length > 0) {
@@ -50,6 +49,7 @@ class ProfileDrawerComponent extends Component {
         }
       }
     );
+
     const styles = {
       positionCheckbox: {
         textTransform: 'uppercase',
@@ -72,67 +72,72 @@ class ProfileDrawerComponent extends Component {
         verticalAlign: 'middle'
       }
     };
+
     return (
-      <Drawer docked={docked} width={width}
-              openSecondary={openSecondary}
-              onRequestChange={this.props.handleCloseDrawer}
-              open={open}>
-        <div className="drawer-section profile-drawer">
-          <div className="profile-drawer-heading">
-            <div className="drawer-heading col-md-12">
-              <IconButton style={leftCloseButton} onClick={this.props.handleCloseDrawer}>
-                <Image src="/images/Icons_Red_Cross.png" size="mini"/>
-              </IconButton>
-              <h5 className="confirm-popup"> {userDetails.firstName} {userDetails.lastName} </h5>
+     <Drawer
+         docked={docked}
+         width={width}
+         openSecondary={openSecondary}
+         onRequestChange={this.props.handleCloseDrawer}
+         open={open}>
 
-              {
-                userDetails.avatarUrl ? <Image centered='true' size='small' shape='circular' className="profile-img"
-                                               src={ userDetails.avatarUrl}/> :
-                  <Image centered='true' size='small' shape='circular' className="profile-img"
-                         src="https://s3.us-east-2.amazonaws.com/aday-website/anonymous-profile.png"/>
-              }
+         <div className="drawer-section profile-drawer">
+             <div className="profile-drawer-heading">
+                 <div className="drawer-heading col-md-12">
+                     <IconButton style={leftCloseButton} onClick={this.props.handleCloseDrawer}>
+                        <Image src="/images/Icons_Red_Cross.png" size="mini"/>
+                     </IconButton>
 
-            </div>
-          </div>
-          <div className="heading-rating">
-            <Rating icon='star' defaultRating={5} maxRating={5}/>
-          </div>
-          <div className="drawer-content scroll-div">
-            <div className="member-list">
-              <div className="text-center profile-drawer-title">
-                <h2 className="text-uppercase">Hourly Limits</h2>
-              </div>
-              <form className="form-inline max-hours-form">
-                <div className="form-group daily">
-                  <label htmlFor="daily" className="text-uppercase">Max <strong> Daily </strong> Hours</label>
-                  <input type="text" className="form-control"/>
-                </div>
-                <div className="form-group weekly">
-                  <label htmlFor="weekly" className="text-uppercase">Max <strong> Weekly </strong> Hours</label>
-                  <input type="text" className="form-control"/>
-                </div>
-                <div className="form-group monthly">
-                  <label htmlFor="monthly" className="text-uppercase">Max <strong> Monthly </strong> Hours</label>
-                  <input type="text" className="form-control"/>
-                </div>
-              </form>
-              <div className="profile-drawer-content text-center">
-                <p>Team members with their maximum weekly hours set at or below 30 hours per week are not
-                  included in the automated schedule</p>
-              </div>
-              <div className="update-limit-btn text-center">
-                <button className="btn text-uppercase btn-default">Update Limits</button>
-              </div>
+                     <span className="profile-title first-name-title">{userDetails.firstName}</span>
+                     &nbsp;&nbsp;
+                     <span className="profile-title last-name-title">{userDetails.lastName} </span>
 
+                     {userDetails.avatarUrl
+                            ? <Image centered='true' size='small' shape='circular' className="profile-img" src={ userDetails.avatarUrl}/>
+                            :  <Image centered='true' size='small' shape='circular' className="profile-img"
+                                 src="https://s3.us-east-2.amazonaws.com/aday-website/anonymous-profile.png"/>
+                     }
+             </div>
+         </div>
+         <div className="heading-rating">
+             <Rating icon='star' defaultRating={5} maxRating={5}/>
+         </div>
+         <div className="drawer-content scroll-div">
+             <div className="member-list">
+                 <div className="text-center profile-drawer-title">
+                     <h2 className="text-uppercase">Hourly Limits</h2>
+                 </div>
+                 <form className="form-inline max-hours-form">
+                     <div className="form-group daily">
+                         <label htmlFor="daily" className="text-uppercase">Max <span style={{color:'darkred'}}> Daily </span> Hours</label>
+                         <input type="text" className="form-control"/>
+                     </div>
+                     <div className="form-group weekly">
+                         <label htmlFor="weekly" className="text-uppercase">Max <span style={{color:'darkred'}}> Weekly </span> Hours</label>
+                         <input type="text" className="form-control"/>
+                     </div>
+                     <div className="form-group monthly">
+                         <label htmlFor="monthly" className="text-uppercase">Max <span style={{color:'darkred'}}> Monthly </span> Hours</label>
+                         <input type="text" className="form-control"/>
+                    </div>
+                 </form>
+             <div className="profile-drawer-content text-center">
+                <p className="meta-info">Team members with their maximum weekly hours set at or below 30 hours per week are not included in the automated schedule</p>
+             </div>
+             <div className="update-limit-btn text-center">
+                 <RaisedButton
+                     label="Update Limits"
+                     backgroundColor="#0022A1"
+                     labelColor="#FFFFFF"
+                 />
+             </div>
               <TabPanel
                 userDetails={userDetails}
                 releventPositionsQuery={releventPositionsQuery}
                 releventfilteredPositions={releventfilteredPositions}
               />
-
-
-            </div>
-          </div>
+         </div>
+     </div>
           <div className="block-limit-btn text-center">
             <button className="btn text-uppercase btn-default">Block {userDetails.firstName}</button>
           </div>
@@ -142,7 +147,8 @@ class ProfileDrawerComponent extends Component {
   };
 }
 
-/* 
+/*
+ * Removed from the pilot with Restaurant Associates
 <div className="drawer-right">
                 <RaisedButton label="RESUME" onClick={this.props.openResumeDrawer}/>
               </div>

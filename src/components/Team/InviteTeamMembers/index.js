@@ -99,7 +99,7 @@ class InviteTeamMembersComponent extends Component {
         }
       }).then(({data}) => {
         console.log('createdEmployee');
-        //window.location.reload();
+        window.location.reload();
         /*var uri = 'http://8c793d9d.ngrok.io/invitation'
 
              var options = {
@@ -123,7 +123,7 @@ class InviteTeamMembersComponent extends Component {
                       console.log('there was an error sending the query', error);
                   });
         */
-      }); 
+      });
 
     }).catch((error) => {
         console.log('there was an error sending the query', error);

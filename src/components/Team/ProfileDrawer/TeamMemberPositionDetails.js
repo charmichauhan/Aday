@@ -61,7 +61,6 @@ export default class TeamMemberPositionDetails extends Component {
     const positionDetails = this.props.userDetails.jobsByUserId.edges;
     const trainingPositions = this.getTrainingPositions(positionDetails);
     const releventfilteredPositions = this.props.releventfilteredPositions;
-    debugger;
     return (
 
       <div>

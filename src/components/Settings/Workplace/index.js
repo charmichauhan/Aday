@@ -42,7 +42,7 @@ const styles = {
 const workplaceFields = [
   'id', 'workplaceName', 'corporationId',
   'brandId', 'isActive', 'workplaceImageUrl',
-  'isUnion', 'isRatingsPublic', 'isActive'
+  'isUnion', 'isRatingsPublic', 'isActive', 'address'
 ];
 
 const removeEmpty = (obj) => {
@@ -139,7 +139,21 @@ class Workplace extends Component {
       variables: {
         id,
         workplaceInfo: { isActive: false, dateDeactivated: new Date().toUTCString() }
-      }
+      },
+      updateQueries: {
+          getAllWorkplacesQuery: (previousQueryResult, { mutationResult }) => {
+            let newEdges = [];
+            previousQueryResult.allWorkplaces.nodes.map((value) => {
+              if (value.id != mutationResult.data.updateWorkplaceById.workplace.id) {
+                newEdges.push(value);
+              }
+            })
+            previousQueryResult.allWorkplaces.nodes = newEdges;
+            return {
+              allWorkplaces: previousQueryResult.allWorkplaces
+            };
+          },
+        },
     }).then((res) => {
       const { workplaces } = this.state;
       remove(workplaces, { 'id': id });
@@ -161,11 +175,22 @@ class Workplace extends Component {
       workplace.id = uuidv4();
       workplace.corporationId = this.state.corporationId;
       workplace.isUnion = workplace.isRatingsPublic = workplace.isActive = true;
+      workplace.address = workplace.address + " " + workplace.address2 + " " +
+             workplace.city + " " + workplace.state + " " +  workplace.zip
       this.props.client.mutate({
         mutation: workplaceResolvers.createWorkplaceMutation,
         variables: {
           workplace: removeEmpty(pick(workplace, workplaceFields))
-        }
+        },
+        updateQueries: {
+          getAllWorkplacesQuery: (previousQueryResult, { mutationResult }) => {
+            let newEdges = [];
+            previousQueryResult.allWorkplaces.nodes.push(mutationResult.data.createWorkplace.workplace);
+            return {
+              allWorkplaces: previousQueryResult.allWorkplaces
+            };
+          },
+        },
       }).then((res) => {
         this.showNotification('Workplace details added successfully.', NOTIFICATION_LEVELS.SUCCESS);
         workplace.brand = find(this.props.brands, { 'id': workplace.brandId });

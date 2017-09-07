@@ -17,7 +17,6 @@ export default class TabPanel extends Component {
     const userDetails = this.props.userDetails;
     const releventPositionsQuery = this.props.releventPositionsQuery;
     const releventfilteredPositions = this.props.releventfilteredPositions;
-    debugger;
     return (
       <div>
         <Tabs type="card" defaultActiveKey="1">
@@ -42,13 +41,17 @@ export default class TabPanel extends Component {
         </span>} key="3">
             <MemberPerformance/>
           </TabPane>
-          <TabPane tab={<span>
-            <Image src="/images/Sidebar/folder.png" size="mini"/>
-            </span>} key="4">
-            <MemberSurveyForm />
-          </TabPane>
         </Tabs>
       </div>
     )
   }
 }
+
+
+/*
+ <TabPane tab={<span>
+            <Image src="/images/Sidebar/folder.png" size="mini"/>
+            </span>} key="4">
+            <MemberSurveyForm />
+          </TabPane>
+*/

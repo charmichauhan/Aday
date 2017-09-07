@@ -3,6 +3,7 @@ import { Menu, Icon, Image } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import EmergencyShiftButton from './KendallLearning/EmergencyShiftButton';
 import { gql, graphql,compose} from 'react-apollo';
+import { renderRoutes } from 'react-router-config';
 import './nav.css';
 
 const styles = {
@@ -29,7 +30,7 @@ class NavComponent extends Component {
   logout = () => {
   	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     localStorage.clear();
-  	this.props.history.push('/login')
+  	window.location.href = '/login'
   }
   handleChangeBrand = () => {
     let brandId = document.getElementById("brand").value;
@@ -53,7 +54,8 @@ class NavComponent extends Component {
     const brandId = localStorage.getItem("brandId");
     const workplaceId = localStorage.getItem("workplaceId");
     const isUnion = localStorage.getItem("isUnion");
-    const brandLogo = "";
+    const brand = this.props.allBrands.allBrands.nodes.filter((w) => w.id == brandId);
+    const brandLogo = brand[0].brandIconUrl;
 		const brands = this.props.allBrands.allBrands.nodes;
     const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
     console.log(filteredWorkplaces);
@@ -63,7 +65,7 @@ class NavComponent extends Component {
 				<Menu vertical fluid>
 					<Menu.Item className="menu-item left-menu-logo">
 						<Menu.Header><Image src="/images/logos_aday.png" width="102" height="31" centered={true}/></Menu.Header>
-						<Menu.Header><Image src="" width="100" height="100" centered={true}/></Menu.Header>
+						<Menu.Header><Image src={brandLogo} width="100" height="100" centered={true}/></Menu.Header>
 						<Menu.Header className="dropdown-menu-item">
 							<select onChange={this.handleChangeBrand} id="brand" value={brandId}>
                 { brands.map((v,i)=>(

@@ -20,6 +20,7 @@ import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
 const uuidv4 = require('uuid/v4');
 import './shift-edit.css';
+var rp = require('request-promise');
 
 
 const unassignedTeamMember = {
@@ -123,95 +124,151 @@ class DrawerHelper extends Component {
   };
 
   handleSaveShift = () => {
-
-    const shiftPatch = {};
-    shiftPatch['workersAssigned'] = [];
-    shiftPatch['workersRequestedNum'] = this.state.teamMembers.length;
-
-    this.state.teamMembers.map((value) => {
-      if (value.user.id != 0 && shiftPatch['workersAssigned'].indexOf(value) == -1) {
-        shiftPatch['workersAssigned'].push(value.user.id)
-      }
-    });
-    this.props.updateShift({
-      variables: {
-        data: { id: this.props.shift.id, shiftPatch: shiftPatch }
-      }
-    }).then(({ data }) => {
-      this.props.handlerClose();
-      console.log('update shift', data);
-    }).catch((error) => {
-      console.log('there was an error sending the query', error);
-    });
-
-    let removedUsers = [];
-    this.props.shift.workersAssigned.map((value) => {
-      if (shiftPatch['workersAssigned'].includes(value)) {
-      } else {
-        removedUsers.push(value)
-      }
-    });
-    //UPDATE UNASSIGNED USERS
-    removedUsers.map((value) => {
-      let marketId = null
-      this.props.shiftMarkets.allMarkets.edges.map((v, i) => {
-        if (v.node.workerId == value) {
-          marketId = v.node.id;
-        }
-      });
-      if (marketId) {
-        this.props.updateMarket({
-          variables: {
-            data: {
-              id: marketId,
-              marketPatch: { isBooked: false, workerResponse: 'NONE', clockInDate: null, clockOutDate: null }
-            }
-          }
-        }).then(({ data }) => {
-          console.log('update market', data);
-        }).catch((error) => {
-          console.log('there was an error sending the query', error);
-        });
-      }
-    });
-    //UPDATE ASSIGNED USERS
-    shiftPatch['workersAssigned'].map((value) => {
-      let marketId = null;
-      //seeing if shift's markets has this user
-      this.props.shiftMarkets.allMarkets.edges.map((v, i) => {
-        if (v.node.workerId == value) {
-          marketId = v.node.id;
-        }
-      });
-
-      // market exists
-      if (marketId) {
-        this.props.updateMarket({
-          variables: {
-            data: { id: marketId, marketPatch: { isBooked: true, workerResponse: 'NONE' } }
-          }
-        })
-      } else {
-        this.props.createMarket({
-          variables: {
-            data: {
-              market: {
-                id: uuidv4(),
-                shiftId: this.props.shift.id,
-                workerId: value,
-                isEmailed: false,
-                isCalled: false,
-                isTexted: false,
-                isBooked: true,
-                workerResponse: 'NONE'
+     const shiftPatch = {}
+      shiftPatch['workersAssigned'] = []
+      shiftPatch['workersRequestedNum'] = this.state.teamMembers.length
+      const teamMembersAdded = []
+      this.state.teamMembers.map((value) => {
+        if(value.user.id != 0 && shiftPatch['workersAssigned'].indexOf(value)==-1){
+              shiftPatch['workersAssigned'].push(value.user.id)
+              if (this.props.shift.workersAssigned.indexOf(value) ==-1 ) {
+                  teamMembersAdded.push(value.user.id)
               }
-            }
-          }
-        })
 
-      }
-    })
-  };
+        }
+      })
+      this.props.updateShift({
+          variables: { data:
+                    {id: this.props.shift.id, shiftPatch: shiftPatch }
+                }
+      }).then(({ data }) => {
+        this.props.handlerClose();
+        console.log('update shift', data);
+      }).catch((error) => {
+        console.log('there was an error sending the query', error);
+      });
+
+      let removedUsers = []
+      this.props.shift.workersAssigned.map((value) => {
+        if (shiftPatch['workersAssigned'].includes(value)){
+        } else{
+          removedUsers.push(value)
+        }
+      })
+      //UPDATE UNASSIGNED USERS
+      removedUsers.map((value) => {
+        let marketId = null
+        this.props.shiftMarkets.allMarkets.edges.map( (v,i) => {
+                if (v.node.workerId == value){
+                  marketId = v.node.id;
+                }
+        })
+        if(marketId) {         
+              this.props.updateMarket({
+                  variables: { data:
+                      { id: marketId, marketPatch: {isBooked: false, workerResponse: "NONE", clockInDate: null, clockOutDate: null} }
+                    }
+                  }).then(({ data }) => {
+                    console.log('update market', data);
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+        }
+      }) 
+
+      //UPDATE ASSIGNED USERS
+      shiftPatch['workersAssigned'].map((value) => {
+              let marketId = null
+              //seeing if shift's markets has this user 
+              if (this.props.shiftMarkets.allMarkets){
+                this.props.shiftMarkets.allMarkets.edges.map( (v,i) => {
+                  if (v.node.workerId == value){
+                    marketId = v.node.id;
+                  }
+                })
+              }
+                 
+              // market exists
+              if(marketId) {        
+              this.props.updateMarket({
+                  variables: { data:
+                      { id: marketId, marketPatch: {isBooked: true, workerResponse: "NONE"} }
+                    }
+                  })
+              } else {
+                this.props.createMarket({
+                  variables: 
+                    { data:
+                        {market:
+                          { id: uuidv4(), 
+                            shiftId: this.props.shift.id,
+                            workerId: value,
+                            isEmailed: false,
+                            isCalled: false,
+                            isTexted: false,
+                            isBooked: true,
+                            workerResponse: "NONE"
+                          }}
+                        }
+                  })
+                  
+              }
+      })
+
+
+
+       var shift = this.props.shift
+        /*
+        if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
+          var uriRemoved = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
+
+              var options = {
+                  uri: uriRemoved,
+                  method: 'POST',
+                  json: {data: {
+                      "sec": "QDVPZJk54364gwnviz921",
+                      "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                      "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                      "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                      "workersAssigned": removedUsers,
+                      "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+                      "workplaceAddress": shift.workplaceByWorkplaceId.address,
+                      "position": shift.positionByPositionId.positionName,
+                      "brand": shift.positionByPositionId.brandByBrandId.brandName
+                  }}
+              };
+              rp(options)
+                .then(function(response) {              
+                }).catch((error) => {
+                   console.log('there was an error sending the query for delete cancellation call', error);
+              });
+        }
+        */
+        /*
+        if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
+             var uriAdded = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/userAdded'
+              var options = {
+                  uri: uriAdded,
+                  method: 'POST',
+                  json: {data: {
+                      "sec": "QDVPZJk54364gwnviz921",
+                      "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                      "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                      "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                      "workersAssigned": teamMembersAdded,
+                      "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+                      "workplaceAddress": shift.workplaceByWorkplaceId.address,
+                      "position": shift.positionByPositionId.positionName,
+                      "brand": shift.positionByPositionId.brandByBrandId.brandName
+                  }}
+              };
+              rp(options)
+                .then(function(response) {              
+                }).catch((error) => {
+                   console.log('there was an error sending the query for delete cancellation call', error);
+              });
+        }*/
+  }
 
   addTeamMember = () => {
     const { teamMembers } = this.state;
@@ -227,6 +284,7 @@ class DrawerHelper extends Component {
 
   deleteShift = () => {
     let id = this.props.shift.id;
+    let shift = this.props.shift
     let that = this;
     that.props.deleteShiftById(uuidv4(), id)
       .then(({ data }) => {
@@ -236,6 +294,32 @@ class DrawerHelper extends Component {
     });
     that.setState({ deleteModalPopped: false });
     this.handleCloseDrawer();
+    /*
+    if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
+        var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
+
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {data: {
+                "sec": "QDVPZJk54364gwnviz921",
+                "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                "workersAssigned": shift.workersAssigned,
+                "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+                "workplaceAddress": shift.workplaceByWorkplaceId.address,
+                "position": shift.positionByPositionId.positionName,
+                "brand": shift.positionByPositionId.brandByBrandId.brandName
+            }}
+        };
+        rp(options)
+          .then(function(response) {              
+          }).catch((error) => {
+             console.log('there was an error sending the query for delete cancellation call', error);
+        });
+    } */
+ 
   };
 
   getUserById = (id, isAssigned) => {
@@ -249,10 +333,6 @@ class DrawerHelper extends Component {
     };
   };
 
-  getUsers = () => {
-    const usersData = this.props.users;
-    return usersData.allUsers.edges.map(({ node }) => pick(node, ['id', 'avatarUrl', 'firstName', 'lastName']));
-  };
 
   getInitialData = ({ shift: { workersAssigned = [], workersInvited = [], workersRequestedNum = 0 } }) => {
     workersAssigned = workersAssigned.map(worker => {
@@ -308,6 +388,11 @@ class DrawerHelper extends Component {
   };
 
   render() {
+    console.log(this.props.teamMembers)
+    if (this.props.teamMembers.loading) {
+                return (<div>Loading</div>) 
+    }
+
     const {
       shift = {},
       width = 600,
@@ -315,9 +400,12 @@ class DrawerHelper extends Component {
       docked = false,
       open
     } = this.props;
+     
+
 
     const { teamMembers, jobShadowers } = this.state;
-    const users = this.getUsers();
+
+    const users = this.props.teamMembers.allJobs.edges.map(({ node }) => pick(node.userByUserId, ['id', 'avatarUrl', 'firstName', 'lastName']));
 
     const actionTypes = [{
       type: 'white',
@@ -498,8 +586,7 @@ const DrawerHelperComponent = compose(graphql(deleteShiftMutation, {
   }),
   graphql(allUsersQuery, {
     name: 'teamMembers',
-    options: (ownProps) => ({ variables: { positionId: ownProps.shift && ownProps.shift.positionByPositionId.id } }),
-    props: ({ teamMembers, ownProps }) => ({ teamMemberNodes: teamMembers.allJobs && teamMembers.allJobs.edges })
+    options: (ownProps) => ({ variables: { positionId: ownProps.shift && ownProps.shift.positionByPositionId.id } }) 
   }))
 (DrawerHelper);
 

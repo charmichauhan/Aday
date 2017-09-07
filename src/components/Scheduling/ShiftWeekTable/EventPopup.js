@@ -8,6 +8,7 @@ import { gql, graphql, compose } from 'react-apollo';
 import '../style.css';
 import './shiftWeekTable.css';
 const uuidv4 = require('uuid/v4');
+var rp = require('request-promise');
 
 class EventPopupComponent extends Component {
   constructor(props) {
@@ -34,14 +35,44 @@ class EventPopupComponent extends Component {
 
   deleteShift = () => {
     let id = this.props.data.id;
+    let shift = this.props.data
     let that = this;
     that.props.deleteShiftById(uuidv4(), id)
-    .then(({ data }) => {
-      console.log('Delete Data', data);
-    }).catch((error) => {
-      console.log('there was an error sending the query', error);
-    });
+                              .then(({ data }) => {
+                                console.log('Delete Data', data);
+                              }).catch((error) => {
+                                console.log('there was an error sending the query', error);
+                              });
     that.setState({ deleteModalPopped: false });
+
+    // only update employees if shift is less than a week away
+    /*
+    if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
+
+        var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
+        
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {data: {
+                "sec": "QDVPZJk54364gwnviz921",
+                "shiftDay": moment(shift.startTime).format("Do,  MMMM  YYYY"),
+                "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                "workersAssigned": shift.workersAssigned,
+                "workplaceLocation": shift.workplaceByWorkplaceId.workplaceName,
+                "workplaceAddress": shift.workplaceByWorkplaceId.address,
+                "position": shift.positionByPositionId.positionName,
+                "brand": shift.positionByPositionId.brandByBrandId.brandName
+            }}
+        };
+        rp(options)
+          .then(function(response) {              
+          }).catch((error) => {
+             console.log('there was an error sending the query for delete cancellation call', error);
+          });
+      }
+      */
   };
 
   closeEditShiftModal = () => {

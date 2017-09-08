@@ -164,9 +164,7 @@ class ProfileDrawerComponent extends Component {
               />
          </div>
      </div>
-          <div className="block-limit-btn text-center">
-            <button className="btn text-uppercase btn-default">Block {userDetails.firstName}</button>
-          </div>
+
         </div>
       </Drawer>
     );
@@ -178,6 +176,10 @@ class ProfileDrawerComponent extends Component {
 <div className="drawer-right">
                 <RaisedButton label="RESUME" onClick={this.props.openResumeDrawer}/>
               </div>
+          <div className="block-limit-btn text-center">
+            <button className="btn text-uppercase btn-default">Block {userDetails.firstName}</button>
+          </div>
+
 */
 
 const ProfileDrawer = compose(

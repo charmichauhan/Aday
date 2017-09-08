@@ -147,3 +147,64 @@ export const updateJobPrimaryPosition = gql`
     }
   }
 `
+
+export const fetchPrimaryLocation = gql`
+query fetchPrimaryLocation ($corporationId: Uuid!) {
+      allWorkplaces (condition: { corporationId: $corporationId, isActive: true }) {
+        edges {
+          node {
+            id
+            workplaceName
+            brandId
+            address
+            isActive
+          }
+        }
+      }
+    }
+`
+
+export const fetchEmployeeByUserId = gql`
+query allEmployees($userId: Uuid!, $corporationId: Uuid!){
+  allEmployees(condition: {userId: $userId, corporationId:$corporationId}){
+    edges{
+      node{
+        id
+        userId
+        nodeId
+        employeeNum
+        payrollNum
+        hireDate
+        deletionDate
+        primaryWorkplace
+        employeeNum
+        primaryWorkplace
+        wage
+        userByUserId{
+          id
+          payrollId
+        }
+      }
+    }
+  }
+}
+`
+
+export const updatePersonnelInfo = gql`
+mutation updateEmployeeById($id: Uuid!, $wage: Float, $hireDate: Datetime, $deletionDate: Datetime,$primaryWorkplace: Uuid){
+  updateEmployeeById(input:{id: $id, employeePatch:{
+    wage: $wage, 
+    hireDate: $hireDate, 
+    deletionDate: $deletionDate,
+    primaryWorkplace: $primaryWorkplace
+  }}){
+  employee {
+    id
+    wage
+    hireDate
+    deletionDate
+    primaryWorkplace
+    }
+  }
+}
+`

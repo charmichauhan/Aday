@@ -57,22 +57,11 @@ class ProfileDrawerComponent extends Component {
       docked = false,
       open
     } = this.props;
-    if (this.props.userQuery.loading || this.props.releventPositionsQuery.loading) {
+    if (this.props.userQuery.loading) {
       return (<div>Loading</div>)
     }
-    let positions = [];
-    let training = [];
+    
     let userDetails = this.props.userQuery && this.props.userQuery.userById;
-    let releventPositionsQuery = [...this.props.releventPositionsQuery.allPositions.nodes];
-    let releventfilteredPositions = releventPositionsQuery.filter((w) => {
-        if (w.jobsByPositionId.nodes.length > 0) {
-             positions.push(w)
-        } else {
-          training.push(w)
-        }
-      }
-    );
-
     const styles = {
       positionCheckbox: {
         textTransform: 'uppercase',
@@ -95,7 +84,6 @@ class ProfileDrawerComponent extends Component {
         verticalAlign: 'middle'
       }
     };
-
     return (
      <Drawer
          docked={docked}
@@ -159,8 +147,6 @@ class ProfileDrawerComponent extends Component {
              </div>
               <TabPanel
                 userDetails={userDetails}
-                releventPositionsQuery={positions}
-                releventfilteredPositions={training}
               />
          </div>
      </div>
@@ -187,16 +173,6 @@ const ProfileDrawer = compose(
     options: (ownProps) => ({
       variables: {
         id: ownProps.userId
-      }
-    })
-  }),
-  graphql(releventPositionsQuery, {
-    name: "releventPositionsQuery",
-    options: (ownProps) => ({
-      variables: {
-        corporationId: localStorage.getItem("corporationId"),
-        brandId: localStorage.getItem("brandId"),
-        userId:  ownProps.userId
       }
     })
   }),

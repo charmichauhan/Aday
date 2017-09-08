@@ -8,7 +8,6 @@ import {leftCloseButton} from "../../styles";
 import Checkbox from 'material-ui/Checkbox';
 import { gql, graphql, compose } from 'react-apollo';
 const uuidv1 = require('uuid/v1');
-import {releventPositionsQuery} from "../Team.graphql";
 
 const RadioGroup = Radio.Group;
 
@@ -47,6 +46,9 @@ class TeamMemberPositionDetailsComponent extends Component {
       },
       updateQueries: {
           releventPositionsQuery: (previousQueryResult, { mutationResult }) => { 
+                      console.log("HELLO")
+                      console.log(previousQueryResult)
+                      console.log(mutationResult)
                       previousQueryResult.allPositions.nodes.map((value,i) =>{
                           if (value.id == p.id) {      
                               value.jobsByPositionId.nodes = [] 
@@ -67,7 +69,6 @@ class TeamMemberPositionDetailsComponent extends Component {
   }
 
   addPosition  = (v) =>{
-
     if (!this.props.userDetails.employeesByUserId.edges[0].node.primaryWorkplace){
       this.setState({ primaryWorkplaceWarning: true })
     } else { 
@@ -131,11 +132,26 @@ class TeamMemberPositionDetailsComponent extends Component {
 
     };
 
+    if (this.props.releventPositionsQuery.loading) {
+      return (<div>Loading</div>)
+    }
+
+    let releventPositionsQuery = [];
+    let releventfilteredPositions= [];
+    let releventPositionsQueryResults = [...this.props.releventPositionsQuery.allPositions.nodes];
+    releventPositionsQueryResults.filter((w) => {
+        if (w.jobsByPositionId.nodes.length > 0) {
+             releventPositionsQuery.push(w)
+          } else {
+            releventfilteredPositions.push(w)
+          }
+      }
+    );
+
     const userDetails = this.props.userDetails;
-    const releventPositionsQuery = this.props.releventPositionsQuery;
     const positionDetails = this.props.userDetails.jobsByUserId.edges;
     const trainingPositions = this.getTrainingPositions(positionDetails);
-    const releventfilteredPositions = this.props.releventfilteredPositions;
+    console.log(this)
     return (
 
       <div>
@@ -249,6 +265,26 @@ class TeamMemberPositionDetailsComponent extends Component {
   }
 }
 
+const releventPositionsQuery = gql`
+  query releventPositionsQuery($corporationId: Uuid, $brandId: Uuid, $userId: Uuid) {
+    allPositions(condition: { corporationId: $corporationId, brandId: $brandId} ){
+      nodes {
+        id
+        positionName
+        traineeHours
+        jobsByPositionId (condition: { userId: $userId, isPositionActive: true }) {
+          nodes {
+            id
+            isPositionActive
+            primaryJob
+            rating
+            numTraineeHoursCompleted
+          }
+        }
+      }
+    }
+  }`;
+
 const updateJobActive = gql
     `mutation updatejob($id: Uuid!, $jobInfo: JobPatch!){
         updateJobById(input: { id: $id, jobPatch: $jobInfo }) {
@@ -273,7 +309,17 @@ const createJob = gql
 
 
 const TeamMemberPositionDetails= compose( graphql(updateJobActive, {name: "update"}),
-   graphql(createJob, {name: "create"}))(TeamMemberPositionDetailsComponent)
+   graphql(createJob, {name: "create"}),
+     graphql(releventPositionsQuery, {
+    name: "releventPositionsQuery",
+    options: (ownProps) => ({
+      variables: {
+        corporationId: localStorage.getItem("corporationId"),
+        brandId: localStorage.getItem("brandId"),
+        userId:  ownProps.userDetails.id
+      }
+    })
+  }))(TeamMemberPositionDetailsComponent)
 export default TeamMemberPositionDetails
 
 

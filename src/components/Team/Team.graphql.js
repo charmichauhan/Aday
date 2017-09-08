@@ -83,6 +83,8 @@ export const userQuery = gql `
     employeesByUserId{
     edges{
       node{
+        id
+        primaryWorkplace
         workplaceByPrimaryWorkplace
         {
           id

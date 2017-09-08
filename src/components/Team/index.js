@@ -76,7 +76,7 @@ export default class Team extends Component {
 						<Managers workplaceId={this.state.workplaceId}/>
 					</Tab>
 
-					
+
 				</Tabs>
 			</section>
 		)

@@ -55,7 +55,7 @@ class TeamMemberCardComponent extends Component {
         }
 
 		return (
-		    <Card style={{width:250}}>
+            <Card style={{width:250}} color='grey'>
                  {this.state.viewProfileDrawer && <ProfileDrawer
                                                                                 open={this.state.viewProfileDrawer}
                                                                                 openResumeDrawer={this.openResumeDrawer}
@@ -64,32 +64,36 @@ class TeamMemberCardComponent extends Component {
                                                                             />}
                 {this.state.viewResumeDrawer && <ResumeDrawer
                                                                                 open={this.state.viewResumeDrawer} backProfileDrawer={this.backProfileDrawer} userId={this.props.userId}/>}
-                <Image src={avatarUrl} />
-		    	<Card.Content className='profile-card'>
-                     <Card.Header style={{textAlign:"center"}}>
-                         <font size="5.5" className="_first-name">{firstName}</font>
-                             <br />
-                         <font size="5.5" className="_last-name">{lastName}</font>
-                     </Card.Header>
-		        	<Card.Description>
-						<center className='card_body'>
-                            <div>
-							    <Rating icon='star' defaultRating={5} maxRating={5}/>
-                            </div>
-                            <Card.Meta>
-    							<font size="2">
-    							{userEmail}
-    							<br/>
-                                <phoneNumber>{userPhoneNumber}</phoneNumber>
-    							<br/>
-    							</font>
-                            </Card.Meta>
-                            <RaisedButton label="View Profile" backgroundColor="#0022A1" labelColor="#FFFFFF" onClick={this.handleDrawerOpen} style={{marginTop:3}}/>
-							<br/>
+
+		    	<Card.Content>
+			      	<center>
+					    <Image centered={true} size='small' shape='circular' src={avatarUrl} />
+					</center>
+					<div style={{height:15}} />
+					<Card.Header style={{textAlign:"center"}}>
+						<font size="5.5" className="_first-name">{firstName}</font>
+							<br />
+						<font size="5.5" className="_last-name">{lastName}</font>
+					</Card.Header>
+
+						<center className='rating card_body'>
+							<div style={{height:7}} />
+							<Rating icon='star' defaultRating={5} maxRating={5} />
+							<div style={{height:15}} />
+							<Card.Meta>
+								<font size="2">
+								{userEmail}
+								<br/>
+								{userPhoneNumber}
+								</font>
+							</Card.Meta>
+							<div style={{height:7}} />
+							<RaisedButton label="View Profile" backgroundColor="#0022A1" labelColor="#FFFFFF" onClick={this.handleDrawerOpen} style={{marginTop:3}}/>
+							<div style={{height:7}} />
 						</center>
-		        	</Card.Description>
 		    	</Card.Content>
 		    </Card>
+
 		);
 	}
 }

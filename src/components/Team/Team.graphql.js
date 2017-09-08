@@ -83,11 +83,6 @@ export const userQuery = gql `
     employeesByUserId{
     edges{
       node{
-        id
-        primaryWorkplace
-        weekHourLimit
-        monthHourLimit
-        dayHourLimit
         workplaceByPrimaryWorkplace
         {
           id
@@ -102,16 +97,14 @@ export const userQuery = gql `
   }
 }`
 
-
-
 export const releventPositionsQuery = gql`
-  query releventPositionsQuery($corporationId: Uuid, $brandId: Uuid, $userId: Uuid) {
+  query ($corporationId: Uuid, $brandId: Uuid, $userId: Uuid) {
     allPositions(condition: { corporationId: $corporationId, brandId: $brandId} ){
       nodes {
         id
         positionName
         traineeHours
-        jobsByPositionId (condition: { userId: $userId, isPositionActive: true }) {
+        jobsByPositionId (condition: { userId: $userId }) {
           nodes {
             id
             isPositionActive
@@ -123,20 +116,6 @@ export const releventPositionsQuery = gql`
       }
     }
   }`;
-
-
-export const updateEmployeeById = gql`
-  mutation ($id: Uuid!, $employeeInfo: EmployeePatch!) {
-    updateEmployeeById (input: { id: $id, employeePatch: $employeeInfo }) {
-      employee {
-        id
-        weekHourLimit
-        dayHourLimit
-        monthHourLimit
-      }
-    }
-  }
-`
 
 export const updateJobPrimaryPosition = gql`
   mutation ($id: Uuid!, $jobInfo: JobPatch!) {
@@ -190,7 +169,7 @@ query allEmployees($userId: Uuid!, $corporationId: Uuid!){
 }
 `
 
-export const updatePersonnelInfo = gql`
+export const updateEmployeeById = gql`
 mutation updateEmployeeById($id: Uuid!, $wage: Float, $hireDate: Datetime, $deletionDate: Datetime,$primaryWorkplace: Uuid){
   updateEmployeeById(input:{id: $id, employeePatch:{
     wage: $wage, 

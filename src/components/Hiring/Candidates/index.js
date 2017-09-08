@@ -33,11 +33,11 @@ export default class Candidates extends Component {
 		return (
 			<div>
 				<br/><br/>
-				<Card.Group itemsPerRow="5">
+				<Card.Group itemsPerRow="7">
 					{
 						this.state.candidates.map((m, i)=> <CandidateCard key={i} member={m}/>)
 					}
-				</Card.Group>
+				</Card.Group>*/
 			</div>
 		);
 	}

@@ -24,7 +24,7 @@ export const userQuery = gql `
         }
       }
     }
-    jobsByUserId{
+    jobsByUserId(condition: {isPositionActive: true}){
       edges{
         node{
           id
@@ -104,7 +104,7 @@ export const releventPositionsQuery = gql`
         id
         positionName
         traineeHours
-        jobsByPositionId (condition: { userId: $userId }) {
+        jobsByPositionId (condition: { userId: $userId, isPositionActive: true }) {
           nodes {
             id
             isPositionActive

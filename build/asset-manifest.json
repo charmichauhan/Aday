@@ -1,15 +1,8 @@
 {
-<<<<<<< HEAD
   "main.css": "static/css/main.46473c8a.css",
   "main.css.map": "static/css/main.46473c8a.css.map",
-  "main.js": "static/js/main.8c9b06ab.js",
-  "main.js.map": "static/js/main.8c9b06ab.js.map",
-=======
-  "main.css": "static/css/main.cd73cdb8.css",
-  "main.css.map": "static/css/main.cd73cdb8.css.map",
-  "main.js": "static/js/main.9f0450d1.js",
-  "main.js.map": "static/js/main.9f0450d1.js.map",
->>>>>>> 20de45a19d6db4d2c6d2c0d0f63bf29e19128868
+  "main.js": "static/js/main.01df6ebf.js",
+  "main.js.map": "static/js/main.01df6ebf.js.map",
   "static/media/RobotoCondensed-Bold.ttf": "static/media/RobotoCondensed-Bold.36b5da03.ttf",
   "static/media/RobotoCondensed-Light.ttf": "static/media/RobotoCondensed-Light.117f6877.ttf",
   "static/media/Simple-Line-Icons.eot?-i3a2kk": "static/media/Simple-Line-Icons.dacd16c9.eot",

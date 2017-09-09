@@ -12,7 +12,7 @@ const uuidv1 = require('uuid/v1');
 const RadioGroup = Radio.Group;
 
 class TeamMemberPositionDetailsComponent extends Component {
-  
+
   state = {
     value: 1,
     value1: 1,
@@ -41,17 +41,17 @@ class TeamMemberPositionDetailsComponent extends Component {
   removePosition = (p, v) =>{
     this.props.update({
       variables: {
-        id: v, 
+        id: v,
         jobInfo: { primaryJob: false, isPositionActive: false  }
       },
       updateQueries: {
-          releventPositionsQuery: (previousQueryResult, { mutationResult }) => { 
+          releventPositionsQuery: (previousQueryResult, { mutationResult }) => {
                       console.log("HELLO")
                       console.log(previousQueryResult)
                       console.log(mutationResult)
                       previousQueryResult.allPositions.nodes.map((value,i) =>{
-                          if (value.id == p.id) {      
-                              value.jobsByPositionId.nodes = [] 
+                          if (value.id == p.id) {
+                              value.jobsByPositionId.nodes = []
                               return value.jobsByPositionId.nodes
                           } else{
                               return value
@@ -65,28 +65,28 @@ class TeamMemberPositionDetailsComponent extends Component {
     }).then(({ data }) => {
           console.log(data)
     })
-    
+
   }
 
   addPosition  = (v) =>{
     if (!this.props.userDetails.employeesByUserId.edges[0].node.primaryWorkplace){
       this.setState({ primaryWorkplaceWarning: true })
-    } else { 
+    } else {
       this.setState({ primaryWorkplaceWarning: false })
       console.log(this)
 
     this.props.create({
         variables: { data:
             { job:
-              { id: uuidv1(), 
+              { id: uuidv1(),
                 positionId: v,
                 userId: this.props.userDetails.id,
                 workplaceId: this.props.userDetails.employeesByUserId.edges[0].node.primaryWorkplace,
                 primaryJob: false,
-                isPositionActive: true, 
+                isPositionActive: true,
                 numTraineeHoursCompleted: 0
               }
-            } 
+            }
           },
           updateQueries: {
             releventPositionsQuery: (previousQueryResult, { mutationResult }) => {
@@ -107,7 +107,7 @@ class TeamMemberPositionDetailsComponent extends Component {
         .then(({ data }) => {
           console.log(data)
         })
-    
+
       }
   }
 
@@ -156,7 +156,7 @@ class TeamMemberPositionDetailsComponent extends Component {
 
       <div>
         <div className="text-center profile-drawer-tab">
-          <Image src="/images/Sidebar/badge.png" size="mini" />
+          <Image className="section-icon" src="/images/Sidebar/badge.png"/>
           <h2 className="text-uppercase">{userDetails.firstName}'s Positions</h2>
         </div>
         <div className="grid-positions">
@@ -168,26 +168,25 @@ class TeamMemberPositionDetailsComponent extends Component {
                 <div>
                 </div>
               </Grid.Column>
-              <Grid.Column width={2} style={{textTransform: 'uppercase'}}>
-                Team Trainer
+              <Grid.Column width={2} className="tiny-header">
+                <span>TEAM</span><span>TRAINER</span>
               </Grid.Column>
-              <Grid.Column width={2}>
-                Primary Position
+              <Grid.Column width={2} className="tiny-header">
+                <span>PRIMARY</span><span>POSITION</span>
               </Grid.Column>
-              <Grid.Column width={2}>
-                Revoke Position
+              <Grid.Column width={2} className="tiny-header">
+                <span>REVOKE</span><span>POSITION</span>
               </Grid.Column>
             </Grid.Row>
             {releventPositionsQuery.map((v, index) => (
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <i className="icon-circle-td"><Image src="/images/Sidebar/positions.png" size="mini"/></i>
+                <Grid.Column width={2} style={{display:'flex', flexDirection:'row'}}>
+                  <div className="circle"><img src="/images/Sidebar/positions.png" style={{width:22, height:30}}/></div>
                 </Grid.Column>
                 <Grid.Column width={8}>
                   <div className="wrapper-element">
                     <p className="cook-name">{v.positionName}</p>
-                    {/*<Rating icon='star' defaultRating={v.node.rating} maxRating={5}/>*/}
-                    <span className="text-uppercase green">Primary Position</span>
+                    <div className="tinier-header"><span>YOUR RATING: <Rating icon='star' defaultRating={5} maxRating={5}/></span></div>
                   </div>
                 </Grid.Column>
                 <Grid.Column width={2}>
@@ -206,7 +205,7 @@ class TeamMemberPositionDetailsComponent extends Component {
                 </Grid.Column>
                 <Grid.Column width={2}>
                   <div className="text-center wrapper-element">
-                  <Icon type="down-circle" onClick={() => this.removePosition(v, v.jobsByPositionId.nodes[0].id)} style={{fontSize: '20px'}} />
+                  <Icon type="down-circle" onClick={() => this.removePosition(v, v.jobsByPositionId.nodes[0].id)} style={{fontSize: '20px', cursor: "pointer"}} />
                   </div>
                 </Grid.Column>
               </Grid.Row>
@@ -215,45 +214,55 @@ class TeamMemberPositionDetailsComponent extends Component {
           </Grid>
         </div>
         <div className="text-center profile-drawer-tab">
-          <Image src="/images/Sidebar/cross.png" size="mini"/>
+          <Image src="/images/Sidebar/cross.png" style={{width:30, height:30, padding:3}}/>
           <h2 className="text-uppercase">Cross-Training Progress</h2>
         </div>
         <div className="grid-positions">
-         {this.state.primaryWorkplaceWarning? <p style={{ fontSize: "18px", color: "red" }}> BEFORE YOU CAN GRANT A POSITION, MUST FIRST SET TEAM MEMBER'S PRIMARY LOCATION </p> : ""}
+         {this.state.primaryWorkplaceWarning? <p style={{ fontSize: "18px", color: "red" }}> BEFORE YOU CAN GRANT A POSITION, MUST FIRST SET PRIMARY LOCATION FOR THIS TEAM MEMBER</p> : ""}
           <Grid columns={3}>
 
             <Grid.Row>
               <Grid.Column width={2}>
-                
+
               </Grid.Column>
-              <Grid.Column width={10}>
+              <Grid.Column width={8}>
 
               </Grid.Column>
               <Grid.Column width={2}>
-                Training Approve
+
               </Grid.Column>
-              <Grid.Column width={2}>
-                Grant Position
+              <Grid.Column width={2} className="tiny-header">
+                <span>TRAINING</span><span>APPROVED</span>
               </Grid.Column>
-            </Grid.Row>
+              <Grid.Column width={2} className="tiny-header">
+                <span>GRANT</span><span>POSITION</span>
+              </Grid.Column>
+              </Grid.Row>
 
             {releventfilteredPositions.map((v, index) => (
                 <Grid.Row>
                   <Grid.Column width={2}>
+                    <Progress type="circle" percent={0} /*status="exception" */  width={45}/>
                   </Grid.Column>
-                  <Grid.Column width={10}>
+                  <Grid.Column width={8}>
                     <div>
                       <p className="cook-name">{v.positionName}</p>
-
-                      <span className="text-uppercase green"> Approved For Job Shadowing</span>
+                      <div className="tinier-header"><span>0 OF 50 HOURS COMPLETED</span></div>
                     </div>
                   </Grid.Column>
                   <Grid.Column width={2}>
-
                   </Grid.Column>
                   <Grid.Column width={2}>
-                    <i onClick={() => this.addPosition(v.id)} 
-                    className="fa fa-check fa-3x" style={{color: 'gray'}}/>
+                      <div className="wrapper-element">
+                      <Switch defaultChecked={false} onChange={this.onChange}
+                              className="switchStyle" circleStyles={{border: '1px solid #000', background: '#f00'}}
+                              checkedChildren="YES" unCheckedChildren="NO"/>
+                      </div>
+                  </Grid.Column>
+                  <Grid.Column width={2}>
+                      <div className="text-center wrapper-element">
+                      <Icon type="up-circle" onClick={() => this.addPosition(v.id)} style={{fontSize: '20px', cursor: "pointer"}} />
+                      </div>
                   </Grid.Column>
                 </Grid.Row>
             ))}
@@ -330,4 +339,3 @@ export default TeamMemberPositionDetails
                       <Radio value={2}></Radio>
                     </RadioGroup> */
 /*                      <span className="text-uppercase red">4 of 20 hours completed</span> */
-

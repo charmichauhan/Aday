@@ -35,9 +35,12 @@
     font-weight: 100;
 }
 
+/* this affects the ant input components, specifically the space between title text and contents */
 .form-control.form-control-sm {
   height: 30px;
-  padding: 5px 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+
 }
 
 .green {
@@ -676,6 +679,15 @@ img.list-left-image {
   justify-content: center;
 }
 
+.custom-ant-style-header {
+    padding-left: 2px;
+    color: #4A4A4A;
+    font-family: "Roboto Condensed";
+    font-size: 16px;
+    font-weight: normal;
+}
+
+
 /*
 .ui star rating {
     font-size: 12px;
@@ -725,8 +737,25 @@ img.list-left-image {
   height: auto;
 }
 
+/**
+ * September 9, 2017, Rahkeem
+ * @comment modifies the the margin below .form-group; better solution is possible
+ */
+div > div > .form-group, .form-horizontal .form-group {
+    margin-top: 12px !important;
+    margin-bottom: 12px !important;
+}
+
 .personal-info .info {
-  font-style: italic;
+    height: 19px;
+    width: 608px;
+    color: #4A4A4A;
+    font-family: Lato-Light;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: lighter;
+    line-height: 19px;
+    padding-left: 3px;
 }
 
 .text-editor-wrapper {

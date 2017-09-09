@@ -28,9 +28,9 @@ class MemberPersonnelInformationComponent extends Component {
     this.state = {
       primaryLocation: null,
       wage: null,
-      hire: null, 
-      pay: null, 
-      termination: null, 
+      hire: null,
+      pay: null,
+      termination: null,
       num: null,
       updated: false
     };
@@ -85,7 +85,7 @@ class MemberPersonnelInformationComponent extends Component {
     }
     this.props.updateEmployee({
       variables: {
-        id: v, 
+        id: v,
         employeeInfo
         }
         }).then(({ data }) => {
@@ -102,14 +102,14 @@ class MemberPersonnelInformationComponent extends Component {
     let allPositions = this.props.primaryLocation && this.props.primaryLocation.allWorkplaces && this.props.primaryLocation.allWorkplaces.edges;
     const fetchEmployeeByUserId = this.props.fetchEmployeeByUserId && this.props.fetchEmployeeByUserId.allEmployees && this.props.fetchEmployeeByUserId.allEmployees.edges;
     const userDetails = this.props.userDetails;
-    
+
     return(
 
       <div>
 
         <div className="text-center profile-drawer-tab">
-          <Image src="/images/Sidebar/user.png" size="mini"/>
-          <h2 className="text-uppercase">Personnel Information</h2>
+          <Image className="section-icon" src="/images/Sidebar/user.png" style={{width:30, height:30, padding:3}}/>
+          <h2 className="text-uppercase" >Personnel Information</h2>
         </div>
          {this.state.updated? <div style={{ fontSize: "16px", color: "black" }}> Personnel Information Updated. </div>:"" }
         <div className="personal-info">
@@ -118,8 +118,8 @@ class MemberPersonnelInformationComponent extends Component {
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Primary Location:</label>
-                  <select className="form-control form-control-sm"  onChange={this.handlePrimaryLocationChange}>
+                  <span className="custom-ant-style-header">PRIMARY LOCATION</span>
+                  <select className="form-control form-control-sm"  style={{marginTop:5}} onChange={this.handlePrimaryLocationChange}>
                     {
                       allPositions.map((v,index)=>{
 
@@ -143,32 +143,32 @@ class MemberPersonnelInformationComponent extends Component {
                     }
                   </select>
                 </div>
+                <p className="info">
+                  Scheduling automation will prioritize assigning this team member to the location above
+                </p>
               </div>
             </div>
-            <p className="info">
-              Scheduling automation will attempt to schedule the employee at this location first
-            </p>
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Hourly Wage</label>
+                  <text className="custom-ant-style-header">HOURLY WAGE</text>
                   <input type="text" onChange={this.handleChangeWage} className="form-control form-control-sm" placeholder={value.node.wage} />
                 </div>
+                    <p className="info">
+                      Wages are set on the positions worksheet for part-time team members
+                    </p>
               </div>
             </div>
-            <p className="info">
-              Wages for employees that work less than 30 hours per week are set corporation-wide
-            </p>
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Payroll ID</label>
+                  <text className="custom-ant-style-header">PAYROLL ID</text>
                   <input type="text" onChange={this.handleChangePayRoll} className="form-control form-control-sm" placeholder={value.node.payrollNum} />
                 </div>
               </div>
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Employee ID</label>
+                  <text className="custom-ant-style-header">EMPLOYEE ID</text>
                   <input type="text" onChange={this.handleChangeEmployeeNum} className="form-control form-control-sm" placeholder={value.node.employeeNum}/>
                 </div>
               </div>
@@ -176,7 +176,7 @@ class MemberPersonnelInformationComponent extends Component {
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Hire Date</label>
+                  <text className="custom-ant-style-header">HIRE DATE</text>
                   {/*<input type="text" className="form-control form-control-sm" placeholder="Date" />*/}
                   <DatePicker hintText="Date"
                       container="inline"
@@ -191,7 +191,7 @@ class MemberPersonnelInformationComponent extends Component {
               </div>
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Termination Date</label>
+                  <text className="custom-ant-style-header">TERMINATION DATE</text>
                 {/*<input type="text" className="form-control form-control-sm" placeholder="Date" />*/}
                   <DatePicker hintText="Date"
                       container="inline"
@@ -240,4 +240,3 @@ const MemberPersonnelInformation = compose(
     )(MemberPersonnelInformationComponent);
 
 export default MemberPersonnelInformation
-

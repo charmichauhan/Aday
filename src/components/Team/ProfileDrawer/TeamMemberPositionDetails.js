@@ -46,9 +46,6 @@ class TeamMemberPositionDetailsComponent extends Component {
       },
       updateQueries: {
           releventPositionsQuery: (previousQueryResult, { mutationResult }) => { 
-                      console.log("HELLO")
-                      console.log(previousQueryResult)
-                      console.log(mutationResult)
                       previousQueryResult.allPositions.nodes.map((value,i) =>{
                           if (value.id == p.id) {      
                               value.jobsByPositionId.nodes = [] 

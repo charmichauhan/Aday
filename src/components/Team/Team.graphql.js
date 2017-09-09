@@ -1,7 +1,7 @@
 import { gql } from 'react-apollo';
 
 export const userQuery = gql `
- query UserById($id: Uuid!){
+ query userById($id: Uuid!, $corporationId: Uuid!){
   userById(id: $id){
     id
     firstName
@@ -80,13 +80,16 @@ export const userQuery = gql `
         hourRange
       }
     }
-    employeesByUserId{
+    employeesByUserId(condition: { corporationId: $corporationId }){
     edges{
       node{
         id
+        wage
+        hireDate
+        deletionDate
+        payrollNum
         primaryWorkplace
-        workplaceByPrimaryWorkplace
-        {
+        workplaceByPrimaryWorkplace{
           id
           workplaceName
         }
@@ -145,46 +148,18 @@ query fetchPrimaryLocation ($corporationId: Uuid!) {
     }
 `
 
-export const fetchEmployeeByUserId = gql`
-query allEmployees($userId: Uuid!, $corporationId: Uuid!){
-  allEmployees(condition: {userId: $userId, corporationId:$corporationId}){
-    edges{
-      node{
-        id
-        userId
-        nodeId
-        employeeNum
-        payrollNum
-        hireDate
-        deletionDate
-        primaryWorkplace
-        employeeNum
-        primaryWorkplace
-        wage
-        userByUserId{
-          id
-          payrollId
-        }
-      }
-    }
-  }
-}
-`
-
 export const updateEmployeeById = gql`
-mutation updateEmployeeById($id: Uuid!, $wage: Float, $hireDate: Datetime, $deletionDate: Datetime,$primaryWorkplace: Uuid){
-  updateEmployeeById(input:{id: $id, employeePatch:{
-    wage: $wage, 
-    hireDate: $hireDate, 
-    deletionDate: $deletionDate,
-    primaryWorkplace: $primaryWorkplace
-  }}){
+mutation ($id: Uuid!, $employeeInfo: EmployeePatch!) {  
+  updateEmployeeById (input: { id: $id, employeePatch: $employeeInfo }) {
   employee {
     id
     wage
     hireDate
     deletionDate
     primaryWorkplace
+    dayHourLimit
+    weekHourLimit
+    monthHourLimit
     }
   }
 }

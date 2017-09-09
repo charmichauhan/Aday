@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import TeamMemberCard from './../TeamMemberCard'
 import { gql, graphql } from 'react-apollo';
 import { Card } from 'semantic-ui-react'
+import moment from 'moment'
 
 const initialState = {
 	//stub
@@ -54,12 +55,20 @@ class TeamMembersComponent extends Component {
 
 	    if(localStorage.getItem("workplaceId")){
 	    	teamMembers.map((value , i) => {
-				if ( value['node']['primaryWorkplace'] == localStorage.getItem("workplaceId") ) {
-					mappedTeamMembers.push(value)
+				if ( value['node']['primaryWorkplace'] == localStorage.getItem("workplaceId")) {
+				    if((value['node']['deletionDate']) && (moment(value['node']['deletionDate']).isBefore(moment().format())) ){
+				    } else{
+						mappedTeamMembers.push(value)
+				    }
 				}
 	    	})
 	    } else {
-			mappedTeamMembers = teamMembers;
+			teamMembers.map((value , i) => {
+				if((value['node']['deletionDate']) && (moment(value['node']['deletionDate']).isBefore(moment().format())) ){
+				 } else {
+				 	mappedTeamMembers.push(value)
+				 }
+			})
 	    }
 
 		return (
@@ -83,6 +92,7 @@ const allUsers = gql`
             edges{
                 node{
                   id
+                  deletionDate
                   primaryWorkplace
                   userByUserId{
                     id

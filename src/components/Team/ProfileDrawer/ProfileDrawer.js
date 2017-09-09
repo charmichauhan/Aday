@@ -57,10 +57,11 @@ class ProfileDrawerComponent extends Component {
       docked = false,
       open
     } = this.props;
+
     if (this.props.userQuery.loading) {
       return (<div>Loading</div>)
     }
-    
+
     let userDetails = this.props.userQuery && this.props.userQuery.userById;
     const styles = {
       positionCheckbox: {
@@ -172,7 +173,8 @@ const ProfileDrawer = compose(
     name: "userQuery",
     options: (ownProps) => ({
       variables: {
-        id: ownProps.userId
+        id: ownProps.userId,
+        corporationId: localStorage.getItem("corporationId")
       }
     })
   }),

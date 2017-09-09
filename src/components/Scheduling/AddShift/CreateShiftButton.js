@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { Divider, Modal, Header, Image } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 
-import AddShiftForm from './CreateShift/AddShiftForm';
 import AddEmployeeForm from './CreateShift/AddEmployeeForm';
-import CreateShiftDrawer from './CreateShift/CreateShiftDrawer';
 
 import './styles.css';
 import 'react-date-picker/index.css';

@@ -24,3 +24,8 @@
   font-size: 18px;
   font-weight: 500;
 }
+
+.shift-section .drawer-section .time-wrapper {
+  display: inline-block;
+  padding-right: 20px;
+}

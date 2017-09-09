@@ -7,19 +7,19 @@ import cloneDeep from 'lodash/cloneDeep';
 import { withApollo } from 'react-apollo';
 import moment from 'moment';
 
+import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
 import Loading from '../../../helpers/Loading';
 import CircleButton from '../../../helpers/CircleButton';
 import dataHelper from '../../../helpers/common/dataHelper';
 import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
-import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import CreateShiftHelper from './CreateShiftHelper';
 
 import './select.css';
 
 const methodOptions = [{ key: 'standard', value: 'standard', text: 'Standard', disabled: true, selected: true }];
-const startDate = moment(new Date()).startOf('week').isoWeekday(1);
+const startDate = moment().startOf('week');
 
 class DrawerHelper extends Component {
 
@@ -29,6 +29,8 @@ class DrawerHelper extends Component {
       shift: {
         ...cloneDeep(props.shift),
         shiftMethod: 'standard',
+        tags: [],
+        tagOptions: [],
         brandId: localStorage.getItem('brandId'),
         corporationId: localStorage.getItem('corporationId'),
         workplaceId: localStorage.getItem('workplaceId')
@@ -60,11 +62,21 @@ class DrawerHelper extends Component {
     const { shift } = this.state;
     const { name, value } = event.target;
     shift[name] = value;
+    if (name === 'tags') shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
     this.setState({ shift });
     if (name === 'workplaceId') this.getPositions(value);
   };
 
   updateFormState = (dataValue) => {
+    if (dataValue.unpaidBreakInMinutes) {
+      const hours = Math.floor(dataValue.unpaidBreakInMinutes / 60);
+      let minutes = dataValue.unpaidBreakInMinutes % 60;
+      if (minutes < 10){
+        minutes = 0 + minutes;
+      }
+      const finalTime = hours + ":" + minutes;
+      dataValue.unpaidBreak = finalTime;
+    }
     const shift = Object.assign(this.state.shift, dataValue);
     this.setState({ shift });
   };
@@ -131,8 +143,20 @@ class DrawerHelper extends Component {
                 options={positionOptions} />
             </div>
             <div className="form-group">
-              <TimePicker hintText="Start Time" minutesStep={15} />
-              <TimePicker hintText="End Time" minutesStep={15} />
+              <div className="time-wrapper">
+                <label className="text-uppercase blue-heading">Start Time</label>
+                <TimePicker
+                  hintText="Start Time"
+                  minutesStep={15}
+                  onChange={(_, date) => this.handleChange({ target: { name: 'startTime', value: date.toUTCString() }})} />
+              </div>
+              <div className="time-wrapper">
+                <label className="text-uppercase blue-heading">End Time</label>
+                <TimePicker
+                  hintText="End Time"
+                  minutesStep={15}
+                  onChange={(_, date) => this.handleChange({ target: { name: 'endTime', value: date.toUTCString() }})} />
+              </div>
             </div>
             <div className="form-group">
               <ShiftDaySelector startDate={startDate} formCallBack={this.updateFormState} />
@@ -147,26 +171,27 @@ class DrawerHelper extends Component {
             <div className="form-group">
               <UnpaidBreakInMinutes formCallBack={this.updateFormState} />
             </div>
+            <div className="form-group">
+              <label className="text-uppercase blue-heading">Tags</label>
+              <Dropdown
+                multiple
+                name="tags"
+                fluid
+                placeholder='Add tags'
+                search
+                selection
+                allowAdditions
+                options={shift.tagOptions}
+                onChange={(_, data) => this.handleChange({ target: data })} />
+            </div>
             <div className="form-group ui form">
               <label className="text-uppercase blue-heading">Instructions</label>
-              <TextArea rows="3" />
-            </div>
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Advanced Options</label>
-              <div className="advanced-option-content">
-                <p>Allow job shadowers: <span>No</span></p>
-                <p>Restrict gender: <span>Male</span></p>
-                <p>Maximum Wage for Shift: <span>$21.00</span></p>
-                <p>Invited Part-time Team Members</p>
-                <li>Carol Brown</li>
-                <p>Assigned Full-time Team Members</p>
-                <li>Carol Brown</li>
-              </div>
+              <TextArea name="instructions" onChange={(_, data) => this.handleChange({ target: data })} rows="3" />
             </div>
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={closeDrawer} type="white" title="Cancel" />
-                <CircleButton handleClick={() => handleSubmit(shift)} type="blue" title="Update Name" />
+                <CircleButton handleClick={() => handleSubmit(shift)} type="blue" title="Add Shift" />
               </div>
             </div>
           </div>

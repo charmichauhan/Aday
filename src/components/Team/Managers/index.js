@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import TeamMemberCard from './../TeamMemberCard'
 import { gql,graphql,compose } from 'react-apollo';
-import { Image, Button, Icon, Card, Header, Rating } from 'semantic-ui-react'
+import { Card } from 'semantic-ui-react'
 
 const initialState = {
 	//stub
@@ -13,8 +13,23 @@ class ManagersComponent extends Component {
 		this.state = {
 			...initialState,
 			team_members: props.managers,
+      searchManager: '',
+      mappedManager: props.managers,
 		};
 	}
+
+  componentWillReceiveProps(nextProps) {
+    let allManagers=[];
+    if(this.props.workplaceId!=""){
+      let allManagersData = nextProps.allManagers && nextProps.allManagers.allManagers.edges;
+      allManagers= allManagersData.filter((item)=>{
+        if(item['node']['workplaceId'] == this.props.workplaceId){
+          return true
+        }
+      })
+    }
+    this.setState({ mappedManager:allManagers, filteredManagers: allManagers });
+  }
 
 	handleDeleteClick = (event) => {
 		event.preventDefault();
@@ -35,26 +50,41 @@ class ManagersComponent extends Component {
 		this.setState({ open: true, drawerBrand: brand });
 	};
 
+  searchChange = (event, value) => {
+    const filteredManagers = this.state.mappedManager.filter(mapped => {
+
+      var toFilter =
+          new RegExp(value.toLowerCase(), 'g').test(mapped.node.userByUserId.firstName.toLowerCase())||
+          new RegExp(value.toLowerCase(), 'g').test(mapped.node.userByUserId.lastName.toLowerCase());
+        return toFilter;
+      }
+    );
+    this.setState({
+      searchManager: value,
+      filteredManagers
+    });
+  };
 
 	render() {
     if (this.props.allManagers.loading) {
       return (<div>Loading</div>)
     }
-    let allManagers=[];
-    if(this.props.workplaceId!=""){
-      let allManagersData = this.props.allManagers && this.props.allManagers.allManagers.edges;
-      allManagers= allManagersData.filter((item)=>{
-        if(item['node']['workplaceId'] == this.props.workplaceId){
-          return true
-        }
-      })
-    }
+
 		return (
 			<div>
-				<br/><br/>
+				<br/>
+        <input
+          type="text"
+          autoFocus
+          value={this.state.searchManager}
+          className="form-control"
+          placeholder="Search Manager"
+          onChange={(e) => this.searchChange(e.target, e.target.value)}
+        />
+        <br/>
 				<Card.Group itemsPerRow="5">
 					{
-						allManagers.map((m, i)=> <TeamMemberCard key={i} member={m['node']['userByUserId']}/>)
+            this.state.filteredManagers.map((m, i)=> <TeamMemberCard key={i} member={m['node']['userByUserId']}/>)
 					}
 				</Card.Group>
 			</div>

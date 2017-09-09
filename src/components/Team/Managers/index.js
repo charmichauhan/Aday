@@ -52,7 +52,7 @@ class ManagersComponent extends Component {
 
   searchChange = (event, value) => {
     const filteredManagers = this.state.mappedManager.filter(mapped => {
-      debugger;
+
       var toFilter =
           new RegExp(value.toLowerCase(), 'g').test(mapped.node.userByUserId.firstName.toLowerCase())||
           new RegExp(value.toLowerCase(), 'g').test(mapped.node.userByUserId.lastName.toLowerCase());

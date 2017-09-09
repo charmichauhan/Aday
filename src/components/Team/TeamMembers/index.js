@@ -16,30 +16,9 @@ class TeamMembersComponent extends Component {
 		super(props);
 		this.state = {
 			...initialState,
-			team_members: props.team_members,
-      searchTeamMember:'',
-      mappedTeamMembers:props.team_members,
+			team_members: props.team_members
 		};
 	}
-
-
-  componentWillReceiveProps(nextProps) {
-
-    let teamMembers = nextProps.allTeamMembers && nextProps.allTeamMembers.allEmployees.edges;
-
-    let mappedTeamMembers = [];
-
-    if(localStorage.getItem("workplaceId")){
-      teamMembers.map((value , i) => {
-        if ( value['node']['primaryWorkplace'] == localStorage.getItem("workplaceId") ) {
-          mappedTeamMembers.push(value)
-        }
-      })
-    } else {
-      mappedTeamMembers = teamMembers;
-    }
-    this.setState({ mappedTeamMembers, filteredTeamMembers: mappedTeamMembers });
-  }
 
 	handleDeleteClick = (event) => {
 		event.preventDefault();
@@ -60,48 +39,35 @@ class TeamMembersComponent extends Component {
 		this.setState({ open: true, drawerBrand: brand });
 	};
 
-
-
-  searchChange = (event, value) => {
-     const filteredTeamMembers = this.state.mappedTeamMembers.filter(mapped => {
-     var toFilter =
-         new RegExp(value.toLowerCase(), 'g').test(mapped.node.userByUserId.firstName.toLowerCase())||
-         new RegExp(value.toLowerCase(), 'g').test(mapped.node.userByUserId.lastName.toLowerCase());
-     return toFilter;
-    }
-    );
-    this.setState({
-      searchTeamMember: value,
-      filteredTeamMembers
-    });
-  };
-
-
 	/**
 	 * @param {string} allTeamMembers - the graphql query used to retrieve team members
 	 * @return {TeamMemberCard} cards of team members for the current workplace + brand
 	 */
 	render() {
 	    if(this.props.allTeamMembers.loading) {
-	      return (<div>Loading</div>);
+	      return (<div>Loading</div>)
+	    }
+
+	    let teamMembers = this.props.allTeamMembers && this.props.allTeamMembers.allEmployees.edges;
+
+	    let mappedTeamMembers = [];
+
+	    if(localStorage.getItem("workplaceId")){
+	    	teamMembers.map((value , i) => {
+				if ( value['node']['primaryWorkplace'] == localStorage.getItem("workplaceId") ) {
+					mappedTeamMembers.push(value)
+				}
+	    	})
+	    } else {
+			mappedTeamMembers = teamMembers;
 	    }
 
 		return (
 			<div>
-				<br/>
-        <input
-          type="text"
-          ref={(input) => this.searchField = input}
-          autoFocus
-          value={this.state.searchTeamMember}
-          className="form-control"
-          placeholder="Search Team member"
-          onChange={(e) => this.searchChange(e.target, e.target.value)}
-          />
-        <br/>
+				<br/><br/>
 				<Card.Group itemsPerRow="8">
 					{
-            			this.state.filteredTeamMembers.map((m, i)=>
+            			mappedTeamMembers.map((m, i)=>
             				    <TeamMemberCard key={i} member={m['node']['userByUserId'] } userId={m['node']['userByUserId']['id']}/>
             			)
 					}

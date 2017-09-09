@@ -75,7 +75,6 @@ class ManagersComponent extends Component {
 				<br/>
         <input
           type="text"
-
           autoFocus
           value={this.state.searchManager}
           className="form-control"

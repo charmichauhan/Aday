@@ -5,6 +5,7 @@ import EmergencyShiftButton from './KendallLearning/EmergencyShiftButton';
 import { gql, graphql,compose} from 'react-apollo';
 import { renderRoutes } from 'react-router-config';
 import './nav.css';
+var Halogen = require('halogen');
 
 const styles = {
     menuStyle:{
@@ -44,7 +45,7 @@ class NavComponent extends Component {
 
 	render() {
 		if (this.props.data.loading || this.props.allBrands.loading) {
-             return (<div>Loading</div>)
+             return (<div><Halogen.SyncLoader color='#00A863'/></div>)
          }
 
          if (this.props.data.error) {

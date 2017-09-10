@@ -9,6 +9,8 @@ import {graphql, compose} from "react-apollo";
 import TabPanel from "./TabPanel";
 import {userQuery, releventPositionsQuery, updateEmployeeById} from "../Team.graphql";
 import "../team.css";
+var Halogen = require('halogen');
+
 const uuidv4 = require('uuid/v4');
 
 class ProfileDrawerComponent extends Component {
@@ -24,11 +26,11 @@ class ProfileDrawerComponent extends Component {
 
     dayHour = (event) => {
       this.setState({ dayHour: event.target.value });
-    } 
+    }
 
     weekHour = (event) => {
       this.setState({ weekHour: event.target.value });
-    } 
+    }
 
     monthHour = (event) => {
       this.setState({ monthHour: event.target.value });
@@ -37,7 +39,7 @@ class ProfileDrawerComponent extends Component {
     saveLimits(v){
       this.props.updateEmployee({
       variables: {
-        id: v, 
+        id: v,
         employeeInfo: { dayHourLimit: this.state.dayHour,
                      weekHourLimit:  this.state.weekHour,
                      monthHourLimit: this.state.monthHour  }
@@ -57,10 +59,11 @@ class ProfileDrawerComponent extends Component {
       docked = false,
       open
     } = this.props;
+
     if (this.props.userQuery.loading) {
-      return (<div>Loading</div>)
+        return(<div><Halogen.BeatLoader color='#00A863'/></div>)
     }
-    
+
     let userDetails = this.props.userQuery && this.props.userQuery.userById;
     const styles = {
       positionCheckbox: {
@@ -123,14 +126,14 @@ class ProfileDrawerComponent extends Component {
                   {this.state.updated? <div style={{ fontSize: "16px", color: "black" }}> Hourly Limits Updated. </div>:"" }
                      <div className="form-group daily">
                          <label htmlFor="daily" className="text-uppercase">Max <span style={{color:'darkred'}}> Daily </span> Hours</label>
-                         <input type="text" className="form-control" onChange={this.dayHour} placeholder={userDetails.employeesByUserId.edges[0].node.dayHourLimit}/>
+                         <input htmlFor="hourly-limits" type="text" className="form-control" onChange={this.dayHour} placeholder={userDetails.employeesByUserId.edges[0].node.dayHourLimit}/>
                      </div>
                      <div className="form-group weekly">
-                         <label htmlFor="weekly" className="text-uppercase">Max <span style={{color:'darkred'}}> Weekly </span> Hours</label>
-                         <input type="text" className="form-control" onChange={this.weekHour} placeholder={userDetails.employeesByUserId.edges[0].node.weekHourLimit}/>
+                         <label htmlFor="weekly" htmlFor="hourly-limits" className="text-uppercase">Max <span style={{color:'darkred'}}> Weekly </span> Hours</label>
+                         <input type="text" htmlFor="hourly-limits" className="form-control" onChange={this.weekHour} placeholder={userDetails.employeesByUserId.edges[0].node.weekHourLimit}/>
                      </div>
                      <div className="form-group monthly">
-                         <label htmlFor="monthly" className="text-uppercase">Max <span style={{color:'darkred'}}> Monthly </span> Hours</label>
+                         <label htmlFor="monthly" htmlFor="hourly-limits" className="text-uppercase">Max <span style={{color:'darkred'}}> Monthly </span> Hours</label>
                          <input type="text" className="form-control" onChange={this.monthHour}placeholder={userDetails.employeesByUserId.edges[0].node.monthHourLimit}/>
                     </div>
                  </form>

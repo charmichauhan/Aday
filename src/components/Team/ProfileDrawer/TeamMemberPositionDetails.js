@@ -8,9 +8,14 @@ import {leftCloseButton} from "../../styles";
 import Checkbox from 'material-ui/Checkbox';
 import { gql, graphql, compose } from 'react-apollo';
 const uuidv1 = require('uuid/v1');
+var Halogen = require('halogen');
 
 const RadioGroup = Radio.Group;
 
+/**
+ * @todo placeholder for when there are no approved positions for the employee
+ * @todo include fourth tab as completed by Riya
+ */
 class TeamMemberPositionDetailsComponent extends Component {
 
   state = {
@@ -133,7 +138,7 @@ class TeamMemberPositionDetailsComponent extends Component {
     };
 
     if (this.props.releventPositionsQuery.loading) {
-      return (<div>Loading</div>)
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
 
     let releventPositionsQuery = [];

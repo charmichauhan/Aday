@@ -15,8 +15,8 @@ import uuidv1 from 'uuid/v1';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
 import {allTemplateShifts, allUsers, createWeekPublishedMutation,
         deleteTemplateMutation, allTemplates} from '../TemplateQueries';
+var Halogen = require('halogen');
 var rp = require('request-promise');
-
 
 const styles = {
     bodyStyle: {
@@ -234,7 +234,7 @@ class ShiftWeekTableComponent extends Week {
            return (<div>  No Template Selected</div>)
          }
          if (this.props.data.loading || this.props.allUsers.loading) {
-             return (<div>Loading</div>)
+             return (<div><Halogen.SyncLoader color='#00A863'/></div>)
          }
          if (this.props.data.error) {
              console.log(this.props.data.error)

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import TeamMemberCard from './../TeamMemberCard'
 import { gql, graphql } from 'react-apollo';
 import { Card } from 'semantic-ui-react'
+var Halogen = require('halogen');
 
 const initialState = {
 	//stub
@@ -45,7 +46,7 @@ class TeamMembersComponent extends Component {
 	 */
 	render() {
 	    if(this.props.allTeamMembers.loading) {
-	      return (<div>Loading</div>)
+	      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
 	    }
 
 	    let teamMembers = this.props.allTeamMembers && this.props.allTeamMembers.allEmployees.edges;

@@ -14,6 +14,7 @@ import PositionSelector  from '../AddShift/CreateShift/positionSelector'
 import WorkplaceSelector  from '../AddShift/CreateShift/workplaceSelector'
 import '../AddShift/CreateShift/styles.css';
 var rp = require('request-promise');
+var Halogen = require('halogen');
 
 export class UpdateShiftForm extends Component{
  static propTypes = {
@@ -141,7 +142,7 @@ export class UpdateShiftForm extends Component{
                   }}
               };
               rp(options)
-                .then(function(response) {              
+                .then(function(response) {
                 }).catch((error) => {
                    console.log('there was an error sending the query for delete cancellation call', error);
                 });
@@ -227,7 +228,7 @@ export class UpdateShiftForm extends Component{
           <Form>
             <div className="outside-add-shift">
              <div className="inside-add-shift">
-              <div>Loading</div>
+              <div><Halogen.SyncLoader color='#00A863'/></div>
               </div>
              </div>
           </Form>

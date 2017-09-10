@@ -35,12 +35,17 @@
     font-weight: 100;
 }
 
-/* this affects the ant input components, specifically the space between title text and contents */
 .form-control.form-control-sm {
   height: 30px;
   margin-top: 5px;
   margin-bottom: 10px;
+  /* modifies Ant Design component */
+}
 
+.form-control.form-control-sm:focus, .form-control.form-control-sm:hover, [for*="hourly-limits"]:hover,  [for*="hourly-limits"]:focus {
+    border-color: #49a9ee !important;
+    /* modifies Ant Design component */
+    /* the selector argument modifies the hourly limits input */
 }
 
 .green {
@@ -685,8 +690,8 @@ img.list-left-image {
     font-family: "Roboto Condensed";
     font-size: 16px;
     font-weight: normal;
-}
 
+}
 
 /*
 .ui star rating {
@@ -737,13 +742,54 @@ img.list-left-image {
   height: auto;
 }
 
+ div.personal-info > div, hr {
+    border-bottom: 0px !important;
+    /*modifies Material-UI library*/
+}
+
+div.personal-info > div .ant-input-number {
+    width: 209px !important;
+    margin-top: 5px;
+}
+
+div.personal-info > div, input {
+   font-size: 14px !important;
+   color: #4A4A4A !important;
+   font-family: sans-serif  !important;
+   padding: 3px;
+   /*modifies Material-UI library*/
+}
+
 /**
- * September 9, 2017, Rahkeem
  * @comment modifies the the margin below .form-group; better solution is possible
  */
 div > div > .form-group, .form-horizontal .form-group {
     margin-top: 12px !important;
     margin-bottom: 12px !important;
+}
+
+/**
+ * The following 4 CSS selectors recolor the calendar
+ */
+
+[style*="background-color: rgb(0, 188, 212)"] {
+    background-color: rgb(0, 33, 161) !important /*recolors the header of calendar*/
+}
+
+[style*="background-color: rgb(0, 151, 167)"] {
+    background-color: rgb(227, 56, 33) !important /*recolors the highlighted date*/
+}
+
+button[style*="color: rgb(0, 188, 212)"] {
+    color: rgb(0, 33, 161) !important /*recolors the footer buttons of the calendar pop-up*/
+}
+
+span[style*="color: rgb(0, 188, 212)"] {
+    color: rgb(227, 56, 33) !important /*recolors the header of calendar*/
+}
+
+div[style*="border: 1px solid rgb(238, 238, 238)"]:hover {
+    border: 1px solid rgb(73, 169, 238) !important /*datepicker field*/
 }
 
 .personal-info .info {
@@ -756,6 +802,7 @@ div > div > .form-group, .form-horizontal .form-group {
     font-weight: lighter;
     line-height: 19px;
     padding-left: 3px;
+    margin-bottom: 10px;
 }
 
 .text-editor-wrapper {

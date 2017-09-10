@@ -12,6 +12,7 @@ import ShiftWeekTable from "./ShiftWeekTable";
 import "../Scheduling/style.css";
 import { gql, graphql, compose } from 'react-apollo';
 import { allTemplates, allWeekPublisheds, editTemplateNameMutation } from './TemplateQueries';
+var Halogen = require('halogen');
 
 let templateName;
 let that;
@@ -70,7 +71,7 @@ class TemplateComponent extends Component {
     render() {
 
       if (this.props.data.loading) {
-        return (<div>Loading</div>)
+        return (<div><Halogen.SyncLoader color='#00A863'/></div>)
       }
       if (this.props.data.error) {
         console.log(this.props.data.error);
@@ -143,7 +144,7 @@ class CustomToolbarComponent extends Toolbar {
   }
   render() {
       if (this.props.data.loading) {
-          return (<div>Loading</div>)
+          return (<div><Halogen.SyncLoader color='#00A863'/></div>)
       }
       if (this.props.data.error) {
           console.log(this.props.data.error)

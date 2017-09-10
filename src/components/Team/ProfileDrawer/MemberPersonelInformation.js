@@ -11,6 +11,8 @@ import { graphql,compose } from 'react-apollo';
 import CircleButton from '../../helpers/CircleButton';
 import "antd/lib/date-picker/style/css";
 import moment from 'moment';
+import 'material-ui/styles/colors.js';
+var Halogen = require('halogen');
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -18,6 +20,12 @@ const init ={
   primaryLocation: ''
 };
 
+const styles = {
+  circleButton: {
+    fontSize: 18,
+    padding: '6px 5px',
+    fontWeight: 'bold'
+}};
 
 class MemberPersonnelInformationComponent extends Component {
 
@@ -95,8 +103,9 @@ class MemberPersonnelInformationComponent extends Component {
         })
   }
   render(){
+
     if (this.props.primaryLocation.loading || this.props.fetchEmployeeByUserId.loading) {
-      return (<div>Loading</div>);
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>);
     }
 
     let allPositions = this.props.primaryLocation && this.props.primaryLocation.allWorkplaces && this.props.primaryLocation.allWorkplaces.edges;
@@ -118,7 +127,11 @@ class MemberPersonnelInformationComponent extends Component {
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
+
+
+
                   <span className="custom-ant-style-header">PRIMARY LOCATION</span>
+
                   <select className="form-control form-control-sm"  style={{marginTop:5}} onChange={this.handlePrimaryLocationChange}>
                     {
                       allPositions.map((v,index)=>{
@@ -142,17 +155,23 @@ class MemberPersonnelInformationComponent extends Component {
                       })
                     }
                   </select>
+
                 </div>
                 <p className="info">
-                  Scheduling automation will prioritize assigning this team member to the location above
+                  Scheduling automation will prioritize assigning this team member to this location
                 </p>
               </div>
             </div>
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
-                  <text className="custom-ant-style-header">HOURLY WAGE</text>
-                  <input type="text" onChange={this.handleChangeWage} className="form-control form-control-sm" placeholder={value.node.wage} />
+                  <text className="custom-ant-style-header">HOURLY WAGE</text><br />
+                  <InputNumber
+                    defaultValue={value.node.wage}
+                    formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                    onChange={this.handleChangeWage}
+                  />
                 </div>
                     <p className="info">
                       Wages are set on the positions worksheet for part-time team members
@@ -186,6 +205,7 @@ class MemberPersonnelInformationComponent extends Component {
                       defaultDate={new Date (value.node.hireDate)}
                       inputStyle={{padding: '5px 10px'}}
                       textFieldStyle={{border: '1px solid #eee', height: 30, borderRadius: 6, width: 211}}
+                      style={{paddingTop: 5}}
                   />
                 </div>
               </div>
@@ -200,13 +220,18 @@ class MemberPersonnelInformationComponent extends Component {
                       hintStyle={{bottom: 2, left: 10}}
                       inputStyle={{padding: '5px 10px'}}
                       defaultDate={new Date (value.node.deletionDate)}
+                      /*If you change the style below, modify the CSS selector with the comment "datepicker field""*/
                       textFieldStyle={{border: '1px solid #eee', height: 30, borderRadius: 6, width: 211}}
+                      style={{paddingTop: 5}}
                   />
+
                 </div>
               </div>
-              <div className="text-center btn">
-              <button onClick={() => this.saveEmployee(value.node.id)} className="btn text-uppercase btn-default">Save {userDetails.firstName}</button>
-           </div>
+              <div className="drawer-footer">
+                <div className="buttons text-center">
+                  <CircleButton style={styles.circleButton} type="green" title="Save Update" handleClick={() => this.saveEmployee(value.node.id)} image={'/assets/Icons/save-icon.png'}/>
+              </div>
+          </div>
         </div>
         </div>
         ))}

@@ -13,6 +13,7 @@ import 'fullcalendar-scheduler/dist/scheduler.css';
 import 'fullcalendar-scheduler/dist/scheduler.js';
 import { gql, graphql, compose } from 'react-apollo';
 import ApolloClient from 'apollo-client';
+var Halogen = require('halogen');
 
 const style = {
   titleStyle: {
@@ -101,7 +102,7 @@ class ScheduleComponent extends Component {
     BigCalendar.momentLocalizer(moment);
 
     if (this.props.data.loading) {
-      return (<div>Loading</div>)
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
 
     if (this.props.data.error) {

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import TeamMemberCard from './../TeamMemberCard'
 import { gql,graphql,compose } from 'react-apollo';
 import { Image, Button, Icon, Card, Header, Rating } from 'semantic-ui-react'
+var Halogen = require('halogen');
 
 const initialState = {
 	//stub
@@ -38,7 +39,7 @@ class ManagersComponent extends Component {
 
 	render() {
     if (this.props.allManagers.loading) {
-      return (<div>Loading</div>)
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
     let allManagers=[];
     if(this.props.workplaceId!=""){

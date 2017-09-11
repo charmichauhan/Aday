@@ -146,7 +146,7 @@ class DrawerHelper extends Component {
             <IconButton style={closeButton} onClick={this.closeShiftDrawer}>
               <Image src='/images/Icons_Red_Cross.png' size="mini" />
             </IconButton>
-            <h2 className="text-center text-uppercase">Add Shift</h2>
+            <h2 className="text-center text-uppercase">Add Hours</h2>
           </div>
           <div className="col-md-12 form-div edit-drawer-content">
             <div className="form-group">

@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import RaisedButton from 'material-ui/RaisedButton';
+import AddIcon from 'material-ui/svg-icons/content/add';
 import { Divider, Modal, Header, Image } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 
 import AddEmployeeForm from './CreateShift/AddEmployeeForm';
+import { colors } from '../../styles';
 
 import './styles.css';
 import 'react-date-picker/index.css';
@@ -37,8 +40,10 @@ export default class CreateShiftButton extends Component {
   }
 
   onButtonClick = (e) => {
-    if (this.props.onButtonClick) this.props.onButtonClick();
-    this.setState({ poppedOut: true });
+    // if (this.props.onButtonClick) this.props.onButtonClick();
+    // this.setState({ poppedOut: true });
+    if (this.props.onCreateShift) this.props.onCreateShift();
+    this.setState({ isCreateShiftOpen: true });
   };
 
   onFormClose = () => {
@@ -55,7 +60,6 @@ export default class CreateShiftButton extends Component {
   };
 
   onStandard = () => {
-    // this.setState({ modalHeight: '900px', modalSize: 'medium', standard: true });
     if (this.props.onCreateShift) this.props.onCreateShift();
     this.setState({ isCreateShiftOpen: true });
   };
@@ -71,8 +75,16 @@ export default class CreateShiftButton extends Component {
   render() {
     return (
       <div>
-        <Image src="/images/Assets/Icons/Buttons/create-shift-button.png"
-               style={{ cursor: 'pointer' }} onClick={this.onButtonClick} className="btn-image" />
+        <RaisedButton
+          onClick={this.onButtonClick}
+          label="ADD HOURS"
+          backgroundColor={colors.primaryBlue}
+          labelColor="#FFFFFF"
+          labelStyle={{ fontWeight: 800 }}
+          buttonStyle = {{height: 42}}
+          style = {{ margin: '10px 0'}}
+          icon={<AddIcon />}
+        />
         <Modal open={this.props.open}
                size={this.state.modalSize}
                style={{ height: this.state.modalHeight }}

@@ -39,7 +39,7 @@ export default class UnpaidBreakInMinutes extends Component {
     const { selectedValue } = this.state;
     return (
       <div style={{ marginTop: '40px' }}>
-        <p style={{ fontSize: '18px', fontStyle: 'normal', color: '#666666' }}>UNPAID BREAK IN MINUTES</p>
+        <label className="text-uppercase blue-heading">UNPAID BREAK IN MINUTES</label>
         <List horizontal style={{ marginTop: '-10px' }}>
           {
             _.map(mins, (value) => {

@@ -15,16 +15,14 @@ const queries = {
     }`
 };
 
-/**
- *
- */
 function getCurrentWorkplaces(brandId = localStorage.getItem('brandId'), corporationId = localStorage.getItem('corporationId')) {
+  if (!corporationId || !brandId) return Promise.reject({ message: 'required data are missing' });
   return client.query({
     query: queries.getWorkplaces,
     variables: { corporationId, brandId }
   }).then((res) => {
     if (res.data && res.data.allWorkplaces) return res.data.allWorkplaces.nodes;
-  }).catch(err => err);
+  }).catch(err => Promise.reject(err));
 }
 
 export default { getCurrentWorkplaces };

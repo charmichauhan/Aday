@@ -369,4 +369,4 @@ const ShiftPublish = compose(
     name: 'createWeekPublished'
   }))(ShiftPublishComponent);
 
-export default ShiftPublish
+export default ShiftPublish;

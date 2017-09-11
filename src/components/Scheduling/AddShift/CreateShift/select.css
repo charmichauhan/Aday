@@ -19,6 +19,7 @@
   color: #2200a1;
   font-size: 18px;
   font-family: "Roboto Condensed";
+  font-weight: 500;
 }
 
 .performance-tagline p {
@@ -47,3 +48,8 @@
 .advanced-option-content span, .advanced-option-content li {
   font-weight: 600;
 }
+.edit-drawer-content .form-group .ui.horizontal.list {
+  margin-top: 10px !important;
+  display: block;
+}
+

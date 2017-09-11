@@ -19,6 +19,7 @@ function getRelevantPositions(workplaceId) {
   const brandId = localStorage.getItem('brandId');
   const corporationId = localStorage.getItem('corporationId');
   if (!workplaceId) workplaceId = localStorage.getItem('workplaceId');
+  if (!workplaceId || !corporationId || !brandId) return Promise.reject({ message: 'required data are missing' });
   return client.query({
     query: queries.getRelevantPositions,
     variables: { brandId, corporationId, workplaceId }

@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
-import TimePicker from 'material-ui/TimePicker';
 import { Image, TextArea, Dropdown } from 'semantic-ui-react';
-import cloneDeep from 'lodash/cloneDeep';
 import { withApollo } from 'react-apollo';
 import moment from 'moment';
 
@@ -15,30 +13,36 @@ import dataHelper from '../../../helpers/common/dataHelper';
 import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import CreateShiftHelper from './CreateShiftHelper';
+import StartToEndTimePicker from './StartToEndTimePicker';
 
 import './select.css';
 
 const methodOptions = [{ key: 'standard', value: 'standard', text: 'Standard', disabled: true, selected: true }];
 const startDate = moment().startOf('week');
 
+const initalState = {
+  shift: {
+    shiftMethod: 'standard',
+    tags: [],
+    tagOptions: [],
+    brandId: localStorage.getItem('brandId') || '',
+    corporationId: localStorage.getItem('corporationId') || '',
+    workplaceId: localStorage.getItem('workplaceId') || ''
+  },
+  brandId: localStorage.getItem('brandId') || '',
+  corporationId: localStorage.getItem('corporationId') || '',
+  workplaceId: localStorage.getItem('workplaceId') || ''
+};
+
 class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
+    let shift = { ...initalState.shift, ...props.shift };
     this.state = {
-      shift: {
-        ...cloneDeep(props.shift),
-        shiftMethod: 'standard',
-        tags: [],
-        tagOptions: [],
-        brandId: localStorage.getItem('brandId'),
-        corporationId: localStorage.getItem('corporationId'),
-        workplaceId: localStorage.getItem('workplaceId')
-      },
-      brandId: localStorage.getItem('brandId'),
-      corporationId: localStorage.getItem('corporationId'),
-      workplaceId: localStorage.getItem('workplaceId')
-    }
+      ...initalState,
+      ...shift
+    };
   }
 
   componentDidMount() {
@@ -53,9 +57,11 @@ class DrawerHelper extends Component {
   };
 
   getPositions = (workplaceId = this.state.workplaceId) => {
-    CreateShiftHelper.getRelevantPositions(workplaceId)
-      .then((positions) => this.setState({ positions }))
-      .catch(err => console.error(err));
+    if (workplaceId) {
+      CreateShiftHelper.getRelevantPositions(workplaceId)
+        .then((positions) => this.setState({ positions }))
+        .catch(err => console.error(err));
+    }
   };
 
   handleChange = (event) => {
@@ -65,6 +71,12 @@ class DrawerHelper extends Component {
     if (name === 'tags') shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
     this.setState({ shift });
     if (name === 'workplaceId') this.getPositions(value);
+  };
+
+  handleShiftSubmit = (shift) => {
+    const { handleSubmit } = this.props;
+    if (handleSubmit) handleSubmit(shift);
+    this.setState(initalState);
   };
 
   updateFormState = (dataValue) => {
@@ -81,12 +93,18 @@ class DrawerHelper extends Component {
     this.setState({ shift });
   };
 
+  closeShiftDrawer = () => {
+    const { closeDrawer } = this.props;
+    this.setState(initalState);
+    if (closeDrawer) closeDrawer();
+  };
+
   render() {
 
-    const { width, open, closeDrawer, handleSubmit } = this.props;
-    const { shift, workplaces, positions } = this.state;
-
-    if (!workplaces || !positions) {
+    const { width, open } = this.props;
+    const { shift, workplaces, positions, workplaceId } = this.state;
+    let positionOptions = [{ key: 'select', value: 0, text: 'Select Workplace'}];
+    if (!workplaces) {
       return (<Loading />);
     }
 
@@ -96,20 +114,36 @@ class DrawerHelper extends Component {
       text: workplace.workplaceName,
       selected: this.state.workplaceId === workplace.id
     }));
-    const positionOptions = positions.map(position => ({
-      key: position.id,
-      value: position.id,
-      text: position.positionName
-    }));
+    if (positions) {
+      positionOptions = positions.map(position => ({
+        key: position.id,
+        value: position.id,
+        text: position.positionName
+      }));
+      positionOptions.unshift({
+        key: 'selected',
+        value: 0,
+        text: 'Select Position',
+        disabled: true
+      });
+    }
+    if (!workplaceId) {
+      workplaceOptions.unshift({
+        key: 'selected',
+        value: 0,
+        text: 'Select Workplace',
+        disabled: true
+      });
+    }
     return (
       <Drawer
         width={width}
         openSecondary={true}
         docked={false}
-        onRequestChange={closeDrawer} open={open}>
+        onRequestChange={this.closeShiftDrawer} open={open}>
         <div className="drawer-section edit-drawer-section">
           <div className="drawer-heading col-md-12">
-            <IconButton style={closeButton} onClick={closeDrawer}>
+            <IconButton style={closeButton} onClick={this.closeShiftDrawer}>
               <Image src='/images/Icons_Red_Cross.png' size="mini" />
             </IconButton>
             <h2 className="text-center text-uppercase">Add Shift</h2>
@@ -126,7 +160,7 @@ class DrawerHelper extends Component {
               <Dropdown
                 name="workplaceId"
                 onChange={(_, data) => this.handleChange({ target: data })}
-                value={shift.workplaceId}
+                value={shift.workplaceId || 0}
                 fluid
                 selection
                 options={workplaceOptions} />
@@ -137,36 +171,24 @@ class DrawerHelper extends Component {
                 placeholder="Select Position"
                 name="positionId"
                 onChange={(_, data) => this.handleChange({ target: data })}
-                value={shift.positionId}
+                value={shift.positionId || 0}
                 fluid
                 selection
+                disabled={!positions}
                 options={positionOptions} />
             </div>
             <div className="form-group">
-              <div className="time-wrapper">
-                <label className="text-uppercase blue-heading">Start Time</label>
-                <TimePicker
-                  hintText="Start Time"
-                  minutesStep={15}
-                  onChange={(_, date) => this.handleChange({ target: { name: 'startTime', value: date.toUTCString() }})} />
-              </div>
-              <div className="time-wrapper">
-                <label className="text-uppercase blue-heading">End Time</label>
-                <TimePicker
-                  hintText="End Time"
-                  minutesStep={15}
-                  onChange={(_, date) => this.handleChange({ target: { name: 'endTime', value: date.toUTCString() }})} />
-              </div>
+              <StartToEndTimePicker formCallBack={this.updateFormState} />
             </div>
             <div className="form-group">
               <ShiftDaySelector startDate={startDate} formCallBack={this.updateFormState} />
             </div>
             <div className="form-group">
               <NumberOfTeamMembers formCallBack={this.updateFormState} />
-            </div>
-            <div className="performance-tagline">
-              <p>At maximum, <span className="color-green">4 employees</span> will report for this shift: 2 job
-                trainers, 2 job shadowers</p>
+              <div className="performance-tagline">
+                <p>At maximum, <span className="color-green">4 employees</span> will report for this shift: 2 job
+                  trainers, 2 job shadowers</p>
+              </div>
             </div>
             <div className="form-group">
               <UnpaidBreakInMinutes formCallBack={this.updateFormState} />
@@ -190,8 +212,8 @@ class DrawerHelper extends Component {
             </div>
             <div className="drawer-footer">
               <div className="buttons text-center">
-                <CircleButton handleClick={closeDrawer} type="white" title="Cancel" />
-                <CircleButton handleClick={() => handleSubmit(shift)} type="blue" title="Add Shift" />
+                <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
+                <CircleButton handleClick={() => this.handleShiftSubmit(shift)} type="blue" title="Add Shift" />
               </div>
             </div>
           </div>

@@ -23,6 +23,7 @@
     "postcss-cssnext": "^3.0.2",
     "punycode": "^2.1.0",
     "rc-time-picker": "^2.4.1",
+    "rc-timepicker": "0.0.10",
     "react": "^15.5.4",
     "react-apollo": "^1.4.6",
     "react-avatar-editor": "^10.0.3",

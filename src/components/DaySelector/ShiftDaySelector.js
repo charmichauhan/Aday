@@ -15,12 +15,15 @@ export default class ShiftDaySelector extends Component {
     const tableSize = 7;
     const selectedDate = moment().format('MM-DD-YYYY');
     return (
-      <DaySelector
-        tableSize={tableSize}
-        startDate={this.props.startDate}
-        selectedDate={selectedDate}
-        callBack={this.handleData}
-      />
+      <div>
+        <label className="text-uppercase blue-heading">Shift Day(s) Of The Week</label>
+        <DaySelector
+          tableSize={tableSize}
+          startDate={this.props.startDate}
+          selectedDate={selectedDate}
+          callBack={this.handleData}
+        />
+      </div>
     );
   }
 }

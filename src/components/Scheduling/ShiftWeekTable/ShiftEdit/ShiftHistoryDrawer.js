@@ -3,6 +3,8 @@ import Drawer from 'material-ui/Drawer';
 import { find, pick } from 'lodash';
 import { Header, Icon, Table, Image, List } from 'semantic-ui-react';
 import FlatButton from 'material-ui/FlatButton';
+import { gql, graphql, compose } from 'react-apollo';
+var Halogen = require('halogen');
 
 import CircleButton from '../../../helpers/CircleButton';
 
@@ -28,11 +30,10 @@ const User = ({ user }) => (
   </div>
 );
 
-class ShiftHistoryDrawer extends Component {
+class ShiftHistoryDrawerComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      historyDetails: this.getInitialData(props),
       shiftHistory: [
         {
           user: {
@@ -130,8 +131,8 @@ class ShiftHistoryDrawer extends Component {
     }
   }
 
-  getInitialData = ({ shift: { marketsByShiftId = [] } }) => {
-    marketsByShiftId = marketsByShiftId.nodes.map((shiftMarket = {}) => {
+  getInitialData = ({ allMarkets = [] }) => {
+    const marketsByShiftId = allMarkets.nodes.map((shiftMarket = {}) => {
       const market = { ...shiftMarket };
       if (market.workerId) {
         market.worker = this.getUserById(market.workerId, true);
@@ -169,8 +170,7 @@ class ShiftHistoryDrawer extends Component {
     this.props.handleBack();
   };
 
-  showDetails = (i) => {
-    const { historyDetails } = this.state;
+  showDetails = ( historyDetails, i) => {
     historyDetails[i].showDetails = !historyDetails[i].showDetails;
     this.setState({ historyDetails });
   };
@@ -182,7 +182,13 @@ class ShiftHistoryDrawer extends Component {
       openSecondary = true,
       docked = false
     } = this.props;
-    const { historyDetails } = this.state;
+    console.log(this.props)
+    if (this.props.data.loading) {
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
+    }
+
+    let historyDetails = this.getInitialData(this.props.data)
+
     return (
       <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
               open={open}>
@@ -217,7 +223,7 @@ class ShiftHistoryDrawer extends Component {
               </Table.Header>
               {historyDetails && historyDetails.map((history, i) => (
                 <Table.Body key={i}>
-                  <Table.Row onClick={() => this.showDetails(i)}>
+                  <Table.Row onClick={() => this.showDetails( historyDetails, i)}>
                     <Table.Cell>
                       <Icon name={history.showDetails ? 'chevron down' : 'chevron up'} />
                     </Table.Cell>
@@ -279,4 +285,38 @@ class ShiftHistoryDrawer extends Component {
   };
 }
 
-export default ShiftHistoryDrawer;
+
+const allMarkets = gql`
+query allMarkets($shiftId: Uuid!) {
+    allMarkets(condition: {shiftId: $shiftId }) {
+            nodes {
+              id
+              workerId
+              shiftId
+              shiftExpirationDate
+              isTexted
+              isCalled
+              isBooked
+              isEmailed
+              isPhoneAnswered
+              workerResponse
+              marketRulesByMarketId {
+                nodes {
+                  ruleByRuleId {
+                    ruleName
+                  }
+                }
+              }
+            }
+          }
+  }`;
+
+const ShiftHistoryDrawer = graphql(allMarkets, {
+    options: (ownProps) => ({
+      variables: {
+        shiftId: ownProps.shift && ownProps.shift.id 
+      }
+    }),
+  })(ShiftHistoryDrawerComponent);
+
+export default ShiftHistoryDrawer

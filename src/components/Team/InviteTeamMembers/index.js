@@ -7,6 +7,7 @@ import 'react-date-picker/index.css'
 import { DateField, Calendar } from 'react-date-picker'
 import moment from 'moment';
 var rp = require('request-promise');
+var Halogen = require('halogen');
 
 const initialState={
   first_name: '',
@@ -135,7 +136,7 @@ class InviteTeamMembersComponent extends Component {
   render() {
 
     if (this.props.allPositions.loading) {
-      return (<div>Loading</div>)
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
 
     // this.props.deleteUserById({variables:{data:{id:"5de243f6-a284-4dff-b9cb-d7ae1d8fc1fe"}}})

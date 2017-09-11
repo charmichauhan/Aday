@@ -4,6 +4,8 @@ import {Grid, Container } from 'semantic-ui-react'
 import Nav from './Nav'
 import { gql, graphql } from 'react-apollo';
 const uuidv4 = require('uuid/v4');
+var Halogen = require('halogen');
+
 
 class AppComponent extends Component {
   constructor(props){
@@ -27,7 +29,7 @@ class AppComponent extends Component {
   };
   render(){
     if (this.props.data.loading) {
-      return (<div>Loading</div>)
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
 
     if (this.props.data.error) {
@@ -98,7 +100,7 @@ const userInfo = gql
 const App = graphql(userInfo, {
   options: (ownProps) => ({
     variables: {
-      email: "test@example.com"
+      email: localStorage.getItem('email')
     }
   }),
 })(AppComponent);

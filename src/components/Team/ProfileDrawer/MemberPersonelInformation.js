@@ -11,6 +11,8 @@ import { graphql,compose } from 'react-apollo';
 import CircleButton from '../../helpers/CircleButton';
 import "antd/lib/date-picker/style/css";
 import moment from 'moment';
+import 'material-ui/styles/colors.js';
+var Halogen = require('halogen');
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -18,6 +20,12 @@ const init ={
   primaryLocation: ''
 };
 
+const styles = {
+  circleButton: {
+    fontSize: 18,
+    padding: '6px 5px',
+    fontWeight: 'bold'
+}};
 
 class MemberPersonnelInformationComponent extends Component {
 
@@ -101,8 +109,8 @@ class MemberPersonnelInformationComponent extends Component {
     })
   }
   render(){
-    if (this.props.primaryLocation.loading ) {
-      return (<div>Loading</div>);
+    if (this.props.primaryLocation.loading) {
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>);
     }
 
     let allWorkplaces = this.props.primaryLocation && this.props.primaryLocation.allWorkplaces && this.props.primaryLocation.allWorkplaces.edges;
@@ -114,8 +122,8 @@ class MemberPersonnelInformationComponent extends Component {
       <div>
 
         <div className="text-center profile-drawer-tab">
-          <Image src="/images/Sidebar/user.png" size="mini"/>
-          <h2 className="text-uppercase">Personnel Information</h2>
+          <Image className="section-icon" src="/images/Sidebar/user.png" style={{width:30, height:30, padding:3}}/>
+          <h2 className="text-uppercase" >Personnel Information</h2>
         </div>
          {this.state.updated? <div style={{ fontSize: "16px", color: "black" }}> Personnel Information Updated. </div>:"" }
         <div className="personal-info">
@@ -123,9 +131,10 @@ class MemberPersonnelInformationComponent extends Component {
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Primary Location:</label>
-                  <select className="form-control form-control-sm"  value={this.state.primaryLocation} onChange={this.handlePrimaryLocationChange}>
-                    <option
+                  <span className="custom-ant-style-header">PRIMARY LOCATION</span>
+
+                  <select className="form-control form-control-sm"  style={{marginTop:5}} value={this.state.primaryLocation} onChange={this.handlePrimaryLocationChange}>
+                                      <option
                           key={""}
                           value={""}
                           >
@@ -147,33 +156,39 @@ class MemberPersonnelInformationComponent extends Component {
                       })
                     }
                   </select>
+
                 </div>
+                <p className="info">
+                  Scheduling automation will prioritize assigning this team member to this location
+                </p>
               </div>
             </div>
-            <p className="info">
-              Scheduling automation will attempt to schedule the employee at this location first
-            </p>
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Hourly Wage</label>
-                  <input type="text" onChange={this.handleChangeWage} className="form-control form-control-sm"  value={this.state.wage} />
+                  <text className="custom-ant-style-header">HOURLY WAGE</text><br />
+                  <InputNumber
+                    defaultValue={this.state.wage}
+                    formatter={value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                    onChange={this.handleChangeWage}
+                  />
                 </div>
+                    <p className="info">
+                      Wages are set on the positions worksheet for part-time team members
+                    </p>
               </div>
             </div>
-            <p className="info">
-              Wages for employees that work less than 30 hours per week are set corporation-wide
-            </p>
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Payroll ID</label>
-                  <input type="text" onChange={this.handleChangePayRoll} className="form-control form-control-sm"  value={this.state.pay} />
+                  <text className="custom-ant-style-header">PAYROLL ID</text>
+                  <input type="text" onChange={this.handleChangePayRoll} className="form-control form-control-sm" value={this.state.pay} />
                 </div>
               </div>
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Employee ID</label>
+                  <text className="custom-ant-style-header">EMPLOYEE ID</text>
                   <input type="text" onChange={this.handleChangeEmployeeNum} className="form-control form-control-sm" value={this.state.num}/>
                 </div>
               </div>
@@ -181,7 +196,7 @@ class MemberPersonnelInformationComponent extends Component {
             <div className="col-md-12 p0">
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Hire Date</label>
+                  <text className="custom-ant-style-header">HIRE DATE</text>
                   {/*<input type="text" className="form-control form-control-sm" placeholder="Date" />*/}
                   <DatePicker hintText="Date"
                       container="inline"
@@ -191,12 +206,13 @@ class MemberPersonnelInformationComponent extends Component {
                       value={ this.state.hire }
                       inputStyle={{padding: '5px 10px'}}
                       textFieldStyle={{border: '1px solid #eee', height: 30, borderRadius: 6, width: 211}}
+                      style={{paddingTop: 5}}
                   />
                 </div>
               </div>
               <div className="col-md-5">
                 <div className="form-group">
-                  <label className="text-uppercase">Termination Date</label>
+                  <text className="custom-ant-style-header">TERMINATION DATE</text>
                 {/*<input type="text" className="form-control form-control-sm" placeholder="Date" />*/}
                   <DatePicker hintText="Date"
                       container="inline"
@@ -205,13 +221,18 @@ class MemberPersonnelInformationComponent extends Component {
                       hintStyle={{bottom: 2, left: 10}}
                       inputStyle={{padding: '5px 10px'}}
                       value={ this.state.termination }
+                      /*If you change the style below, modify the CSS selector with the comment "datepicker field""*/
                       textFieldStyle={{border: '1px solid #eee', height: 30, borderRadius: 6, width: 211}}
+                      style={{paddingTop: 5}}
                   />
+
                 </div>
               </div>
-              <div className="text-center btn">
-              <button onClick={() => this.saveEmployee(this.state.employee.id)} className="btn text-uppercase btn-default">Save {userDetails.firstName}</button>
-           </div>
+              <div>
+                <div className="buttons text-center">
+                  <CircleButton style={styles.circleButton} type="green" title="Save Update" handleClick={() => this.saveEmployee(this.state.employee.id)} image={'/assets/Icons/save-icon.png'}/>
+              </div>
+          </div>
         </div>
         </div>
         </div>
@@ -234,4 +255,3 @@ const MemberPersonnelInformation = compose(
   )(MemberPersonnelInformationComponent);
 
 export default MemberPersonnelInformation
-

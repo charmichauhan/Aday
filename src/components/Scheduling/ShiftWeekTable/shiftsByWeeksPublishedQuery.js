@@ -30,27 +30,6 @@ const allShiftsByWeeksPublished = gql`
             workplaceName
             address
           }
-          marketsByShiftId {
-            nodes {
-              id
-              workerId
-              shiftId
-              shiftExpirationDate
-              isTexted
-              isCalled
-              isBooked
-              isEmailed
-              isPhoneAnswered
-              workerResponse
-              marketRulesByMarketId {
-                nodes {
-                  ruleByRuleId {
-                    ruleName
-                  }
-                }
-              }
-            }
-          }
         }
       }
     }

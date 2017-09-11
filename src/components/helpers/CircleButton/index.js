@@ -43,8 +43,12 @@ export default class CircleButton extends Component {
       handleClick = () => { },
       style = {},
       titleStyle = {
-          marginLeft: 8,
-          lineHeight: 1.2
+          lineHeight: 1.2,
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection:'row',
+          justifyContent:'center',
+          alignContent:'center'
       },
       image = false,
       imageSize = 'small',
@@ -61,7 +65,7 @@ export default class CircleButton extends Component {
         <button style={buttonStyles} onClick={handleClick} className={classes.join(' ')}
                 disabled={disabled}>
           {image && <Image src={image} className={[imageSize, 'img-icon'].join(' ')} />}
-          <p style={titleStyle}>{title}</p>
+          <div style={titleStyle}><text className="innerCircle">{title}</text></div>
         </button>
       </div>
     );

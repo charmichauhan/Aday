@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Icon, Divider, Button, Modal, Header, Image} from 'semantic-ui-react';
 import ShiftHistoryDrawer from './ShiftHistoryDrawer';
 	
-export default class EditHistoryDrawerContainer extends Component {
+export default class ShiftHistoryDrawerContainer extends Component {
 	constructor(props) {
 	    super(props);
 	 }

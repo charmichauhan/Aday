@@ -5,11 +5,12 @@ import RaisedButton from "material-ui/RaisedButton";
 import {Image, Rating} from "semantic-ui-react";
 import {find, pick} from "lodash";
 import {leftCloseButton} from "../../styles";
-import {graphql, compose} from "react-apollo";
+import {graphql, gql, compose} from "react-apollo";
 import TabPanel from "./TabPanel";
 import {userQuery, releventPositionsQuery, updateEmployeeById} from "../Team.graphql";
 import "../team.css";
 var Halogen = require('halogen');
+import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 
 const uuidv4 = require('uuid/v4');
 
@@ -17,9 +18,9 @@ class ProfileDrawerComponent extends Component {
   constructor(props){
     super(props);
     this.state = {
-      dayHour: 0,
-      weekHour: 0,
-      monthHour: 0,
+      dayHour: null,
+      weekHour: null,
+      monthHour: null,
       updated: false
       }
     }
@@ -36,16 +37,51 @@ class ProfileDrawerComponent extends Component {
       this.setState({ monthHour: event.target.value });
     }
 
+
+  showNotification = (message, type) => {
+    this.setState({
+      notify: true,
+      notificationType: type,
+      notificationMessage: message
+    });
+  };
+
+  hideNotification = () => {
+    this.setState({
+      notify: false,
+      notificationType: '',
+      notificationMessage: ''
+    });
+  }
+
     saveLimits(v){
+      let employeeInfo = {}
+      if (this.state.dayHour){
+        employeeInfo['dayHourLimit'] = this.state.dayHour
+      }
+      if (this.state.weekHour){
+        employeeInfo['weekHourLimit'] = this.state.weekHour
+      }
+      if (this.state.monthHour){
+        employeeInfo['monthHourLimit'] = this.state.monthHour
+      }
+    
       this.props.updateEmployee({
       variables: {
         id: v,
-        employeeInfo: { dayHourLimit: this.state.dayHour,
-                     weekHourLimit:  this.state.weekHour,
-                     monthHourLimit: this.state.monthHour  }
-          }
+        employeeInfo: employeeInfo
+        },
+          updateQueries: {
+              userById: (previousQueryResult, { mutationResult }) => {
+                      let employeeData = mutationResult.data.updateEmployeeById.employee
+                      previousQueryResult.userById.employeesByUserId.edges = [{ 'node': employeeData, '__typename': "EmployeesEdge" }]
+                      return {
+                        userById: previousQueryResult.userById
+                      };
+              },
+         },
         }).then(({ data }) => {
-              this.setState({ updated: true });
+              this.showNotification('Limits Updated Successfully.', NOTIFICATION_LEVELS.SUCCESS);
               console.log(data)
         })
       }
@@ -60,7 +96,7 @@ class ProfileDrawerComponent extends Component {
       open
     } = this.props;
 
-    if (this.props.userQuery.loading) {
+    if (this.props.userQuery.loading || this.props.releventPositionsQuery.loading) {
         return(<div><Halogen.BeatLoader color='#00A863'/></div>)
     }
 
@@ -134,7 +170,7 @@ class ProfileDrawerComponent extends Component {
                      </div>
                      <div className="form-group monthly">
                          <label htmlFor="monthly" htmlFor="hourly-limits" className="text-uppercase">Max <span style={{color:'darkred'}}> Monthly </span> Hours</label>
-                         <input type="text" className="form-control" onChange={this.monthHour}placeholder={userDetails.employeesByUserId.edges[0].node.monthHourLimit}/>
+                         <input type="text" className="form-control" onChange={this.monthHour} placeholder={userDetails.employeesByUserId.edges[0].node.monthHourLimit}/>
                     </div>
                  </form>
              <div className="profile-drawer-content text-center">
@@ -150,11 +186,13 @@ class ProfileDrawerComponent extends Component {
              </div>
               <TabPanel
                 userDetails={userDetails}
+                releventPositionsQuery={this.props.releventPositionsQuery}
               />
          </div>
      </div>
-
         </div>
+          <Notifier hideNotification={this.hideNotification} notify={this.state.notify} notificationMessage={this.state.notificationMessage}
+                  notificationType={this.state.notificationType} />
       </Drawer>
     );
   };
@@ -177,6 +215,16 @@ const ProfileDrawer = compose(
       variables: {
         id: ownProps.userId,
         corporationId: localStorage.getItem("corporationId")
+      }
+    })
+  }),
+  graphql(releventPositionsQuery, {
+    name: "releventPositionsQuery",
+    options: (ownProps) => ({
+      variables: {
+        corporationId: localStorage.getItem("corporationId"),
+        brandId: localStorage.getItem("brandId"),
+        userId:  ownProps.userId
       }
     })
   }),

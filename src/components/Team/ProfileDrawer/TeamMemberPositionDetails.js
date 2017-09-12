@@ -7,6 +7,7 @@ import Delete from 'material-ui/svg-icons/action/delete';
 import {leftCloseButton} from "../../styles";
 import Checkbox from 'material-ui/Checkbox';
 import { gql, graphql, compose } from 'react-apollo';
+import { releventPositionsQuery } from "../Team.graphql";
 const uuidv1 = require('uuid/v1');
 var Halogen = require('halogen');
 
@@ -18,24 +19,96 @@ const RadioGroup = Radio.Group;
  */
 class TeamMemberPositionDetailsComponent extends Component {
 
-  state = {
-    value: 1,
-    value1: 1,
-    crossValue: 1,
-    primaryWorkplaceWarning: false
+  constructor(props){
+    super(props);
+
+    let releventPositionsQuery = [];
+    let releventfilteredPositions= [];
+    let primaryJob = ""
+    let releventPositionsQueryResults = this.props.releventPositionsQuery.allPositions.nodes;
+    releventPositionsQueryResults.filter((w) => {
+        if (w.jobsByPositionId.nodes.length > 0) {
+             releventPositionsQuery.push(w)
+             if (w.jobsByPositionId.nodes[0].primaryJob == true){
+                 primaryJob = w.jobsByPositionId.nodes[0].id
+             }
+          } else {
+            releventfilteredPositions.push(w)
+          }
+      }
+    );
+
+    this.state = {
+      releventPositionsQuery: releventPositionsQuery,
+      releventfilteredPositions: releventfilteredPositions,
+      primaryJob: primaryJob,
+      crossValue: 1,
+      primaryWorkplaceWarning: false
+    }
   }
+
   onRadioChange = (e) => {
-    console.log('radio checked', e.target.value);
-    this.setState({
-      value: e.target.value,
-    });
+      const oldPrimary = this.state.primaryJob
+
+      this.setState({
+          primaryJob: e.target.value,
+      });
+
+      if (oldPrimary){
+          this.props.update({
+          variables: {
+            id: oldPrimary,
+            jobInfo: { primaryJob: false }
+          },
+          updateQueries: {
+              releventPositionsQuery: (previousQueryResult, { mutationResult }) => {
+                          previousQueryResult.allPositions.nodes.map((value,i) =>{
+                              if (value.jobsByPositionId.nodes[0]){
+                                if (value.jobsByPositionId.nodes[0].id == oldPrimary) {
+                                    value.jobsByPositionId.nodes[0].primaryJob = false
+                                    return value
+                                } else{
+                                    return value
+                                }
+                              }
+                           })
+                          return {
+                            allPositions: previousQueryResult.allPositions
+                          };
+                        },
+             },
+        }).then(({ data }) => {
+              console.log(data)
+        })
+      }
+      
+      this.props.update({
+          variables: {
+            id: e.target.value,
+            jobInfo: { primaryJob: true }
+          },
+          updateQueries: {
+              releventPositionsQuery: (previousQueryResult, { mutationResult }) => {
+                          previousQueryResult.allPositions.nodes.map((value,i) =>{
+                            if (value.jobsByPositionId.nodes[0]){
+                              if (value.jobsByPositionId.nodes[0].id == e.target.value) {
+                                  value.jobsByPositionId.nodes[0].primaryJob = true
+                                  return value
+                              } else{
+                                  return value
+                              }
+                            }
+                           })
+                          return {
+                            allPositions: previousQueryResult.allPositions
+                          };
+                        },
+             },
+        }).then(({ data }) => {
+              console.log(data)
+        })
   }
-  onRadioChange1 = (e) => {
-    console.log('radio checked', e.target.value);
-    this.setState({
-      value1: e.target.value,
-    });
-  }
+
   onCrossRadioChange = (e) => {
     console.log('radio checked', e.target.value);
     this.setState({
@@ -43,16 +116,40 @@ class TeamMemberPositionDetailsComponent extends Component {
     });
   }
 
-  removePosition = (p, v) =>{
+  removePosition = (position, jobID) =>{
+      // REMOVING IT FROM THE STATE  
+      let releventPositionsQuery = [];
+      let releventfilteredPositions= [];
+      let positions = this.state.releventPositionsQuery.concat(this.state.releventfilteredPositions)
+      positions.filter((w) => {
+              if (w.jobsByPositionId.nodes.length > 0 && w.jobsByPositionId.nodes[0].id != jobID) {
+                   releventPositionsQuery.push(w)
+                } else {
+                  if (w.jobsByPositionId.nodes[0] && w.jobsByPositionId.nodes[0].id == jobID){
+                      let newPosition = {
+                        id: w.id, 
+                        positionName: w.positionName, 
+                        traineeHours: w.traineeHours, 
+                        jobsByPositionId: { nodes: [] }
+                      }
+                     releventfilteredPositions.push(newPosition)
+                  } else {
+                    releventfilteredPositions.push(w)
+                  }
+                }
+          })
+      this.setState({ releventPositionsQuery: releventPositionsQuery })
+      this.setState({ releventfilteredPositions: releventfilteredPositions })  
+    // REMOVING IT FROM DB AND PROPS 
     this.props.update({
       variables: {
-        id: v,
+        id: jobID,
         jobInfo: { primaryJob: false, isPositionActive: false  }
       },
       updateQueries: {
           releventPositionsQuery: (previousQueryResult, { mutationResult }) => {
                       previousQueryResult.allPositions.nodes.map((value,i) =>{
-                          if (value.id == p.id) {
+                          if (value.id == position.id) {
                               value.jobsByPositionId.nodes = []
                               return value.jobsByPositionId.nodes
                           } else{
@@ -65,7 +162,6 @@ class TeamMemberPositionDetailsComponent extends Component {
                     },
          },
     }).then(({ data }) => {
-          console.log(data)
     })
 
   }
@@ -74,9 +170,7 @@ class TeamMemberPositionDetailsComponent extends Component {
     if (!this.props.userDetails.employeesByUserId.edges[0].node.primaryWorkplace){
       this.setState({ primaryWorkplaceWarning: true })
     } else {
-      this.setState({ primaryWorkplaceWarning: false })
-      console.log(this)
-
+       this.setState({ primaryWorkplaceWarning: false })
     this.props.create({
         variables: { data:
             { job:
@@ -107,9 +201,29 @@ class TeamMemberPositionDetailsComponent extends Component {
                 },
         })
         .then(({ data }) => {
-          console.log(data)
+                let releventPositionsQuery = [];
+                let releventfilteredPositions= [];
+                let positions = this.state.releventPositionsQuery.concat(this.state.releventfilteredPositions)
+                positions.filter((w) => {
+                  if (w.jobsByPositionId.nodes.length > 0 || w.id == v) {
+                       if(w.id == v){
+                         let newPosition = {
+                            id: w.id, 
+                            positionName: w.positionName, 
+                            traineeHours: w.traineeHours, 
+                            jobsByPositionId: { nodes: [data.createJob.job] }
+                          }
+                         releventPositionsQuery.push(newPosition)
+                       } else {
+                          releventPositionsQuery.push(w)
+                        }
+                    } else {
+                      releventfilteredPositions.push(w)
+                    }
+              })
+              this.setState({ releventPositionsQuery: releventPositionsQuery })
+              this.setState({ releventfilteredPositions: releventfilteredPositions })  
         })
-
       }
   }
 
@@ -134,26 +248,11 @@ class TeamMemberPositionDetailsComponent extends Component {
 
     };
 
-    if (this.props.releventPositionsQuery.loading) {
-      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
-    }
-
-    let releventPositionsQuery = [];
-    let releventfilteredPositions= [];
-    let releventPositionsQueryResults = [...this.props.releventPositionsQuery.allPositions.nodes];
-    releventPositionsQueryResults.filter((w) => {
-        if (w.jobsByPositionId.nodes.length > 0) {
-             releventPositionsQuery.push(w)
-          } else {
-            releventfilteredPositions.push(w)
-          }
-      }
-    );
 
     const userDetails = this.props.userDetails;
     const positionDetails = this.props.userDetails.jobsByUserId.edges;
     const trainingPositions = this.getTrainingPositions(positionDetails);
-    console.log(this)
+
     return (
 
       <div>
@@ -180,7 +279,7 @@ class TeamMemberPositionDetailsComponent extends Component {
                 <span>REVOKE</span><span>POSITION</span>
               </Grid.Column>
             </Grid.Row>
-            {releventPositionsQuery.map((v, index) => (
+            {this.state.releventPositionsQuery.map((v, index) => (
               <Grid.Row>
                 <Grid.Column width={2} style={{display:'flex', flexDirection:'row'}}>
                   <div className="circle"><img src="/images/Sidebar/positions.png" style={{width:22, height:30}}/></div>
@@ -200,8 +299,8 @@ class TeamMemberPositionDetailsComponent extends Component {
                 </Grid.Column>
                 <Grid.Column width={2}>
                   <div className="text-center wrapper-element">
-                    <RadioGroup onChange={this.onRadioChange1} value={this.state.value1} className="radioStyle">
-                      <Radio value={1}></Radio>
+                    <RadioGroup onChange={this.onRadioChange} value={ this.state.primaryJob} className="radioStyle">
+                      <Radio value={v.jobsByPositionId.nodes[0].id}></Radio>
                     </RadioGroup>
                   </div>
                 </Grid.Column>
@@ -241,7 +340,7 @@ class TeamMemberPositionDetailsComponent extends Component {
               </Grid.Column>
               </Grid.Row>
 
-            {releventfilteredPositions.map((v, index) => (
+            {this.state.releventfilteredPositions.map((v, index) => (
                 <Grid.Row>
                   <Grid.Column width={2}>
                     <Progress type="circle" percent={0} /*status="exception" */  width={45}/>
@@ -276,26 +375,6 @@ class TeamMemberPositionDetailsComponent extends Component {
   }
 }
 
-const releventPositionsQuery = gql`
-  query releventPositionsQuery($corporationId: Uuid, $brandId: Uuid, $userId: Uuid) {
-    allPositions(condition: { corporationId: $corporationId, brandId: $brandId} ){
-      nodes {
-        id
-        positionName
-        traineeHours
-        jobsByPositionId (condition: { userId: $userId, isPositionActive: true }) {
-          nodes {
-            id
-            isPositionActive
-            primaryJob
-            rating
-            numTraineeHoursCompleted
-          }
-        }
-      }
-    }
-  }`;
-
 const updateJobActive = gql
     `mutation updatejob($id: Uuid!, $jobInfo: JobPatch!){
         updateJobById(input: { id: $id, jobPatch: $jobInfo }) {
@@ -318,19 +397,10 @@ const createJob = gql
         }
   }`
 
-
-const TeamMemberPositionDetails= compose( graphql(updateJobActive, {name: "update"}),
-   graphql(createJob, {name: "create"}),
-     graphql(releventPositionsQuery, {
-    name: "releventPositionsQuery",
-    options: (ownProps) => ({
-      variables: {
-        corporationId: localStorage.getItem("corporationId"),
-        brandId: localStorage.getItem("brandId"),
-        userId:  ownProps.userDetails.id
-      }
-    })
-  }))(TeamMemberPositionDetailsComponent)
+const TeamMemberPositionDetails= compose( 
+   graphql(updateJobActive, {name: "update"}),
+   graphql(createJob, {name: "create"})
+   )(TeamMemberPositionDetailsComponent)
 export default TeamMemberPositionDetails
 
 

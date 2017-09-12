@@ -6,13 +6,14 @@ import "antd/lib/select/style/css";
 import "antd/lib/dropdown/style/css";
 import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
-import { fetchPrimaryLocation, fetchEmployeeByUserId, updateEmployeeById } from "../Team.graphql";
+import { fetchPrimaryLocation, userQuery, updateEmployeeById } from "../Team.graphql";
 import { graphql,compose } from 'react-apollo';
 import CircleButton from '../../helpers/CircleButton';
 import "antd/lib/date-picker/style/css";
 import moment from 'moment';
 import 'material-ui/styles/colors.js';
 var Halogen = require('halogen');
+import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -50,6 +51,9 @@ class MemberPersonnelInformationComponent extends Component {
       pay: employee.payrollNum || "", 
       termination: termDate, 
       num: employee.employeeNum || "",
+      notify: false,
+      notificationType: '',
+      notificationMessage: '',
       updated: false
     };
   }
@@ -81,6 +85,22 @@ class MemberPersonnelInformationComponent extends Component {
     this.setState({num: e.target.value});
   }
 
+  showNotification = (message, type) => {
+    this.setState({
+      notify: true,
+      notificationType: type,
+      notificationMessage: message
+    });
+  };
+
+  hideNotification = () => {
+    this.setState({
+      notify: false,
+      notificationType: '',
+      notificationMessage: ''
+    });
+  }
+
   handleMenuClick(e) {
     message.info('Click on menu item.');
     console.log('click', e);
@@ -101,10 +121,18 @@ class MemberPersonnelInformationComponent extends Component {
       variables: {
         id: v, 
         employeeInfo: employeeInfo
-        }
+        },  
+        updateQueries: {
+          userById: (previousQueryResult, { mutationResult }) => {
+                      let employeeData = mutationResult.data.updateEmployeeById.employee
+                      previousQueryResult.userById.employeesByUserId.edges = [{ 'node': employeeData, '__typename': "EmployeesEdge" }]
+                      return {
+                        userById: previousQueryResult.userById
+                      };
+              },
+         },
     }).then(({ data }) => {
-      this.setState({ updated: true });
-      window.location.reload();
+      this.showNotification('Employee Updated Successfully.', NOTIFICATION_LEVELS.SUCCESS);
       console.log(data)
     })
   }
@@ -236,6 +264,8 @@ class MemberPersonnelInformationComponent extends Component {
         </div>
         </div>
         </div>
+        <Notifier hideNotification={this.hideNotification} notify={this.state.notify} notificationMessage={this.state.notificationMessage}
+                  notificationType={this.state.notificationType} />
       </div>
     )
   }

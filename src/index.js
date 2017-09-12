@@ -19,7 +19,7 @@ injectTapEventPlugin();
 
 // production: https://20170808t142850-dot-forward-chess-157313.appspot.com/graphql
 // dev: https://forward-chess-157313.appspot.com/graphql
-const networkInterface =  createNetworkInterface({ uri: 'https://forward-chess-157313.appspot.com/graphql'})
+const networkInterface =  createNetworkInterface({ uri: 'https://20170808t142850-dot-forward-chess-157313.appspot.com/graphql'})
 
 networkInterface.use([{
    applyMiddleware(req, next) {

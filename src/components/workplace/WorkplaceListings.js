@@ -6,6 +6,7 @@ import WorkplaceMap from '../maps/Workplace'
 import WorkingHours from './WorkingHours'
 import WorkplaceReviews from './WorkplaceReviews'
 import { gql, graphql} from 'react-apollo';
+import { Truncate } from 'rebass'
 
 class WorkplaceListingsComponent extends Component {
 	render() {
@@ -19,22 +20,26 @@ class WorkplaceListingsComponent extends Component {
 		}
 		return (
 			<div>
-
 				<label className="workplace-subheader">CROSSTRAINING OPPORTUNITIES</label>
     				<Card.Group itemsPerRow={3}>
-    					  <Card>
+    					  <Card className="workplace-listing-card">
     						<Card.Content>
-                                <div>
-                                    <div>
-                                        <Image src={this.props.data.workplaceById.brandByBrandId.brandIconUrl} className="workplace-card-icon"/>
-                                    </div>
-                                     <div className="workplace-listing-headers">
-                						  <span className="workplace-listing-header">Short Order Cook</span>
-                                          <span className="workplace-listing-subheader">Short Order Cook</span>
-                                      </div>
-                                 </div>
-                                  <hr />
-        						  <Card.Meta>125 Batten Way, Boston • 0 miles away    </Card.Meta>
+                                <div className="workplace-listing-upper">
+									<div className="workplace-listing-head">
+		                                <div className="workplace-listing-wrapper">
+		                                    <Image src={this.props.data.workplaceById.brandByBrandId.brandIconUrl} className="workplace-card-icon"/>
+		                                </div>
+		                                 <div className="workplace-listing-headers">
+		            						  <span className="workplace-listing-header">Short Order Cook</span>
+		                                      <Truncate className="workplace-listing-subheader">Harvard Business School, Restaurant Associates</Truncate>
+		                                  </div>
+		                             </div>
+								</div>
+								 <div className="workplace-card-footer">
+								 	 <div className="horizontal-line" />
+									 <div style={{height:7}} />
+	        						 <Card.Meta>125 Batten Way, Boston • 0 miles away    </Card.Meta>
+								 </div>
             				</Card.Content>
     					  </Card>
     				</Card.Group>

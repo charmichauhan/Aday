@@ -200,7 +200,7 @@ class ShiftPublishComponent extends Component {
       }).then(({ data }) => {
         days.forEach((day) => {
           if (shift.shiftDaysSelected[day] === true) {
-            this.saveShift(shift, publishId);
+            this.saveShift(shift, day, publishId);
           }
         })
       }).catch((error) => {
@@ -213,7 +213,7 @@ class ShiftPublishComponent extends Component {
     else {
       days.forEach((day) => {
         if (shift.shiftDaysSelected[day] === true) {
-          this.saveShift(shift, publishId);
+          this.saveShift(shift, day, publishId);
         }
       })
     }
@@ -224,7 +224,13 @@ class ShiftPublishComponent extends Component {
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
-  saveShift(shift, weekPublishedId) {
+  saveShift(shift, day, weekPublishedId) {
+    const shiftDay = moment(day, 'YYYY-MM-DD');
+    const shiftDate = shiftDay.date();
+    const shiftMonth = shiftDay.month();
+    const shiftYear = shiftDay.year();
+    shift.startTime.date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    shift.endTime.date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     this.props.createShift({
       variables: {
         data: {
@@ -257,7 +263,10 @@ class ShiftPublishComponent extends Component {
     }).then(({ data }) => {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
       console.log('got data', data);
-    }).catch(_ => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
+    }).catch(err => {
+      debugger;
+      this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
+    });
   }
 
   render() {

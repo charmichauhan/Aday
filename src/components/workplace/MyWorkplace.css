@@ -44,8 +44,10 @@
 }
 
 .workplace-card-icon{
-	width: 75px;
-	height: 75px;
+	min-width: 75px;
+	min-height: 75px;
+	max-width: 75px; /*Yes, strange, but needed to override semantic-ui*/
+	max-height: 75px;
 	float: left;
 	margin: 10px;
 }
@@ -62,16 +64,50 @@
 
 }
 
-.workplace-listing-headers8 {
-
+.workplace-listing-headers {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: center;
+	margin-left: 20px;
 }
 
 .workplace-listing-header {
+	color: #0022A1;
+	font-family: "Roboto Condensed";
+	font-size: 20px;
+	line-height: 22px;
+	font-weight: bold;
+	margin: 2px;
+}
+
+.workplace-listing-subheader {;
+	opacity: 0.6;
+	color: #4A4A4A;
+	font-family: Lato;
+	font-size: 16px;
+	line-height: 18px;
+	margin: 2px;
+}
+
+.workplace-listing-wrapper {
 
 }
 
-.workplace-listing-subheader {
+.workplace-listing-head {
+	display: flex;
+	flex: 1;
+}
 
+.workplace-listing-upper {
+	display: flex;
+	flex: 1;
+}
+
+.workplace-card-footer {
+	border-top-color: #0021A1;
+	border-top: 1px;
+	font-size: 16px;
 }
 
 .workplace-review{
@@ -141,9 +177,21 @@
 
 }
 
+.workplace-listing-card {
+	min-width: 500px;
+	box-shadow: 5px 5px 5px 5px #4A4A4A;
+}
+
 .select-workplace {
 	height: 400px;
 	width: 500px;
+}
+
+.horizontal-line {
+	min-height: 1px;
+	background-color: #999;
+	min-width: 502px;
+	margin-left: -15px;
 }
 
 /*

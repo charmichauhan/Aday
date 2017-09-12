@@ -10,6 +10,8 @@ import {
     TableRow,
     TableRowColumn,
 } from 'material-ui/Table';
+var Halogen = require('halogen');
+
 const styles={
     paddingLeft:'0',
     paddingRight:'0',
@@ -106,7 +108,7 @@ class SpecialDayComponent extends Component{
     render(){
         console.log(this.props);
         if (this.props.allHoliday.loading) {
-         return (<div>Loading</div>)
+         return (<div><Halogen.SyncLoader color='#00A863'/></div>)
         }
         if (this.props.allHoliday.error) {
           console.log(this.props.allHoliday.error);

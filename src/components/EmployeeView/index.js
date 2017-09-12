@@ -10,6 +10,7 @@ import ShiftPublish from '../Scheduling/ShiftWeekTable/ShiftPublish';
 import '../Scheduling/style.css';
 import {Modal} from 'semantic-ui-react';
 import { gql, graphql, compose } from 'react-apollo';
+var Halogen = require('halogen');
 
 const styles = {
     bodyStyle: {
@@ -72,7 +73,7 @@ class EmployeeViewComponent extends Component {
         BigCalendar.momentLocalizer(moment);
 
          if (this.props.data.loading) {
-            return (<div>Loading</div>)
+            return (<div><Halogen.SyncLoader color='#00A863'/></div>)
         }
 
         if (this.props.data.error) {

@@ -217,7 +217,6 @@ class DrawerHelper extends Component {
     const formValid=DrawerPosition.positionName != "" &&
                     DrawerPosition.positionDescription != "" &&
                     DrawerPosition.minimiumAge != "" &&
-                    DrawerPosition.minimumLiftWeight != "" &&
                     DrawerPosition.partTimeWage !== "" && DrawerPosition.partTimeWage >= 0 &&
                     DrawerPosition.traineeHours !== "" && DrawerPosition.traineeHours >= 0 &&
                     !(this.props.mode == "create" && localStorage.getItem("workplaceId") != "");

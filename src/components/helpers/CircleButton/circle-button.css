@@ -1,6 +1,6 @@
 .btn-circle-wrapper {
   display: inline-block;
-  margin: 15px 5px;
+  margin: 15px 15px;
 }
 
 .btn-circle-wrapper img {
@@ -8,16 +8,22 @@
 }
 
 .btn-circle-wrapper img.img-icon.small {
-  height: 46px;
-  width: 46px;
+  height: 60px;
+  width: 60px;
 }
 
-.btn-circle-wrapper p {
+.btn-circle-wrapper div {
   font-size: 16px;
   word-wrap: break-word;
-  width: 110px;
-  font-family: Lato;
-  font-weight: light;
+  font-family: Lato-Light;
+  font-weight: 100;
+}
+
+.innerCircle {
+    display: table;
+    margin: 0 auto;
+    width: 80%;
+    padding-bottom: 10px;
 }
 
 .btn-circle-center {

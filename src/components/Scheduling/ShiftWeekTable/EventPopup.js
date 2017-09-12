@@ -3,7 +3,7 @@ import moment from 'moment';
 import Modal from '../../helpers/Modal';
 import EditShiftDrawerContainer from './ShiftEdit/EditShiftDrawerContainer';
 import EditShiftModal from './ShiftEdit/EditShiftModal';
-import ShiftHistoryDrawer from './ShiftEdit/ShiftHistoryDrawer';
+import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer';
 import { gql, graphql, compose } from 'react-apollo';
 import '../style.css';
 import './shiftWeekTable.css';
@@ -190,7 +190,7 @@ class EventPopupComponent extends Component {
           open={this.state.newShiftModalPopped}
           handlerClose={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
-        <ShiftHistoryDrawer
+        <ShiftHistoryDrawerContainer
           shift={data}
           users={users}
           open={this.state.shiftHistoryDrawer}

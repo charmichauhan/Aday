@@ -21,6 +21,7 @@ import CircleButton from '../../../helpers/CircleButton';
 const uuidv4 = require('uuid/v4');
 import './shift-edit.css';
 var rp = require('request-promise');
+var Halogen = require('halogen');
 
 
 const unassignedTeamMember = {
@@ -163,7 +164,7 @@ class DrawerHelper extends Component {
                   marketId = v.node.id;
                 }
         })
-        if(marketId) {         
+        if(marketId) {
               this.props.updateMarket({
                   variables: { data:
                       { id: marketId, marketPatch: {isBooked: false, workerResponse: "NONE", clockInDate: null, clockOutDate: null} }
@@ -174,12 +175,12 @@ class DrawerHelper extends Component {
                     console.log('there was an error sending the query', error);
                   });
         }
-      }) 
+      })
 
       //UPDATE ASSIGNED USERS
       shiftPatch['workersAssigned'].map((value) => {
               let marketId = null
-              //seeing if shift's markets has this user 
+              //seeing if shift's markets has this user
               if (this.props.shiftMarkets.allMarkets){
                 this.props.shiftMarkets.allMarkets.edges.map( (v,i) => {
                   if (v.node.workerId == value){
@@ -187,9 +188,9 @@ class DrawerHelper extends Component {
                   }
                 })
               }
-                 
+
               // market exists
-              if(marketId) {        
+              if(marketId) {
               this.props.updateMarket({
                   variables: { data:
                       { id: marketId, marketPatch: {isBooked: true, workerResponse: "NONE"} }
@@ -197,10 +198,10 @@ class DrawerHelper extends Component {
                   })
               } else {
                 this.props.createMarket({
-                  variables: 
+                  variables:
                     { data:
                         {market:
-                          { id: uuidv4(), 
+                          { id: uuidv4(),
                             shiftId: this.props.shift.id,
                             workerId: value,
                             isEmailed: false,
@@ -211,7 +212,7 @@ class DrawerHelper extends Component {
                           }}
                         }
                   })
-                  
+
               }
       })
 
@@ -238,7 +239,7 @@ class DrawerHelper extends Component {
                   }}
               };
               rp(options)
-                .then(function(response) {              
+                .then(function(response) {
                 }).catch((error) => {
                    console.log('there was an error sending the query for delete cancellation call', error);
               });
@@ -263,7 +264,7 @@ class DrawerHelper extends Component {
                   }}
               };
               rp(options)
-                .then(function(response) {              
+                .then(function(response) {
                 }).catch((error) => {
                    console.log('there was an error sending the query for delete cancellation call', error);
               });
@@ -314,12 +315,12 @@ class DrawerHelper extends Component {
             }}
         };
         rp(options)
-          .then(function(response) {              
+          .then(function(response) {
           }).catch((error) => {
              console.log('there was an error sending the query for delete cancellation call', error);
         });
     } */
- 
+
   };
 
   getUserById = (id, isAssigned) => {
@@ -390,7 +391,7 @@ class DrawerHelper extends Component {
   render() {
     console.log(this.props.teamMembers)
     if (this.props.teamMembers.loading) {
-                return (<div>Loading</div>) 
+                return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
 
     const {
@@ -400,7 +401,7 @@ class DrawerHelper extends Component {
       docked = false,
       open
     } = this.props;
-     
+
 
 
     const { teamMembers, jobShadowers } = this.state;
@@ -586,7 +587,7 @@ const DrawerHelperComponent = compose(graphql(deleteShiftMutation, {
   }),
   graphql(allUsersQuery, {
     name: 'teamMembers',
-    options: (ownProps) => ({ variables: { positionId: ownProps.shift && ownProps.shift.positionByPositionId.id } }) 
+    options: (ownProps) => ({ variables: { positionId: ownProps.shift && ownProps.shift.positionByPositionId.id } })
   }))
 (DrawerHelper);
 

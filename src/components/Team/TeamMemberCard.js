@@ -44,8 +44,8 @@ class TeamMemberCardComponent extends Component {
             userPhoneNumber
 		} = this.props.member;
 
-        const phoneNumber = () => {
-             let s2 = (""+this.props.children).replace(/\D/g, '');
+        const phoneNumber = (j) => {
+             let s2 = (""+j).replace(/\D/g, '');
              let m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
              return (
                  <Card.Meta>
@@ -100,9 +100,3 @@ class TeamMemberCardComponent extends Component {
 const TeamMemberCard =  (TeamMemberCardComponent);
 
 export default TeamMemberCard;
-/*
-  * deprecated: circle avatar for header of the card
-<center>
-    <Image centered='true' size='small' shape='circular' src={avatarUrl} />
-</center>
-*/

@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import Drawer from "material-ui/Drawer";
 import IconButton from "material-ui/IconButton";
 import RaisedButton from "material-ui/RaisedButton";
-import {Image, Rating} from "semantic-ui-react";
+import {Image, Rating, Button} from "semantic-ui-react";
 import {find, pick} from "lodash";
 import {leftCloseButton} from "../../styles";
 import {graphql, compose} from "react-apollo";
@@ -102,15 +102,31 @@ class ProfileDrawerComponent extends Component {
                         <Image src="/images/Icons_Red_Cross.png" size="mini"/>
                      </IconButton>
 
-                     <span className="profile-title first-name-title">{userDetails.firstName}</span>
-                     &nbsp;&nbsp;
-                     <span className="profile-title last-name-title">{userDetails.lastName} </span>
+                         <span className="profile-title first-name-title" style={{marginLeft:50}}>{userDetails.firstName}</span>
+                         &nbsp;&nbsp;
+                         <span className="profile-title last-name-title">{userDetails.lastName} </span>
+
 
                      {userDetails.avatarUrl
                             ? <Image centered='true' size='small' shape='circular' className="profile-img" src={ userDetails.avatarUrl}/>
                             :  <Image centered='true' size='small' shape='circular' className="profile-img"
                                  src="https://s3.us-east-2.amazonaws.com/aday-website/anonymous-profile.png"/>
                      }
+
+                     <div className="drawer-right" style={{paddingTop:0, marginRight:0}}>
+
+                     <Button inverted style={{borderRadius:5}} color='red' onClick={this.props.openResumeDrawer}>RESUME</Button>
+
+                     {/*
+                        <RaisedButton
+                            label="RESUME"
+                            onClick={this.props.openResumeDrawer}
+                            backgroundColor="#E33821"
+                        />
+                    */}
+
+                    </div>
+
              </div>
          </div>
          <div className="heading-rating">
@@ -160,22 +176,13 @@ class ProfileDrawerComponent extends Component {
   };
 }
 
-/*
- * Removed from the pilot with Restaurant Associates
-<div className="drawer-right">
-                <RaisedButton label="RESUME" onClick={this.props.openResumeDrawer}/>
-              </div>
-          <div className="block-limit-btn text-center">
-            <button className="btn text-uppercase btn-default">Block {userDetails.firstName}</button>
-          </div>
-*/
-
 const ProfileDrawer = compose(
   graphql(userQuery, {
     name: "userQuery",
     options: (ownProps) => ({
       variables: {
-        id: ownProps.userId
+        id: ownProps.userId,
+        corporationId: localStorage.getItem("corporationId")
       }
     })
   }),

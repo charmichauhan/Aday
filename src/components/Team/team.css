@@ -25,6 +25,18 @@
     line-height: 35px;
     text-align: center;
     text-transform: uppercase;
+
+}
+
+.profile-title .resume-title {
+    height: 35px;
+    color: #FFFFFF;
+    font-family: "Roboto Condensed" !important;
+    font-size: 30px;
+    line-height: 35px;
+    text-align: center;
+    text-transform: uppercase;
+
 }
 
 .first-name-title {
@@ -564,13 +576,22 @@ img.list-left-image {
   position: relative;
 }
 
+.resume-drawer .resume-sub-header {
+    font-weight: bold;
+    font-size: 20px !important;
+    color: #4A4A4A;
+    margin-top: 20px;
+}
+
 .resume-drawer .qualification-title h2 {
   color: #4a4a4a;
   margin: 30px 0;
-  font-size: 30px;
-  font-weight: 300;
+  font-size: 26px;
+  font-weight: normal;
+  font-family: "Roboto Condensed";
   display: inline-block;
   padding: 0 10px;
+  color: #0021A1;
 }
 
 .resume-drawer .content-heading h2 {
@@ -579,13 +600,16 @@ img.list-left-image {
 }
 
 .resume-drawer .brief-content {
-  background: #f7f7f7;
+  /*background: #f7f7f7;*/
   padding: 10px 20px;
   margin: 10px 0;
 }
 
 .resume-drawer .address {
   font-size: 20px;
+  font-family: Lato;
+  font-weight: light;
+  color: #4A4A4A;
 }
 
 .resume-drawer .extra-work, .performance-tagline p {

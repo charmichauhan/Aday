@@ -46,6 +46,7 @@
     "react-router-dom": "^4.1.1",
     "react-scrollbar-js": "^1.0.1",
     "react-select": "^1.0.0-rc.5",
+    "react-slick": "^0.15.4",
     "react-tap-event-plugin": "^2.0.1",
     "react-toolbox": "^2.0.0-beta.12",
     "rebass": "^1.0.4",

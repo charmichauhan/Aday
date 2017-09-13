@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Icon, Divider, Button, Modal, Header, Image} from 'semantic-ui-react';
 import ShiftHistoryDrawer from './ShiftHistoryDrawer';
-	
+
 export default class ShiftHistoryDrawerContainer extends Component {
 	constructor(props) {
 	    super(props);
@@ -14,6 +13,7 @@ export default class ShiftHistoryDrawerContainer extends Component {
 	          shift={this.props.shift}
 	          users={this.props.users}
 	          open={this.props.open}
+            handleBack={this.props.handleBack}
 	          handlerClose={this.props.handlerClose}
 	          handleHistory={this.props.handleHistory} />
 			)
@@ -21,7 +21,7 @@ export default class ShiftHistoryDrawerContainer extends Component {
 			return (
 					<div> </div>
 				)
-		}	
+		}
 	}
 }
 

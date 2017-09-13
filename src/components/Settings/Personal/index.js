@@ -107,7 +107,7 @@ class Personal extends Component {
   handleImageUpload = (files) => {
     console.log(files);
     //when api feature added to prod: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
-    SuperAgent.post('https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg//uploadImage')
+    SuperAgent.post('https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImage')
     .field('bucket', 'aday-user')
     .field('filename', localStorage.getItem('userId'))
     .field('id', localStorage.getItem('userId'))

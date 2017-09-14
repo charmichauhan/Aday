@@ -13,7 +13,8 @@ import Loading from '../../../helpers/Loading';
 
 const styles = {
   paperStyle: {
-    borderRadius: 6
+    borderRadius: 6,
+    zIndex: 99999
   }
 };
 
@@ -33,7 +34,7 @@ const User = ({ user }) => (
     <div className="avatar">
       <Image avatar src={user.avatarUrl} />
     </div>
-    <div className="label font18 text-uppercase">
+    <div className="label font16 text-uppercase">
       <b>{user.firstName}</b> {user.lastName}
     </div>
   </div>
@@ -44,9 +45,9 @@ const SortableItem = SortableElement(({ history, index }) =>
     <Paper style={styles.paperStyle}
            zDepth={1}
            key={index}
-           className="content-row">
+           className="content-row shift-history">
       <Grid>
-        <GridColumn width={1}>
+        <GridColumn width={5}>
           <div className="wrapper-element text-left">
             <Dropdown
               name="more-options"
@@ -58,9 +59,9 @@ const SortableItem = SortableElement(({ history, index }) =>
                     <Dropdown.Menu>
                       <Dropdown.Item>
                         <div className="called sub-menu">
-                                  <span className="phn-icon">
-                                    <i className="fa fa-phone"></i>
-                                  </span>
+                                <span className="phn-icon">
+                                  <i className="fa fa-phone"></i>
+                                </span>
                           <span className="tick">
                                     <Icon2 type="check" />
                                   </span>
@@ -110,8 +111,7 @@ const SortableItem = SortableElement(({ history, index }) =>
               </Dropdown.Menu>
             </Dropdown>
           </div>
-        </GridColumn>
-        <GridColumn width={4} className="history-name">
+
           <div className="wrapper-element text-left">
             <User user={history.worker} />
           </div>

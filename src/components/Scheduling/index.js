@@ -13,6 +13,8 @@ import 'fullcalendar-scheduler/dist/scheduler.css';
 import 'fullcalendar-scheduler/dist/scheduler.js';
 import { gql, graphql, compose } from 'react-apollo';
 import ApolloClient from 'apollo-client';
+import {CSVLink, CSVDownload} from 'react-csv';
+
 var Halogen = require('halogen');
 
 const style = {
@@ -35,10 +37,17 @@ const style = {
   }
 };
 
+const csvData1 = [
+  ['firstname', 'lastname', 'email'] ,
+  ['Ahmed', 'Tomi' , 'ah@smthing.co.com'] ,
+  ['Raed', 'Labes' , 'rl@smthing.co.com'] ,
+  ['Yezzi','Min l3b', 'ymin@cocococo.com']
+];
+
 let that;
 let viewName="Employee View";
 let currentView = "job";
-
+let csvData = "";
 class ScheduleComponent extends Component {
     constructor(props){
         super(props);
@@ -48,7 +57,8 @@ class ScheduleComponent extends Component {
 			templateName:"",
             redirect:false,
             view:"job",
-            date: moment(this.props.match.params.date) ||  moment()
+            date: moment(this.props.match.params.date) ||  moment(),
+            csvData1:'',
         }
     }
 
@@ -62,6 +72,8 @@ class ScheduleComponent extends Component {
    * @return {view} sets the state of currentView, which switches calendar view
    */
   customEvent  = (currentlyView) => {
+    console.log("On scheduling page");
+
     if(currentlyView == "job"){
       viewName="Job View";
       currentView="employee";
@@ -98,6 +110,38 @@ class ScheduleComponent extends Component {
     that = this
   };
 
+
+
+  getCSVData = (csvData) => {
+
+    let displayCsvData = [];
+    displayCsvData.push({
+      firstName:'FirstName',
+      lastName:'LastName',
+      sunday:'Sunday',
+      monday:'Monday',
+      tuesday:'Tuesday',
+      wednesday:'Wednesday',
+      thursday:'Thursday',
+      friday:'Friday',
+      saturday:'Saturday'
+  });
+    csvData.forEach((value, index) => {
+      for(let i=0;i<1;i++){
+        const weekday = value.weekday;
+          var obj = {
+            firstName:value.firstName,
+            lastName:value.lastName
+          }
+          obj[weekday] = value.startTime +' to '+ value.endTime;
+          displayCsvData.push(obj);
+
+      }
+    });
+
+    this.setState({ csvData: displayCsvData, dataReceived: true });
+  };
+
   render() {
     BigCalendar.momentLocalizer(moment);
 
@@ -110,6 +154,7 @@ class ScheduleComponent extends Component {
       return (<div>An unexpected error occurred</div>)
     }
 
+    csvData = this.state.csvData;
     let events= [];
     let is_publish = "none";
     let publish_id = "";
@@ -144,6 +189,8 @@ class ScheduleComponent extends Component {
                    endAccessor='endDate'
                    defaultView='week'
                    date={this.state.date}
+                   setCSVData={this.getCSVData}
+                   dataReceived={this.state.dataReceived}
                    views={{today: true, week: ShiftWeekTable, day: true}}
                    eventPropGetter={this.onViewChange}
                    onNavigate={(start) => this.onNavigate(start)}
@@ -159,6 +206,7 @@ class ScheduleComponent extends Component {
 }
 
 class CustomToolbar extends Toolbar {
+
   render() {
     let month = moment(this.props.date).format("MMMM YYYY");
     return (
@@ -176,6 +224,9 @@ class CustomToolbar extends Toolbar {
               </div>
               <ul className="nav navbar-nav">
                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
+                {
+                  csvData && <CSVLink data={csvData}>Download CSV</CSVLink>
+                }
               </ul>
               <div className="maintitle">
                 {month}

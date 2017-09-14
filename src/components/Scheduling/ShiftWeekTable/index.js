@@ -8,7 +8,7 @@ import Week from 'react-big-calendar/lib/Week';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 import JobsRow from './JobsRow';
-import { concat, groupBy } from 'lodash';
+import { concat, groupBy, pick, find } from 'lodash';
 import SpecialDay from './SpecialDay';
 import { gql, graphql, compose } from 'react-apollo';
 import jobsData from './jobs.json';
@@ -64,7 +64,7 @@ const styles = {
     headerStyle: {
         padding:0
     },
-    tableFooterHeading: {
+  tableFooterHeading: {
         paddingLeft:'0px',
         paddingRight:'0px',
         width: 178
@@ -88,8 +88,12 @@ class ShiftWeekTableComponent extends Week {
     });
   }
 
-  componentWillReceiveProps = () => {
-    this.setState({ calendarView: this.props.eventPropGetter() });
+  componentWillReceiveProps = (nextProps) => {
+
+    if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
+      this.props.setCSVData(this.csvData(nextProps));
+    }
+    this.setState({calendarView: this.props.eventPropGetter()});
   };
 
   getSummary = (summary, start) => {
@@ -108,6 +112,49 @@ class ShiftWeekTableComponent extends Week {
     }
     return summaryDetail;
   };
+
+  getUserById = (id, props) => {
+    const users = props.allUsers;
+
+    let foundWorker = find(users.allUsers.edges, (user) => user.node.id === id);
+    if (!foundWorker) return null;
+    return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
+  };
+
+  getShiftData = (shiftValue, props) => {
+    const shift = {...shiftValue};
+    if (!shift.workersAssigned) shift.workersAssigned = [];
+    shift.workersAssigned = shift.workersAssigned.map(worker => {
+      if (typeof worker === 'string') {
+        return this.getUserById(worker, props);
+      }
+      return null;
+    });
+
+    return shift;
+  };
+
+  csvData = (props) => {
+    const userAssignedShifts =  props.data.allShifts.edges.map(({node}) => {
+      return this.getShiftData(node, props);
+    }).filter((shift) => { return shift.workersAssigned.length });
+
+    const csvShifts = [];
+    userAssignedShifts.forEach((shift) => {
+      shift.workersAssigned.forEach((user) => {
+        csvShifts.push({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          weekday: moment(shift.startTime).format('dddd'),
+          endTime: shift.endTime,
+          startTime: shift.startTime,
+        })
+      });
+    });
+    // weekday: moment(shift.startTime).format('dddd'),
+    return csvShifts;
+  };
+
   getDataEmployeeView = (workplaceId, data, allUsers) => {
     let userHash = {};
     let calendarHash = {};

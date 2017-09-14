@@ -28,6 +28,7 @@
     "react-apollo": "^1.4.6",
     "react-avatar-editor": "^10.0.3",
     "react-big-calendar": "^0.14.4",
+    "react-csv": "^1.0.8",
     "react-custom-scrollbars": "^4.1.2",
     "react-date-picker": "^5.3.28",
     "react-dom": "^15.5.4",

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import '../../Scheduling/style.css';
 import { graphql, compose } from 'react-apollo';
 import moment from 'moment'
 import { Button } from 'semantic-ui-react';
@@ -7,6 +6,7 @@ import { BrowserRouter as Router, Redirect } from 'react-router-dom';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 import uuidv4 from 'uuid/v4';
+import cloneDeep from 'lodash/cloneDeep';
 
 import CreateShiftButton from '../../Scheduling/AddShift/CreateShiftButton';
 import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftDrawer';
@@ -20,6 +20,7 @@ import {
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 var rp = require('request-promise');
 
+import '../../Scheduling/style.css';
 import './shiftSection.css';
 
 const styles = {
@@ -224,13 +225,14 @@ class ShiftPublishComponent extends Component {
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
-  saveShift(shift, day, weekPublishedId) {
-    const shiftDay = moment(day, 'YYYY-MM-DD');
+  saveShift(shiftValue, day, weekPublishedId) {
+    const shift = cloneDeep(shiftValue);
+    const shiftDay = moment.utc(day, 'YYYY-MM-DD');
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
-    shift.startTime.date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-    shift.endTime.date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     this.props.createShift({
       variables: {
         data: {
@@ -241,8 +243,8 @@ class ShiftPublishComponent extends Component {
             workersRequestedNum: shift.numberOfTeamMembers,
             creatorId: localStorage.getItem('userId'),
             managersOnShift: [null],
-            startTime: shift.startTime,
-            endTime: shift.endTime,
+            startTime: moment.utc(shift.startTime),
+            endTime: moment.utc(shift.endTime),
             shiftDateCreated: moment().format(),
             weekPublishedId: weekPublishedId,
             instructions: shift.instructions,

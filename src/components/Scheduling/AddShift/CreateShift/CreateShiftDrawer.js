@@ -20,7 +20,7 @@ import './select.css';
 const methodOptions = [{ key: 'standard', value: 'standard', text: 'Standard', disabled: true, selected: true }];
 const startDate = moment().startOf('week');
 
-const initalState = {
+const initialState = {
   shift: {
     shiftMethod: 'standard',
     tags: [],
@@ -38,9 +38,9 @@ class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
-    let shift = { ...initalState.shift, ...props.shift };
+    let shift = { ...initialState.shift, ...props.shift };
     this.state = {
-      ...initalState,
+      ...initialState,
       ...shift
     };
   }
@@ -59,8 +59,14 @@ class DrawerHelper extends Component {
   getPositions = (workplaceId = this.state.workplaceId) => {
     if (workplaceId) {
       CreateShiftHelper.getRelevantPositions(workplaceId)
-        .then((positions) => this.setState({ positions }))
-        .catch(err => console.error(err));
+        .then((positions) => {
+          debugger;
+          this.setState({ positions })
+        })
+        .catch(err => {
+          debugger;
+          console.error(err)
+        });
     }
   };
 
@@ -76,7 +82,7 @@ class DrawerHelper extends Component {
   handleShiftSubmit = (shift) => {
     const { handleSubmit } = this.props;
     if (handleSubmit) handleSubmit(shift);
-    this.setState(initalState);
+    this.setState(initialState);
   };
 
   updateFormState = (dataValue) => {
@@ -95,7 +101,7 @@ class DrawerHelper extends Component {
 
   closeShiftDrawer = () => {
     const { closeDrawer } = this.props;
-    this.setState(initalState);
+    this.setState(initialState);
     if (closeDrawer) closeDrawer();
   };
 

@@ -3,7 +3,7 @@
 
 .workplace{
 	padding: 15px;
-	background-color: white;
+	/*background-color: white;*/
 	box-shadow: 1px 1px 1px 1px #FFF;
 	clear: both;
 	height: auto;
@@ -32,7 +32,8 @@
 }
 
 .workplace-loc-img {
-
+	display: flex;
+	flex-direction: row;
 }
 
 .workplace-brand-name {
@@ -178,7 +179,7 @@
 }
 
 .workplace-listing-card {
-	min-width: 500px;
+	min-width: 400px;
 	box-shadow: 5px 5px 5px 5px #4A4A4A;
 }
 
@@ -190,7 +191,7 @@
 .horizontal-line {
 	min-height: 1px;
 	background-color: #999;
-	min-width: 502px;
+	min-width: 402px;
 	margin-left: -15px;
 }
 

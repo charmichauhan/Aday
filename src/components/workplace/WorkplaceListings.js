@@ -22,6 +22,7 @@ class WorkplaceListingsComponent extends Component {
 			<div>
 				<label className="workplace-subheader">CROSSTRAINING OPPORTUNITIES</label>
     				<Card.Group itemsPerRow={3}>
+
     					  <Card className="workplace-listing-card">
     						<Card.Content>
                                 <div className="workplace-listing-upper">
@@ -42,6 +43,70 @@ class WorkplaceListingsComponent extends Component {
 								 </div>
             				</Card.Content>
     					  </Card>
+
+						  <Card className="workplace-listing-card">
+    						<Card.Content>
+                                <div className="workplace-listing-upper">
+									<div className="workplace-listing-head">
+		                                <div className="workplace-listing-wrapper">
+		                                    <Image src={this.props.data.workplaceById.brandByBrandId.brandIconUrl} className="workplace-card-icon"/>
+		                                </div>
+		                                 <div className="workplace-listing-headers">
+		            						  <span className="workplace-listing-header">Short Order Cook</span>
+		                                      <Truncate className="workplace-listing-subheader">Harvard Business School, Restaurant Associates</Truncate>
+		                                  </div>
+		                             </div>
+								</div>
+								 <div className="workplace-card-footer">
+								 	 <div className="horizontal-line" />
+									 <div style={{height:7}} />
+	        						 <Card.Meta>125 Batten Way, Boston • 0 miles away    </Card.Meta>
+								 </div>
+            				</Card.Content>
+    					  </Card>
+
+						  <Card className="workplace-listing-card">
+    						<Card.Content>
+                                <div className="workplace-listing-upper">
+									<div className="workplace-listing-head">
+		                                <div className="workplace-listing-wrapper">
+		                                    <Image src={this.props.data.workplaceById.brandByBrandId.brandIconUrl} className="workplace-card-icon"/>
+		                                </div>
+		                                 <div className="workplace-listing-headers">
+		            						  <span className="workplace-listing-header">Short Order Cook</span>
+		                                      <Truncate className="workplace-listing-subheader">Harvard Business School, Restaurant Associates</Truncate>
+		                                  </div>
+		                             </div>
+								</div>
+								 <div className="workplace-card-footer">
+								 	 <div className="horizontal-line" />
+									 <div style={{height:7}} />
+	        						 <Card.Meta>125 Batten Way, Boston • 0 miles away    </Card.Meta>
+								 </div>
+            				</Card.Content>
+    					  </Card>
+
+						  <Card className="workplace-listing-card">
+    						<Card.Content>
+                                <div className="workplace-listing-upper">
+									<div className="workplace-listing-head">
+		                                <div className="workplace-listing-wrapper">
+		                                    <Image src={this.props.data.workplaceById.brandByBrandId.brandIconUrl} className="workplace-card-icon"/>
+		                                </div>
+		                                 <div className="workplace-listing-headers">
+		            						  <span className="workplace-listing-header">Short Order Cook</span>
+		                                      <Truncate className="workplace-listing-subheader">Harvard Business School, Restaurant Associates</Truncate>
+		                                  </div>
+		                             </div>
+								</div>
+								 <div className="workplace-card-footer">
+								 	 <div className="horizontal-line" />
+									 <div style={{height:7}} />
+	        						 <Card.Meta>125 Batten Way, Boston • 0 miles away    </Card.Meta>
+								 </div>
+            				</Card.Content>
+    					  </Card>
+
     				</Card.Group>
             </div>
         )

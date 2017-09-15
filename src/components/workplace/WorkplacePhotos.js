@@ -10,17 +10,19 @@ export default class WorkplacePhotos extends Component {
           className: 'center',
           centerMode: true,
           infinite: true,
-          centerPadding: '60px',
           slidesToShow: 3,
-          speed: 500
+          speed: 500,
+          adaptiveHeight: true,
+          autoplay: true,
+          pauseOnHover: true,
         };
       return (
-        <div>
+        <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
           <Slider {...settings}>
-            <div><Image src="https://s3.us-east-2.amazonaws.com/aday-website/workplace-pictures/chao-center-dining.jpg"    size="large" /></div>
-            <div><Image src="http://d3vgmmrg377kge.cloudfront.net/about/PublishingImages/campus-donors/Spangler_patio_110915-640x360.jpg"  size="large" /></div>
-            <div><Image src="http://www.ramsa.com/api/sites/default/files/97035-ESTO-2001A75.78.jpg"  size="large" /></div>
-            <div><Image src="http://www.ramsa.com/api/sites/default/files/97035-ESTO-2001A75.25.jpg"  size="large" /></div>
+            <div><Image src="https://s3.us-east-2.amazonaws.com/aday-website/workplace-pictures/chao-center900x900.png"    size="massive" /></div>
+            <div><Image src="https://s3.us-east-2.amazonaws.com/aday-website/workplace-pictures/spanger-dining1593x1593.jpg"  size="massive" /></div>
+            <div><Image src="https://s3.us-east-2.amazonaws.com/aday-website/workplace-pictures/spanger-outside1155x1155.jpg"  size="massive" /></div>
+            <div><Image src="https://s3.us-east-2.amazonaws.com/aday-website/workplace-pictures/spangler-lawn500x500.png"  size="massive" /></div>
           </Slider>
         </div>
       );

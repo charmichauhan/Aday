@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
-import moment from 'moment';
-import BigCalendar from 'react-big-calendar';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import Toolbar from 'react-big-calendar/lib/Toolbar';
-import ShiftWeekTable from './ShiftWeekTable';
-import './style.css';
-import {Modal} from 'semantic-ui-react';
-import ShiftPublish from './ShiftWeekTable/ShiftPublish';
-import 'fullcalendar/dist/fullcalendar.min.css';
-import 'fullcalendar/dist/fullcalendar.min.js';
-import 'fullcalendar-scheduler/dist/scheduler.css';
-import 'fullcalendar-scheduler/dist/scheduler.js';
-import { gql, graphql, compose } from 'react-apollo';
-import ApolloClient from 'apollo-client';
-import {CSVLink, CSVDownload} from 'react-csv';
+import React, {Component} from "react";
+import moment from "moment";
+import BigCalendar from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import Toolbar from "react-big-calendar/lib/Toolbar";
+import ShiftWeekTable from "./ShiftWeekTable";
+import "./style.css";
+import {Modal} from "semantic-ui-react";
+import ShiftPublish from "./ShiftWeekTable/ShiftPublish";
+import "fullcalendar/dist/fullcalendar.min.css";
+import "fullcalendar/dist/fullcalendar.min.js";
+import "fullcalendar-scheduler/dist/scheduler.css";
+import "fullcalendar-scheduler/dist/scheduler.js";
+import {gql, graphql} from "react-apollo";
+import {CSVLink} from "react-csv";
+import {groupBy} from "lodash";
 
 var Halogen = require('halogen');
 
@@ -37,13 +37,6 @@ const style = {
   }
 };
 
-const csvData1 = [
-  ['firstname', 'lastname', 'email'] ,
-  ['Ahmed', 'Tomi' , 'ah@smthing.co.com'] ,
-  ['Raed', 'Labes' , 'rl@smthing.co.com'] ,
-  ['Yezzi','Min l3b', 'ymin@cocococo.com']
-];
-
 let that;
 let viewName="Employee View";
 let currentView = "job";
@@ -58,12 +51,12 @@ class ScheduleComponent extends Component {
             redirect:false,
             view:"job",
             date: moment(this.props.match.params.date) ||  moment(),
-            csvData1:'',
         }
     }
 
   onNavigate = (start) => {
-    this.setState({date: start})
+    this.setState({date: start, dataReceived: false })
+
   };
 
   /**
@@ -116,29 +109,56 @@ class ScheduleComponent extends Component {
 
     let displayCsvData = [];
     displayCsvData.push({
-      firstName:'FirstName',
-      lastName:'LastName',
-      sunday:'Sunday',
-      monday:'Monday',
-      tuesday:'Tuesday',
-      wednesday:'Wednesday',
-      thursday:'Thursday',
-      friday:'Friday',
-      saturday:'Saturday'
+      firstName:'',
+      lastName:'',
+      Sunday:'',
+      Monday:'',
+      Tuesday:'',
+      Wednesday:'',
+      Thursday:'',
+      Friday:'',
+      Saturday:''
   });
-    csvData.forEach((value, index) => {
-      for(let i=0;i<1;i++){
-        const weekday = value.weekday;
-          var obj = {
-            firstName:value.firstName,
-            lastName:value.lastName
-          }
-          obj[weekday] = value.startTime +' to '+ value.endTime;
-          displayCsvData.push(obj);
+    debugger;
+    //Riya
+    // let sortedData = csvData.map((data) => ({ ...data, userId: data.userId }));
+    // let groupedData = groupBy(sortedData, 'userId');
+    // Object.values(groupedData).map((user) => {
+    //   var obj = {
+    //     firstName: user[0].firstName,
+    //     lastName: user[0].lastName,
+    //   };
+    //   debugger;
+    //   user.map((shift) => {
+    //     const weekday = shift.weekday;
+    //     obj[weekday] = moment(shift.startTime).format('h:mm A') + ' to ' + moment(shift.endTime).format('h:mm A');
+    //   })
+    //   displayCsvData.push(obj);
+    // })
+    // console.log('displayCsvData',displayCsvData);
 
+    csvData.forEach((value) => {
+      const weekday = value.weekday;
+
+      var obj ={};
+
+      let foundWorker = findIndex(displayCsvData, (displayCsvData) => displayCsvData.userId === value.id);
+
+      if(foundWorker){
+        displayCsvData[foundWorker][weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
+        debugger;
+      }else {
+        obj =
+          {
+            userId: value.id,
+            firstName: value.firstName,
+            lastName: value.lastName,
+          };
+        debugger;
+        obj[weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
+        displayCsvData.push(obj);
       }
     });
-
     this.setState({ csvData: displayCsvData, dataReceived: true });
   };
 
@@ -279,3 +299,25 @@ const Schedule = graphql(allWeekPublisheds, {
 })(ScheduleComponent);
 
 export default Schedule
+
+var data = [{
+  "id": "1",
+  "firstName": "testManager",
+  "lastName": "testMAnager",
+  "Thursday": "12:02 AM to 9:10 PM"
+}, {
+  "id": "1",
+  "firstName": "testManager",
+  "lastName": "testMAnager",
+  "Friday": "12:02 AM to 9:10 PM"
+}, {
+  "id": "2",
+  "firstName": "Donald",
+  "lastName": "Trump",
+  "Friday": "12:02 AM to 9:10 PM"
+}, {
+  "id": "2",
+  "firstName": "Donald",
+  "lastName": "Trump",
+  "Saturday": "10:02 AM to 5:10 PM"
+}];

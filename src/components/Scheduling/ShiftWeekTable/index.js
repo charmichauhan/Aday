@@ -89,7 +89,7 @@ class ShiftWeekTableComponent extends Week {
   }
 
   componentWillReceiveProps = (nextProps) => {
-
+    debugger;
     if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
       this.props.setCSVData(this.csvData(nextProps));
     }
@@ -140,9 +140,15 @@ class ShiftWeekTableComponent extends Week {
     }).filter((shift) => { return shift.workersAssigned.length });
 
     const csvShifts = [];
+    debugger;
     userAssignedShifts.forEach((shift) => {
       shift.workersAssigned.forEach((user) => {
         csvShifts.push({
+          userId: user.id,
+          positionId: shift.positionByPositionId.id,
+          positionName: shift.positionByPositionId.positionName,
+          workplaceId: shift.workplaceByWorkplaceId.id,
+          workplaceName: shift.workplaceByWorkplaceId.workplaceName,
           firstName: user.firstName,
           lastName: user.lastName,
           weekday: moment(shift.startTime).format('dddd'),
@@ -151,6 +157,7 @@ class ShiftWeekTableComponent extends Week {
         })
       });
     });
+    debugger;
     // weekday: moment(shift.startTime).format('dddd'),
     return csvShifts;
   };

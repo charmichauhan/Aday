@@ -356,6 +356,7 @@ class ShiftPublishComponent extends Component {
           width={styles.drawer.width}
           open={this.state.isCreateShiftOpen}
           shift={this.state.drawerShift}
+          weekStart={start}
           handleSubmit={this.handleCreateSubmit}
           closeDrawer={this.closeDrawerAndModal} />
         <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />

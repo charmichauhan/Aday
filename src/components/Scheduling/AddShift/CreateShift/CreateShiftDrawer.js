@@ -18,7 +18,6 @@ import StartToEndTimePicker from './StartToEndTimePicker';
 import './select.css';
 
 const methodOptions = [{ key: 'standard', value: 'standard', text: 'Standard', disabled: true, selected: true }];
-const startDate = moment().startOf('week');
 
 const initialState = {
   shift: {
@@ -41,13 +40,20 @@ class DrawerHelper extends Component {
     let shift = { ...initialState.shift, ...props.shift };
     this.state = {
       ...initialState,
-      ...shift
+      ...shift,
+      weekStart: props.weekStart
     };
   }
 
   componentDidMount() {
     this.getWorkplaces();
     this.getPositions();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.weekStart.valueOf() !== this.props.weekStart.valueOf()) {
+      this.setState({ weekStart: nextProps.weekStart });
+    }
   }
 
   getWorkplaces = () => {
@@ -108,7 +114,7 @@ class DrawerHelper extends Component {
   render() {
 
     const { width, open } = this.props;
-    const { shift, workplaces, positions, workplaceId } = this.state;
+    const { shift, workplaces, positions, workplaceId, weekStart } = this.state;
     let positionOptions = [{ key: 'select', value: 0, text: 'Select Workplace'}];
     if (!workplaces) {
       return (<Loading />);
@@ -187,7 +193,7 @@ class DrawerHelper extends Component {
               <StartToEndTimePicker formCallBack={this.updateFormState} />
             </div>
             <div className="form-group">
-              <ShiftDaySelector startDate={startDate} formCallBack={this.updateFormState} />
+              <ShiftDaySelector startDate={weekStart} formCallBack={this.updateFormState} />
             </div>
             <div className="form-group">
               <NumberOfTeamMembers formCallBack={this.updateFormState} />

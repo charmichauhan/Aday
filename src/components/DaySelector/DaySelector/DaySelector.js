@@ -35,6 +35,12 @@ export default class DaySelector extends React.Component {
     //  formCallback({ selectedDays: selectedState });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.startDate.valueOf() !== this.props.startDate.valueOf()) {
+      this.setState({ startdate: nextProps.startDate });
+    }
+  }
+
   selectedDay(event) {
     const { callBack } = this.props;
     const cellId = $(event.target).data('cellid');

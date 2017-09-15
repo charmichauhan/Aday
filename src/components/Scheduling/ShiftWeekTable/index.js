@@ -89,7 +89,6 @@ class ShiftWeekTableComponent extends Week {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    debugger;
     if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
       this.props.setCSVData(this.csvData(nextProps));
     }
@@ -140,7 +139,7 @@ class ShiftWeekTableComponent extends Week {
     }).filter((shift) => { return shift.workersAssigned.length });
 
     const csvShifts = [];
-    debugger;
+
     userAssignedShifts.forEach((shift) => {
       shift.workersAssigned.forEach((user) => {
         csvShifts.push({
@@ -157,7 +156,7 @@ class ShiftWeekTableComponent extends Week {
         })
       });
     });
-    debugger;
+
     // weekday: moment(shift.startTime).format('dddd'),
     return csvShifts;
   };

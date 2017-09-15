@@ -119,7 +119,7 @@ class ScheduleComponent extends Component {
       Friday:'',
       Saturday:''
   });
-    debugger;
+
     //Riya
     // let sortedData = csvData.map((data) => ({ ...data, userId: data.userId }));
     // let groupedData = groupBy(sortedData, 'userId');
@@ -128,7 +128,7 @@ class ScheduleComponent extends Component {
     //     firstName: user[0].firstName,
     //     lastName: user[0].lastName,
     //   };
-    //   debugger;
+    //
     //   user.map((shift) => {
     //     const weekday = shift.weekday;
     //     obj[weekday] = moment(shift.startTime).format('h:mm A') + ' to ' + moment(shift.endTime).format('h:mm A');
@@ -146,7 +146,7 @@ class ScheduleComponent extends Component {
 
       if(foundWorker){
         displayCsvData[foundWorker][weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
-        debugger;
+
       }else {
         obj =
           {
@@ -154,7 +154,7 @@ class ScheduleComponent extends Component {
             firstName: value.firstName,
             lastName: value.lastName,
           };
-        debugger;
+
         obj[weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
         displayCsvData.push(obj);
       }

@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
 import $ from 'webpack-zepto';
-import NumberButton from '../../../NumberButton/NumberButton';
 import { List } from 'semantic-ui-react';
 import _ from 'lodash';
 
-export default class NumberOfTeamMembers extends Component {
+import NumberButton from '../../../NumberButton/NumberButton';
+
+const mins = [0, 15, 30, 45, 60, 90, 120, 150];
+
+export default class UnpaidBreakInMinutes extends Component {
   constructor(props) {
     super(props);
     this.selectValue = this.selectValue.bind(this);
     this.state = {
-      selectedValue: this.props.numRequested || ''
+      selectedValue: ''
     }
   }
 
   componentWillMount() {
     const { formCallBack } = this.props;
     const value = {
-      numberOfTeamMembers: this.state.selectedValue
+      unpaidBreakInMinutes: this.state.selectedValue
     };
     formCallBack(value);
   }
@@ -27,7 +30,7 @@ export default class NumberOfTeamMembers extends Component {
     const numberValue = $target.data('time-value');
     this.setState({ selectedValue: numberValue });
     const value = {
-      numberOfTeamMembers: numberValue
+      unpaidBreakInMinutes: numberValue
     };
     formCallBack(value);
   }
@@ -36,11 +39,11 @@ export default class NumberOfTeamMembers extends Component {
     const { selectedValue } = this.state;
     return (
       <div style={{ marginTop: '40px' }}>
-        <label className="text-uppercase blue-heading">NUMBER OF TEAM MEMBERS</label>
+        <label className="text-uppercase blue-heading">UNPAID BREAK IN MINUTES</label>
         <List horizontal style={{ marginTop: '-10px' }}>
           {
-            _.map(_.range(1, 12), (value) => {
-              const displayValue = value === 11 ? '+' : value;
+            _.map(mins, (value) => {
+              const displayValue = value > 120 ? '+' : value;
               const inputValue = String(value);
               const liKey = `number-button-li-${inputValue}`;
               const buttonKey = `number-button-${inputValue}`;

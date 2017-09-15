@@ -4,15 +4,17 @@ import moment from 'moment';
 
 import './DayCellButton.css';
 
-function DayCellButton({
-  daySubString,
-  cellId,
-  displayMonth,
-  displayDate,
-  fullDate,
-  selected,
-  onClick,
-}) {
+function DayCellButton(props) {
+  const {
+    daySubString,
+    cellId,
+    displayMonth,
+    displayDate,
+    fullDate,
+    selected,
+    onClick
+  } = props;
+
   const buttonClasses = classNames({
     'shift-modal-day-cell-button': true,
     selected,
@@ -22,18 +24,19 @@ function DayCellButton({
     console.log(fullDate.format());
     console.log(moment().format());
     console.log(moment().diff(fullDate, 'days'));
-    if (moment().diff(fullDate, 'days') <= 0){
-      onClick(e)
-    }
+    onClick(e);
+    // if (moment().diff(fullDate, 'days') <= 0) {
+    //
+    // }
   };
 
   return (
-    <div className="shift-modal-day-cell" onClick={filteredOnClick} >
+    <div className="shift-modal-day-cell" onClick={filteredOnClick}>
       <button type="button" className={buttonClasses} data-cellId={cellId} disabled={true}>
-        <p data-cellId={cellId} style={{width:'100%', height:'100%'}}>
-            {daySubString}
-          <br/>
-            {displayMonth} {displayDate}
+        <p data-cellId={cellId} style={{ width: '100%', height: '100%' }}>
+          {daySubString}
+          <br />
+          {displayMonth} {displayDate}
         </p>
       </button>
     </div>

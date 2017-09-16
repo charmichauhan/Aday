@@ -15,6 +15,19 @@
 	flex-direction: column;
 }
 
+.job-description {
+	background-color: white;
+	border-radius: 5px;
+	min-height: 100px;
+	padding: 20px;
+	font-family: Lato;
+	font-size: 16px;
+	box-shadow: 0.5px 0.5px 0.5px 0.5px #999;
+	display: flex;
+	flex-direction: column;
+	width: 1015px;
+}
+
 .workplace-brand-icon {
 	box-shadow: 1px 1px 1px 1px #999;
 	width: 100px;

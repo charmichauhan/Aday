@@ -13,7 +13,7 @@ import "fullcalendar-scheduler/dist/scheduler.css";
 import "fullcalendar-scheduler/dist/scheduler.js";
 import {gql, graphql} from "react-apollo";
 import {CSVLink} from "react-csv";
-import {groupBy} from "lodash";
+import {groupBy,findIndex} from "lodash";
 
 var Halogen = require('halogen');
 
@@ -136,26 +136,29 @@ class ScheduleComponent extends Component {
     //   displayCsvData.push(obj);
     // })
     // console.log('displayCsvData',displayCsvData);
-
+    // const position=[]
     csvData.forEach((value) => {
       const weekday = value.weekday;
 
       var obj ={};
 
-      let foundWorker = findIndex(displayCsvData, (displayCsvData) => displayCsvData.userId === value.id);
+      let foundWorker = findIndex(displayCsvData, (displayCsvData) => displayCsvData.userId === value.userId);
 
-      if(foundWorker){
+      if(foundWorker !== -1){
+
         displayCsvData[foundWorker][weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
 
       }else {
+
         obj =
           {
-            userId: value.id,
+            userId: value.userId,
             firstName: value.firstName,
             lastName: value.lastName,
           };
 
         obj[weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
+
         displayCsvData.push(obj);
       }
     });
@@ -245,7 +248,7 @@ class CustomToolbar extends Toolbar {
               <ul className="nav navbar-nav">
                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
                 {
-                  csvData && <CSVLink data={csvData}>Download CSV</CSVLink>
+                  csvData && <CSVLink data={csvData} filename={moment(new Date()).format('MM//DD//YYYY, H/:mm/:ss') + '.csv' }>Download CSV</CSVLink>
                 }
               </ul>
               <div className="maintitle">
@@ -299,25 +302,3 @@ const Schedule = graphql(allWeekPublisheds, {
 })(ScheduleComponent);
 
 export default Schedule
-
-var data = [{
-  "id": "1",
-  "firstName": "testManager",
-  "lastName": "testMAnager",
-  "Thursday": "12:02 AM to 9:10 PM"
-}, {
-  "id": "1",
-  "firstName": "testManager",
-  "lastName": "testMAnager",
-  "Friday": "12:02 AM to 9:10 PM"
-}, {
-  "id": "2",
-  "firstName": "Donald",
-  "lastName": "Trump",
-  "Friday": "12:02 AM to 9:10 PM"
-}, {
-  "id": "2",
-  "firstName": "Donald",
-  "lastName": "Trump",
-  "Saturday": "10:02 AM to 5:10 PM"
-}];

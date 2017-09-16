@@ -114,7 +114,6 @@ class ShiftWeekTableComponent extends Week {
 
   getUserById = (id, props) => {
     const users = props.allUsers;
-
     let foundWorker = find(users.allUsers.edges, (user) => user.node.id === id);
     if (!foundWorker) return null;
     return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
@@ -134,6 +133,7 @@ class ShiftWeekTableComponent extends Week {
   };
 
   csvData = (props) => {
+
     const userAssignedShifts =  props.data.allShifts.edges.map(({node}) => {
       return this.getShiftData(node, props);
     }).filter((shift) => { return shift.workersAssigned.length });

@@ -47,6 +47,17 @@ class MyWorkplace extends Component {
 							<WorkplaceMap address={this.props.data.workplaceById.address}/>
 							<WorkplacePhotos style={{marginRight:20}}/>
 						</div>
+
+						<div className="workplace-subheader" style={{paddingBottom:10}}>WORKPLACE DESCRIPTION</div>
+						<div>
+							<div className="workplace-description">
+								<span style={{flex:14}}>If you have a positive attitude and a love for learning, you may be interested in joining our team.</span>
+								<div style={{flex:1}}>
+									<Image className="workplace-edit-button" src="https://s3.us-east-2.amazonaws.com/aday-website/icons/edit-button.png"/>
+								</div>
+							</div>
+						</div>
+
 						<WorkplaceListings className="workplace-listings" />
 						<div className="workplace-subheader" style={{paddingBottom:10}}>WORKPLACE REVIEWS</div>
 						 <WorkplaceReviews className="workplace-reviews"/>

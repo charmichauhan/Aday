@@ -65,6 +65,14 @@
 
 }
 
+.workplace-card-group {
+	margin-left: 10px;
+}
+
+.workplace-card-spacing {
+	margin: 5px;
+}
+
 .workplace-listing-headers {
 	display: flex;
 	flex: 1;
@@ -76,8 +84,8 @@
 .workplace-listing-header {
 	color: #0022A1;
 	font-family: "Roboto Condensed";
-	font-size: 20px;
-	line-height: 22px;
+	font-size: 22px;
+	line-height: 24px;
 	font-weight: bold;
 	margin: 2px;
 }
@@ -109,6 +117,9 @@
 	border-top-color: #0021A1;
 	border-top: 1px;
 	font-size: 16px;
+	display: flex;
+	flex-direction: column;
+
 }
 
 .workplace-review{
@@ -116,7 +127,7 @@
     width: 675px;
     border: 0.5px solid #979797;
     border-radius: 5px;
-    background-color: #FFFFFF;
+    /*background-color: #FFFFFF;*/
 }
 
 .workplace  h1 {
@@ -148,7 +159,7 @@
     line-height: 60px;
 	font-weight: 400;
 	margin-top: 15px;
-	margin-bottom: 25px;
+	margin-bottom: 35px;
 }
 
 .choose-workplace-text {
@@ -179,8 +190,10 @@
 }
 
 .workplace-listing-card {
-	min-width: 400px;
+	min-width: 500px;
 	box-shadow: 5px 5px 5px 5px #4A4A4A;
+	margin: 0.25em, 0.25em !important;
+	cursor: pointer;
 }
 
 .select-workplace {
@@ -188,11 +201,119 @@
 	width: 500px;
 }
 
+.workplace-listing-footer-text {
+	height: 30px;
+    width: 700px;
+    color: #999999;
+    font-family: "Lato";
+    font-size: 14px;
+    line-height: 16px;
+	margin-left: 10px;
+}
+
 .horizontal-line {
 	min-height: 1px;
+	height: 1px;
 	background-color: #999;
-	min-width: 402px;
-	margin-left: -15px;
+	min-width: 502px;
+}
+
+.workplace-description {
+	background-color: white;
+	border-radius: 5px;
+	min-height: 100px;
+	padding: 20px;
+	font-family: Lato;
+	font-size: 16px;
+	box-shadow: 0.5px 0.5px 0.5px 0.5px #999;
+	display: flex;
+	flex-direction: row;
+	width: 1015px;
+}
+
+.workplace-edit-button {
+	cursor: pointer;
+}
+
+/*[class="workplace"] [class="active icon"], .four-star-rating{
+	background-color: #E33821 !important;
+	color: #FFF !important;
+	line-height: 1.45 !important;
+	border-radius: 3px !important;
+	width: 20px !important;
+	border-color: #FFF;
+	border-width: thick !important;
+}*/
+
+[class="workplace"] [class="icon"], .inactive-star-rating{
+	background-color: rgba(74, 74, 74, 0.25) !important;
+	color: #FFF !important;
+	line-height: 1.45 !important;
+	border-radius: 3px !important;
+	width: 20px !important;
+	border-color: #FFF;
+}
+
+/*
+[class="workplace"] [class="active icon"]:nth-last-child(1) {
+	background-color: rgb(227, 56, 33) !important;
+	color: #FFF !important;
+	line-height: 1.45 !important;
+	border-radius: 3px !important;
+	width: 20px !important;
+	border-color: #FFF;
+	border-width: thick !important;
+}
+
+[class="workplace"] [class="active icon"]:nth-last-child(2) {
+	background-color: rgba(227, 56, 33, 0.8) !important;
+	color: #FFF !important;
+	line-height: 1.45 !important;
+	border-radius: 3px !important;
+	width: 20px !important;
+	border-color: #FFF;
+	border-width: thick !important;
+}
+
+[class="workplace"] [class="active icon"]:nth-last-child(3) {
+	background-color: rgb(255, 144, 62) !important;
+	color: #FFF !important;
+	line-height: 1.45 !important;
+	border-radius: 3px !important;
+	width: 20px !important;
+	border-color: #FFF;
+	border-width: thick !important;
+}
+
+[class="workplace"] [class="active icon"]:nth-last-child(4) {
+	background-color: rgb(255, 191, 0) !important;
+	color: #FFF !important;
+	line-height: 1.45 !important;
+	border-radius: 3px !important;
+	width: 20px !important;
+	border-color: #FFF;
+	border-width: thick !important;
+}
+
+[class="workplace"] [class="active icon"]:nth-last-child(5)  {
+	background-color: rgb(243, 188, 119) !important;
+	color: #FFF !important;
+	line-height: 1.45 !important;
+	border-radius: 3px !important;
+	width: 20px !important;
+	border-color: #FFF;
+	border-width: thick !important;
+}*/
+
+[class="workplace"] [class="active icon"] {
+	/*background-color:  rgb(227, 56, 33) !important;*/
+	background-color:  rgb(227, 56, 33) !important;
+	color: #FFF !important;
+	line-height: 1.45 !important;
+	border-radius: 3px !important;
+	width: 20px !important;
+	border-color: #FFF;
+	border-width: thick !important;
 }
 
 /*

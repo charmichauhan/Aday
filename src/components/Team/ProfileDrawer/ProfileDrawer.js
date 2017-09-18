@@ -2,14 +2,15 @@ import React, {Component} from "react";
 import Drawer from "material-ui/Drawer";
 import IconButton from "material-ui/IconButton";
 import RaisedButton from "material-ui/RaisedButton";
-import {Image, Rating} from "semantic-ui-react";
+import {Image, Rating, Button} from "semantic-ui-react";
 import {find, pick} from "lodash";
 import {leftCloseButton} from "../../styles";
-import {graphql, compose} from "react-apollo";
+import {graphql, gql, compose} from "react-apollo";
 import TabPanel from "./TabPanel";
 import {userQuery, releventPositionsQuery, updateEmployeeById} from "../Team.graphql";
 import "../team.css";
 var Halogen = require('halogen');
+import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 
 const uuidv4 = require('uuid/v4');
 
@@ -17,9 +18,9 @@ class ProfileDrawerComponent extends Component {
   constructor(props){
     super(props);
     this.state = {
-      dayHour: 0,
-      weekHour: 0,
-      monthHour: 0,
+      dayHour: null,
+      weekHour: null,
+      monthHour: null,
       updated: false
       }
     }
@@ -36,16 +37,51 @@ class ProfileDrawerComponent extends Component {
       this.setState({ monthHour: event.target.value });
     }
 
+
+  showNotification = (message, type) => {
+    this.setState({
+      notify: true,
+      notificationType: type,
+      notificationMessage: message
+    });
+  };
+
+  hideNotification = () => {
+    this.setState({
+      notify: false,
+      notificationType: '',
+      notificationMessage: ''
+    });
+  }
+
     saveLimits(v){
+      let employeeInfo = {}
+      if (this.state.dayHour){
+        employeeInfo['dayHourLimit'] = this.state.dayHour
+      }
+      if (this.state.weekHour){
+        employeeInfo['weekHourLimit'] = this.state.weekHour
+      }
+      if (this.state.monthHour){
+        employeeInfo['monthHourLimit'] = this.state.monthHour
+      }
+    
       this.props.updateEmployee({
       variables: {
         id: v,
-        employeeInfo: { dayHourLimit: this.state.dayHour,
-                     weekHourLimit:  this.state.weekHour,
-                     monthHourLimit: this.state.monthHour  }
-          }
+        employeeInfo: employeeInfo
+        },
+          updateQueries: {
+              userById: (previousQueryResult, { mutationResult }) => {
+                      let employeeData = mutationResult.data.updateEmployeeById.employee
+                      previousQueryResult.userById.employeesByUserId.edges = [{ 'node': employeeData, '__typename': "EmployeesEdge" }]
+                      return {
+                        userById: previousQueryResult.userById
+                      };
+              },
+         },
         }).then(({ data }) => {
-              this.setState({ updated: true });
+              this.showNotification('Limits Updated Successfully.', NOTIFICATION_LEVELS.SUCCESS);
               console.log(data)
         })
       }
@@ -60,7 +96,7 @@ class ProfileDrawerComponent extends Component {
       open
     } = this.props;
 
-    if (this.props.userQuery.loading) {
+    if (this.props.userQuery.loading || this.props.releventPositionsQuery.loading) {
         return(<div><Halogen.BeatLoader color='#00A863'/></div>)
     }
 
@@ -102,15 +138,31 @@ class ProfileDrawerComponent extends Component {
                         <Image src="/images/Icons_Red_Cross.png" size="mini"/>
                      </IconButton>
 
-                     <span className="profile-title first-name-title">{userDetails.firstName}</span>
-                     &nbsp;&nbsp;
-                     <span className="profile-title last-name-title">{userDetails.lastName} </span>
+                         <span className="profile-title first-name-title" style={{marginLeft:50}}>{userDetails.firstName}</span>
+                         &nbsp;&nbsp;
+                         <span className="profile-title last-name-title">{userDetails.lastName} </span>
+
 
                      {userDetails.avatarUrl
                             ? <Image centered='true' size='small' shape='circular' className="profile-img" src={ userDetails.avatarUrl}/>
                             :  <Image centered='true' size='small' shape='circular' className="profile-img"
                                  src="https://s3.us-east-2.amazonaws.com/aday-website/anonymous-profile.png"/>
                      }
+
+                     <div className="drawer-right" style={{paddingTop:0, marginRight:0}}>
+
+                     <Button inverted style={{borderRadius:5}} color='red' onClick={this.props.openResumeDrawer}>RESUME</Button>
+
+                     {/*
+                        <RaisedButton
+                            label="RESUME"
+                            onClick={this.props.openResumeDrawer}
+                            backgroundColor="#E33821"
+                        />
+                    */}
+
+                    </div>
+
              </div>
          </div>
          <div className="heading-rating">
@@ -134,7 +186,7 @@ class ProfileDrawerComponent extends Component {
                      </div>
                      <div className="form-group monthly">
                          <label htmlFor="monthly" htmlFor="hourly-limits" className="text-uppercase">Max <span style={{color:'darkred'}}> Monthly </span> Hours</label>
-                         <input type="text" className="form-control" onChange={this.monthHour}placeholder={userDetails.employeesByUserId.edges[0].node.monthHourLimit}/>
+                         <input type="text" className="form-control" onChange={this.monthHour} placeholder={userDetails.employeesByUserId.edges[0].node.monthHourLimit}/>
                     </div>
                  </form>
              <div className="profile-drawer-content text-center">
@@ -150,25 +202,17 @@ class ProfileDrawerComponent extends Component {
              </div>
               <TabPanel
                 userDetails={userDetails}
+                releventPositionsQuery={this.props.releventPositionsQuery}
               />
          </div>
      </div>
-
         </div>
+          <Notifier hideNotification={this.hideNotification} notify={this.state.notify} notificationMessage={this.state.notificationMessage}
+                  notificationType={this.state.notificationType} />
       </Drawer>
     );
   };
 }
-
-/*
- * Removed from the pilot with Restaurant Associates
-<div className="drawer-right">
-                <RaisedButton label="RESUME" onClick={this.props.openResumeDrawer}/>
-              </div>
-          <div className="block-limit-btn text-center">
-            <button className="btn text-uppercase btn-default">Block {userDetails.firstName}</button>
-          </div>
-*/
 
 const ProfileDrawer = compose(
   graphql(userQuery, {
@@ -177,6 +221,16 @@ const ProfileDrawer = compose(
       variables: {
         id: ownProps.userId,
         corporationId: localStorage.getItem("corporationId")
+      }
+    })
+  }),
+  graphql(releventPositionsQuery, {
+    name: "releventPositionsQuery",
+    options: (ownProps) => ({
+      variables: {
+        corporationId: localStorage.getItem("corporationId"),
+        brandId: localStorage.getItem("brandId"),
+        userId:  ownProps.userId
       }
     })
   }),

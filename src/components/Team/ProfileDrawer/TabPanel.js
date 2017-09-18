@@ -16,7 +16,7 @@ export default class TabPanel extends Component {
   render() {
     const userDetails = this.props.userDetails;
     const releventPositionsQuery = this.props.releventPositionsQuery;
-    const releventfilteredPositions = this.props.releventfilteredPositions;
+
     return (
       <div>
         <Tabs type="card" defaultActiveKey="1">
@@ -25,8 +25,7 @@ export default class TabPanel extends Component {
         </span>} key="1">
             <TeamMemberPositionDetails
               userDetails = {userDetails}
-              releventPositionsQuery = {releventPositionsQuery}
-              releventfilteredPositions = {releventfilteredPositions}
+              releventPositionsQuery={releventPositionsQuery}
             />
           </TabPane>
           <TabPane tab={<span>

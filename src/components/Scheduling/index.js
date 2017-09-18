@@ -88,6 +88,7 @@ class ScheduleComponent extends Component {
  * @return {view} sets the state of currentView, which switches calendar view @see customEvent function
  */
   componentWillMount = () => {
+    debugger;
     if(this.props.location && this.props.location.viewName){
       if(this.props.location.viewName == "job"){
         viewName="Employee View";
@@ -103,10 +104,8 @@ class ScheduleComponent extends Component {
     that = this
   };
 
-
-
   getCSVData = (csvData) => {
-
+    debugger;
     let displayCsvData = [];
     displayCsvData.push({
       firstName:'',
@@ -137,31 +136,57 @@ class ScheduleComponent extends Component {
     // })
     // console.log('displayCsvData',displayCsvData);
     // const position=[]
+
+    // csvData.forEach((value) => {
+    //   const weekday = value.weekday;
+    //
+    //   var obj ={};
+    //
+    //   let foundWorker = findIndex(displayCsvData, (displayCsvData) => displayCsvData.userId === value.userId);
+    //
+    //   if(foundWorker !== -1){
+    //
+    //     displayCsvData[foundWorker][weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
+    //     delete displayCsvData[foundWorker].userId;
+    //
+    //   }else {
+    //
+    //     obj =
+    //       {
+    //         userId: value.userId,
+    //         firstName: value.firstName,
+    //         lastName: value.lastName,
+    //       };
+    //
+    //     obj[weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
+    //
+    //     delete obj.userId;
+    //     displayCsvData.push(obj);
+    //   }
+    // });
+
+    const displayData ={};
     csvData.forEach((value) => {
-      const weekday = value.weekday;
+      const userId =value.userId;
+      delete value.userId;
 
-      var obj ={};
-
-      let foundWorker = findIndex(displayCsvData, (displayCsvData) => displayCsvData.userId === value.userId);
-
-      if(foundWorker !== -1){
-
-        displayCsvData[foundWorker][weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
-
+      if(displayData[userId]){
+        ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach((day) => {
+          if (displayData[userId][day]) {
+            if (value[day]) {
+              value[day] = `${displayData[userId][day]} & ${value[day]}`;
+            } else {
+              value[day] = `${displayData[userId][day]}`;
+            }
+          }
+        });
+        Object.assign(displayData[userId] , value);
       }else {
-
-        obj =
-          {
-            userId: value.userId,
-            firstName: value.firstName,
-            lastName: value.lastName,
-          };
-
-        obj[weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
-
-        displayCsvData.push(obj);
+        displayData[userId] = value;
       }
     });
+    displayCsvData = displayCsvData.concat(Object.values(displayData));
+
     this.setState({ csvData: displayCsvData, dataReceived: true });
   };
 
@@ -248,7 +273,7 @@ class CustomToolbar extends Toolbar {
               <ul className="nav navbar-nav">
                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
                 {
-                  csvData && <CSVLink data={csvData} filename={moment(new Date()).format('MM//DD//YYYY, H/:mm/:ss') + '.csv' }>Download CSV</CSVLink>
+                  csvData && <CSVLink data={csvData} filename={moment(new Date()).format('MM/DD/YYYY, H:mm:ss') + '.csv' }>Download CSV</CSVLink>
                 }
               </ul>
               <div className="maintitle">

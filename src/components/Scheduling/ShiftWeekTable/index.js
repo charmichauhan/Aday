@@ -89,9 +89,10 @@ class ShiftWeekTableComponent extends Week {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
-      this.props.setCSVData(this.csvData(nextProps));
-    }
+      if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
+        this.props.setCSVData(this.csvData(nextProps));
+      }
+    debugger;
     this.setState({calendarView: this.props.eventPropGetter()});
   };
 
@@ -111,6 +112,7 @@ class ShiftWeekTableComponent extends Week {
     }
     return summaryDetail;
   };
+
 
   getUserById = (id, props) => {
     const users = props.allUsers;
@@ -141,18 +143,14 @@ class ShiftWeekTableComponent extends Week {
     const csvShifts = [];
 
     userAssignedShifts.forEach((shift) => {
+      const weekday = moment(shift.startTime).format('dddd');
+
       shift.workersAssigned.forEach((user) => {
         csvShifts.push({
           userId: user.id,
-          positionId: shift.positionByPositionId.id,
-          positionName: shift.positionByPositionId.positionName,
-          workplaceId: shift.workplaceByWorkplaceId.id,
-          workplaceName: shift.workplaceByWorkplaceId.workplaceName,
           firstName: user.firstName,
           lastName: user.lastName,
-          weekday: moment(shift.startTime).format('dddd'),
-          endTime: shift.endTime,
-          startTime: shift.startTime,
+          [weekday]: moment(shift.startTime).format('h:mm A') + ' to ' +moment(shift.endTime).format('h:mm A'),
         })
       });
     });
@@ -440,7 +438,8 @@ class ShiftWeekTableComponent extends Week {
                     data={jobData[value]}
                     key={value}
                     users={this.props.allUsers}
-                    view={this.state.calendarView} />
+                    view={this.state.calendarView}
+                  />
                 )
               )
               }

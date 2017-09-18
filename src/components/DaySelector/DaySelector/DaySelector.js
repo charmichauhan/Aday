@@ -75,8 +75,12 @@ export default class DaySelector extends React.Component {
     const startMoment = moment(startdate);
     const cells = _.map(_.range(tableSize), (i) => {
       const calDate = startMoment.clone().add(i, 'days');
+      let daySubString = getSubStringFromDayName(calDate.format('dddd'));
+      if (moment().format('DD-MM-YYYY') === calDate.format('DD-MM-YYYY')) {
+        daySubString = 'Today';
+      }
       return {
-        daySubString: getSubStringFromDayName(calDate.format('dddd')),
+        daySubString,
         displayMonth: getCapitalMonthName(calDate.format('MMM')),
         displayDate: calDate.format('D'),
         fullDate: calDate,
@@ -107,12 +111,12 @@ export default class DaySelector extends React.Component {
 
 DaySelector.propTypes = {
   tableSize: PropTypes.number.isRequired,
-  startDate: PropTypes.string.isRequired,
+  startDate: PropTypes.object.isRequired,
   selectedDate: PropTypes.string,
   //formCallback: PropTypes.func.isRequired,
 };
 
-/* Not using this right now, too many use cases
+/* Not using this right now, too many use case s
 
  <div style={{float:'left'}}>
  <SquareButton

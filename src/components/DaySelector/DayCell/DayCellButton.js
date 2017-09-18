@@ -34,9 +34,8 @@ function DayCellButton(props) {
     <div className="shift-modal-day-cell" onClick={filteredOnClick}>
       <button type="button" className={buttonClasses} data-cellId={cellId} disabled={true}>
         <p data-cellId={cellId} style={{ width: '100%', height: '100%' }}>
-          {daySubString}
-          <br />
-          {displayMonth} {displayDate}
+          <p data-cellId={cellId} className={daySubString === 'Today' && 'day-label-red' || 'day-label'}>{daySubString}</p>
+          <p data-cellId={cellId} className="month-date-label">{displayMonth} {displayDate}</p>
         </p>
       </button>
     </div>

@@ -14,6 +14,7 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import CreateShiftHelper from './CreateShiftHelper';
 import StartToEndTimePicker from './StartToEndTimePicker';
+// import StartToEndDatePicker from './StartToEndDatePicker';
 
 import './select.css';
 
@@ -22,6 +23,7 @@ const methodOptions = [{ key: 'standard', value: 'standard', text: 'Standard', d
 const initialState = {
   shift: {
     shiftMethod: 'standard',
+    recurringShift: 'none',
     tags: [],
     tagOptions: [],
     brandId: localStorage.getItem('brandId') || '',
@@ -54,6 +56,14 @@ class DrawerHelper extends Component {
     if (nextProps.weekStart.valueOf() !== this.props.weekStart.valueOf()) {
       this.setState({ weekStart: nextProps.weekStart });
     }
+    const workplaceId = localStorage.getItem('workplaceId');
+    if (workplaceId !== (this.state.shift && this.state.shift.workplaceId)) {
+      const shift = {
+        ...this.state.shift,
+        workplaceId
+      };
+      this.setState({ shift });
+    }
   }
 
   getWorkplaces = () => {
@@ -65,14 +75,8 @@ class DrawerHelper extends Component {
   getPositions = (workplaceId = this.state.workplaceId) => {
     if (workplaceId) {
       CreateShiftHelper.getRelevantPositions(workplaceId)
-        .then((positions) => {
-          debugger;
-          this.setState({ positions })
-        })
-        .catch(err => {
-          debugger;
-          console.error(err)
-        });
+        .then((positions) => this.setState({ positions }))
+        .catch(err => console.error(err));
     }
   };
 
@@ -96,10 +100,9 @@ class DrawerHelper extends Component {
       const hours = Math.floor(dataValue.unpaidBreakInMinutes / 60);
       let minutes = dataValue.unpaidBreakInMinutes % 60;
       if (minutes < 10){
-        minutes = 0 + minutes;
+        minutes = '0' + minutes;
       }
-      const finalTime = hours + ":" + minutes;
-      dataValue.unpaidBreak = finalTime;
+      dataValue.unpaidBreak = hours + ":" + minutes;
     }
     const shift = Object.assign(this.state.shift, dataValue);
     this.setState({ shift });
@@ -116,6 +119,7 @@ class DrawerHelper extends Component {
     const { width, open } = this.props;
     const { shift, workplaces, positions, workplaceId, weekStart } = this.state;
     let positionOptions = [{ key: 'select', value: 0, text: 'Select Workplace'}];
+
     if (!workplaces) {
       return (<Loading />);
     }
@@ -147,6 +151,15 @@ class DrawerHelper extends Component {
         disabled: true
       });
     }
+    const recurringOptions = [{
+      key: 'none',
+      value: 'none',
+      text: 'DOES NOT REPEAT',
+    }, {
+      key: 'weekly',
+      value: 'weekly',
+      text: 'WEEKLY',
+    }];
     return (
       <Drawer
         width={width}
@@ -193,13 +206,28 @@ class DrawerHelper extends Component {
               <StartToEndTimePicker formCallBack={this.updateFormState} />
             </div>
             <div className="form-group">
+              <label className="text-uppercase blue-heading">Recurring Shift</label>
+              <Dropdown
+                name="recurringShift"
+                onChange={(_, data) => this.handleChange({ target: data })}
+                value={shift.recurringShift}
+                fluid
+                selection
+                options={recurringOptions} />
+            </div>
+            <div className="form-group">
               <ShiftDaySelector startDate={weekStart} formCallBack={this.updateFormState} />
             </div>
+            {/*<div className="form-group">
+              <StartToEndDatePicker formCallBack={this.updateFormState} />
+            </div>*/}
             <div className="form-group">
               <NumberOfTeamMembers formCallBack={this.updateFormState} />
               <div className="performance-tagline">
-                <p>At maximum, <span className="color-green">4 employees</span> will report for this shift: 2 job
-                  trainers, 2 job shadowers</p>
+                <p>
+                  At maximum, <span className="color-green">{shift.numberOfTeamMembers * 2} employees </span>
+                  will report for this shift: {shift.numberOfTeamMembers || 0} job trainers, {shift.numberOfTeamMembers || 0} job shadowers
+                </p>
               </div>
             </div>
             <div className="form-group">

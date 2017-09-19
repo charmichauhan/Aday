@@ -15,8 +15,8 @@ export default class ShiftDaySelector extends Component {
     const tableSize = 7;
     const selectedDate = moment().format('MM-DD-YYYY');
     return (
-      <div>
-        <label className="text-uppercase blue-heading">Repeats On</label>
+      <div className="day-selector">
+        <label className="text-uppercase blue-heading">Repeat Shifts Weekly</label>
         <DaySelector
           tableSize={tableSize}
           startDate={this.props.startDate}

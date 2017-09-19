@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import $ from 'webpack-zepto';
 import NumberButton from '../../../NumberButton/NumberButton';
-import { List } from 'semantic-ui-react';
+import { List, Input } from 'semantic-ui-react';
 import _ from 'lodash';
+import validator from 'validator';
 
 export default class NumberOfTeamMembers extends Component {
   constructor(props) {
@@ -32,15 +33,32 @@ export default class NumberOfTeamMembers extends Component {
     formCallBack(value);
   }
 
+  setValue = (event) => {
+    const { formCallBack } = this.props;
+    const { value } = event.target;
+    let error;
+    if (value !== '' && !validator.isNumeric(value)) {
+      error = 'Value must be in integer';
+    }
+    formCallBack(value);
+    this.setState({ selectedValue: value, error });
+  };
+
   render() {
-    const { selectedValue } = this.state;
+
+    const { selectedValue, error } = this.state;
+
+    const getErrorClasses = (isError) => {
+      return `alert alert-danger fade ${isError ? 'in' : 'out'} alert-dismissable`;
+    };
+
     return (
-      <div style={{ marginTop: '40px' }}>
+      <div>
         <label className="text-uppercase blue-heading">NUMBER OF TEAM MEMBERS</label>
-        <List horizontal style={{ marginTop: '-10px' }}>
+        <List horizontal>
           {
-            _.map(_.range(1, 12), (value) => {
-              const displayValue = value === 11 ? '+' : value;
+            _.map(_.range(1, 8), (value) => {
+              const displayValue = value;
               const inputValue = String(value);
               const liKey = `number-button-li-${inputValue}`;
               const buttonKey = `number-button-${inputValue}`;
@@ -58,6 +76,10 @@ export default class NumberOfTeamMembers extends Component {
             })
           }
         </List>
+        <Input type='text' className="extra-min" value={selectedValue} onChange={this.setValue} />
+        <div style={{ display: error && 'block' || 'none' }} className={getErrorClasses(error)}>
+          <span>Value must be an integer</span>
+        </div>
       </div>
     );
   }

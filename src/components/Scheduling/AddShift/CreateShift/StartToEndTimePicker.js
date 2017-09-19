@@ -35,7 +35,7 @@ export default class StartToEndTimePicker extends Component {
     if (formCallBack) {
       const { startTime, startTimeValue, endTime, endTimeValue } = this.state;
       formCallBack({ startTime, endTime });
-      this.setState({ startTimeValueTop: startTimeValue, endTimeValueTop: endTimeValue });
+      this.setState({ startTimeValueTop: startTimeValue, endTimeValueTop: endTimeValue, showSelector: false });
     }
   };
 
@@ -63,11 +63,11 @@ export default class StartToEndTimePicker extends Component {
         </div>
         <div className="time-selector-display" style={{ display: showSelector ? 'block' : 'none' }}>
           <div className="time-wrapper">
-            <p style={{background: '#ffffff', paddingLeft: '10px'}}>{startTimeValue || 'Start'}</p>
+            <p style={{ background: '#ffffff', paddingLeft: '10px' }}>{startTimeValue || 'Start'}</p>
             <TimePicker getTime={(value) => this.handleTimeChange({ name: 'startTime', value })} />
           </div>
           <div className="time-wrapper">
-            <p style={{background: '#ffffff', paddingLeft: '10px'}}>{endTimeValue || 'End'}</p>
+            <p style={{ background: '#ffffff', paddingLeft: '10px' }}>{endTimeValue || 'End'}</p>
             <TimePicker getTime={(value) => this.handleTimeChange({ name: 'endTime', value })} />
           </div>
           <div className="time-actions-wrapper text-uppercase">
@@ -76,11 +76,11 @@ export default class StartToEndTimePicker extends Component {
               backgroundColor={colors.primaryRed}
               labelColor="#FFFFFF"
               labelStyle={{ fontWeight: 800 }}
-              style = {{ margin: '10px 0'}}
+              style={{ margin: '10px 0' }}
             />
             <div className="pull-right">
               <Button
-                style={{color: '#0022a1', background: 'transparent'}}
+                style={{ color: '#0022a1', background: 'transparent' }}
                 content='CANCEL'
                 onClick={this.toggleSelector}
               />
@@ -89,7 +89,7 @@ export default class StartToEndTimePicker extends Component {
                 backgroundColor={colors.primaryBlue}
                 labelColor="#FFFFFF"
                 labelStyle={{ fontWeight: 800 }}
-                style = {{ margin: '10px 0'}}
+                style={{ margin: '10px 0' }}
                 onClick={this.setCallbackData}
               />
             </div>

@@ -265,10 +265,7 @@ class ShiftPublishComponent extends Component {
     }).then(({ data }) => {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
       console.log('got data', data);
-    }).catch(err => {
-      debugger;
-      this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
-    });
+    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
   }
 
   render() {

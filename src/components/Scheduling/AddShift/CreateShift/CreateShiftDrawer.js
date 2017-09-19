@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
-import { Image, TextArea, Dropdown } from 'semantic-ui-react';
+import { Image, TextArea, Dropdown, Grid, Button } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
 import moment from 'moment';
 
@@ -168,92 +168,154 @@ class DrawerHelper extends Component {
         onRequestChange={this.closeShiftDrawer} open={open}>
         <div className="drawer-section edit-drawer-section">
           <div className="drawer-heading col-md-12">
-            <IconButton style={closeButton} onClick={this.closeShiftDrawer}>
+            <IconButton className="pull-left" style={closeButton} onClick={this.closeShiftDrawer}>
               <Image src='/images/Icons_Red_Cross.png' size="mini" />
             </IconButton>
             <h2 className="text-center text-uppercase">Add Hours</h2>
+            <Button className="pull-right advance-options">Advanced
+            </Button>
           </div>
           <div className="col-md-12 form-div edit-drawer-content">
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Scheduling Method</label>
-              <select disabled className="ui fluid dropdown add-shift-dropdown">
-                {methodOptions && methodOptions.map(option => <option {...option} >{option.text}</option>)}
-              </select>
-            </div>
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Workplace</label>
-              <Dropdown
-                name="workplaceId"
-                onChange={(_, data) => this.handleChange({ target: data })}
-                value={shift.workplaceId || 0}
-                fluid
-                selection
-                options={workplaceOptions} />
-            </div>
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Position</label>
-              <Dropdown
-                placeholder="Select Position"
-                name="positionId"
-                onChange={(_, data) => this.handleChange({ target: data })}
-                value={shift.positionId || 0}
-                fluid
-                selection
-                disabled={!positions}
-                options={positionOptions} />
-            </div>
-            <div className="form-group">
-              <StartToEndTimePicker formCallBack={this.updateFormState} />
-            </div>
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Recurring Shift</label>
-              <Dropdown
-                name="recurringShift"
-                onChange={(_, data) => this.handleChange({ target: data })}
-                value={shift.recurringShift}
-                fluid
-                selection
-                options={recurringOptions} />
-            </div>
-            <div className="form-group">
-              <ShiftDaySelector startDate={weekStart} formCallBack={this.updateFormState} />
-            </div>
-            {/*<div className="form-group">
-              <StartToEndDatePicker formCallBack={this.updateFormState} />
-            </div>*/}
-            <div className="form-group">
-              <NumberOfTeamMembers formCallBack={this.updateFormState} />
-              <div className="performance-tagline">
-                <p>
-                  At maximum, <span className="color-green">{shift.numberOfTeamMembers * 2} employees </span>
-                  will report for this shift: {shift.numberOfTeamMembers || 0} job trainers, {shift.numberOfTeamMembers || 0} job shadowers
-                </p>
-              </div>
-            </div>
-            <div className="form-group">
-              <UnpaidBreakInMinutes formCallBack={this.updateFormState} />
-            </div>
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Tags</label>
-              <Dropdown
-                multiple
-                name="tags"
-                fluid
-                placeholder='Add tags'
-                search
-                selection
-                allowAdditions
-                options={shift.tagOptions}
-                onChange={(_, data) => this.handleChange({ target: data })} />
-            </div>
-            <div className="form-group ui form">
-              <label className="text-uppercase blue-heading">Instructions</label>
-              <TextArea name="instructions" onChange={(_, data) => this.handleChange({ target: data })} rows="3" />
-            </div>
+            <Grid columns={2}>
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/scheduling-method.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <label className="text-uppercase blue-heading">Scheduling Method</label>
+                  <select disabled className="ui fluid dropdown add-shift-dropdown">
+                    {methodOptions && methodOptions.map(option => <option {...option} >{option.text}</option>)}
+                  </select>
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/workplace.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <label className="text-uppercase blue-heading">Workplace</label>
+                  <Dropdown
+                    name="workplaceId"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={shift.workplaceId || 0}
+                    fluid
+                    selection
+                    options={workplaceOptions} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/certification.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <label className="text-uppercase blue-heading">Position</label>
+                  <Dropdown
+                    placeholder="Select Position"
+                    name="positionId"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={shift.positionId || 0}
+                    fluid
+                    selection
+                    disabled={!positions}
+                    options={positionOptions} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/shift-time.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <StartToEndTimePicker formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/repeating-shifts.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <label className="text-uppercase blue-heading">Recurring Shift</label>
+                  <Dropdown
+                    name="recurringShift"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={shift.recurringShift}
+                    fluid
+                    selection
+                    options={recurringOptions} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/shift-date.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <ShiftDaySelector startDate={weekStart} formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/team-members.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <NumberOfTeamMembers formCallBack={this.updateFormState} />
+                  <div className="performance-tagline">
+                    <p>
+                      At maximum, <span className="color-green">{shift.numberOfTeamMembers * 2} employees </span>
+                      will report for this shift: {shift.numberOfTeamMembers || 0} job trainers, {shift.numberOfTeamMembers || 0} job shadowers
+                    </p>
+                  </div>
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/scheduled-break.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <UnpaidBreakInMinutes formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/tags.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <label className="text-uppercase blue-heading">Tags</label>
+                  <Dropdown
+                    multiple
+                    name="tags"
+                    fluid
+                    placeholder='Add tags'
+                    search
+                    selection
+                    allowAdditions
+                    options={shift.tagOptions}
+                    onChange={(_, data) => this.handleChange({ target: data })} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/instructions.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <label className="text-uppercase blue-heading">Instructions</label>
+                  <TextArea className="form-control" name="instructions" onChange={(_, data) => this.handleChange({ target: data })} rows="3" />
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
-                <CircleButton handleClick={() => this.handleShiftSubmit(shift)} type="blue" title="Add Shift" />
+                <CircleButton type="green" title="Assign Shift" />
+                <CircleButton handleClick={() => this.handleShiftSubmit(shift)} type="blue" title="Add Hours" />
               </div>
             </div>
           </div>

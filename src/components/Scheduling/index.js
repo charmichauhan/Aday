@@ -1,19 +1,21 @@
 import React, {Component} from "react";
 import moment from "moment";
 import BigCalendar from "react-big-calendar";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import Toolbar from "react-big-calendar/lib/Toolbar";
-import ShiftWeekTable from "./ShiftWeekTable";
-import "./style.css";
+import {gql, graphql} from "react-apollo";
+import {CSVLink} from "react-csv";
+import {groupBy,findIndex, cloneDeep} from "lodash";
 import {Modal} from "semantic-ui-react";
+import Toolbar from "react-big-calendar/lib/Toolbar";
+import json2csv from 'json2csv';
+import ShiftWeekTable from "./ShiftWeekTable";
 import ShiftPublish from "./ShiftWeekTable/ShiftPublish";
+
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import "fullcalendar/dist/fullcalendar.min.css";
 import "fullcalendar/dist/fullcalendar.min.js";
 import "fullcalendar-scheduler/dist/scheduler.css";
 import "fullcalendar-scheduler/dist/scheduler.js";
-import {gql, graphql} from "react-apollo";
-import {CSVLink} from "react-csv";
-import {groupBy,findIndex} from "lodash";
+import "./style.css";
 
 var Halogen = require('halogen');
 
@@ -51,11 +53,12 @@ class ScheduleComponent extends Component {
             redirect:false,
             view:"job",
             date: moment(this.props.match.params.date) ||  moment(),
+          dataReceived: true
         }
     }
 
   onNavigate = (start) => {
-    this.setState({date: start, dataReceived: false })
+    this.setState({date: start})
 
   };
 
@@ -77,7 +80,9 @@ class ScheduleComponent extends Component {
       this.setState({view:currentView});
     }
   };
-
+  csvDataDownload = () => {
+    this.setState({ dataReceived:false });
+  };
   onViewChange = () =>{
     return this.state.view;
   };
@@ -88,7 +93,6 @@ class ScheduleComponent extends Component {
  * @return {view} sets the state of currentView, which switches calendar view @see customEvent function
  */
   componentWillMount = () => {
-    debugger;
     if(this.props.location && this.props.location.viewName){
       if(this.props.location.viewName == "job"){
         viewName="Employee View";
@@ -105,11 +109,11 @@ class ScheduleComponent extends Component {
   };
 
   getCSVData = (csvData) => {
-    debugger;
     let displayCsvData = [];
     displayCsvData.push({
-      firstName:'',
-      lastName:'',
+      FirstName:'',
+      LastName:'',
+      PositionName:'',
       Sunday:'',
       Monday:'',
       Tuesday:'',
@@ -119,75 +123,51 @@ class ScheduleComponent extends Component {
       Saturday:''
   });
 
-    //Riya
-    // let sortedData = csvData.map((data) => ({ ...data, userId: data.userId }));
-    // let groupedData = groupBy(sortedData, 'userId');
-    // Object.values(groupedData).map((user) => {
-    //   var obj = {
-    //     firstName: user[0].firstName,
-    //     lastName: user[0].lastName,
-    //   };
-    //
-    //   user.map((shift) => {
-    //     const weekday = shift.weekday;
-    //     obj[weekday] = moment(shift.startTime).format('h:mm A') + ' to ' + moment(shift.endTime).format('h:mm A');
-    //   })
-    //   displayCsvData.push(obj);
-    // })
-    // console.log('displayCsvData',displayCsvData);
-    // const position=[]
-
-    // csvData.forEach((value) => {
-    //   const weekday = value.weekday;
-    //
-    //   var obj ={};
-    //
-    //   let foundWorker = findIndex(displayCsvData, (displayCsvData) => displayCsvData.userId === value.userId);
-    //
-    //   if(foundWorker !== -1){
-    //
-    //     displayCsvData[foundWorker][weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
-    //     delete displayCsvData[foundWorker].userId;
-    //
-    //   }else {
-    //
-    //     obj =
-    //       {
-    //         userId: value.userId,
-    //         firstName: value.firstName,
-    //         lastName: value.lastName,
-    //       };
-    //
-    //     obj[weekday] = moment(value.startTime).format('h:mm A') + ' to ' + moment(value.endTime).format('h:mm A');
-    //
-    //     delete obj.userId;
-    //     displayCsvData.push(obj);
-    //   }
-    // });
-
     const displayData ={};
     csvData.forEach((value) => {
-      const userId =value.userId;
+      const userId = value.userId;
+      const positionId = value.positionId;
       delete value.userId;
+      delete value.positionId;
 
-      if(displayData[userId]){
-        ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach((day) => {
-          if (displayData[userId][day]) {
-            if (value[day]) {
-              value[day] = `${displayData[userId][day]} & ${value[day]}`;
-            } else {
-              value[day] = `${displayData[userId][day]}`;
+      if(displayData[positionId]) {
+        if (displayData[positionId][userId]) {
+          ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach((day) => {
+            if (displayData[positionId][userId][day]) {
+              if (value[day]) {
+                value[day] = `${displayData[positionId][userId][day]} & ${value[day]}`;
+              } else {
+                value[day] = `${displayData[positionId][userId][day]}`;
+              }
             }
-          }
-        });
-        Object.assign(displayData[userId] , value);
-      }else {
-        displayData[userId] = value;
-      }
-    });
-    displayCsvData = displayCsvData.concat(Object.values(displayData));
+          });
+          Object.assign(displayData[positionId][userId], value);
+        } else {
 
+          displayData[positionId][userId] = value;
+        }
+      }else{
+        var objuser = {};
+        objuser[userId]=value;
+        displayData[positionId] = objuser;
+      }
+
+    });
+    Object.values(displayData).map((value)=>{
+      displayCsvData = displayCsvData.concat(Object.values(value));
+    })
     this.setState({ csvData: displayCsvData, dataReceived: true });
+
+    if(!this.state.dataReceived){
+
+      var result = json2csv({ data: displayCsvData });
+
+      var hiddenElement = document.createElement('a');
+      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(result);
+      hiddenElement.target = '_blank';
+      hiddenElement.download = moment(new Date()).format('MM/DD/YYYY, H:mm:ss') + '.csv';
+      hiddenElement.click();
+    }
   };
 
   render() {
@@ -256,6 +236,7 @@ class ScheduleComponent extends Component {
 class CustomToolbar extends Toolbar {
 
   render() {
+    // const { csvData } = this.state;
     let month = moment(this.props.date).format("MMMM YYYY");
     return (
       <div>
@@ -272,9 +253,7 @@ class CustomToolbar extends Toolbar {
               </div>
               <ul className="nav navbar-nav">
                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
-                {
-                  csvData && <CSVLink data={csvData} filename={moment(new Date()).format('MM/DD/YYYY, H:mm:ss') + '.csv' }>Download CSV</CSVLink>
-                }
+                <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.csvDataDownload()}>Download CSV</button>
               </ul>
               <div className="maintitle">
                 {month}

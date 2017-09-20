@@ -92,7 +92,6 @@ class ShiftWeekTableComponent extends Week {
       if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
         this.props.setCSVData(this.csvData(nextProps));
       }
-    debugger;
     this.setState({calendarView: this.props.eventPropGetter()});
   };
 
@@ -137,7 +136,7 @@ class ShiftWeekTableComponent extends Week {
   csvData = (props) => {
 
     const userAssignedShifts =  props.data.allShifts.edges.map(({node}) => {
-      return this.getShiftData(node, props);
+        return this.getShiftData(node, props);
     }).filter((shift) => { return shift.workersAssigned.length });
 
     const csvShifts = [];
@@ -148,15 +147,16 @@ class ShiftWeekTableComponent extends Week {
       shift.workersAssigned.forEach((user) => {
         csvShifts.push({
           userId: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
+          positionId: shift.positionByPositionId.id,
+          PositionName: shift.positionByPositionId.positionName,
+          FirstName: user.firstName,
+          LastName: user.lastName,
           [weekday]: moment(shift.startTime).format('h:mm A') + ' to ' +moment(shift.endTime).format('h:mm A'),
+
         })
       });
     });
-
-    // weekday: moment(shift.startTime).format('dddd'),
-    return csvShifts;
+  return csvShifts;
   };
 
   getDataEmployeeView = (workplaceId, data, allUsers) => {
@@ -438,8 +438,7 @@ class ShiftWeekTableComponent extends Week {
                     data={jobData[value]}
                     key={value}
                     users={this.props.allUsers}
-                    view={this.state.calendarView}
-                  />
+                    view={this.state.calendarView}/>
                 )
               )
               }
@@ -449,7 +448,7 @@ class ShiftWeekTableComponent extends Week {
                 data={jobData['Open Shifts']}
                 key={'Open Shifts'}
                 users={this.props.allUsers}
-                view={this.state.calendarView} />
+                view={this.state.calendarView}/>
               }
             </TableBody>
             <TableFooter adjustForCheckbox={false}>

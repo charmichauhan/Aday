@@ -6,6 +6,10 @@ import DayCellButton from '../DayCell/DayCellButton';
 import SquareButton from '../SquareButton/SquareButton';
 import{ getSubStringFromDayName, getCapitalMonthName } from './utility';
 
+/**
+ * [DaySelector description]
+ * @todo "today" to show up in red text
+ */
 export default class DaySelector extends React.Component {
 
   constructor(props) {

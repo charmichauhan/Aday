@@ -1,3 +1,7 @@
+div.ui.fluid.selection.dropdown:hover, .shift-section .time-selector-wrapper .label-wrapper:hover, input:hover, textarea:hover  {
+    border-color: #49a9ee !important;
+}
+
 .sectionTest .Select-input input {
   width: 600% !important;
   margin-left: -11px !important;
@@ -16,6 +20,8 @@
 
 .blue-heading {
   color: #2200a1;
+  margin-top: 10px;
+  margin-bottom: 15px;
   font-size: 18px;
   font-family: "Roboto Condensed";
   font-weight: 500;
@@ -64,11 +70,17 @@
 
 .shift-modal-day-cell .day-label {
   margin-bottom: 2px;
-  color: #4A4A4A;
+  color: #423A3F;
+  font-family: "Varela Round";
+  font-size: 18px;
+  font-weight: normal;
 }
 
 .shift-modal-day-cell .day-label-red {
   color: #e33821;
+  font-weight: normal !important;
+  font-size: 20px !important;
+  font-family: "Varela Round";
   margin: 0 auto;
 }
 
@@ -90,4 +102,3 @@
 .shift-modal-day-cell .shift-modal-day-cell-button.selected .day-label {
   color: #ffffff;
 }
-

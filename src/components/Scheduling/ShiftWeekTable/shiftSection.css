@@ -109,6 +109,7 @@
   margin: 0 auto;
 }
 
+/* Spacing between day selector buttons */
 .edit-drawer-section .edit-drawer-content .shift-modal-day-cell .shift-modal-day-cell-button {
   margin: 0 5px;
 }

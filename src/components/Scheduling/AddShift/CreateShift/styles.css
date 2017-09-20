@@ -1,3 +1,17 @@
+/* duplicate CSS code below, see ProfileDrawer.js profile-drawer-title-cross-training */
+.drawer-title {
+    height: 35px;
+    color: #FFFFFF;
+    font-family: "Roboto Condensed";
+    font-size: 24px;
+    line-height: 26px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 100;
+    flex: 20;
+    align-self: center;
+}
+
 .add-shift-modal {
   z-index:1;
   padding-top:100px;
@@ -184,4 +198,71 @@ div.tab button.active{
 
 .default {
   color: "#838890" !important;
+}
+
+.time-actions-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    height: 35px;
+}
+
+.left-picker-group {
+    flex: 8;
+    float: left;
+    height: 20px;
+    width: 45px;
+    align-self: center;
+    justify-content: center;
+}
+
+.now-picker-button {
+    height: 20px;
+    width: 45px;
+    border-color: transparent;
+    text-align: center !important;
+    border-radius: 4px !important;
+    background-color: #E33821 !important;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5) !important;
+    font-size: 14px !important;
+    font-weight: bold;
+    font-family: Lato !important;
+    color: #FFFFFF !important;
+}
+
+.right-picker-group {
+    display: flex;
+    flex-direction: row;
+    flex: 2;
+    float: right;
+    justify-content: space-around;
+    align-content: center;
+}
+
+.cancel-picker-button {
+    height: 18px;
+    width: 55px;
+    color: #0000EE;
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 18px;
+    border-color: transparent;
+    background-color: transparent;
+    margin-right: 15px;
+}
+
+.ok-picker-button {
+    height: 20px;
+    width: 45px;
+    border-color: transparent;
+    text-align: center !important;
+    font-weight: bold;
+    border-radius: 4px !important;
+    background-color: #2200A1 !important;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5) !important;
+    font-size: 14px !important;
+    font-family: Lato !important;
+    color: #FFFFFF !important;
+
 }

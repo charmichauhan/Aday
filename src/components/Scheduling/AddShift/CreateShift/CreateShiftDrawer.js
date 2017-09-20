@@ -4,7 +4,6 @@ import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Image, TextArea, Dropdown, Grid, Button } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
-
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
 import Loading from '../../../helpers/Loading';
@@ -14,7 +13,6 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import CreateShiftHelper from './CreateShiftHelper';
 import StartToEndTimePicker from './StartToEndTimePicker';
-// import StartToEndDatePicker from './StartToEndDatePicker';
 
 import './select.css';
 
@@ -130,7 +128,7 @@ class DrawerHelper extends Component {
 
     const { width, open, handleAdvance } = this.props;
     const { shift, workplaces, positions, workplaceId, weekStart } = this.state;
-    let positionOptions = [{ key: 'select', value: 0, text: 'Select Workplace'}];
+    let positionOptions = [{ key: 'select', value: 0, text: 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS'}];
 
     if (!workplaces) {
       return (<Loading />);
@@ -151,7 +149,7 @@ class DrawerHelper extends Component {
       positionOptions.unshift({
         key: 'selected',
         value: 0,
-        text: 'Select Position',
+        text: 'CHOOSE POSITION',
         disabled: true
       });
     }
@@ -159,18 +157,18 @@ class DrawerHelper extends Component {
       workplaceOptions.unshift({
         key: 'selected',
         value: 0,
-        text: 'Select Workplace',
+        text: 'CHOOSE WORKPLACE',
         disabled: true
       });
     }
     const recurringOptions = [{
       key: 'none',
       value: 'none',
-      text: 'DOES NOT REPEAT',
+      text: 'NO',
     }, {
       key: 'weekly',
       value: 'weekly',
-      text: 'WEEKLY',
+      text: 'YES – SHIFT DAYS AND TIME REPEAT WEEKLY',
     }];
     return (
       <Drawer
@@ -179,32 +177,45 @@ class DrawerHelper extends Component {
         docked={false}
         onRequestChange={this.closeShiftDrawer} open={open}>
         <div className="drawer-section edit-drawer-section">
-          <div className="drawer-heading col-md-12">
-            <IconButton className="pull-left" style={closeButton} onClick={this.closeShiftDrawer}>
-              <Image src='/images/Icons_Red_Cross.png' size="mini" />
-            </IconButton>
-            <h2 className="text-center text-uppercase">Add Hours</h2>
-            <Button className="pull-right advance-options" onClick={handleAdvance}>Advanced</Button>
+          <div className="drawer-heading col-md-12"style={{display:'flex', flexDirection:'row'}}>
+
+            <div style={{flex:3, alignSelf:'center', marginLeft:5}}>
+              <IconButton className="pull-left" style={closeButton} onClick={this.closeShiftDrawer}>
+                <Image src='/images/Icons_Red_Cross.png' size="mini" />
+              </IconButton>
+            </div>
+
+            <div style={{flex:10, alignSelf:'center'}}>
+              <span className="drawer-title">Add Hours</span>
+            </div>
+
+            <div style={{flex:3, alignSelf:'center'}}>
+              <Button inverted style={{borderRadius:5}} onClick={handleAdvance} color='red'>Advanced</Button>
+            </div>
           </div>
+
           <div className="col-md-12 form-div edit-drawer-content">
             <Grid columns={2}>
               <Grid.Row>
-                <Grid.Column width={2}>
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
                   <Image src="/assets/Icons/scheduling-method.png" size="mini" className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Scheduling Method</label>
+                  <Dropdown placeholder='STANDARD' fluid selection disabled style={{cursor:'notAllowed'}}/>
+                  {/*
                   <select disabled className="ui fluid dropdown add-shift-dropdown">
                     {methodOptions && methodOptions.map(option => <option {...option} >{option.text}</option>)}
                   </select>
+                  */}
                 </Grid.Column>
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <Image src="/assets/Icons/workplace.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/workplace.png" style={{width:33, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Workplace</label>
                   <Dropdown
                     name="workplaceId"
@@ -217,10 +228,10 @@ class DrawerHelper extends Component {
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <Image src="/assets/Icons/certification.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/certification.png" style={{width:25, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Position</label>
                   <Dropdown
                     placeholder="Select Position"
@@ -235,20 +246,20 @@ class DrawerHelper extends Component {
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <Image src="/assets/Icons/shift-time.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/shift-time.png" style={{width:33, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
                   <StartToEndTimePicker formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <Image src="/assets/Icons/repeating-shifts.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/repeating-shifts.png" style={{width:32, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
-                  <label className="text-uppercase blue-heading">Recurring Shift</label>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
+                  <label className="text-uppercase blue-heading">Repeat Shift Weekly?</label>
                   <Dropdown
                     name="recurringShift"
                     onChange={(_, data) => this.handleChange({ target: data })}
@@ -260,19 +271,20 @@ class DrawerHelper extends Component {
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <Image src="/assets/Icons/shift-date.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/shift-date.png" style={{width:31, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
+                  <label className="text-uppercase blue-heading">SHIFT DATE</label>
                   <ShiftDaySelector isRecurring={shift.recurringShift !== 'none'} startDate={weekStart} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <Image src="/assets/Icons/team-members.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/team-members.png" style={{width:30, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
                   <NumberOfTeamMembers formCallBack={this.updateFormState} />
                   <div className="performance-tagline">
                     <p>
@@ -284,29 +296,29 @@ class DrawerHelper extends Component {
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-  7                <Image src="/assets/Icons/scheduled-break.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/scheduled-break.png" style={{width:29, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
                   <UnpaidBreakInMinutes formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <Image src="/assets/Icons/add-user.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/add-user.png" style={{width:30, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
                   <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'} onClick={this.handleAddTeamMember} />
                 </Grid.Column>
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <Image src="/assets/Icons/tags.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/tags.png" style={{width:30, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Tags</label>
                   <Dropdown
                     multiple
@@ -322,10 +334,10 @@ class DrawerHelper extends Component {
               </Grid.Row>
 
               <Grid.Row>
-                <Grid.Column width={2}>
-                  <Image src="/assets/Icons/instructions.png" size="mini" className="display-inline" />
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/instructions.png" style={{width:30, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14}>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Instructions</label>
                   <TextArea className="form-control" name="instructions" onChange={(_, data) => this.handleChange({ target: data })} rows="3" />
                 </Grid.Column>

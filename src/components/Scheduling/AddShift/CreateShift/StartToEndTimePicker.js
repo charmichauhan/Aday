@@ -35,7 +35,7 @@ export default class StartToEndTimePicker extends Component {
     if (formCallBack) {
       const { startTime, startTimeValue, endTime, endTimeValue } = this.state;
       formCallBack({ startTime, endTime });
-      this.setState({ startTimeValueTop: startTimeValue, endTimeValueTop: endTimeValue, showSelector: false });
+      this.setState({ startTimeValueTop: startTimeValue, endTimeValueTop: endTimeValue, showSelector: false, showSelector: !this.state.showSelector });
     }
   };
 
@@ -50,13 +50,12 @@ export default class StartToEndTimePicker extends Component {
         <div className="time-wrapper">
           <label className="text-uppercase blue-heading">Start Time</label>
         </div>
-        <div className="time-wrapper">
+        <div className="time-wrapper" style={{marginLeft:-10}}>
           <label className="text-uppercase blue-heading">End Time</label>
         </div>
         <div className="label-wrapper" onClick={this.toggleSelector}>
-          <p>{startTimeValueTop || 'Start'}</p>
-          <p className="text-center">to</p>
-          <p>{endTimeValueTop || 'End'}</p>
+          <p>{startTimeValueTop || 'When does this shift start?'}</p>
+          <p>{endTimeValueTop || 'When does this shift end?'}</p>
           <p>
             <i className="fa fa-clock-o" />
           </p>
@@ -71,27 +70,16 @@ export default class StartToEndTimePicker extends Component {
             <TimePicker getTime={(value) => this.handleTimeChange({ name: 'endTime', value })} />
           </div>
           <div className="time-actions-wrapper text-uppercase">
-            <RaisedButton
-              label="NOW"
-              backgroundColor={colors.primaryRed}
-              labelColor="#FFFFFF"
-              labelStyle={{ fontWeight: 800 }}
-              style={{ margin: '10px 0' }}
-            />
-            <div className="pull-right">
-              <Button
-                style={{ color: '#0022a1', background: 'transparent' }}
-                content='CANCEL'
-                onClick={this.toggleSelector}
-              />
-              <RaisedButton
-                label="OK"
-                backgroundColor={colors.primaryBlue}
-                labelColor="#FFFFFF"
-                labelStyle={{ fontWeight: 800 }}
-                style={{ margin: '10px 0' }}
-                onClick={this.setCallbackData}
-              />
+            <div className="left-picker-group">
+                <button className="now-picker-button" >NOW</button>
+            </div>
+            <div className="right-picker-group">
+                <div style={{alignSelf:'center'}}>
+                    <button className="cancel-picker-button" onClick={this.toggleSelector}>CANCEL</button>
+                </div>
+                <div style={{alignSelf:'center'}}>
+                    <button className="ok-picker-button" onClick={this.setCallbackData}>OK</button>
+                </div>
             </div>
           </div>
         </div>

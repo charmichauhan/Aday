@@ -79,7 +79,7 @@ export default class UnpaidBreakInMinutes extends Component {
             })
           }
         </List>
-        <Input type='text' className="extra-min" value={selectedValue} onChange={this.setValue} />
+        <Input type='text' className="extra-min" value={selectedValue} onChange={this.setValue} style={{textAlign:'center', fontSize:17}}/>
         <div style={{ display: error && 'block' || 'none' }} className={getErrorClasses(error)}>
           <span>Value must be an integer</span>
         </div>

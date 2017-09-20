@@ -59,7 +59,6 @@ class ScheduleComponent extends Component {
 
   onNavigate = (start) => {
     this.setState({date: start})
-
   };
 
   /**
@@ -293,6 +292,16 @@ const allWeekPublisheds = gql
             published
             start
             end
+            workplacePublishedsByWeekPublishedId
+            {
+              edges{
+                node{
+                  workplaceId
+                  published
+                  id
+                }
+              }
+            }
         }
     }
 }`

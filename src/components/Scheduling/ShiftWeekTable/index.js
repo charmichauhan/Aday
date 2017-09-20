@@ -123,13 +123,12 @@ class ShiftWeekTableComponent extends Week {
   getShiftData = (shiftValue, props) => {
     const shift = {...shiftValue};
     if (!shift.workersAssigned) shift.workersAssigned = [];
-    shift.workersAssigned = shift.workersAssigned.map(worker => {
-      if (typeof worker === 'string') {
-        return this.getUserById(worker, props);
-      }
-      return null;
-    });
-
+      shift.workersAssigned = shift.workersAssigned.map(worker => {
+        if (typeof worker === 'string') {
+          return this.getUserById(worker, props);
+        }
+        return null;
+      });
     return shift;
   };
 
@@ -144,19 +143,35 @@ class ShiftWeekTableComponent extends Week {
     userAssignedShifts.forEach((shift) => {
       const weekday = moment(shift.startTime).format('dddd');
 
-      shift.workersAssigned.forEach((user) => {
-        csvShifts.push({
-          userId: user.id,
-          positionId: shift.positionByPositionId.id,
-          PositionName: shift.positionByPositionId.positionName,
-          FirstName: user.firstName,
-          LastName: user.lastName,
-          [weekday]: moment(shift.startTime).format('h:mm A') + ' to ' +moment(shift.endTime).format('h:mm A'),
+      if (localStorage.getItem('workplaceId') != '') {
+        if (localStorage.getItem('workplaceId') == shift.workplaceByWorkplaceId.id) {
+          shift.workersAssigned.forEach((user) => {
+            csvShifts.push({
+              userId: user.id,
+              positionId: shift.positionByPositionId.id,
+              PositionName: shift.positionByPositionId.positionName,
+              FirstName: user.firstName,
+              LastName: user.lastName,
+              [weekday]: moment(shift.startTime).format('h:mm A') + ' to ' +moment(shift.endTime).format('h:mm A'),
 
-        })
-      });
+            })
+          });
+        }
+      }else {
+        shift.workersAssigned.forEach((user) => {
+          csvShifts.push({
+            userId: user.id,
+            positionId: shift.positionByPositionId.id,
+            PositionName: shift.positionByPositionId.positionName,
+            FirstName: user.firstName,
+            LastName: user.lastName,
+            [weekday]: moment(shift.startTime).format('h:mm A') + ' to ' +moment(shift.endTime).format('h:mm A'),
+
+          })
+        });
+      }
     });
-  return csvShifts;
+  return csvShifts;1
   };
 
   getDataEmployeeView = (workplaceId, data, allUsers) => {

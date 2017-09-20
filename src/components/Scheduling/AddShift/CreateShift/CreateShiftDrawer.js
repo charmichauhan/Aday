@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import { Image, TextArea, Dropdown, Grid, Button } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
-import moment from 'moment';
 
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
@@ -64,6 +64,14 @@ class DrawerHelper extends Component {
       };
       this.setState({ shift });
     }
+    if (nextProps.open !== this.props.open) {
+      this.setState((state) => ({
+        shift: {
+          ...state.shift,
+          advance: state.shift.advance
+        }
+      }));
+    }
   }
 
   getWorkplaces = () => {
@@ -87,6 +95,10 @@ class DrawerHelper extends Component {
     if (name === 'tags') shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
     this.setState({ shift });
     if (name === 'workplaceId') this.getPositions(value);
+  };
+
+  handleAddTeamMember = () => {
+
   };
 
   handleShiftSubmit = (shift) => {
@@ -116,7 +128,7 @@ class DrawerHelper extends Component {
 
   render() {
 
-    const { width, open } = this.props;
+    const { width, open, handleAdvance } = this.props;
     const { shift, workplaces, positions, workplaceId, weekStart } = this.state;
     let positionOptions = [{ key: 'select', value: 0, text: 'Select Workplace'}];
 
@@ -172,8 +184,7 @@ class DrawerHelper extends Component {
               <Image src='/images/Icons_Red_Cross.png' size="mini" />
             </IconButton>
             <h2 className="text-center text-uppercase">Add Hours</h2>
-            <Button className="pull-right advance-options">Advanced
-            </Button>
+            <Button className="pull-right advance-options" onClick={handleAdvance}>Advanced</Button>
           </div>
           <div className="col-md-12 form-div edit-drawer-content">
             <Grid columns={2}>
@@ -253,7 +264,7 @@ class DrawerHelper extends Component {
                   <Image src="/assets/Icons/shift-date.png" size="mini" className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14}>
-                  <ShiftDaySelector startDate={weekStart} formCallBack={this.updateFormState} />
+                  <ShiftDaySelector isRecurring={shift.recurringShift !== 'none'} startDate={weekStart} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
 
@@ -266,7 +277,7 @@ class DrawerHelper extends Component {
                   <div className="performance-tagline">
                     <p>
                       At maximum, <span className="color-green">{shift.numberOfTeamMembers * 2} employees </span>
-                      will report for this shift: {shift.numberOfTeamMembers || 0} job trainers, {shift.numberOfTeamMembers || 0} job shadowers
+                      will report for this shift: {shift.numberOfTeamMembers ||   0} job trainers, {shift.numberOfTeamMembers || 0} job shadowers
                     </p>
                   </div>
                 </Grid.Column>
@@ -274,10 +285,20 @@ class DrawerHelper extends Component {
 
               <Grid.Row>
                 <Grid.Column width={2}>
-                  <Image src="/assets/Icons/scheduled-break.png" size="mini" className="display-inline" />
+  7                <Image src="/assets/Icons/scheduled-break.png" size="mini" className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14}>
                   <UnpaidBreakInMinutes formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2}>
+                  <Image src="/assets/Icons/add-user.png" size="mini" className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14}>
+                  <label className="text-uppercase blue-heading">Assign Team Member</label>
+                  <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'} onClick={this.handleAddTeamMember} />
                 </Grid.Column>
               </Grid.Row>
 
@@ -314,12 +335,12 @@ class DrawerHelper extends Component {
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
-                <CircleButton type="green" title="Assign Shift" />
                 <CircleButton handleClick={() => this.handleShiftSubmit(shift)} type="blue" title="Add Hours" />
               </div>
             </div>
           </div>
         </div>
+
       </Drawer>
     );
   }

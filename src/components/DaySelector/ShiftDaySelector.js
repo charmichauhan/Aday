@@ -12,6 +12,7 @@ export default class ShiftDaySelector extends Component {
   };
 
   render() {
+    const { startDate, isRecurring } = this.props;
     const tableSize = 7;
     const selectedDate = moment().format('MM-DD-YYYY');
     return (
@@ -19,7 +20,8 @@ export default class ShiftDaySelector extends Component {
         <label className="text-uppercase blue-heading">Repeat Shifts Weekly</label>
         <DaySelector
           tableSize={tableSize}
-          startDate={this.props.startDate}
+          isRecurring={isRecurring}
+          startDate={startDate}
           selectedDate={selectedDate}
           callBack={this.handleData}
         />

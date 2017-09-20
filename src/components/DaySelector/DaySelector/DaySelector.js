@@ -36,8 +36,12 @@ export default class DaySelector extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.startDate.valueOf() !== this.props.startDate.valueOf()) {
+    const props = this.props;
+    if (nextProps.startDate.valueOf() !== props.startDate.valueOf()) {
       this.setState({ startdate: nextProps.startDate });
+    }
+    if (nextProps.isRecurring !== props.isRecurring) {
+      this.setState({ selected: {} });
     }
   }
 
@@ -70,16 +74,17 @@ export default class DaySelector extends React.Component {
 
   render() {
     const { selected, startdate } = this.state;
-    const { tableSize } = this.props;
+    const { tableSize, isRecurring } = this.props;
 
     const startMoment = moment(startdate);
     const cells = _.map(_.range(tableSize), (i) => {
       const calDate = startMoment.clone().add(i, 'days');
       let daySubString = getSubStringFromDayName(calDate.format('dddd'));
-      if (moment().format('DD-MM-YYYY') === calDate.format('DD-MM-YYYY')) {
+      if (!isRecurring && moment().format('DD-MM-YYYY') === calDate.format('DD-MM-YYYY')) {
         daySubString = 'Today';
       }
       return {
+        isRecurring,
         daySubString,
         displayMonth: getCapitalMonthName(calDate.format('MMM')),
         displayDate: calDate.format('D'),
@@ -88,8 +93,8 @@ export default class DaySelector extends React.Component {
       };
     });
     return (
-      <div style={{ height: '80px' }}>
-        <div style={{ float: 'left' }}>
+      <div style={{ height: 80 }}>
+        <div style={{ float: 'left', paddingTop: 3 }}>
           {
             _.map(cells, (cell) => {
               const cellKey = `${cell.cellId}-modal-day-cell`;

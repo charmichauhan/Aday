@@ -63,7 +63,7 @@ export default class StartToEndTimePicker extends Component {
         </div>
         <div className="time-selector-display" style={{ display: showSelector ? 'block' : 'none' }}>
           <div className="time-wrapper">
-            <p style={{ background: '#ffffff', paddingLeft: '10px' }}>{startTimeValue || 'Start'}</p>
+            <p style={{ background: '#ffffff', padding: '0 0 10px 10px', marginBottom: 0  }}>{startTimeValue || 'Start'}</p>
             <TimePicker getTime={(value) => this.handleTimeChange({ name: 'startTime', value })} />
           </div>
           <div className="time-wrapper">

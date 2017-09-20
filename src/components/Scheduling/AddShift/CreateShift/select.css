@@ -1,7 +1,6 @@
 .sectionTest .Select-input input {
   width: 600% !important;
   margin-left: -11px !important;
-
 }
 
 .ui.dropdown:not(.button) > .default.text {
@@ -34,6 +33,14 @@
   color: #00A863;
 }
 
+.font-italic {
+  font-style: italic;
+  color: #4A4A4A;
+  font-size: 18px;
+  padding: 10px 0;
+  font-weight: 300;
+}
+
 .edit-drawer-content {
   height: calc(100vh - 300px);
   overflow-y: scroll;
@@ -61,8 +68,8 @@
 }
 
 .shift-modal-day-cell .day-label-red {
-  margin-bottom: 2px;
   color: #e33821;
+  margin: 0 auto;
 }
 
 .shift-modal-day-cell .shift-day-red {
@@ -83,3 +90,4 @@
 .shift-modal-day-cell .shift-modal-day-cell-button.selected .day-label {
   color: #ffffff;
 }
+

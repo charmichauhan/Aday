@@ -10,6 +10,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import CreateShiftButton from '../../Scheduling/AddShift/CreateShiftButton';
 import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftDrawer';
+import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
 import {
@@ -221,6 +222,14 @@ class ShiftPublishComponent extends Component {
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
+  handleAdvanceToggle = (drawerShift) => {
+    this.setState((state) => ({
+      drawerShift,
+      isCreateShiftOpen: !state.isCreateShiftOpen,
+      isCreateShiftAdvanceOpen: !state.isCreateShiftAdvanceOpen
+    }));
+  };
+
   closeDrawerAndModal = () => {
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
@@ -355,7 +364,13 @@ class ShiftPublishComponent extends Component {
           shift={this.state.drawerShift}
           weekStart={start}
           handleSubmit={this.handleCreateSubmit}
+          handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeDrawerAndModal} />
+        <CreateShiftAdvanceDrawer
+          width={styles.drawer.width}
+          shift={this.state.drawerShift}
+          open={this.state.isCreateShiftAdvanceOpen}
+          handleBack={this.handleAdvanceToggle} />
         <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </div>
     )

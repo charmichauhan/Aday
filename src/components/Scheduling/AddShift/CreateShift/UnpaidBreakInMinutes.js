@@ -24,10 +24,17 @@ export default class UnpaidBreakInMinutes extends Component {
     formCallBack(value);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.unpaidBreakInMinutes !== this.state.selectedValue) {
+      this.setState({ selectedValue: nextProps.unpaidBreakInMinutes});
+    }
+  }
+
   selectValue = (event) => {
     const { formCallBack } = this.props;
     const $target = $(event.target);
-    const numberValue = $target.data('time-value');
+    let numberValue = $target.data('time-value');
+    if (typeof numberValue === 'string' && numberValue.length) numberValue = parseInt(numberValue);
     this.setState({ selectedValue: numberValue });
     const value = {
       unpaidBreakInMinutes: numberValue
@@ -37,12 +44,13 @@ export default class UnpaidBreakInMinutes extends Component {
 
   setValue = (event) => {
     const { formCallBack } = this.props;
-    const { value } = event.target;
+    let { value } = event.target;
     let error;
     if (value !== '' && !validator.isNumeric(value)) {
       error = 'Value must be in integer';
     }
-    formCallBack(value);
+    if (!error && typeof value === 'string' && value.length) value = parseInt(value);
+    formCallBack({ unpaidBreakInMinutes: value });
     this.setState({ selectedValue: value, error });
   };
 

@@ -10,7 +10,7 @@ export default class NumberOfTeamMembers extends Component {
     super(props);
     this.selectValue = this.selectValue.bind(this);
     this.state = {
-      selectedValue: this.props.numRequested || ''
+      selectedValue: this.props.numberOfTeamMembers || 1
     }
   }
 
@@ -22,10 +22,17 @@ export default class NumberOfTeamMembers extends Component {
     formCallBack(value);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.numberOfTeamMembers !== this.state.selectedValue) {
+      this.setState({ selectedValue: nextProps.numberOfTeamMembers});
+    }
+  }
+
   selectValue(event) {
     const { formCallBack } = this.props;
     const $target = $(event.target);
-    const numberValue = $target.data('time-value');
+    let numberValue = $target.data('time-value');
+    if (typeof numberValue === 'string' && numberValue.length) numberValue = parseInt(numberValue);
     this.setState({ selectedValue: numberValue });
     const value = {
       numberOfTeamMembers: numberValue
@@ -35,12 +42,13 @@ export default class NumberOfTeamMembers extends Component {
 
   setValue = (event) => {
     const { formCallBack } = this.props;
-    const { value } = event.target;
+    let { value } = event.target;
     let error;
     if (value !== '' && !validator.isNumeric(value)) {
       error = 'Value must be in integer';
     }
-    formCallBack(value);
+    if (!error && typeof value === 'string' && value.length) value = parseInt(value);
+    formCallBack({ numberOfTeamMembers: value });
     this.setState({ selectedValue: value, error });
   };
 

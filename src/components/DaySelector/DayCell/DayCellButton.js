@@ -35,7 +35,7 @@ function DayCellButton(props) {
     <div className="shift-modal-day-cell" onClick={filteredOnClick}>
       <button type="button" className={buttonClasses} data-cellId={cellId} disabled={true}>
         <p data-cellId={cellId} className={isRecurring && 'shift-day-red'} style={{ width: '100%', height: '100%' }}>
-          <p data-cellId={cellId} className={daySubString === 'Today' && 'day-label-red' || 'day-label'}>{daySubString}</p>
+          <p data-cellId={cellId} className={daySubString === 'Today' && 'day-label-red text-uppercase' || 'day-label'}>{daySubString}</p>
           <p data-cellId={cellId} className="month-date-label">{displayMonth} {displayDate}</p>
         </p>
       </button>

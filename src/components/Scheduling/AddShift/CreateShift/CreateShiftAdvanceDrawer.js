@@ -22,33 +22,11 @@ const styles = {
   },
 };
 
-const unassignedTeamMember = {
-  user: {
-    id: 0,
-    firstName: 'Unassigned',
-    lastName: '',
-    avatarUrl: 'http://www.iiitdm.ac.in/img/bog/4.jpg',
-  },
-  content: 'There is currenlty an open position',
-  status: 'unassigned'
-};
-
-const User = ({ user }) => (
-  <div className="content">
-    <div className="avatar">
-      <Image avatar src={user.avatarUrl} />
-    </div>
-    <div className="label text-uppercase">
-      <b>{user.firstName}</b> {user.lastName}
-    </div>
-  </div>
-);
-
 class ShiftHistoryDrawerComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shift: { ...props.shift, advance: {} }
+      shift: { ...props.shift, advance: { allowShadowing: true } }
     }
   }
 
@@ -124,7 +102,7 @@ class ShiftHistoryDrawerComponent extends Component {
                 <strong> Allow Job Shadowers </strong> for increased sales and reduced costs
               </p>
               <div className="wrapper-element">
-                <Switch checked={advance.allowShadowing || true}
+                <Switch checked={advance.allowShadowing}
                         name="allowJobShadowing" onChange={this.onAllowShadowingChange}
                         className="switchStyle"
                         circleStyles={{border: '1px solid #000', background: '#f00'}}

@@ -4,6 +4,7 @@ import Modal from '../../helpers/Modal';
 import EditShiftDrawerContainer from './ShiftEdit/EditShiftDrawerContainer';
 import EditShiftModal from './ShiftEdit/EditShiftModal';
 import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer';
+import CreateShiftDrawer from '../AddShift/CreateShift/CreateShiftDrawer';
 import { gql, graphql, compose } from 'react-apollo';
 import '../style.css';
 import './shiftWeekTable.css';
@@ -50,7 +51,7 @@ class EventPopupComponent extends Component {
     if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
 
         var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
-        
+
         var options = {
             uri: uri,
             method: 'POST',
@@ -67,7 +68,7 @@ class EventPopupComponent extends Component {
             }}
         };
         rp(options)
-          .then(function(response) {              
+          .then(function(response) {
           }).catch((error) => {
              console.log('there was an error sending the query for delete cancellation call', error);
           });

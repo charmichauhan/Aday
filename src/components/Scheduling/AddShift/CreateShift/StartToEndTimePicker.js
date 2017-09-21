@@ -66,7 +66,7 @@ export default class StartToEndTimePicker extends Component {
             <TimePicker getTime={(value) => this.handleTimeChange({ name: 'startTime', value })} />
           </div>
           <div className="time-wrapper">
-            <p style={{ background: '#ffffff', paddingLeft: '10px' }}>{endTimeValue || 'End'}</p>
+            <p style={{ background: '#ffffff', padding: '0 0 10px 10px', marginBottom: 0 }}>{endTimeValue || 'End'}</p>
             <TimePicker getTime={(value) => this.handleTimeChange({ name: 'endTime', value })} />
           </div>
           <div className="time-actions-wrapper text-uppercase">

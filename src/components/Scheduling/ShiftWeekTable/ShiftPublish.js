@@ -42,7 +42,7 @@ class ShiftPublishComponent extends Component {
       redirect: false,
       isCreateShiftModalOpen: false,
       isCreateShiftOpen: false,
-      drawerShift: {}
+      drawerShift: { advance: { allowShadowing: true } }
     }
   }
 

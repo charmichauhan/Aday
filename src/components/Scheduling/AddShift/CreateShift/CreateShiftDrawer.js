@@ -16,18 +16,19 @@ import StartToEndTimePicker from './StartToEndTimePicker';
 
 import './select.css';
 
-const methodOptions = [{ key: 'standard', value: 'standard', text: 'Standard', disabled: true, selected: true }];
-
 const initialState = {
   shift: {
     shiftMethod: 'standard',
     recurringShift: 'none',
+    numberOfTeamMembers: 1,
+    unpaidBreakInMinutes: 0,
     tags: [],
     tagOptions: [],
     brandId: localStorage.getItem('brandId') || '',
     corporationId: localStorage.getItem('corporationId') || '',
     workplaceId: localStorage.getItem('workplaceId') || ''
   },
+  shiftErrors: {},
   brandId: localStorage.getItem('brandId') || '',
   corporationId: localStorage.getItem('corporationId') || '',
   workplaceId: localStorage.getItem('workplaceId') || ''
@@ -37,10 +38,10 @@ class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
-    let shift = { ...initialState.shift, ...props.shift };
+    let shift = { ...initialState.shift, ...props.shift, advance: { allowShadowing: true } };
     this.state = {
       ...initialState,
-      ...shift,
+      shift,
       weekStart: props.weekStart
     };
   }
@@ -66,7 +67,7 @@ class DrawerHelper extends Component {
       this.setState((state) => ({
         shift: {
           ...state.shift,
-          advance: state.shift.advance
+          advance: nextProps.shift.advance
         }
       }));
     }
@@ -93,6 +94,7 @@ class DrawerHelper extends Component {
     if (name === 'tags') shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
     this.setState({ shift });
     if (name === 'workplaceId') this.getPositions(value);
+    this.validateShift(shift);
   };
 
   handleAddTeamMember = () => {
@@ -124,10 +126,15 @@ class DrawerHelper extends Component {
     if (closeDrawer) closeDrawer();
   };
 
+  validateShift = (shift) => {
+    const { shiftErrors } = this.state;
+    if (!shift.workplaceId) shiftErrors['workplaceId'] = true;
+  };
+
   render() {
 
     const { width, open, handleAdvance } = this.props;
-    const { shift, workplaces, positions, workplaceId, weekStart } = this.state;
+    const { shift, workplaces, positions, workplaceId, weekStart, shiftErrors } = this.state;
     let positionOptions = [{ key: 'select', value: 0, text: 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS'}];
 
     if (!workplaces) {
@@ -170,6 +177,13 @@ class DrawerHelper extends Component {
       value: 'weekly',
       text: 'YES – SHIFT DAYS AND TIME REPEAT WEEKLY',
     }];
+
+    const teamMembers = {
+      total: (shift.numberOfTeamMembers * (shift.advance && shift.advance.allowShadowing && 2 || 1)),
+      trainers: shift.numberOfTeamMembers,
+      shadowers: shift.advance && shift.advance.allowShadowing && shift.numberOfTeamMembers || 0
+    };
+
     return (
       <Drawer
         width={width}
@@ -177,7 +191,7 @@ class DrawerHelper extends Component {
         docked={false}
         onRequestChange={this.closeShiftDrawer} open={open}>
         <div className="drawer-section edit-drawer-section">
-          <div className="drawer-heading col-md-12"style={{display:'flex', flexDirection:'row'}}>
+          <div className="drawer-heading col-md-12" style={{display:'flex', flexDirection:'row'}}>
 
             <div style={{flex:3, alignSelf:'center', marginLeft:5}}>
               <IconButton className="pull-left" style={closeButton} onClick={this.closeShiftDrawer}>
@@ -190,7 +204,7 @@ class DrawerHelper extends Component {
             </div>
 
             <div style={{flex:3, alignSelf:'center'}}>
-              <Button inverted style={{borderRadius:5}} onClick={handleAdvance} color='red'>Advanced</Button>
+              <Button inverted style={{borderRadius:5}} onClick={()=> handleAdvance(shift)} color='red'>Advanced</Button>
             </div>
           </div>
 
@@ -202,7 +216,7 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Scheduling Method</label>
-                  <Dropdown placeholder='STANDARD' fluid selection disabled style={{cursor:'notAllowed'}}/>
+                  <Dropdown placeholder='STANDARD' fluid selection disabled style={{cursor: 'not-allowed'}}/>
                   {/*
                   <select disabled className="ui fluid dropdown add-shift-dropdown">
                     {methodOptions && methodOptions.map(option => <option {...option} >{option.text}</option>)}
@@ -275,7 +289,7 @@ class DrawerHelper extends Component {
                   <Image src="/assets/Icons/shift-date.png" style={{width:31, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
-                  <label className="text-uppercase blue-heading">SHIFT DATE</label>
+                  <label className="text-uppercase blue-heading">REPEATS ON</label>
                   <ShiftDaySelector isRecurring={shift.recurringShift !== 'none'} startDate={weekStart} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
@@ -285,11 +299,11 @@ class DrawerHelper extends Component {
                   <Image src="/assets/Icons/team-members.png" style={{width:30, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
-                  <NumberOfTeamMembers formCallBack={this.updateFormState} />
+                  <NumberOfTeamMembers numberOfTeamMembers={shift.numberOfTeamMembers} formCallBack={this.updateFormState} />
                   <div className="performance-tagline">
                     <p>
-                      At maximum, <span className="color-green">{shift.numberOfTeamMembers * 2} employees </span>
-                      will report for this shift: {shift.numberOfTeamMembers ||   0} job trainers, {shift.numberOfTeamMembers || 0} job shadowers
+                      At maximum, <span className="color-green">{teamMembers.total} employees </span>
+                      will report for this shift: {teamMembers.trainers} job trainers, {teamMembers.shadowers} job shadowers
                     </p>
                   </div>
                 </Grid.Column>
@@ -300,7 +314,7 @@ class DrawerHelper extends Component {
                   <Image src="/assets/Icons/scheduled-break.png" style={{width:29, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
-                  <UnpaidBreakInMinutes formCallBack={this.updateFormState} />
+                  <UnpaidBreakInMinutes unpaidBreakInMinutes={shift.unpaidBreakInMinutes} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
 
@@ -347,7 +361,7 @@ class DrawerHelper extends Component {
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
-                <CircleButton handleClick={() => this.handleShiftSubmit(shift)} type="blue" title="Add Hours" />
+                <CircleButton disabled={shiftErrors.length} handleClick={() => this.handleShiftSubmit(shift)} type="blue" title="Add Hours" />
               </div>
             </div>
           </div>

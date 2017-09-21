@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
-import { Image, TextArea, Dropdown, Grid, Button } from 'semantic-ui-react';
+import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
@@ -13,6 +13,8 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import CreateShiftHelper from './CreateShiftHelper';
 import StartToEndTimePicker from './StartToEndTimePicker';
+import { Tooltip } from 'rebass'
+//import Tooltip from 'react-toolbox/lib/tooltip';
 
 import './select.css';
 
@@ -191,7 +193,7 @@ class DrawerHelper extends Component {
         docked={false}
         onRequestChange={this.closeShiftDrawer} open={open}>
         <div className="drawer-section edit-drawer-section">
-          <div className="drawer-heading col-md-12" style={{display:'flex', flexDirection:'row'}}>
+          <div className="drawer-heading col-md-12" style={{display:'flex', flexDirection:'row', backgroundColor:'ghostwhite', borderBottom:'1px solid #DCDCDC'}}>
 
             <div style={{flex:3, alignSelf:'center', marginLeft:5}}>
               <IconButton className="pull-left" style={closeButton} onClick={this.closeShiftDrawer}>
@@ -204,7 +206,7 @@ class DrawerHelper extends Component {
             </div>
 
             <div style={{flex:3, alignSelf:'center'}}>
-              <Button inverted style={{borderRadius:5}} onClick={()=> handleAdvance(shift)} color='red'>Advanced</Button>
+              <button className="semantic-ui-button" style={{borderRadius:5}} onClick={()=> handleAdvance(shift)} color='red'>Advanced</button>
             </div>
           </div>
 
@@ -212,7 +214,7 @@ class DrawerHelper extends Component {
             <Grid columns={2}>
               <Grid.Row>
                 <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
-                  <Image src="/assets/Icons/scheduling-method.png" size="mini" className="display-inline" />
+                  <Image src="/assets/Icons/scheduling-method.png" style={{width:28, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Scheduling Method</label>
@@ -227,7 +229,7 @@ class DrawerHelper extends Component {
 
               <Grid.Row>
                 <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
-                  <Image src="/assets/Icons/workplace.png" style={{width:33, height:'auto'}} className="display-inline" />
+                  <Image src="/assets/Icons/workplace.png" style={{width:26, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Workplace</label>
@@ -261,19 +263,10 @@ class DrawerHelper extends Component {
 
               <Grid.Row>
                 <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
-                  <Image src="/assets/Icons/shift-time.png" style={{width:33, height:'auto'}} className="display-inline" />
+                  <Image src="/assets/Icons/repeating-shifts.png" style={{width:36, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
-                  <StartToEndTimePicker formCallBack={this.updateFormState} />
-                </Grid.Column>
-              </Grid.Row>
-
-              <Grid.Row>
-                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
-                  <Image src="/assets/Icons/repeating-shifts.png" style={{width:32, height:'auto'}} className="display-inline" />
-                </Grid.Column>
-                <Grid.Column width={14} style={{marginLeft:-20}}>
-                  <label className="text-uppercase blue-heading">Repeat Shift Weekly?</label>
+                  <label className="text-uppercase blue-heading">Repeat Shift Weekly</label>
                   <Dropdown
                     name="recurringShift"
                     onChange={(_, data) => this.handleChange({ target: data })}
@@ -286,10 +279,23 @@ class DrawerHelper extends Component {
 
               <Grid.Row>
                 <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
-                  <Image src="/assets/Icons/shift-date.png" style={{width:31, height:'auto'}} className="display-inline" />
+                  <Image src="/assets/Icons/shift-time.png" style={{width:33, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
-                  <label className="text-uppercase blue-heading">REPEATS ON</label>
+                  <StartToEndTimePicker formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
+                  <Image src="/assets/Icons/shift-date.png" style={{width:28, height:'auto'}} className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{marginLeft:-20}}>
+
+                  {/* this is the alternate title for when the shift is not set to repeat
+                    <label className="text-uppercase blue-heading">SHIFT START DATE</label>
+                  */}
+                  <label className="text-uppercase blue-heading">REPEAT THIS SHIFT EVERY:</label>
                   <ShiftDaySelector isRecurring={shift.recurringShift !== 'none'} startDate={weekStart} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
@@ -320,11 +326,13 @@ class DrawerHelper extends Component {
 
               <Grid.Row>
                 <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
-                  <Image src="/assets/Icons/add-user.png" style={{width:30, height:'auto'}} className="display-inline" />
+                  <Image src="/assets/Icons/add-user.png" style={{width:29, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
-                  <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'} onClick={this.handleAddTeamMember} />
+                  <Tooltip className="tooltip-message" text=' &nbsp; Creating recurring shifts and adding team members cannot be done at the same time &nbsp;'>
+                    <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'} onClick={this.handleAddTeamMember} />
+                  </Tooltip>
                 </Grid.Column>
               </Grid.Row>
 

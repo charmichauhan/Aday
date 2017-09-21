@@ -1,13 +1,83 @@
+.tooltip-message::before {
+  left: 182.5% !important;
+  background-color: rgba(0, 0, 0, 0.75) !important;
+  padding: 5px !important;
+  border-radius: 2px !important;
+  font-family: 'Varela Round';
+}
+
+.semantic-ui-button {
+  background-color: transparent;
+  box-shadow: 0 0 0 2px #ff695e inset!important;
+  color: #ff695e;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-block;
+  min-height: 1em;
+  border: none;
+  vertical-align: baseline;
+  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  margin: 0 .25em 0 0;
+  padding: .78571429em 1.5em .78571429em;
+  text-transform: none;
+  font-weight: 700;
+  line-height: 1em;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: button;
+  overflow: visible;
+  align-items: flex-start;
+  text-rendering: auto;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+.semantic-ui-button:hover {
+  background-color: #ff5144;
+  box-shadow: none!important;
+  color: #FFF;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-block;
+  min-height: 1em;
+  border: none;
+  vertical-align: baseline;
+  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  margin: 0 .25em 0 0;
+  padding: .78571429em 1.5em .78571429em;
+  text-transform: none;
+  font-weight: 700;
+  line-height: 1em;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: button;
+  overflow: visible;
+  align-items: flex-start;
+  text-rendering: auto;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
 /* duplicate CSS code below, see ProfileDrawer.js profile-drawer-title-cross-training */
 .drawer-title {
     height: 35px;
-    color: #FFFFFF;
+    color: #0021A1;
     font-family: "Roboto Condensed";
     font-size: 24px;
     line-height: 26px;
     text-align: center;
     text-transform: uppercase;
-    font-weight: 100;
+    font-weight: 500;
     flex: 20;
     align-self: center;
 }

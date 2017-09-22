@@ -12,9 +12,8 @@ export default class ShiftDaySelector extends Component {
   };
 
   render() {
-    const { startDate, isRecurring } = this.props;
+    const { startDate, isRecurring, selectedDate } = this.props;
     const tableSize = 7;
-    const selectedDate = moment().format('MM-DD-YYYY');
     return (
       <div className="day-selector">
         <DaySelector

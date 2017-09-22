@@ -201,7 +201,7 @@ class ShiftPublishComponent extends Component {
         },
       }).then(({ data }) => {
         days.forEach((day) => {
-          if (shift.shiftDaysSelected[day] === true) {
+          if (day && shift.shiftDaysSelected[day] === true) {
             this.saveShift(shift, day, publishId);
           }
         })
@@ -214,7 +214,7 @@ class ShiftPublishComponent extends Component {
     // else create all shifts with existing week published
     else {
       days.forEach((day) => {
-        if (shift.shiftDaysSelected[day] === true) {
+        if (day && shift.shiftDaysSelected[day] === true) {
           this.saveShift(shift, day, publishId);
         }
       })
@@ -274,7 +274,10 @@ class ShiftPublishComponent extends Component {
     }).then(({ data }) => {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
       console.log('got data', data);
-    }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
+    }).catch(err => {
+      console.log('There was error in saving shift', err);
+      this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
+    });
   }
 
   render() {

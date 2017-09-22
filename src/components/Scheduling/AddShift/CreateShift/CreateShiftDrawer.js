@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
-import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
+import moment from 'moment';
+import { Image, TextArea, Dropdown, Grid, Button } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
+
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
 import Loading from '../../../helpers/Loading';
@@ -103,6 +105,10 @@ class DrawerHelper extends Component {
 
   };
 
+  handleNowSelect = () => {
+    this.setState({ selectedDate: moment().format('MM-DD-YYYY')});
+  };
+
   handleShiftSubmit = (shift) => {
     const { handleSubmit } = this.props;
     if (handleSubmit) handleSubmit(shift);
@@ -136,7 +142,7 @@ class DrawerHelper extends Component {
   render() {
 
     const { width, open, handleAdvance } = this.props;
-    const { shift, workplaces, positions, workplaceId, weekStart, shiftErrors } = this.state;
+    const { shift, workplaces, positions, workplaceId, weekStart, shiftErrors, selectedDate } = this.state;
     let positionOptions = [{ key: 'select', value: 0, text: 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS'}];
 
     if (!workplaces) {
@@ -218,12 +224,14 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Scheduling Method</label>
-                  <Dropdown placeholder='STANDARD' fluid selection disabled style={{cursor: 'not-allowed'}}/>
-                  {/*
-                  <select disabled className="ui fluid dropdown add-shift-dropdown">
-                    {methodOptions && methodOptions.map(option => <option {...option} >{option.text}</option>)}
-                  </select>
-                  */}
+                  <Dropdown
+                    name="method"
+                    value='standard'
+                    style={{cursor: 'not-allowed'}}
+                    fluid
+                    selection
+                    disabled
+                    options={[{ key: 'standard', value: 'standard', text: 'STANDARD' }]} />
                 </Grid.Column>
               </Grid.Row>
 
@@ -282,7 +290,7 @@ class DrawerHelper extends Component {
                   <Image src="/assets/Icons/shift-time.png" style={{width:33, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
-                  <StartToEndTimePicker formCallBack={this.updateFormState} />
+                  <StartToEndTimePicker onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
 
@@ -291,12 +299,10 @@ class DrawerHelper extends Component {
                   <Image src="/assets/Icons/shift-date.png" style={{width:28, height:'auto'}} className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{marginLeft:-20}}>
-
-                  {/* this is the alternate title for when the shift is not set to repeat
-                    <label className="text-uppercase blue-heading">SHIFT START DATE</label>
-                  */}
-                  <label className="text-uppercase blue-heading">REPEAT THIS SHIFT EVERY:</label>
-                  <ShiftDaySelector isRecurring={shift.recurringShift !== 'none'} startDate={weekStart} formCallBack={this.updateFormState} />
+                  <label className="text-uppercase blue-heading">
+                    {(shift.recurringShift !== 'none' && 'REPEAT THIS SHIFT EVERY:') || 'SHIFT START DATE'}
+                    </label>
+                  <ShiftDaySelector selectedDate={selectedDate} isRecurring={shift.recurringShift !== 'none'} startDate={weekStart} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
 
@@ -340,7 +346,7 @@ class DrawerHelper extends Component {
                 <Grid.Column width={2} style={{marginLeft:-5, paddingTop:10}}>
                   <Image src="/assets/Icons/tags.png" style={{width:30, height:'auto'}} className="display-inline" />
                 </Grid.Column>
-                <Grid.Column width={14} style={{marginLeft:-20}}>
+                <Grid.Column className="tag-dropdown" width={14} style={{marginLeft:-20}}>
                   <label className="text-uppercase blue-heading">Tags</label>
                   <Dropdown
                     multiple

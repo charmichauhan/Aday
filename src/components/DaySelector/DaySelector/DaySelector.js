@@ -6,10 +6,6 @@ import DayCellButton from '../DayCell/DayCellButton';
 import SquareButton from '../SquareButton/SquareButton';
 import{ getSubStringFromDayName, getCapitalMonthName } from './utility';
 
-/**
- * [DaySelector description]
- * @todo "today" to show up in red text
- */
 export default class DaySelector extends React.Component {
 
   constructor(props) {
@@ -41,11 +37,21 @@ export default class DaySelector extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const props = this.props;
+    let { selected } = this.state;
     if (nextProps.startDate.valueOf() !== props.startDate.valueOf()) {
       this.setState({ startdate: nextProps.startDate });
     }
     if (nextProps.isRecurring !== props.isRecurring) {
       this.setState({ selected: {} });
+    }
+    if (selected && !selected[nextProps.selectedDate]) {
+      this.setState(() => {
+        selected[nextProps.selectedDate] = true;
+        this.setState({ selected });
+        if (props.callBack) {
+          props.callBack({ shiftDaysSelected: selected });
+        }
+      });
     }
   }
 
@@ -84,7 +90,7 @@ export default class DaySelector extends React.Component {
     const cells = _.map(_.range(tableSize), (i) => {
       const calDate = startMoment.clone().add(i, 'days');
       let daySubString = getSubStringFromDayName(calDate.format('dddd'));
-      if (!isRecurring && moment().format('DD-MM-YYYY') === calDate.format('DD-MM-YYYY')) {
+      if (!isRecurring && moment().format('MM-DD-YYYY') === calDate.format('MM-DD-YYYY')) {
         daySubString = 'Today';
       }
       return {
@@ -93,7 +99,7 @@ export default class DaySelector extends React.Component {
         displayMonth: getCapitalMonthName(calDate.format('MMM')),
         displayDate: calDate.format('D'),
         fullDate: calDate,
-        cellId: calDate.format('YYYY-MM-DD'),
+        cellId: calDate.format('MM-DD-YYYY'),
       };
     });
     return (

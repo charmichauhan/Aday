@@ -94,9 +94,11 @@
   text-align: right;
   padding-right: 10px;
 }
+
 .shift-section .time-selector-wrapper .columns .id {
   display: none;
 }
+
 .shift-section .time-selector-wrapper .time-picker-container .columns li {
   text-align: left;
 }
@@ -133,9 +135,24 @@
 }
 
 .edit-drawer-section .edit-drawer-content .alert-danger {
-  background: rgba(255,118,118,0.4);
+  background: rgba(255, 118, 118, 0.4);
   color: #e33238;
   border-bottom: 2px solid #ff7676 !important;
   padding: 10px;
   border: 0 none;
+}
+
+.edit-drawer-content .tag-dropdown .ui.label {
+  background: #e33821;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.edit-drawer-content .tag-dropdown .ui.label > .close.icon,
+.edit-drawer-content .tag-dropdown .ui.label > .delete.icon {
+  opacity: 1;
+}
+
+.edit-drawer-content .tag-dropdown .ui.multiple.search.dropdown > input {
+  text-transform: uppercase;
 }

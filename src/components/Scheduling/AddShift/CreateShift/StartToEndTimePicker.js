@@ -43,8 +43,14 @@ export default class StartToEndTimePicker extends Component {
     this.setState({ showSelector: !this.state.showSelector });
   };
 
+  isDisabled = () => {
+    const { startTime, endTime } = this.state;
+    return !startTime || !endTime;
+  };
+
   render() {
     const { showSelector, startTimeValue, startTimeValueTop, endTimeValue, endTimeValueTop } = this.state;
+    const { onNowSelect } = this.props;
     return (
       <div className="time-selector-wrapper">
         <div className="time-wrapper">
@@ -71,14 +77,14 @@ export default class StartToEndTimePicker extends Component {
           </div>
           <div className="time-actions-wrapper text-uppercase">
             <div className="left-picker-group">
-                <button className="now-picker-button" >NOW</button>
+                <button className="now-picker-button" onClick={onNowSelect}>NOW</button>
             </div>
             <div className="right-picker-group">
                 <div style={{alignSelf:'center'}}>
                     <button className="cancel-picker-button" onClick={this.toggleSelector}>CANCEL</button>
                 </div>
                 <div style={{alignSelf:'center'}}>
-                    <button className="ok-picker-button" onClick={this.setCallbackData}>OK</button>
+                    <button className="ok-picker-button" disabled={this.isDisabled()} onClick={this.setCallbackData}>OK</button>
                 </div>
             </div>
           </div>

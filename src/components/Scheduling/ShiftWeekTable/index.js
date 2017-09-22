@@ -182,13 +182,15 @@ class ShiftWeekTableComponent extends Week {
         userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
       });
 
+
+
       data.allShifts.edges.map((value, index) => {
         if (workplaceId != '') {
           if (workplaceId == value.node.workplaceByWorkplaceId.id) {
 
             const dayOfWeek = moment(value.node.startTime).format('dddd').toUpperCase();;
 
-            let assigned = value.node.workersAssigned
+            let assigned = value.node.workersAssigned 
             if (value.node.workersAssigned == null) {
               assigned = [];
             }
@@ -255,6 +257,91 @@ class ShiftWeekTableComponent extends Week {
         }
       });
     }
+
+
+
+
+    recurring.unappliedRecurring.edges.map((value, index) => {
+        let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+        if (workplaceId != '') {
+        if (workplaceId == value.node.workplaceByWorkplaceId.id) {
+            value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+                    const positionName = shift.node.positionByPositionId.positionName;
+                    shift.node.days.map((day, dayIndex) => {    
+                        let assigned = []
+                        shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
+                            assigned.push(assignees.node.userId)
+                        })
+                        
+                        if (assigned.length < shift.node.workerCount) {
+                          const rowHash = {};
+                          rowHash['weekday'] = day
+                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                          rowHash['userFirstName'] = 'Open'
+                          rowHash['userLastName'] = 'Shifts'
+                          rowHash['userAvatar'] = '/assets/Icons/search.png'
+                          if (calendarHash['Open Shifts']) {
+                            calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)]
+                          } else {
+                            calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)]
+                          }
+                        }
+                        assigned.map((v) => {
+                          const rowHash = {}
+                          rowHash['weekday'] = day;
+                          const userName = userHash[v];
+                          rowHash['userFirstName'] = userHash[v][0]
+                          rowHash['userLastName'] = userHash[v][1]
+                          rowHash['userAvatar'] = userHash[v][2]
+                          if (calendarHash[userName]) {
+                            calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)]
+                          } else {
+                            calendarHash[userName] = [Object.assign(rowHash, shift.node)];
+                          }
+                        })
+              })
+            })
+          }
+        } else {
+            value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+                    const positionName = shift.node.positionByPositionId.positionName;
+                    shift.node.days.map((day, dayIndex) => {    
+                        let assigned = []
+                        shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
+                            assigned.push(assignees.node.userId)
+                        })
+                        
+                        if (assigned.length < shift.node.workerCount) {
+                          const rowHash = {};
+                          rowHash['weekday'] = day
+                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                          rowHash['userFirstName'] = 'Open'
+                          rowHash['userLastName'] = 'Shifts'
+                          rowHash['userAvatar'] = '/assets/Icons/search.png'
+                          if (calendarHash['Open Shifts']) {
+                            calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)]
+                          } else {
+                            calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)]
+                          }
+                        }
+                        assigned.map((v) => {
+                          const rowHash = {}
+                          rowHash['weekday'] = day;
+                          const userName = userHash[v];
+                          rowHash['userFirstName'] = userHash[v][0]
+                          rowHash['userLastName'] = userHash[v][1]
+                          rowHash['userAvatar'] = userHash[v][2]
+                          if (calendarHash[userName]) {
+                            calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)]
+                          } else {
+                            calendarHash[userName] = [Object.assign(rowHash, shift.node)];
+                          }
+                        })
+              })
+            })
+        }
+     })
+
     return calendarHash;
   };
 
@@ -289,9 +376,27 @@ class ShiftWeekTableComponent extends Week {
 
     recurring.unappliedRecurring.edges.map((value, index) => {
           let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+          console.log(workplaceId)
+          console.log(value.node.workplaceByWorkplaceId.id)
            if (workplaceId != '') {
              if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-               console.log("HELLO")
+              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+                const positionName = shift.node.positionByPositionId.positionName;
+                shift.node.days.map((day, dayIndex) => {    
+                     const rowHash = {};
+                     rowHash['weekday'] = day
+                     rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                     rowHash['workersAssigned'] = []
+                     shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
+                          rowHash['workersAssigned'].push(assignees.node.userId)
+                     })
+                     if (calendarHash[positionName]) {
+                        calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
+                     } else {
+                      calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
+                     }
+               })
+              })
             }
             } else {
               value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
@@ -313,8 +418,6 @@ class ShiftWeekTableComponent extends Week {
               })
             }
     })
-
-    console.log(calendarHash)
     return calendarHash;
   };
 
@@ -532,6 +635,7 @@ const unappliedRecurring = gql`
         node{
           id
           workplaceByWorkplaceId{
+            id
             workplaceName
           }
           recurringShiftsByRecurringId{

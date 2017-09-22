@@ -12,10 +12,10 @@ export default class JobsRow extends Component{
 
     render(){
         let data = this.props.data;
-        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const hashByDay = {"Sunday": [], "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": []};
+        const daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+        const hashByDay = {"SUNDAY": [], "MONDAY": [], "TUESDAY": [], "WEDNESDAY": [], "THURSDAY": [], "FRIDAY": [], "SATURDAY": []};
         data.map((value,index) => {
-            const day =  moment(value.startTime, "YYYY-MM-DD HH:mm:ss").format("dddd");
+            const day =  value.weekday
             if (hashByDay[day]){
                 hashByDay[day] = [...hashByDay[day], value];
             } else {
@@ -26,8 +26,17 @@ export default class JobsRow extends Component{
         let finalMinutes = 0;
 
         Object.values(data).map((value,index) => {
+
             let startTime = moment(value.startTime).format("hh:mm A");
             let endTime = moment(value.endTime).format("hh:mm A");
+
+            if (startTime == "Invalid date"){
+                let start = value.startTime.split(":")
+                let end = value.endTime.split(":")
+                startTime = moment().hour(parseInt(start[0])).minute(parseInt(start[1])).format("hh:mm A");
+                endTime = moment().hour(parseInt(end[0])).minute(parseInt(end[1])).format("hh:mm A");
+            }
+            
             let h = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("HH");
             let m = moment.utc(moment(endTime,"hh:mm A").diff(moment(startTime,"hh:mm A"))).format("mm");
             let unpaidHours = 0;
@@ -38,6 +47,7 @@ export default class JobsRow extends Component{
             }
             h = parseInt(h) - unpaidHours;
             m = parseInt(m) - unpaidMinutes;
+
             if (this.props.view=="job"){
                 let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
                 h=h*workerAssigned;

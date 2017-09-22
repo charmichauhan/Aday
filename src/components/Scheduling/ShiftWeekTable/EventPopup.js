@@ -120,6 +120,14 @@ class EventPopupComponent extends Component {
     let pastDate = moment().diff(data.startTime) > 0;
     let startTime = moment(data.startTime).format('h:mm A');
     let endTime = moment(data.endTime).format('h:mm A');
+
+    if (startTime == "Invalid date"){
+        let start = data.startTime.split(":")
+        let end = data.endTime.split(":")
+        startTime = moment().hour(parseInt(start[0])).minute(parseInt(start[1])).format("hh:mm A");
+        endTime = moment().hour(parseInt(end[0])).minute(parseInt(end[1])).format("hh:mm A");
+    }
+            
     let h = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('HH');
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
@@ -130,7 +138,9 @@ class EventPopupComponent extends Component {
     if (data.workersInvited == null) {
       data.workersInvited = [];
     }
-    this.openShift = data.workersRequestedNum - (data.workersAssigned.length + data.workersInvited.length );
+
+    var workersCount = data.workersRequestedNum || data.workerCount
+    this.openShift = workersCount - (data.workersAssigned.length + data.workersInvited.length );
 
     return (
         <div className="day-item hov">

@@ -186,12 +186,14 @@ class ScheduleComponent extends Component {
     let is_publish = "none";
     let publish_id = "";
     const date = this.state.date;
-
     this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
       if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
         || (moment(date).isSame(moment(value.start), 'day'))
         || (moment(date).isSame(moment(value.end), 'day'))
       ) {
+        // if(value.workplacePublishedsByWeekPublishedId.edges.length > 0 && value.workplacePublishedsByWeekPublishedId.edges.filter()){
+        //
+        // }
         is_publish = value.published;
         publish_id = value.id;
       }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql, compose, withApollo } from 'react-apollo';
 import moment from 'moment'
 import { Button } from 'semantic-ui-react';
 import { BrowserRouter as Router, Redirect } from 'react-router-dom';
@@ -7,7 +7,6 @@ import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 import uuidv4 from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
-
 import CreateShiftButton from '../../Scheduling/AddShift/CreateShiftButton';
 import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftDrawer';
 import Modal from '../../helpers/Modal';
@@ -15,7 +14,8 @@ import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
 import {
   updateWeekPublishedNameMutation,
   createWeekPublishedMutation,
-  createShiftMutation
+  createShiftMutation,
+  createWorkplacePublishedMutation
 } from './ShiftPublish.graphql';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 var rp = require('request-promise');
@@ -70,7 +70,6 @@ class ShiftPublishComponent extends Component {
   addTemplateName = () => {
     if (this.state.workplaceId && this.state.templateName) {
       const that = this;
-
       var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/shiftToTemplate'
 
       var options = {
@@ -142,9 +141,28 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
-    this.props.mutate({
-      variables: { id: this.props.publishId, date: moment().format() }
-    });
+    const that = this;
+    const id = uuidv4();
+    if (localStorage.getItem('workplaceId') != "") {
+      this.props.createWorkplacePublishedMutation({
+        variables: {
+          workplacePublished: {
+            id: uuidv4(),
+            workplaceId: localStorage.getItem('workplaceId'),
+            weekPublishedId: this.props.publishId,
+            published: true
+          }
+        }
+      }).then((res) => {
+        console.log('Inside the data', res);
+      }).catch(err => console.log('An error occurred.', err));
+
+    }else{
+      this.props.updateWeekPublishedNameMutation({
+        variables: { id: this.props.publishId, date: moment().format() }
+      });
+    }
+
     this.modalClose();
   };
 
@@ -266,7 +284,6 @@ class ShiftPublishComponent extends Component {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
       console.log('got data', data);
     }).catch(err => {
-      debugger;
       this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
     });
   }
@@ -373,12 +390,18 @@ ShiftPublishComponent.range = (date, { culture }) => {
 };
 
 const ShiftPublish = compose(
-  graphql(updateWeekPublishedNameMutation),
+  graphql(updateWeekPublishedNameMutation,{
+    name: 'updateWeekPublishedNameMutation'
+  }),
   graphql(createShiftMutation, {
     name: 'createShift'
   }),
   graphql(createWeekPublishedMutation, {
     name: 'createWeekPublished'
-  }))(ShiftPublishComponent);
+  }),
+  graphql(createWorkplacePublishedMutation, {
+    name: 'createWorkplacePublishedMutation'
+  })
+  )(ShiftPublishComponent);
 
 export default ShiftPublish;

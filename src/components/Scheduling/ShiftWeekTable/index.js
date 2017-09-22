@@ -171,7 +171,7 @@ class ShiftWeekTableComponent extends Week {
         });
       }
     });
-  return csvShifts;1
+  return csvShifts;
   };
 
   getDataEmployeeView = (workplaceId, data, allUsers) => {
@@ -286,13 +286,42 @@ class ShiftWeekTableComponent extends Week {
         }
       }
     });
+    /*
+    let templateShifts = "";
+    let workplace="";
+        if (this.props.data.templateById){
+          templateShifts = this.props.data.templateById.templateShiftsByTemplateId.edges;
+          workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
+    }
+        if(templateShifts){
+          templateShifts.map((value, index) => {
+            value.node.days.map({
+              const positionName = value.node.positionByPositionId.positionName;
+              const dayOfWeek =  vx .dayOfWeek;
+
+              const rowHash = {};
+              rowHash["weekday"] = dayOfWeek;
+              rowHash["workplace"] = workplace;
+              if (calendarHash[positionName]) {
+                calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node)]
+              } else {
+                calendarHash[positionName] = [Object.assign(rowHash, value.node)];
+              }
+            })
+          });
+    }
+      */
+      
     return calendarHash;
   };
 
   render() {
-    if (this.props.data.loading || this.props.allUsers.loading) {
+    console.log(this.props)
+    if (this.props.data.loading || this.props.allUsers.loading || this.props.unappliedRecurring.loading) {
       return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
+
+    console.log(this.props)
 
     let { date } = this.props;
     let { start } = ShiftWeekTable.range(date, this.props);
@@ -493,6 +522,33 @@ ShiftWeekTableComponent.range = (date, { culture }) => {
   return { start, end };
 };
 
+
+const unappliedRecurring = gql`
+  query unappliedRecurring ($brandId: Uuid!, $lastApplied: Datetime!) {
+    unappliedRecurring( brand: $brandId, lastApplied: $lastApplied ){
+      edges{
+        node{
+          id
+          workplaceByWorkplaceId{
+            workplaceName
+          }
+          recurringShiftsByRecurringId{
+            edges{
+              node{
+                startTime
+                endTime
+                days
+                positionByPositionId{
+                  positionName
+                }
+              }
+            }
+          }
+        }
+      }
+      }
+}`
+
 const allUsers = gql`
   query allUsers {
     allUsers {
@@ -506,14 +562,23 @@ const allUsers = gql`
       }
     }
   }`;
-
+///
 const ShiftWeekTable = compose(
   graphql(allShiftsByWeeksPublished, {
     options: (ownProps) => ({
       variables: {
         publishId: ownProps.events.publish_id
       }
+    })
+  }),
+  graphql( unappliedRecurring, {
+    options: (ownProps) => ({
+      variables: {
+        brandId: localStorage.getItem('brandId'),
+        lastApplied: moment(ownProps.date).startOf('week')
+      }
     }),
+    name: 'unappliedRecurring'
   }),
   graphql(allUsers, { name: 'allUsers' })
 )(ShiftWeekTableComponent);

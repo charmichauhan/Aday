@@ -183,7 +183,7 @@ class DrawerHelper extends Component {
       positionOptions.unshift({
         key: 'selected',
         value: 0,
-        text: 'CHOOSE POSITION',
+        text: 'WHICH POSITION CERTIFICATION MUST THE TEAM MEMBER HAVE?',
         disabled: true
       });
     }
@@ -198,7 +198,7 @@ class DrawerHelper extends Component {
     const recurringOptions = [{
       key: 'select',
       value: 0,
-      text: 'SELECT WHETHER TO REPEAT SHIFT.',
+      text: 'WILL YOU HAVE TO SCHEDULE THESE WORKING HOURS EVERY WEEK?',
       disabled: true,
       selected: true
     }, {
@@ -208,7 +208,7 @@ class DrawerHelper extends Component {
     }, {
       key: 'weekly',
       value: 'weekly',
-      text: 'YES – SHIFT DAYS AND TIME REPEAT WEEKLY',
+      text: 'YES',
     }];
 
     const teamMembers = {

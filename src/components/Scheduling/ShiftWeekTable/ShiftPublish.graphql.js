@@ -87,3 +87,13 @@ mutation createWorkplacePublished($workplacePublished: WorkplacePublishedInput!)
    }
  }
 }`
+
+export const updateWorkplacePublishedIdMutation = gql`
+mutation($id: Uuid!, $workplacePublishedPatch: WorkplacePublishedPatch!){
+  updateWorkplacePublishedById(input:{id:$id, workplacePublishedPatch: $workplacePublishedPatch}){
+    workplacePublished{
+      id
+      published
+    }
+  }
+}`

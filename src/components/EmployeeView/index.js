@@ -174,6 +174,14 @@ const allWeekPublisheds = gql
             published
             start
             end
+            workplacePublishedsByWeekPublishedId{
+              edges{
+                node{
+                  workplaceId
+                  published
+                }
+              }
+            }
         }
     }
 }`

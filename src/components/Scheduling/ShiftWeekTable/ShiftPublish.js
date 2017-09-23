@@ -15,7 +15,8 @@ import {
   updateWeekPublishedNameMutation,
   createWeekPublishedMutation,
   createShiftMutation,
-  createWorkplacePublishedMutation
+  createWorkplacePublishedMutation,
+  updateWorkplacePublishedIdMutation
 } from './ShiftPublish.graphql';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 var rp = require('request-promise');
@@ -143,6 +144,7 @@ class ShiftPublishComponent extends Component {
   publishWeek = () => {
     const that = this;
     const id = uuidv4();
+    debugger;
     if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
         variables: {
@@ -156,13 +158,11 @@ class ShiftPublishComponent extends Component {
       }).then((res) => {
         console.log('Inside the data', res);
       }).catch(err => console.log('An error occurred.', err));
-
     }else{
       this.props.updateWeekPublishedNameMutation({
         variables: { id: this.props.publishId, date: moment().format() }
       });
     }
-
     this.modalClose();
   };
 
@@ -401,6 +401,9 @@ const ShiftPublish = compose(
   }),
   graphql(createWorkplacePublishedMutation, {
     name: 'createWorkplacePublishedMutation'
+  }),
+  graphql(updateWorkplacePublishedIdMutation, {
+    name: 'updateWorkplacePublishedIdMutation'
   })
   )(ShiftPublishComponent);
 

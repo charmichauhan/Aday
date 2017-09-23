@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import { TimePicker } from 'rc-timepicker';
 import moment from 'moment';
-import RaisedButton from 'material-ui/RaisedButton';
-import { Button } from 'semantic-ui-react';
-
-import { colors } from '../../../styles';
 
 import 'rc-timepicker/lib/css/styles.css';
 

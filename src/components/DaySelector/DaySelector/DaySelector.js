@@ -44,7 +44,7 @@ export default class DaySelector extends React.Component {
     if (nextProps.isRecurring !== props.isRecurring) {
       this.setState({ selected: {} });
     }
-    if (selected && !selected[nextProps.selectedDate]) {
+    if (selected && nextProps.selectedDate && !selected[nextProps.selectedDate]) {
       this.setState(() => {
         selected[nextProps.selectedDate] = true;
         this.setState({ selected });

@@ -507,3 +507,8 @@ i.chevron.up.icon, i.chevron.down.icon {
     transform: scaleY(1);
   }
 }
+
+
+.shift-section.edit-shit-drawer .edit-drawer-content .ui.two .row:before, .edit-drawer-content .ui.two .row:after {
+  display: none;
+}

@@ -201,7 +201,7 @@ class ShiftPublishComponent extends Component {
         },
       }).then(({ data }) => {
         days.forEach((day) => {
-          if (day && shift.shiftDaysSelected[day] === true) {
+          if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             this.saveShift(shift, day, publishId);
           }
         })
@@ -214,7 +214,7 @@ class ShiftPublishComponent extends Component {
     // else create all shifts with existing week published
     else {
       days.forEach((day) => {
-        if (day && shift.shiftDaysSelected[day] === true) {
+        if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
           this.saveShift(shift, day, publishId);
         }
       })
@@ -236,29 +236,30 @@ class ShiftPublishComponent extends Component {
 
   saveShift(shiftValue, day, weekPublishedId) {
     const shift = cloneDeep(shiftValue);
-    const shiftDay = moment.utc(day, 'YYYY-MM-DD');
+    const shiftDay = moment.utc(day, 'MM-DD-YYYY');
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    const payload = {
+      id: uuidv4(),
+      workplaceId: shift.workplaceId,
+      positionId: shift.positionId,
+      workersRequestedNum: shift.numberOfTeamMembers,
+      creatorId: localStorage.getItem('userId'),
+      managersOnShift: [null],
+      startTime: moment.utc(shift.startTime),
+      endTime: moment.utc(shift.endTime),
+      shiftDateCreated: moment().format(),
+      weekPublishedId: weekPublishedId,
+      instructions: shift.instructions,
+      unpaidBreakTime: shift.unpaidBreak
+    };
     this.props.createShift({
       variables: {
         data: {
-          shift: {
-            id: uuidv4(),
-            workplaceId: shift.workplaceId,
-            positionId: shift.positionId,
-            workersRequestedNum: shift.numberOfTeamMembers,
-            creatorId: localStorage.getItem('userId'),
-            managersOnShift: [null],
-            startTime: moment.utc(shift.startTime),
-            endTime: moment.utc(shift.endTime),
-            shiftDateCreated: moment().format(),
-            weekPublishedId: weekPublishedId,
-            instructions: shift.instructions,
-            unpaidBreakTime: shift.unpaidBreak
-          }
+          shift: payload
         }
       },
       updateQueries: {

@@ -83,6 +83,7 @@ export default class Position extends Component {
       }
       return opportunity.workplaceId == workplaceId;
     }
+    console.log(positions_copy);
     return (
       <div className="content positions-content">
         <div className="position-add-button">
@@ -113,10 +114,13 @@ export default class Position extends Component {
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder} className="grid-actions">
                   <Watch style={styles.iconStyles} onClick={this.handleClick} />
-                  <Edit style={styles.iconStyles} onClick={() => {if(position.opportunitiesByPositionId.nodes.length > 0)
+                  <Edit style={styles.iconStyles} onClick={() => {if(position.positionDescription!="placeholder - 70495871" &&
+                                                                     position.opportunitiesByPositionId.nodes.length > 0)
                                                                     {this.openPositionDrawer("edit", position)}
                                                                  }} />
-                  <Delete style={styles.iconStyles} onClick={() => this.handleDeleteClick(position.id)} />
+                  <Delete style={styles.iconStyles} onClick={() => {if(position.positionDescription!="placeholder - 70495871")
+                                                                    {this.handleDeleteClick(position.id)}
+                                                                   }} />
                 </TableRowColumn>
               </TableRow>))
             }

@@ -6,6 +6,7 @@ import Schedule from './components/Scheduling';
 import Settings from './components/Settings';
 import Positions from './components/Positions';
 import MyWorkplace from './components/workplace/MyWorkplace';
+import Listing from './components/workplace/Listing';
 import Hiring from './components/Hiring';
 import Template from './components/Template';
 import Team from './components/Team';
@@ -72,6 +73,11 @@ const routes = [
 						path: '/workplaces/mine',
 						exact: true,
 						component: MyWorkplace
+					},
+					{
+						path: '/workplaces/listing',
+						exact: true,
+						component: Listing
 					},
 					{
 						path: '/hiring',

@@ -11,6 +11,7 @@ import jobsData from "./jobs.json";
 import '../../Scheduling/style.css';
 import { gql, graphql, compose } from 'react-apollo';
 import allShiftsByWeeksPublished from '../../Scheduling/ShiftWeekTable/shiftsByWeeksPublishedQuery'
+var Halogen = require('halogen');
 
 const styles = {
 
@@ -43,7 +44,7 @@ const styles = {
 class ShiftWeekTableComponent extends Week {
     render() {
         if (this.props.data.loading) {
-            return (<div>Loading</div>)
+            return (<div><Halogen.SyncLoader color='#00A863'/></div>)
         }
 
         if (this.props.data.error) {

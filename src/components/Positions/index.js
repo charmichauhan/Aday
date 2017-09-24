@@ -8,6 +8,7 @@ import uuidv4 from 'uuid/v4';
 import moment from 'moment';
 import Positions from './Positions';
 import { tabDesign } from '../styles';
+import { all_positions, add_position, update_position, delete_position } from './positionQueries'
 import './positions.css';
 
 const styles = {
@@ -19,6 +20,7 @@ export class PositionsSection extends Component {
     super(props);
     this.state = {
       value: 'positions',
+      refetching: false
     };
   }
 
@@ -48,13 +50,21 @@ export class PositionsSection extends Component {
             "id":id
           },
         },
-        refetchQueries: [{query: all_positions,
-                          variables: {
-                            workplaceId: localStorage.getItem('workplaceId') == "" ?
-                                         null : localStorage.getItem('workplaceId'),
-                            brandId: localStorage.getItem('brandId'),
-                            corporationId: localStorage.getItem('corporationId'),
-                          }}]
+        updateQueries: {
+          fetchRelevantPositions: (previousQueryResult, { mutationResult }) => {
+            let newPositions = [];
+            console.log(mutationResult);
+            previousQueryResult.fetchRelevantPositions.nodes.map((value) => {
+              if (value.id != mutationResult.data.deletePositionById.position.id) {
+                newPositions.push(value);
+              }
+            })
+            previousQueryResult.fetchRelevantPositions.nodes = newPositions;
+            return {
+              fetchRelevantPositions: previousQueryResult.fetchRelevantPositions
+            };
+          },
+        },
       })
       .then(({ data }) => {
         console.log(data);
@@ -109,6 +119,24 @@ export class PositionsSection extends Component {
       };
       this.props.createPosition({
         variables: variables,
+        updateQueries: {
+          fetchRelevantPositions: (previousQueryResult, { mutationResult }) => {
+            console.log(mutationResult);
+            let new_position = mutationResult.data.createPosition.position;
+            new_position.positionDescription = "placeholder - 70495871";
+            new_position.opportunitiesByPositionId.nodes.push({
+              workplaceId: localStorage.getItem("workplaceId"),
+              id: null,
+              isPublic: null,
+              __typename: 'Opportunity'
+            });
+
+            previousQueryResult.fetchRelevantPositions.nodes.push(new_position);
+            return {
+              fetchRelevantPositions: previousQueryResult.fetchRelevantPositions
+            };
+          }
+        },
         refetchQueries: [{query: all_positions,
                           variables: {
                             workplaceId: localStorage.getItem('workplaceId') == "" ?
@@ -154,14 +182,7 @@ export class PositionsSection extends Component {
               "isPublic": position.opportunitiesByPositionId.nodes[0].isPublic,
             }
           }
-        },
-        refetchQueries: [{query: all_positions,
-                          variables: {
-                            workplaceId: localStorage.getItem('workplaceId') == "" ?
-                                         null : localStorage.getItem('workplaceId'),
-                            brandId: localStorage.getItem('brandId'),
-                            corporationId: localStorage.getItem('corporationId'),
-                          }}]
+        }
       })
       .then(({ data }) => {
         console.log(data);
@@ -203,6 +224,7 @@ export class PositionsSection extends Component {
   }
   */
   render() {
+    console.log(this.props.data.networkStatus);
     if (!this.props.data.fetchRelevantPositions) {
       return  (
       <div style={{marginTop:"30%",marginLeft:"0"}}>
@@ -211,7 +233,7 @@ export class PositionsSection extends Component {
     }
     const positions = this.props.data.fetchRelevantPositions.nodes;
     console.log(positions);
-
+    console.log(this.props);
     return (
       <section className="positions">
         <Tabs
@@ -226,7 +248,7 @@ export class PositionsSection extends Component {
             <Positions
               addOrUpdatePosition={this.addOrUpdatePosition}
               onDeletePosition={this.deletePosition}
-              positions={positions} />
+              positions={positions}/>
           </Tab>
           <Tab
             buttonStyle={this.getButtonStyle('training')}
@@ -240,83 +262,6 @@ export class PositionsSection extends Component {
   }
 }
 
-
-const all_positions= gql`
-  query fetchRelevantPositions($corporationId: Uuid!, $brandId: Uuid!, $workplaceId: Uuid){
-    fetchRelevantPositions(corporationid: $corporationId, brandid: $brandId, workplaceid: $workplaceId){
-      nodes{
-        id
-        positionName
-        positionDescription
-        positionIconUrl
-        minimumAge
-        minimumLiftWeight
-        traineeHours
-        partTimeWage
-        trainingUrl
-        exchangeLevel
-        jobsByPositionId(condition:{isPositionActive: true, isTrainer: true}) {
-          totalCount
-          nodes{
-            userId
-            workplaceId
-          }
-        }
-        opportunitiesByPositionId {
-          nodes{
-            id
-            isPublic
-            workplaceId
-          }
-        }
-      }
-    }
-  }`;
-const add_position=gql`
-  mutation createPosition($input:CreatePositionInput!,$data: CreateCorporationBrandWideOpportunitiesInput!){
-    createPosition(input:$input){
-      position{
-        id
-      }
-    }
-    createCorporationBrandWideOpportunities(input: $data) {
-      string
-    }
-  }
-`
-/*
-const add_job=gql`
-mutation createJob($input:CreateJobInput!){
-  createJob(input:$input){
-    job{
-      id
-    }
-  }
-}`
-*/
-const update_position=gql`
-mutation updatePosition($input:UpdateOpportunityByIdInput!,$data:UpdatePositionByIdInput!){
-  updateOpportunityById(input:$input){
-    opportunity{
-      id
-    }
-  }
-  updatePositionById(input:$data){
-    position{
-      id
-    }
-  }
-}`
-
-const delete_position=gql`
-mutation deletePosition($input: DeletePositionByIdInput!) {
-  deletePositionById(input: $input) {
-    position {
-      id
-    }
-  }
-}
-`
 const AddPosition = compose(
   graphql(all_positions, {
     options: (ownProps) => ({

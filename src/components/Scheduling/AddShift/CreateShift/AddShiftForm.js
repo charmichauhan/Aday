@@ -14,6 +14,7 @@ import PositionSelector  from './positionSelector'
 import WorkplaceSelector  from './workplaceSelector'
 import '../styles.css';
 var rp = require('request-promise');
+var Halogen = require('halogen');
 
 export class AddShiftForm extends Component{
  static propTypes = {
@@ -111,10 +112,10 @@ export class AddShiftForm extends Component{
               })
               .then(({ data }) => {
                   this.props.closeFunc();
- 
+
                   console.log('got data', data);
                   /*
-                  var shift = data.createShift.shift 
+                  var shift = data.createShift.shift
                   if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
                   var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/callEmployee/'
 
@@ -281,7 +282,7 @@ export class AddShiftForm extends Component{
           <Form>
             <div className="outside-add-shift">
              <div className="inside-add-shift">
-              <div>Loading</div>
+              <div><Halogen.SyncLoader color='#00A863'/></div>
               </div>
              </div>
           </Form>

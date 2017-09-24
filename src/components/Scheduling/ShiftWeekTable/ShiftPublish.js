@@ -58,9 +58,7 @@ class ShiftPublishComponent extends Component {
   };
 
   addTemplateclose = () => {
-    this.setState({
-      addTemplateModalOpen: false
-    });
+     this.setState({ redirect: true })
   };
 
   templateView = (view) => {
@@ -122,7 +120,7 @@ class ShiftPublishComponent extends Component {
   };
 
   addTemplateModalOpen = () => {
-    this.setState({ addTemplateModalOpen: true })
+     this.setState({ redirect: true })
   };
 
   onConfirm = () => {
@@ -266,7 +264,6 @@ class ShiftPublishComponent extends Component {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
       console.log('got data', data);
     }).catch(err => {
-      debugger;
       this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
     });
   }
@@ -340,13 +337,13 @@ class ShiftPublishComponent extends Component {
               {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
               {is_publish != 'none' &&
               <Button className="btn-image flr" onClick={this.addTemplateModalOpen}>
-                <img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template" />
+                <img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="View Recurring Shifts" />
               </Button>}
             </div> :
             <div>
               {is_publish != 'none' &&
               <Button className="btn-image flr" onClick={this.addTemplateModalOpen}>
-                <img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template" />
+                <img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="View Recurring Shifts" />
               </Button>}
             </div>
           }

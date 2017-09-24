@@ -289,6 +289,7 @@ class ShiftWeekTableComponent extends Week {
                         assigned.map((v) => {
                           const rowHash = {}
                           rowHash['weekday'] = day;
+                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
                           const userName = userHash[v];
                           rowHash['userFirstName'] = userHash[v][0]
                           rowHash['userLastName'] = userHash[v][1]
@@ -327,6 +328,7 @@ class ShiftWeekTableComponent extends Week {
                         assigned.map((v) => {
                           const rowHash = {}
                           rowHash['weekday'] = day;
+                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
                           const userName = userHash[v];
                           rowHash['userFirstName'] = userHash[v][0]
                           rowHash['userLastName'] = userHash[v][1]

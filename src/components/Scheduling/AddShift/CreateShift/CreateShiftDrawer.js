@@ -66,11 +66,9 @@ class DrawerHelper extends Component {
     if (workplaceId) {
       CreateShiftHelper.getRelevantPositions(workplaceId)
         .then((positions) => {
-          debugger;
           this.setState({ positions })
         })
         .catch(err => {
-          debugger;
           console.error(err)
         });
     }

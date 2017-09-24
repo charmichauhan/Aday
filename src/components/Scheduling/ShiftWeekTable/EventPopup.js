@@ -117,6 +117,7 @@ class EventPopupComponent extends Component {
 
   render() {
     let { data, users }= this.props;
+
     let pastDate = moment().diff(data.startTime) > 0;
     let startTime = moment(data.startTime).format('h:mm A');
     let endTime = moment(data.endTime).format('h:mm A');

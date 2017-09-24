@@ -15,7 +15,7 @@ export default class JobsRow extends Component{
         const daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
         const hashByDay = {"SUNDAY": [], "MONDAY": [], "TUESDAY": [], "WEDNESDAY": [], "THURSDAY": [], "FRIDAY": [], "SATURDAY": []};
         data.map((value,index) => {
-            const day =  value.weekday
+            const day =  value.weekday.toUpperCase();
             if (hashByDay[day]){
                 hashByDay[day] = [...hashByDay[day], value];
             } else {
@@ -68,7 +68,6 @@ export default class JobsRow extends Component{
         let adHours= Math.floor(finalMinutes/60);
         finalHours+=adHours;
         finalMinutes = finalMinutes - (adHours*60);
-
         return(
             <TableRow className="tableh" displayBorder={false}>
                 <TableRowColumn className="headcol" style={{paddingLeft:'0px',paddingRight:'0px'}}>

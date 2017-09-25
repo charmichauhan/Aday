@@ -38,7 +38,7 @@ class ShiftPublishComponent extends Component {
       publishModalPopped: false,
       addTemplateModalOpen: false,
       templateName: '',
-      workplaceId: '',
+      workplaceId: localStorage.getItem('workplaceId'),
       redirect: false,
       isCreateShiftModalOpen: false,
       isCreateShiftOpen: false,
@@ -48,10 +48,15 @@ class ShiftPublishComponent extends Component {
 
   modalClose = () => {
     this.setState({
-      publishModalPopped: false
+      workplaceId: localStorage.getItem('workplaceId')
     })
   };
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      publishModalPopped: false
+    });
+  }
   goBack = () => {
     this.setState({
       publishModalPopped: false
@@ -289,19 +294,24 @@ class ShiftPublishComponent extends Component {
   }
 
   render() {
+    debugger;
     let is_publish = this.props.isPublish;
     let publishId = this.props.publishId;
+    let   message="";
     const startDate = this.props.date;
+    const isPublished = ( !this.props.isWorkplacePublished ||(!this.state.workplaceId && is_publish == false && is_publish != 'none'));
 
     const { notify, notificationMessage, notificationType } = this.state;
 
     let status = '';
     let statusImg = '';
-    if (is_publish == false) {
+    if (isPublished) {
+      debugger;
       status = 'UNPUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/unpublished.png';
     }
-    else if (is_publish == true) {
+    else if (!isPublished) {
+      debugger;
       status = 'PUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/published.png';
     }
@@ -312,14 +322,19 @@ class ShiftPublishComponent extends Component {
         <Redirect to={{ pathname: '/schedule/template', viewName: this.props.view }} />
       )
     }
-
+    if(this.state.publishModalPopped && localStorage.getItem('workplaceId')!=""){
+      message="Are you sure that you want to publish the week's schedule on Workplace?"
+    }else {
+      message="Are you sure that you want to publish the week's schedule?"
+    }
     let { date } = this.props;
     let { start } = ShiftPublish.range(date, this.props);
+    debugger;
 
     return (
       <div className="shift-section">
         {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
-                                                 message="Are you sure that you want to publish the week's schedule?"
+                                                 message={message}
                                                  action={publishModalOptions} closeAction={this.modalClose} />
         }
         {this.state.addTemplateModalOpen && <AddAsTemplateModal addTemplateModalOpen={true}
@@ -346,7 +361,7 @@ class ShiftPublishComponent extends Component {
                   weekPublishedId={publishId}
                   weekStart={start} />
               </Button>
-              {(is_publish == false && is_publish != 'none') &&
+              {isPublished &&
               <Button className="btn-image flr" onClick={this.onPublish}>
                 <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
               </Button>}

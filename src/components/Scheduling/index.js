@@ -185,17 +185,26 @@ class ScheduleComponent extends Component {
     let events= [];
     let is_publish = "none";
     let publish_id = "";
+    let isWorkplacePublished = false;
     const date = this.state.date;
     this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
+      console.log(value);
       if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
         || (moment(date).isSame(moment(value.start), 'day'))
         || (moment(date).isSame(moment(value.end), 'day'))
       ) {
-        // if(value.workplacePublishedsByWeekPublishedId.edges.length > 0 && value.workplacePublishedsByWeekPublishedId.edges.filter()){
-        //
-        // }
+        debugger;
+        if(value.workplacePublishedsByWeekPublishedId.edges.length > 0){
+          value.workplacePublishedsByWeekPublishedId.edges.map((value) => {
+            if(value.node.workplaceId == localStorage.getItem("workplaceId")) {
+              debugger;
+              isWorkplacePublished = value.node.published;
+            }
+          });
+        }
         is_publish = value.published;
         publish_id = value.id;
+        debugger;
       }
     });
 
@@ -206,7 +215,7 @@ class ScheduleComponent extends Component {
     return (
         <div style={{maxWidth: '1750px'}}>
             <div style={{height: '160px'}}>
-              <ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={ publish_id } view={this.state.view}/>
+              <ShiftPublish date={this.state.date} isWorkplacePublished={ isWorkplacePublished } isPublish={ is_publish } publishId={ publish_id } view={this.state.view}/>
             </div>
             <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                    message="Are you sure that you want to delete this shift?"
@@ -304,9 +313,9 @@ const allWeekPublisheds = gql
                 }
               }
             }
+            }
         }
-    }
-}`
+  }`
 
 const Schedule = graphql(allWeekPublisheds, {
   options: (ownProps) => ({

@@ -306,12 +306,10 @@ class ShiftPublishComponent extends Component {
     let status = '';
     let statusImg = '';
     if (isPublished) {
-      debugger;
       status = 'UNPUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/unpublished.png';
     }
     else if (!isPublished) {
-      debugger;
       status = 'PUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/published.png';
     }

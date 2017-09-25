@@ -193,18 +193,15 @@ class ScheduleComponent extends Component {
         || (moment(date).isSame(moment(value.start), 'day'))
         || (moment(date).isSame(moment(value.end), 'day'))
       ) {
-        debugger;
         if(value.workplacePublishedsByWeekPublishedId.edges.length > 0){
           value.workplacePublishedsByWeekPublishedId.edges.map((value) => {
             if(value.node.workplaceId == localStorage.getItem("workplaceId")) {
-              debugger;
               isWorkplacePublished = value.node.published;
             }
           });
         }
         is_publish = value.published;
         publish_id = value.id;
-        debugger;
       }
     });
 

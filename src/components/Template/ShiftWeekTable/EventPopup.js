@@ -72,7 +72,6 @@ class EventPopupComponent extends Component{
         let m = moment.utc(moment(endTime).diff(moment(startTime))).format("mm");
         let deleteShiftAction =[{type:"white",title:"Cancel",handleClick:this.handleClose,image:false},
                                 {type:"red",title:"Delete Shift",handleClick:this.deleteShift,image:'/images/modal/close.png'}];
-       
         return(
             <div className="day-item hov">
                 <div className="start-time">

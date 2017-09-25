@@ -114,11 +114,11 @@ export default class Position extends Component {
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder} className="grid-actions">
                   <Watch style={styles.iconStyles} onClick={this.handleClick} />
-                  <Edit style={styles.iconStyles} onClick={() => {if(position.positionDescription!="placeholder - 70495871" &&
+                  <Edit style={styles.iconStyles} onClick={() => {if(position.positionDescription!="placeholder - waiting for refetch" &&
                                                                      position.opportunitiesByPositionId.nodes.length > 0)
                                                                     {this.openPositionDrawer("edit", position)}
                                                                  }} />
-                  <Delete style={styles.iconStyles} onClick={() => {if(position.positionDescription!="placeholder - 70495871")
+                  <Delete style={styles.iconStyles} onClick={() => {if(position.positionDescription!="placeholder - waiting for refetch")
                                                                     {this.handleDeleteClick(position.id)}
                                                                    }} />
                 </TableRowColumn>

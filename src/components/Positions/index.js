@@ -123,7 +123,8 @@ export class PositionsSection extends Component {
           fetchRelevantPositions: (previousQueryResult, { mutationResult }) => {
             console.log(mutationResult);
             let new_position = mutationResult.data.createPosition.position;
-            new_position.positionDescription = "placeholder - 70495871";
+            // add a placeholder with random string to signify that it's waiting for refetch
+            new_position.positionDescription = "placeholder - waiting for refetch";
             new_position.opportunitiesByPositionId.nodes.push({
               workplaceId: localStorage.getItem("workplaceId"),
               id: null,

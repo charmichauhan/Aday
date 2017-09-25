@@ -70,13 +70,18 @@ class DrawerHelper extends Component {
     .attach("theseNamesMustMatch", files[0])
     .end((err, res) => {
       if (err) console.log(err);
-      alert('File uploaded!');
+      else {
+        const workplace = Object.assign(this.state.workplace, { workplaceImageUrl : res.text });
+        this.setState({workplace: workplace});
+        alert('File uploaded!');
+        this.setState({ blob: files[0] });
+      }
     })
-    this.setState({ blob: files[0] });
   };
 
   handleNewImageUpload = (files) => {
     files[0].preview = window.URL.createObjectURL(files[0]);
+    this.setState({ blob: files[0] });
     this.handleImageUpload(files);
   };
 
@@ -133,7 +138,8 @@ class DrawerHelper extends Component {
             </Dropzone>
           </div>}
           {DrawerWorkplace.workplaceImageUrl && !this.state.blob &&
-          <Image className="uploaded-image" src={DrawerWorkplace.workplaceImageUrl} size="large" />
+          <Image className="uploaded-image" src={DrawerWorkplace.workplaceImageUrl + "?" + new Date().getTime()} alt={workplace.name}
+           size="large" />
           }
           {this.state.blob &&
           <Image className="uploaded-image" src={this.state.blob.preview} size="large" />

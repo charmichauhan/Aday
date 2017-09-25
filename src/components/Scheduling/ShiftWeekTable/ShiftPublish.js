@@ -336,11 +336,11 @@ class ShiftPublishComponent extends Component {
               </Button>}
               {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
               {is_publish != 'none' &&
-              <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => this.addTemplateModalOpen()}>View Recurring Shifts</button> }
+              <Button  basic style={{width:150, height: 44}} onClick={() => this.addTemplateModalOpen()}>View Recurring Shifts</Button> }
             </div> :
             <div>
               {is_publish != 'none' &&
-              <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => this.addTemplateModalOpen()}>View Recurring Shifts</button> }
+              <Button basic style={{width:150, height: 44}} onClick={() => this.addTemplateModalOpen()}>View Recurring Shifts</Button> }
             </div>
           }
 

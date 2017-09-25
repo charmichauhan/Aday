@@ -501,7 +501,7 @@ class DrawerHelper extends Component {
                 <p><b>job shadowing shift</b>: <span>No</span></p>
                 <br />
                 <p><b>SHIFT INSTRUCTIONS:</b></p>
-                <p className="dimmedText"> {!shift.instructions.length < 1? <span>{shift.instructions}</span>:<span>n/a</span>}
+                <p className="dimmedText"> {shift.instructions && !shift.instructions.length < 1? <span>{shift.instructions}</span>:<span>n/a</span>}
                 </p>
               </div>
             </div>

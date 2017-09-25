@@ -499,6 +499,14 @@ i.chevron.up.icon, i.chevron.down.icon {
   animation: anim 0.5s ease-in-out;
 }
 
+.rbc-calendar .shift-section .row:before {
+  display: none;
+}
+
+.shift-section .ui.dropdown > .text {
+  font-size: 14px;
+}
+
 @keyframes anim {
   0% {
     transform: scaleY(0);
@@ -506,9 +514,4 @@ i.chevron.up.icon, i.chevron.down.icon {
   100% {
     transform: scaleY(1);
   }
-}
-
-
-.shift-section.edit-shit-drawer .edit-drawer-content .ui.two .row:before, .edit-drawer-content .ui.two .row:after {
-  display: none;
 }

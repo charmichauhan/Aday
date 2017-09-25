@@ -6,9 +6,9 @@ import { gql, graphql, compose } from 'react-apollo';
 import { updateShiftMutation } from './ShiftEdit/EditShiftDrawer.graphql';
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawer from '../AddShift/CreateShift/CreateShiftAdvanceDrawer';
+import CreateShiftDrawer from '../AddShift/CreateShift/CreateShiftDrawer';
 import EditShiftDrawerContainer from './ShiftEdit/EditShiftDrawerContainer';
 import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer';
-import EditShiftDetailsDrawer from './ShiftEdit/EditShiftDetailsDrawer';
 
 import '../style.css';
 import './shiftWeekTable.css';
@@ -18,6 +18,10 @@ const uuidv4 = require('uuid/v4');
 class EventPopupComponent extends Component {
   constructor(props) {
     super(props);
+    const workplaceId = props.data.workplaceByWorkplaceId && props.data.workplaceByWorkplaceId.id;
+    const brandId = props.data.positionByPositionId && props.data.positionByPositionId.brandByBrandId && props.data.positionByPositionId.brandByBrandId.id;
+    const positionId = props.data.positionByPositionId && props.data.positionByPositionId.id;
+    debugger;
     this.state = {
       deleteModalPopped: false,
       editModalPopped: false,
@@ -25,8 +29,14 @@ class EventPopupComponent extends Component {
       shiftHistoryDrawer: false,
       isCreateShiftAdvanceOpen: false,
       drawerShift: {
-        ...this.props.data,
-        advance: { allowShadowing: true }
+        ...props.data,
+        numberOfTeamMembers: props.data.workersRequestedNum,
+        startTime: moment(props.data.startTime),
+        endTime: moment(props.data.endTime),
+        advance: { allowShadowing: true },
+        workplaceId,
+        brandId,
+        positionId
       }
     }
   }
@@ -45,7 +55,6 @@ class EventPopupComponent extends Component {
 
   deleteShift = () => {
     let id = this.props.data.id;
-    let shift = this.props.data
     let that = this;
     that.props.deleteShiftById(uuidv4(), id)
       .then(({ data }) => {
@@ -110,7 +119,7 @@ class EventPopupComponent extends Component {
       },
       updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-          const shiftHash = mutationResult.data.createShift.shift;
+          const shiftHash = mutationResult.data.updateShiftById.shift;
           previousQueryResult.allShifts.edges =
             [...previousQueryResult.allShifts.edges, { 'node': shiftHash, '__typename': 'ShiftsEdge' }];
           return {
@@ -228,7 +237,7 @@ class EventPopupComponent extends Component {
           open={this.state.shiftHistoryDrawer}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
-        <EditShiftDetailsDrawer
+        <CreateShiftDrawer
           width={700}
           open={this.state.editShiftModalOpen}
           shift={this.state.drawerShift}

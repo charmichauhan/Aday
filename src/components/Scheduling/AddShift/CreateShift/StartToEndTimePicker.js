@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { TimePicker } from 'rc-timepicker';
-import moment from 'moment';
+import cloneDeep from 'lodash/cloneDeep';
 
 import 'rc-timepicker/lib/css/styles.css';
 
@@ -21,8 +21,9 @@ export default class StartToEndTimePicker extends Component {
   }
 
   handleTimeChange = ({ name, value }) => {
+    const stateValue = cloneDeep(this.state[name]);
     let [hour, min] = value.split(':');
-    const dateTime = moment().hour(hour).minute(min);
+    const dateTime = stateValue.hour(hour).minute(min);
     this.setState({ [name]: dateTime, [name + 'Value']: value });
   };
 
@@ -31,7 +32,7 @@ export default class StartToEndTimePicker extends Component {
     if (formCallBack) {
       const { startTime, startTimeValue, endTime, endTimeValue } = this.state;
       formCallBack({ startTime, endTime });
-      this.setState({ startTimeValueTop: startTimeValue, endTimeValueTop: endTimeValue, showSelector: false, showSelector: !this.state.showSelector });
+      this.setState({ startTimeValueTop: startTimeValue, endTimeValueTop: endTimeValue, showSelector: !this.state.showSelector });
     }
   };
 
@@ -45,7 +46,7 @@ export default class StartToEndTimePicker extends Component {
   };
 
   render() {
-    const { showSelector, startTimeValue, startTimeValueTop, endTimeValue, endTimeValueTop } = this.state;
+    const { showSelector, startTime, startTimeValue, startTimeValueTop, endTime, endTimeValue, endTimeValueTop } = this.state;
     const { onNowSelect } = this.props;
     return (
       <div className="time-selector-wrapper">
@@ -65,11 +66,11 @@ export default class StartToEndTimePicker extends Component {
         <div className="time-selector-display" style={{ display: showSelector ? 'block' : 'none' }}>
           <div className="time-wrapper">
             <p style={{ background: '#ffffff', padding: '0 0 10px 10px', marginBottom: 0  }}>{startTimeValue || 'Start'}</p>
-            <TimePicker getTime={(value) => this.handleTimeChange({ name: 'startTime', value })} />
+            <TimePicker date={startTime} getTime={(value) => this.handleTimeChange({ name: 'startTime', value })} />
           </div>
           <div className="time-wrapper">
             <p style={{ background: '#ffffff', padding: '0 0 10px 10px', marginBottom: 0 }}>{endTimeValue || 'End'}</p>
-            <TimePicker getTime={(value) => this.handleTimeChange({ name: 'endTime', value })} />
+            <TimePicker date={endTime} getTime={(value) => this.handleTimeChange({ name: 'endTime', value })} />
           </div>
           <div className="time-actions-wrapper text-uppercase">
             <div className="left-picker-group">

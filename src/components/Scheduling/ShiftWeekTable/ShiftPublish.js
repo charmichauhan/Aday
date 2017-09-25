@@ -87,7 +87,7 @@ class ShiftPublishComponent extends Component {
 
       rp(options)
         .then(function (response) {
-          window.location.href = '/schedule/template/'
+          window.location.href = '/schedule/recurring/'
         }).catch((error) => {
         console.log('there was an error sending the query', error);
       });
@@ -289,7 +289,7 @@ class ShiftPublishComponent extends Component {
       { type: 'blue', title: 'Confirm', handleClick: this.publishWeek, image: false }];
     if (this.state.redirect) {
       return (
-        <Redirect to={{ pathname: '/schedule/template', viewName: this.props.view }} />
+        <Redirect to={{ pathname: '/schedule/recurring', viewName: this.props.view }} />
       )
     }
 
@@ -334,7 +334,7 @@ class ShiftPublishComponent extends Component {
               <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}>
                 <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
               </Button>}
-              {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+              {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
               {is_publish != 'none' &&
               <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => this.addTemplateModalOpen()}>View Recurring Shifts</button> }
             </div> :

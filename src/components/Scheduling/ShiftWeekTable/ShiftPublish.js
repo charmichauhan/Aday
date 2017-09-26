@@ -143,6 +143,8 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
+    const { date } = this.props;
+    debugger;
     if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
         variables: {
@@ -159,9 +161,9 @@ class ShiftPublishComponent extends Component {
 
             previousQueryResult.allWeekPublisheds.nodes.forEach(function (value) {
 
-              if ((moment().isAfter(moment(value.start)) && moment().isBefore(moment(value.end)))
-                || (moment().isSame(moment(value.start), 'day'))
-                || (moment().isSame(moment(value.end), 'day'))
+              if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
+                || (moment(date).isSame(moment(value.start), 'day'))
+                || (moment(date).isSame(moment(value.end), 'day'))
               ){
                 value.workplacePublishedsByWeekPublishedId.edges = [...value.workplacePublishedsByWeekPublishedId.edges, {node:workplacePublished, __typename: "WorkplacePublishedsEdge"}];
               }

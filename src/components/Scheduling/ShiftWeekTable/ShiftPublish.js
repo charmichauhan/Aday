@@ -144,7 +144,6 @@ class ShiftPublishComponent extends Component {
 
   publishWeek = () => {
     const { date } = this.props;
-    debugger;
     if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
         variables: {

@@ -3,13 +3,16 @@ import classNames from 'classnames';
 
 import './NumberButton.css';
 
-function NumberButton({
-  display,
-  dataValue,
-  currentValue,
-  onClick,
-  ...otherProps
-}) {
+function NumberButton(props) {
+  
+  const {
+    display,
+    dataValue,
+    currentValue,
+    onClick,
+    ...otherProps
+  } = props;
+
   const classes = classNames({
     'time-selector-number-button': true,
     selected: currentValue === dataValue,

@@ -10,6 +10,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import CreateShiftButton from '../../Scheduling/AddShift/CreateShiftButton';
 import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftDrawer';
+import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
 import {
@@ -41,7 +42,7 @@ class ShiftPublishComponent extends Component {
       redirect: false,
       isCreateShiftModalOpen: false,
       isCreateShiftOpen: false,
-      drawerShift: {}
+      drawerShift: { advance: { allowShadowing: true } }
     }
   }
 
@@ -198,7 +199,7 @@ class ShiftPublishComponent extends Component {
         },
       }).then(({ data }) => {
         days.forEach((day) => {
-          if (shift.shiftDaysSelected[day] === true) {
+          if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             this.saveShift(shift, day, publishId);
           }
         })
@@ -211,12 +212,20 @@ class ShiftPublishComponent extends Component {
     // else create all shifts with existing week published
     else {
       days.forEach((day) => {
-        if (shift.shiftDaysSelected[day] === true) {
+        if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
           this.saveShift(shift, day, publishId);
         }
       })
     }
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
+  };
+
+  handleAdvanceToggle = (drawerShift) => {
+    this.setState((state) => ({
+      drawerShift,
+      isCreateShiftOpen: !state.isCreateShiftOpen,
+      isCreateShiftAdvanceOpen: !state.isCreateShiftAdvanceOpen
+    }));
   };
 
   closeDrawerAndModal = () => {
@@ -225,29 +234,30 @@ class ShiftPublishComponent extends Component {
 
   saveShift(shiftValue, day, weekPublishedId) {
     const shift = cloneDeep(shiftValue);
-    const shiftDay = moment.utc(day, 'YYYY-MM-DD');
+    const shiftDay = moment.utc(day, 'MM-DD-YYYY');
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    const payload = {
+      id: uuidv4(),
+      workplaceId: shift.workplaceId,
+      positionId: shift.positionId,
+      workersRequestedNum: shift.numberOfTeamMembers,
+      creatorId: localStorage.getItem('userId'),
+      managersOnShift: [null],
+      startTime: moment.utc(shift.startTime),
+      endTime: moment.utc(shift.endTime),
+      shiftDateCreated: moment().format(),
+      weekPublishedId: weekPublishedId,
+      instructions: shift.instructions,
+      unpaidBreakTime: shift.unpaidBreak
+    };
     this.props.createShift({
       variables: {
         data: {
-          shift: {
-            id: uuidv4(),
-            workplaceId: shift.workplaceId,
-            positionId: shift.positionId,
-            workersRequestedNum: shift.numberOfTeamMembers,
-            creatorId: localStorage.getItem('userId'),
-            managersOnShift: [null],
-            startTime: moment.utc(shift.startTime),
-            endTime: moment.utc(shift.endTime),
-            shiftDateCreated: moment().format(),
-            weekPublishedId: weekPublishedId,
-            instructions: shift.instructions,
-            unpaidBreakTime: shift.unpaidBreak
-          }
+          shift: payload
         }
       },
       updateQueries: {
@@ -264,6 +274,7 @@ class ShiftPublishComponent extends Component {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
       console.log('got data', data);
     }).catch(err => {
+      console.log('There was error in saving shift', err);
       this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
     });
   }
@@ -351,7 +362,13 @@ class ShiftPublishComponent extends Component {
           shift={this.state.drawerShift}
           weekStart={start}
           handleSubmit={this.handleCreateSubmit}
+          handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeDrawerAndModal} />
+        <CreateShiftAdvanceDrawer
+          width={styles.drawer.width}
+          shift={this.state.drawerShift}
+          open={this.state.isCreateShiftAdvanceOpen}
+          handleBack={this.handleAdvanceToggle} />
         <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </div>
     )

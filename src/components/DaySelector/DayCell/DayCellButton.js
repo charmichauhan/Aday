@@ -12,7 +12,8 @@ function DayCellButton(props) {
     displayDate,
     fullDate,
     selected,
-    onClick
+    onClick,
+    isRecurring
   } = props;
 
   const buttonClasses = classNames({
@@ -33,10 +34,9 @@ function DayCellButton(props) {
   return (
     <div className="shift-modal-day-cell" onClick={filteredOnClick}>
       <button type="button" className={buttonClasses} data-cellId={cellId} disabled={true}>
-        <p data-cellId={cellId} style={{ width: '100%', height: '100%' }}>
-          {daySubString}
-          <br />
-          {displayMonth} {displayDate}
+        <p data-cellId={cellId} className={isRecurring && 'shift-day-red'} style={{ width: '100%', height: '100%' }}>
+          <p data-cellId={cellId} className={daySubString === 'Today' && 'day-label-red text-uppercase' || 'day-label'}>{daySubString}</p>
+          <p data-cellId={cellId} className="month-date-label">{displayMonth} {displayDate}</p>
         </p>
       </button>
     </div>
@@ -49,6 +49,7 @@ DayCellButton.propTypes = {
   cellId: PropTypes.string.isRequired,
   selected: PropTypes.bool,
   onClick: PropTypes.func,
+  isRecurring: PropTypes.bool
 };
 
 export default DayCellButton;

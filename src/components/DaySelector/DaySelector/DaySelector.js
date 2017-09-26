@@ -36,8 +36,22 @@ export default class DaySelector extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.startDate.valueOf() !== this.props.startDate.valueOf()) {
+    const props = this.props;
+    let { selected } = this.state;
+    if (nextProps.startDate.valueOf() !== props.startDate.valueOf()) {
       this.setState({ startdate: nextProps.startDate });
+    }
+    if (nextProps.isRecurring !== props.isRecurring) {
+      this.setState({ selected: {} });
+    }
+    if (selected && nextProps.selectedDate && !selected[nextProps.selectedDate]) {
+      this.setState(() => {
+        selected[nextProps.selectedDate] = true;
+        this.setState({ selected });
+        if (props.callBack) {
+          props.callBack({ shiftDaysSelected: selected });
+        }
+      });
     }
   }
 
@@ -70,22 +84,27 @@ export default class DaySelector extends React.Component {
 
   render() {
     const { selected, startdate } = this.state;
-    const { tableSize } = this.props;
+    const { tableSize, isRecurring } = this.props;
 
     const startMoment = moment(startdate);
     const cells = _.map(_.range(tableSize), (i) => {
       const calDate = startMoment.clone().add(i, 'days');
+      let daySubString = getSubStringFromDayName(calDate.format('dddd'));
+      if (!isRecurring && moment().format('MM-DD-YYYY') === calDate.format('MM-DD-YYYY')) {
+        daySubString = 'Today';
+      }
       return {
-        daySubString: getSubStringFromDayName(calDate.format('dddd')),
+        isRecurring,
+        daySubString,
         displayMonth: getCapitalMonthName(calDate.format('MMM')),
         displayDate: calDate.format('D'),
         fullDate: calDate,
-        cellId: calDate.format('YYYY-MM-DD'),
+        cellId: calDate.format('MM-DD-YYYY'),
       };
     });
     return (
-      <div style={{ height: '80px' }}>
-        <div style={{ float: 'left' }}>
+      <div style={{ height: 80 }}>
+        <div style={{ float: 'left', paddingTop: 3 }}>
           {
             _.map(cells, (cell) => {
               const cellKey = `${cell.cellId}-modal-day-cell`;
@@ -107,12 +126,12 @@ export default class DaySelector extends React.Component {
 
 DaySelector.propTypes = {
   tableSize: PropTypes.number.isRequired,
-  startDate: PropTypes.string.isRequired,
+  startDate: PropTypes.object.isRequired,
   selectedDate: PropTypes.string,
   //formCallback: PropTypes.func.isRequired,
 };
 
-/* Not using this right now, too many use cases
+/* Not using this right now, too many use case s
 
  <div style={{float:'left'}}>
  <SquareButton

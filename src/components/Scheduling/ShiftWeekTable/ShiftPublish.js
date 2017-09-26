@@ -48,14 +48,13 @@ class ShiftPublishComponent extends Component {
 
   modalClose = () => {
     this.setState({
-      workplaceId: localStorage.getItem('workplaceId')
+      workplaceId: localStorage.getItem('workplaceId'),
+      publishModalPopped: false
     })
   };
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      publishModalPopped: false
-    });
+    debugger;
   }
   goBack = () => {
     this.setState({
@@ -147,8 +146,6 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
-    const that = this;
-    const id = uuidv4();
     debugger;
     if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
@@ -159,16 +156,76 @@ class ShiftPublishComponent extends Component {
             weekPublishedId: this.props.publishId,
             published: true
           }
-        }
+        },
+        updateQueries: {
+          allWeekPublisheds: (previousQueryResult, { mutationResult }) => {
+
+            // let weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
+            // previousQueryResult.allWeekPublisheds.nodes = [...previousQueryResult.allWeekPublisheds.nodes, weekPublishedHash]
+            // return {
+            //   allWeekPublisheds: previousQueryResult.allWeekPublisheds
+            // };
+debugger;
+            let WeekPublished = "",workplacePublished = mutationResult.data.createWorkplacePublished.workplacePublished;
+
+            let workplacePublishedsByWeekPublished = "";
+            debugger;
+
+            previousQueryResult.allWeekPublisheds.nodes.forEach(function (value) {
+
+              if ((moment().isAfter(moment(value.start)) && moment().isBefore(moment(value.end)))
+                || (moment().isSame(moment(value.start), 'day'))
+                || (moment().isSame(moment(value.end), 'day'))
+              ){
+                debugger;
+                value.workplacePublishedsByWeekPublishedId.edges = [...value.workplacePublishedsByWeekPublishedId.edges, {node:workplacePublished, __typename: "WorkplacePublishedsEdge"}];
+                debugger
+                // value.workplacePublishedsByWeekPublishedId = [...]
+                // var edgesobj = {edges:workplacePublishedsByWeekPublished};
+                // if(value.workplacePublishedsByWeekPublishedId.edges.length > 0){
+                //   value.workplacePublishedsByWeekPublishedId.edges.filter((value) => {
+                //     const dfs= value;
+                //
+                //     if(value.node.workplaceId != localStorage.getItem("workplaceId")) {
+                //
+                //       // workplacePublishedsByWeekPublished = [...value, workplacePublished];
+                //       console.log(value);
+                //     }
+                //   });
+                // }
+                // debugger;
+                // // WeekPublished = [...value.workplacePublishedsByWeekPublishedId.edges, workplacePublishedsByWeekPublished];
+                // var ref = [...value.workplacePublishedsByWeekPublishedId, workplacePublishedsByWeekPublished];
+                // debugger;
+                // WeekPublished = [...value, ref];
+                // debugger;
+              }
+              debugger;
+            });
+            // let workplacePublishedHash = mutationResult.data.createWorkplacePublished.workplacePublished;
+            //
+            // var obj = [...previousQueryResult.allWeekPublisheds.nodes, WeekPublished];
+            // debugger;
+            // previousQueryResult.allWeekPublisheds.nodes = obj;
+            // debugger;
+            return {
+              allWeekPublisheds: previousQueryResult.allWeekPublisheds
+            };
+          },
+        },
       }).then((res) => {
         console.log('Inside the data', res);
+        this.modalClose();
+
       }).catch(err => console.log('An error occurred.', err));
     }else{
+      debugger;
       this.props.updateWeekPublishedNameMutation({
         variables: { id: this.props.publishId, date: moment().format() }
+      }).then((res)=>{
+        this.modalClose();
       });
     }
-    this.modalClose();
   };
 
   openCreateShiftModal = () => {
@@ -196,6 +253,7 @@ class ShiftPublishComponent extends Component {
   };
 
   handleCreateSubmit = (shift) => {
+    debugger;
     let { publishId } = this.props;
     let days = Object.keys(shift.shiftDaysSelected);
     if (!publishId) {
@@ -294,12 +352,18 @@ class ShiftPublishComponent extends Component {
   }
 
   render() {
-    debugger;
     let is_publish = this.props.isPublish;
     let publishId = this.props.publishId;
     let   message="";
     const startDate = this.props.date;
-    const isPublished = ( !this.props.isWorkplacePublished ||(!this.state.workplaceId && is_publish == false && is_publish != 'none'));
+    // const isPublished = ( this.props.isWorkplacePublished && (is_publish == false && is_publish != 'none'));
+    const isPublished =  (is_publish == false && is_publish != 'none') ? (this.props.isWorkplacePublished === false ? true:false) : false;
+
+    // (is_publish === false && is_publish != 'none' )?
+    //   (is_workplacePublish === false ?
+    //     <Button className="btn-image flr" onClick={this.onPublish}>
+    //       <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
+    //     </Button>: "") : ""
 
     const { notify, notificationMessage, notificationType } = this.state;
 
@@ -320,14 +384,13 @@ class ShiftPublishComponent extends Component {
         <Redirect to={{ pathname: '/schedule/template', viewName: this.props.view }} />
       )
     }
-    if(this.state.publishModalPopped && localStorage.getItem('workplaceId')!=""){
+    if(this.state.publishModalPopped && this.state.workplaceId != ""){
       message="Are you sure that you want to publish the week's schedule on Workplace?"
     }else {
       message="Are you sure that you want to publish the week's schedule?"
     }
     let { date } = this.props;
     let { start } = ShiftPublish.range(date, this.props);
-    debugger;
 
     return (
       <div className="shift-section">

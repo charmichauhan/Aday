@@ -53,9 +53,6 @@ class ShiftPublishComponent extends Component {
     })
   };
 
-  componentWillReceiveProps(nextProps) {
-    debugger;
-  }
   goBack = () => {
     this.setState({
       publishModalPopped: false
@@ -146,7 +143,6 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
-    debugger;
     if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
         variables: {
@@ -159,17 +155,7 @@ class ShiftPublishComponent extends Component {
         },
         updateQueries: {
           allWeekPublisheds: (previousQueryResult, { mutationResult }) => {
-
-            // let weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
-            // previousQueryResult.allWeekPublisheds.nodes = [...previousQueryResult.allWeekPublisheds.nodes, weekPublishedHash]
-            // return {
-            //   allWeekPublisheds: previousQueryResult.allWeekPublisheds
-            // };
-debugger;
-            let WeekPublished = "",workplacePublished = mutationResult.data.createWorkplacePublished.workplacePublished;
-
-            let workplacePublishedsByWeekPublished = "";
-            debugger;
+            let workplacePublished = mutationResult.data.createWorkplacePublished.workplacePublished;
 
             previousQueryResult.allWeekPublisheds.nodes.forEach(function (value) {
 
@@ -177,37 +163,9 @@ debugger;
                 || (moment().isSame(moment(value.start), 'day'))
                 || (moment().isSame(moment(value.end), 'day'))
               ){
-                debugger;
                 value.workplacePublishedsByWeekPublishedId.edges = [...value.workplacePublishedsByWeekPublishedId.edges, {node:workplacePublished, __typename: "WorkplacePublishedsEdge"}];
-                debugger
-                // value.workplacePublishedsByWeekPublishedId = [...]
-                // var edgesobj = {edges:workplacePublishedsByWeekPublished};
-                // if(value.workplacePublishedsByWeekPublishedId.edges.length > 0){
-                //   value.workplacePublishedsByWeekPublishedId.edges.filter((value) => {
-                //     const dfs= value;
-                //
-                //     if(value.node.workplaceId != localStorage.getItem("workplaceId")) {
-                //
-                //       // workplacePublishedsByWeekPublished = [...value, workplacePublished];
-                //       console.log(value);
-                //     }
-                //   });
-                // }
-                // debugger;
-                // // WeekPublished = [...value.workplacePublishedsByWeekPublishedId.edges, workplacePublishedsByWeekPublished];
-                // var ref = [...value.workplacePublishedsByWeekPublishedId, workplacePublishedsByWeekPublished];
-                // debugger;
-                // WeekPublished = [...value, ref];
-                // debugger;
               }
-              debugger;
             });
-            // let workplacePublishedHash = mutationResult.data.createWorkplacePublished.workplacePublished;
-            //
-            // var obj = [...previousQueryResult.allWeekPublisheds.nodes, WeekPublished];
-            // debugger;
-            // previousQueryResult.allWeekPublisheds.nodes = obj;
-            // debugger;
             return {
               allWeekPublisheds: previousQueryResult.allWeekPublisheds
             };
@@ -216,10 +174,8 @@ debugger;
       }).then((res) => {
         console.log('Inside the data', res);
         this.modalClose();
-
       }).catch(err => console.log('An error occurred.', err));
     }else{
-      debugger;
       this.props.updateWeekPublishedNameMutation({
         variables: { id: this.props.publishId, date: moment().format() }
       }).then((res)=>{
@@ -253,7 +209,6 @@ debugger;
   };
 
   handleCreateSubmit = (shift) => {
-    debugger;
     let { publishId } = this.props;
     let days = Object.keys(shift.shiftDaysSelected);
     if (!publishId) {
@@ -356,14 +311,7 @@ debugger;
     let publishId = this.props.publishId;
     let   message="";
     const startDate = this.props.date;
-    // const isPublished = ( this.props.isWorkplacePublished && (is_publish == false && is_publish != 'none'));
     const isPublished =  (is_publish == false && is_publish != 'none') ? (this.props.isWorkplacePublished === false ? true:false) : false;
-
-    // (is_publish === false && is_publish != 'none' )?
-    //   (is_workplacePublish === false ?
-    //     <Button className="btn-image flr" onClick={this.onPublish}>
-    //       <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
-    //     </Button>: "") : ""
 
     const { notify, notificationMessage, notificationType } = this.state;
 

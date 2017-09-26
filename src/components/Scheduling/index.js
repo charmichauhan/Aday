@@ -170,7 +170,6 @@ class ScheduleComponent extends Component {
   };
 
   render() {
-    debugger;
     BigCalendar.momentLocalizer(moment);
 
     if (this.props.data.loading) {
@@ -188,7 +187,6 @@ class ScheduleComponent extends Component {
     let publish_id = "";
     let isWorkplacePublished = false;
     const date = this.state.date;
-    debugger;
     this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
       if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
         || (moment(date).isSame(moment(value.start), 'day'))
@@ -197,7 +195,6 @@ class ScheduleComponent extends Component {
         if(value.workplacePublishedsByWeekPublishedId.edges.length > 0){
           value.workplacePublishedsByWeekPublishedId.edges.map((value) => {
             if(value.node.workplaceId == localStorage.getItem("workplaceId")) {
-              debugger;
               isWorkplacePublished = value.node.published;
             }
           });

@@ -10,6 +10,7 @@ export const userQuery = gql `
     zipCode
     userPhoneConfirmed
     userPhoneNumber
+    userEmail
     aboutMeText
     userReferencesByUserId{
       edges{
@@ -99,9 +100,9 @@ export const userQuery = gql `
       }
     }
   }
-  
- 
-  
+
+
+
   }
 }`
 
@@ -152,7 +153,7 @@ query fetchPrimaryLocation ($corporationId: Uuid!) {
 `
 
 export const updateEmployeeById = gql`
-mutation ($id: Uuid!, $employeeInfo: EmployeePatch!) {  
+mutation ($id: Uuid!, $employeeInfo: EmployeePatch!) {
   updateEmployeeById (input: { id: $id, employeePatch: $employeeInfo }) {
   employee {
       id

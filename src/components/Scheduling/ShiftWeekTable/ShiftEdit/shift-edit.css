@@ -193,7 +193,7 @@
 }
 
 .drawer-section .drawer-heading {
-  background-color: #0022A1;
+  background-color: '#0022A1';
   text-align: center;
   padding: 10px;
 }
@@ -497,6 +497,14 @@ i.chevron.up.icon, i.chevron.down.icon {
 .show-details {
   display: table-row;
   animation: anim 0.5s ease-in-out;
+}
+
+.rbc-calendar .shift-section .row:before {
+  display: none;
+}
+
+.shift-section .ui.dropdown > .text {
+  font-size: 14px;
 }
 
 @keyframes anim {

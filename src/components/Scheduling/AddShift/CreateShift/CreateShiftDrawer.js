@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
-import { Image, TextArea, Dropdown } from 'semantic-ui-react';
-import { withApollo } from 'react-apollo';
+import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';
+import { Image, TextArea, Dropdown, Grid, Button } from 'semantic-ui-react';
+import { withApollo } from 'react-apollo';
 
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
@@ -14,20 +15,24 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import CreateShiftHelper from './CreateShiftHelper';
 import StartToEndTimePicker from './StartToEndTimePicker';
+import { Tooltip } from 'rebass';
+//import Tooltip from 'react-toolbox/lib/tooltip';
 
 import './select.css';
-
-const methodOptions = [{ key: 'standard', value: 'standard', text: 'Standard', disabled: true, selected: true }];
 
 const initialState = {
   shift: {
     shiftMethod: 'standard',
+    recurringShift: 0,
+    numberOfTeamMembers: 1,
+    unpaidBreakInMinutes: 0,
     tags: [],
     tagOptions: [],
     brandId: localStorage.getItem('brandId') || '',
     corporationId: localStorage.getItem('corporationId') || '',
     workplaceId: localStorage.getItem('workplaceId') || ''
   },
+  shiftErrors: {},
   brandId: localStorage.getItem('brandId') || '',
   corporationId: localStorage.getItem('corporationId') || '',
   workplaceId: localStorage.getItem('workplaceId') || ''
@@ -37,12 +42,19 @@ class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
-    let shift = { ...initialState.shift, ...props.shift };
+    let shift = { ...initialState.shift, ...props.shift, advance: { allowShadowing: true } };
+    shift.startTime = moment(shift.startTime);
+    shift.endTime = moment(shift.endTime);
     this.state = {
       ...initialState,
-      ...shift,
+      shift,
+      isEdit: !!shift.id,
       weekStart: props.weekStart
     };
+  }
+
+  componentWillMount() {
+    this.validateShift(this.state.shift);
   }
 
   componentDidMount() {
@@ -51,8 +63,26 @@ class DrawerHelper extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.weekStart.valueOf() !== this.props.weekStart.valueOf()) {
-      this.setState({ weekStart: nextProps.weekStart });
+    if (!this.state.isEdit) {
+      if (nextProps.weekStart.valueOf() !== this.props.weekStart.valueOf()) {
+        this.setState({ weekStart: nextProps.weekStart });
+      }
+      const workplaceId = localStorage.getItem('workplaceId');
+      if (workplaceId !== (this.state.shift && this.state.shift.workplaceId)) {
+        const shift = {
+          ...this.state.shift,
+          workplaceId
+        };
+        this.setState({ shift });
+      }
+    }
+    if (nextProps.open !== this.props.open) {
+      this.setState((state) => ({
+        shift: {
+          ...state.shift,
+          advance: nextProps.shift.advance
+        }
+      }));
     }
   }
 
@@ -62,17 +92,11 @@ class DrawerHelper extends Component {
       .catch(err => console.error(err));
   };
 
-  getPositions = (workplaceId = this.state.workplaceId) => {
+  getPositions = (workplaceId = this.state.shift.workplaceId) => {
     if (workplaceId) {
       CreateShiftHelper.getRelevantPositions(workplaceId)
-        .then((positions) => {
-          debugger;
-          this.setState({ positions })
-        })
-        .catch(err => {
-          debugger;
-          console.error(err)
-        });
+        .then((positions) => this.setState({ positions }))
+        .catch(err => console.error(err));
     }
   };
 
@@ -83,6 +107,15 @@ class DrawerHelper extends Component {
     if (name === 'tags') shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
     this.setState({ shift });
     if (name === 'workplaceId') this.getPositions(value);
+    this.validateShift(shift);
+  };
+
+  handleAddTeamMember = () => {
+
+  };
+
+  handleNowSelect = () => {
+    this.setState({ selectedDate: moment().format('MM-DD-YYYY') });
   };
 
   handleShiftSubmit = (shift) => {
@@ -92,17 +125,19 @@ class DrawerHelper extends Component {
   };
 
   updateFormState = (dataValue) => {
+    let selectedDate = this.state.selectedDate;
     if (dataValue.unpaidBreakInMinutes) {
       const hours = Math.floor(dataValue.unpaidBreakInMinutes / 60);
       let minutes = dataValue.unpaidBreakInMinutes % 60;
-      if (minutes < 10){
-        minutes = 0 + minutes;
+      if (minutes < 10) {
+        minutes = '0' + minutes;
       }
-      const finalTime = hours + ":" + minutes;
-      dataValue.unpaidBreak = finalTime;
+      dataValue.unpaidBreak = hours + ':' + minutes;
     }
+    if (dataValue.shiftDaysSelected) selectedDate = '';
     const shift = Object.assign(this.state.shift, dataValue);
-    this.setState({ shift });
+    this.setState({ shift, selectedDate });
+    this.validateShift(shift);
   };
 
   closeShiftDrawer = () => {
@@ -111,11 +146,39 @@ class DrawerHelper extends Component {
     if (closeDrawer) closeDrawer();
   };
 
+  validateShift = (shift) => {
+    let shiftErrors = {};
+    if (!shift.workplaceId) shiftErrors['workplaceId'] = true;
+    if (!shift.brandId) shiftErrors['brandId'] = true;
+    if (!shift.corporationId) shiftErrors['corporationId'] = true;
+    if (!shift.positionId) shiftErrors['positionId'] = true;
+    if (!shift.recurringShift) shiftErrors['recurringShift'] = true;
+    if (!shift.startTime) shiftErrors['startTime'] = true;
+    if (!shift.endTime) shiftErrors['endTime'] = true;
+    if (!shift.numberOfTeamMembers) shiftErrors['NumberOfTeamMembers'] = true;
+    if (!this.state.isEdit) {
+      if (!shift.shiftDaysSelected) {
+        shiftErrors['shiftDaysSelected'] = true;
+      } else if (typeof shift.shiftDaysSelected === 'object') {
+        if (!Object.values(shift.shiftDaysSelected).filter(value => value).length) {
+          shiftErrors['shiftDaysSelected'] = true;
+        }
+      }
+    }
+    this.setState({ shiftErrors });
+  };
+
+  isShiftValid = () => {
+    const { shiftErrors } = this.state;
+    return Object.keys(shiftErrors).length > 0;
+  };
+
   render() {
 
-    const { width, open } = this.props;
-    const { shift, workplaces, positions, workplaceId, weekStart } = this.state;
-    let positionOptions = [{ key: 'select', value: 0, text: 'Select Workplace'}];
+    const { width, open, handleAdvance } = this.props;
+    const { shift, workplaces, positions, workplaceId, weekStart, selectedDate, isEdit } = this.state;
+    let positionOptions = [{ key: 'select', value: 0, text: 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS' }];
+
     if (!workplaces) {
       return (<Loading />);
     }
@@ -124,18 +187,19 @@ class DrawerHelper extends Component {
       key: workplace.id,
       value: workplace.id,
       text: workplace.workplaceName,
-      selected: this.state.workplaceId === workplace.id
+      selected: this.state.shift.workplaceId === workplace.id
     }));
     if (positions) {
       positionOptions = positions.map(position => ({
         key: position.id,
         value: position.id,
-        text: position.positionName
+        text: position.positionName,
+        selected: this.state.shift.positionId === position.id
       }));
       positionOptions.unshift({
         key: 'selected',
         value: 0,
-        text: 'Select Position',
+        text: 'WHICH POSITION CERTIFICATION MUST THE TEAM MEMBER HAVE?',
         disabled: true
       });
     }
@@ -143,93 +207,250 @@ class DrawerHelper extends Component {
       workplaceOptions.unshift({
         key: 'selected',
         value: 0,
-        text: 'Select Workplace',
+        text: 'CHOOSE WORKPLACE',
         disabled: true
       });
     }
+    const recurringOptions = [{
+      key: 'select',
+      value: 0,
+      text: 'WILL YOU HAVE TO SCHEDULE THESE WORKING HOURS EVERY WEEK?',
+      disabled: true,
+      selected: true
+    }, {
+      key: 'none',
+      value: 'none',
+      text: 'NO',
+    }, {
+      key: 'weekly',
+      value: 'weekly',
+      text: 'YES',
+    }];
+
+    const teamMembers = {
+      total: (shift.numberOfTeamMembers * (shift.advance && shift.advance.allowShadowing && 2 || 1)),
+      trainers: shift.numberOfTeamMembers,
+      shadowers: shift.advance && shift.advance.allowShadowing && shift.numberOfTeamMembers || 0
+    };
+
     return (
       <Drawer
         width={width}
+        className="shift-section"
         openSecondary={true}
         docked={false}
         onRequestChange={this.closeShiftDrawer} open={open}>
         <div className="drawer-section edit-drawer-section">
-          <div className="drawer-heading col-md-12">
-            <IconButton style={closeButton} onClick={this.closeShiftDrawer}>
-              <Image src='/images/Icons_Red_Cross.png' size="mini" />
-            </IconButton>
-            <h2 className="text-center text-uppercase">Add Hours</h2>
+          <div className="drawer-heading col-md-12" style={{
+            display: 'flex',
+            flexDirection: 'row',
+            backgroundColor: 'ghostwhite',
+            borderBottom: '1px solid #DCDCDC'
+          }}>
+
+            <div style={{ flex: 3, alignSelf: 'center', marginLeft: 5 }}>
+              <IconButton className="pull-left" style={closeButton} onClick={this.closeShiftDrawer}>
+                <Image src='/images/Icons_Red_Cross.png' size="mini" />
+              </IconButton>
+            </div>
+
+            <div style={{ flex: 10, alignSelf: 'center' }}>
+              <span className="drawer-title">Add Hours</span>
+            </div>
+
+            <div style={{ flex: 3, alignSelf: 'center' }}>
+              <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={() => handleAdvance(shift)}
+                      color='red'>Advanced
+              </button>
+            </div>
           </div>
+
           <div className="col-md-12 form-div edit-drawer-content">
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Scheduling Method</label>
-              <select disabled className="ui fluid dropdown add-shift-dropdown">
-                {methodOptions && methodOptions.map(option => <option {...option} >{option.text}</option>)}
-              </select>
-            </div>
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Workplace</label>
-              <Dropdown
-                name="workplaceId"
-                onChange={(_, data) => this.handleChange({ target: data })}
-                value={shift.workplaceId || 0}
-                fluid
-                selection
-                options={workplaceOptions} />
-            </div>
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Position</label>
-              <Dropdown
-                placeholder="Select Position"
-                name="positionId"
-                onChange={(_, data) => this.handleChange({ target: data })}
-                value={shift.positionId || 0}
-                fluid
-                selection
-                disabled={!positions}
-                options={positionOptions} />
-            </div>
-            <div className="form-group">
-              <StartToEndTimePicker formCallBack={this.updateFormState} />
-            </div>
-            <div className="form-group">
-              <ShiftDaySelector startDate={weekStart} formCallBack={this.updateFormState} />
-            </div>
-            <div className="form-group">
-              <NumberOfTeamMembers formCallBack={this.updateFormState} />
-              <div className="performance-tagline">
-                <p>At maximum, <span className="color-green">4 employees</span> will report for this shift: 2 job
-                  trainers, 2 job shadowers</p>
-              </div>
-            </div>
-            <div className="form-group">
-              <UnpaidBreakInMinutes formCallBack={this.updateFormState} />
-            </div>
-            <div className="form-group">
-              <label className="text-uppercase blue-heading">Tags</label>
-              <Dropdown
-                multiple
-                name="tags"
-                fluid
-                placeholder='Add tags'
-                search
-                selection
-                allowAdditions
-                options={shift.tagOptions}
-                onChange={(_, data) => this.handleChange({ target: data })} />
-            </div>
-            <div className="form-group ui form">
-              <label className="text-uppercase blue-heading">Instructions</label>
-              <TextArea name="instructions" onChange={(_, data) => this.handleChange({ target: data })} rows="3" />
-            </div>
+            <Grid columns={2}>
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/scheduling-method.png" style={{ width: 28, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">Scheduling Method</label>
+                  <Dropdown
+                    name="method"
+                    value='standard'
+                    style={{ cursor: 'not-allowed' }}
+                    fluid
+                    selection
+                    disabled
+                    options={[{ key: 'standard', value: 'standard', text: 'STANDARD' }]} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/workplace.png" style={{ width: 26, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">Workplace</label>
+                  <Dropdown
+                    name="workplaceId"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={shift.workplaceId || 0}
+                    fluid
+                    selection
+                    options={workplaceOptions} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/certification.png" style={{ width: 25, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">Position</label>
+                  <Dropdown
+                    placeholder="Select Position"
+                    name="positionId"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={shift.positionId || 0}
+                    fluid
+                    selection
+                    disabled={!positions}
+                    options={positionOptions} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/repeating-shifts.png" style={{ width: 36, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">Repeat Shift Weekly</label>
+                  <Dropdown
+                    name="recurringShift"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={shift.recurringShift}
+                    fluid
+                    selection
+                    options={recurringOptions} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/shift-time.png" style={{ width: 33, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <StartToEndTimePicker startTime={shift.startTime} endTime={shift.endTime}
+                                        onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>
+
+              {!isEdit && <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/shift-date.png" style={{ width: 28, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">
+                    {(shift.recurringShift !== 'none' && 'REPEAT THIS SHIFT EVERY:') || 'SHIFT START DATE'}
+                  </label>
+                  <ShiftDaySelector selectedDate={selectedDate} isRecurring={shift.recurringShift !== 'none'}
+                                    startDate={weekStart} formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>}
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/team-members.png" style={{ width: 30, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <NumberOfTeamMembers numberOfTeamMembers={shift.numberOfTeamMembers}
+                                       formCallBack={this.updateFormState} />
+                  <div className="performance-tagline">
+                    <p>
+                      At maximum, <span className="color-green">{teamMembers.total} employees </span>
+                      will report for this shift: {teamMembers.trainers} job trainers, {teamMembers.shadowers} job
+                      shadowers
+                    </p>
+                  </div>
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/scheduled-break.png" style={{ width: 29, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <UnpaidBreakInMinutes unpaidBreakInMinutes={shift.unpaidBreakInMinutes}
+                                        formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/add-user.png" style={{ width: 29, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">Assign Team Member</label>
+                  {shift.recurringShift !== 'none' && <Tooltip className="tooltip-message"
+                                                               text=' &nbsp; Creating recurring shifts and adding team members cannot be done at the same time &nbsp;'>
+                    <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'}
+                                  onClick={this.handleAddTeamMember} />
+                  </Tooltip> || <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'}
+                                              onClick={this.handleAddTeamMember} />}
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/tags.png" style={{ width: 30, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column className="tag-dropdown" width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">Tags</label>
+                  <Dropdown
+                    multiple
+                    name="tags"
+                    fluid
+                    placeholder='Add tags'
+                    search
+                    selection
+                    allowAdditions
+                    options={shift.tagOptions}
+                    onChange={(_, data) => this.handleChange({ target: data })} />
+                </Grid.Column>
+              </Grid.Row>
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/instructions.png" style={{ width: 30, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">Instructions</label>
+                  <TextArea className="form-control" name="instructions"
+                            onChange={(_, data) => this.handleChange({ target: data })} rows="3" />
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
-                <CircleButton handleClick={() => this.handleShiftSubmit(shift)} type="blue" title="Add Shift" />
+                <CircleButton disabled={this.isShiftValid(shift)} handleClick={() => this.handleShiftSubmit(shift)}
+                              type="blue" title="Add Hours" />
               </div>
             </div>
           </div>
         </div>
+
       </Drawer>
     );
   }

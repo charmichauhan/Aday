@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
- import ApolloClient, { createNetworkInterface } from 'apollo-client'
+import ApolloClient, { createNetworkInterface } from 'apollo-client'
 import { ApolloProvider } from 'react-apollo'
 import { renderRoutes } from 'react-router-config';
 
@@ -19,7 +19,9 @@ injectTapEventPlugin();
 
 // production: https://20170808t142850-dot-forward-chess-157313.appspot.com/graphql
 // dev: https://forward-chess-157313.appspot.com/graphql
+
 const networkInterface =  createNetworkInterface({ uri: 'https://forward-chess-157313.appspot.com/graphql'})
+
 
 networkInterface.use([{
    applyMiddleware(req, next) {

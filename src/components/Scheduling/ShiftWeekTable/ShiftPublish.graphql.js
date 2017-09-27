@@ -84,6 +84,8 @@ mutation createWorkplacePublished($workplacePublished: WorkplacePublishedInput!)
    workplacePublished {   
      id
      published
+     workplaceId
+     weekPublishedId
    }
  }
 }`

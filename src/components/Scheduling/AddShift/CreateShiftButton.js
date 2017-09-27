@@ -113,7 +113,7 @@ export default class CreateShiftButton extends Component {
               <Image src="/images/Assets/Icons/Buttons/add-template.png"
                      shape="rounded"
                      style={styles.images}
-                     as={NavLink} to="/schedule/template" />
+                     as={NavLink} to="/schedule/recurring" />
             </div>
           </Modal.Content>
           }

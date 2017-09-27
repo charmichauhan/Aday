@@ -13,8 +13,7 @@ import "../../Scheduling/style.css";
 import { gql, graphql,compose } from 'react-apollo';
 import uuidv1 from 'uuid/v1';
 import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from "material-ui/Table";
-import {allTemplateShifts, allUsers, createWeekPublishedMutation,
-        deleteTemplateMutation, allTemplates} from '../TemplateQueries';
+import {allTemplateShifts, allUsers} from '../TemplateQueries';
 var Halogen = require('halogen');
 var rp = require('request-promise');
 
@@ -74,159 +73,98 @@ class ShiftWeekTableComponent extends Week {
             confirmApplyTemplateModal: false
         });
     };
-    handleDeleteTemplate = () => {
-        let that =this;
-        that.setState({deleteTemplateModal:true});
-    };
-    deleteTemplate = () => {
-        this.props.deleteTemplate({
-          variables: { templateId : this.props.events[1] },
-          refetchQueries: [{query: allTemplates}]}).then(this.props.events[3])
-            .then(this.setState({deleteTemplateModal:false}));
-    }
-    handleApplyTemplate(){
-      this.setState({
-          confirmApplyTemplateModal: true
-      });
-    }
-    applyTemplate(start){
-        const that = this;
-        this.setState({
-            applyingTemplateModal: true
-        });
-
-        let weekPublishedId = this.props.events[2]
-
-        if(!weekPublishedId) {
-         weekPublishedId = uuidv1();
-         this.props.createWeekPublished({
-                variables: { data:
-                                {weekPublished:
-                                   { id: weekPublishedId,
-                                    start: moment(start).startOf('week').format(),
-                                    end: moment(start).endOf('week').format(),
-                                    published: false,
-                                    brandId: localStorage.getItem('brandId') }
-                            }}
-
-            })
-            .then(({ data }) => {
-
-                var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/templateToShift'
-
-                  var options = {
-                      uri: uri,
-                      method: 'POST',
-                      json: {"data": {"template_id": this.props.events[1],
-                                      "weekPublishedId": weekPublishedId ,
-                                      "start": moment(start).startOf('week').format(),
-                                      "end":   moment(start).endOf('week').format()
-                                      }
-                      }
-                  };
-                  rp(options)
-                    .then(function(response) {
-                        that.setState({
-                          applyingTemplateModal: false
-                        });
-                       window.location.href = '/schedule/team/' + moment(start).format() ;
-                      }).catch((error) => {
-                          console.log('there was an error sending the query', error);
-                      });
-            })
-
-        } else {
-
-                var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/templateToShift'
-                var options = {
-                      uri: uri,
-                      method: 'POST',
-                      json: {"data": {"template_id": this.props.events[1],
-                                      "weekPublishedId": weekPublishedId ,
-                                      "start": moment(start).startOf('week').format(),
-                                      "end":   moment(start).endOf('week').format()
-                                    }
-                      }
-                  };
-                  rp(options)
-                    .then(function(response) {
-                        that.setState({
-                          applyingTemplateModal: false
-                        });
-                       window.location.href = '/schedule/team/' + moment(start).format();
-                      }).catch((error) => {
-                          console.log('there was an error sending the query', error);
-                  });
-        }
-    };
     backToCalendarView = () => {
       this.setState({redirect:true});
     }
-    getTemplateDataJob = () => {
+
+  getTemplateDataEmployee = (workplaceId, allUsers, recurring) => {
+    let userHash = {};
+    let calendarHash = {};
+    if (allUsers && allUsers.allUsers) {
+      allUsers.allUsers.edges.map((value, index) => {
+        userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
+      });
+    } 
+
+    recurring.edges.map((value, index) => {
+        let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+        if (workplaceId != '') {
+          if (workplaceId == value.node.workplaceByWorkplaceId.id) {
+              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+                      const positionName = shift.node.positionByPositionId.positionName;
+                      shift.node.days.map((day, dayIndex) => {    
+                          let assigned = []
+                          shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
+                              assigned.push(assignees.node.userId)
+                          })
+                          
+                          if (assigned.length < shift.node.workerCount) {
+                            const rowHash = {};
+                            rowHash['weekday'] = day
+                            rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                            rowHash['userFirstName'] = 'Open'
+                            rowHash['userLastName'] = 'Shifts'
+                            rowHash['userAvatar'] = '/assets/Icons/search.png'
+                            if (calendarHash['Open Shifts']) {
+                              calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)]
+                            } else {
+                              calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)]
+                            }
+                          }
+                          assigned.map((v) => {
+                            const rowHash = {}
+                            rowHash['weekday'] = day;
+                            const userName = userHash[v];
+                            rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                            rowHash['userFirstName'] = userHash[v][0]
+                            rowHash['userLastName'] = userHash[v][1]
+                            rowHash['userAvatar'] = userHash[v][2]
+                            if (calendarHash[userName]) {
+                              calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)]
+                            } else {
+                              calendarHash[userName] = [Object.assign(rowHash, shift.node)];
+                            }
+                          })
+                })
+              })
+            }
+        } 
+     })
+
+    return calendarHash;
+  };
+
+    getTemplateDataJob = (workplaceId, recurring) => {
       let calendarHash = {};
 
-      let templateShifts = "";
-
-      let workplace="";
-        if (this.props.data.templateById){
-          templateShifts = this.props.data.templateById.templateShiftsByTemplateId.edges;
-          workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
-        }
-        if(templateShifts){
-          templateShifts.map((value, index) => {
-            const positionName = value.node.positionByPositionId.positionName;
-            const dayOfWeek = value.node.dayOfWeek;
-
-            const rowHash = {};
-            rowHash["weekday"] = dayOfWeek;
-            rowHash["workplace"] = workplace;
-            if (calendarHash[positionName]) {
-              calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, value.node)]
-            } else {
-              calendarHash[positionName] = [Object.assign(rowHash, value.node)];
-            }
-          });
-        }
+      recurring.edges.map((value, index) => {
+            let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+            console.log(workplaceId)
+            console.log(value.node.workplaceByWorkplaceId.id)
+             if (workplaceId != '') {
+               if (workplaceId == value.node.workplaceByWorkplaceId.id) {
+                value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+                  const positionName = shift.node.positionByPositionId.positionName;
+                  shift.node.days.map((day, dayIndex) => {    
+                       const rowHash = {};
+                       rowHash['weekday'] = day
+                       rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                       rowHash['workersAssigned'] = []
+                       shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
+                            rowHash['workersAssigned'].push(assignees.node.userId)
+                       })
+                       if (calendarHash[positionName]) {
+                          calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
+                       } else {
+                        calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
+                       }
+                 })
+                })
+              }
+              } 
+      })
       return calendarHash;
-    }
-
-    getTemplateDataEmployee = () => {
-      let calendarHash = {};
-      let userHash={};
-      let workplace = "";
-      if (this.props.data.templateById){
-        workplace = this.props.data.templateById.workplaceByWorkplaceId.workplaceName;
-      }
-
-      if (this.props.data.templateById) {
-        this.props.data.templateById.templateShiftsByTemplateId.edges.map((value,index) => {
-
-          if (value.node.workerCount > value.node.templateShiftAssigneesByTemplateShiftId.edges.length){
-            const rowHash = {};
-            rowHash["user"] = ["Open", "Shifts"];
-            rowHash["workplace"] = workplace;
-            if (calendarHash["Open Shifts"]){
-              calendarHash["Open Shifts"] = [...calendarHash["Open Shifts"],  Object.assign(rowHash, value.node)]
-            } else {
-              calendarHash["Open Shifts"] = [Object.assign(rowHash, value.node)]
-            }
-          }
-
-          value.node.templateShiftAssigneesByTemplateShiftId.edges.map((value2,index2) => {
-            const user = [value2.node.userByUserId.firstName, value2.node.userByUserId.lastName, value2.node.userByUserId.avatarUrl]
-            const rowHash = {};
-            rowHash["user"] = user;
-            rowHash["workplace"] = workplace;
-            if (calendarHash[user]){
-              calendarHash[user] = [...calendarHash[user],  Object.assign(rowHash, value.node)]
-            } else {
-              calendarHash[user] = [Object.assign(rowHash, value.node)]
-            }
-          })
-        });
-      }
-      return calendarHash;
-    }
+    };
 
     render() {
          if (this.props.events[1] == "") {
@@ -238,21 +176,24 @@ class ShiftWeekTableComponent extends Week {
          }
          if (this.props.data.error) {
              console.log(this.props.data.error)
-             return (<div>  An unexpected error occurred </div>)
+             return (<div> Must Select A Workplace </div>)
         }
-        if(this.state.redirect){
-          return (
-            <Redirect to={{pathname:'/schedule/team' ,viewName:this.state.view}}/>
-          )
+
+        console.log(this.props)
+        let recurring = this.props.data.allRecurrings
+        let workplaceId = localStorage.getItem('workplaceId');
+        let jobData = this.state.view=="job" ? this.getTemplateDataJob(workplaceId, recurring) :this.getTemplateDataEmployee(workplaceId, this.props.allUsers, recurring);
+        let jobDataKeys = Object.keys(jobData)
+        let openShiftIndex = jobDataKeys.indexOf('Open Shifts')
+        if (openShiftIndex > -1) {
+          jobDataKeys.splice(openShiftIndex, 1);
         }
-        let jobData = this.state.view=="job" ? this.getTemplateDataJob() :this.getTemplateDataEmployee();
+
         let {date} = this.props;
         let {start} = ShiftWeekTableComponent.range(date,this.props);
         let deleteTemplateAction =[{type:"white",title:"Cancel",handleClick:this.modalClose,image:false},
             {type:"red",title:"Delete Template",handleClick:this.deleteTemplate}];
-        let applyTemplateAction =[{type:"white", title: "One Moment"}];
-        let confirmApplyTemplateAction = [{ type: 'white', title: 'Cancel', handleClick: this.modalClose, image: false },
-          { type: 'blue', title: 'Apply Template', handleClick: () => this.applyTemplate(this.props.date)}];
+
         return (
           <div>
             <div className="table-responsive table-fixed-bottom-mrb">
@@ -264,69 +205,63 @@ class ShiftWeekTableComponent extends Week {
                         <TableRow displayBorder={false}>
                             <TableRowColumn style={styles.tableFooter} className="long dayname">
                               <div className="maintitle" style={{width: '100%', alignContent: 'left'}}>
-                                {moment(start).format('MMMM\n')} <br/>
-                                <span style={{fontSize: 24}}>{moment(start).format('YYYY')}</span>
+            
                               </div>
                             </TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
-                                className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
+                                className="weekDay"> {moment(start).day(0).format('dddd')} </p>
+                            </TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
                                 className="weekDay"> {moment(start).day(1).format('dddd')} </p>
-                                <p className="weekDate">{moment(start).day(1).format('D')}</p></TableRowColumn>
+                              </TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                className= "weekDay"> {moment(start).day(2).format('dddd')} </p><p
-                                className="weekDate">  {moment(start).day(2).format('D')}</p></TableRowColumn>
+                                className= "weekDay"> {moment(start).day(2).format('dddd')} </p>
+                              </TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                className="weekDay"> {moment(start).day(3).format('dddd')} </p><p
-                                className="weekDate">  {moment(start).day(3).format('D')}</p></TableRowColumn>
+                                className="weekDay"> {moment(start).day(3).format('dddd')} </p>
+                              </TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                className="weekDay"> {moment(start).day(4).format('dddd')} </p><p
-                                className="weekDate">  {moment(start).day(4).format('D')}</p></TableRowColumn>
+                                className="weekDay"> {moment(start).day(4).format('dddd')} </p>
+                              </TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                className="weekDay"> {moment(start).day(5).format('dddd')} </p><p
-                                className="weekDate">  {moment(start).day(5).format('D')}</p></TableRowColumn>
+                                className="weekDay"> {moment(start).day(5).format('dddd')} </p>
+                              </TableRowColumn>
                             <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                                className="weekDay"> {moment(start).day(6).format('dddd')} </p><p
-                                className="weekDate">  {moment(start).day(6).format('D')}</p></TableRowColumn>
+                                className="weekDay"> {moment(start).day(6).format('dddd')} </p>
+                              </TableRowColumn>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <SpecialDay/>
-                        {Object.keys(jobData).map((value, index) => (
-                                <JobsRow data={jobData[value]} key={index} view={this.state.view}/>
-                                     )
-                             )
-                        }
+                            { jobDataKeys.map((value, index) => (
+                                <JobsRow
+                                  data={jobData[value]}
+                                  key={value}
+                                  users={this.props.allUsers}
+                                  view={this.state.calendarView}/>
+                              )
+                            )
+                            }
+
+                            {jobData['Open Shifts'] &&
+                            <JobsRow
+                              data={jobData['Open Shifts']}
+                              key={'Open Shifts'}
+                              users={this.props.allUsers}
+                              view={this.state.calendarView}/>
+                            }
                     </TableBody>
                     <TableFooter adjustForCheckbox={false}>
                         <TableRow>
                             <TableRowColumn colSpan="8">
                                 <div className="text-center">
-                                    <CircleButton type="white" title="Cancel" handleClick={this.backToCalendarView}/>
-                                    <CircleButton type="red" title="delete template" handleClick={this.handleDeleteTemplate}/>
-                                    <CircleButton type="blue" title="apply template" handleClick={(start) => this.handleApplyTemplate()}
-                                     disabled={moment(this.props.date).startOf('week').diff(moment().startOf('week'), 'days') < 0}/>
+                                    <CircleButton type="white" title="Back" handleClick={this.backToCalendarView}/>
                                 </div>
                             </TableRowColumn>
                         </TableRow>
                     </TableFooter>
                 </Table>
             </div>
-            <Modal isOpen = {this.state.deleteTemplateModal} title="Confirm"
-                  message = {'Are you sure that you want to delete the \'' +
-                              this.props.data.templateById.templateName + '\' template?'}
-                  action = {deleteTemplateAction}
-                  closeAction={this.modalClose} />
-            <Modal isOpen = {this.state.confirmApplyTemplateModal} title=""
-                   message = {"Are You Sure You Want to Apply this Template to the Week of " +
-                             moment(this.props.date).startOf('week').format("MMMM Do") + " ?"}
-                   action = {confirmApplyTemplateAction}
-                   closeAction={this.modalClose}/>
-            <Modal isOpen = {this.state.applyingTemplateModal} title=""
-                   message="Please Wait While We Apply This Template"
-                   action={applyTemplateAction}
-                   closeAction={this.modalClose}/>
           </div>
         );
     }
@@ -344,17 +279,12 @@ const ShiftWeekTable = compose(
   graphql(allTemplateShifts, {
     options: (ownProps) => ({
       variables: {
-        id: ownProps.events[1],
+        workplaceId:localStorage.getItem('workplaceId'),
+        brandId: localStorage.getItem('brandId'),
       }
-    }),
+    })
   }),
-  graphql(allUsers, {name: "allUsers"}),
-  graphql(createWeekPublishedMutation, {
-    name : 'createWeekPublished'
-  }),
-  graphql(deleteTemplateMutation, {
-    name : 'deleteTemplate'
-  })
+  graphql(allUsers, {name: "allUsers"})
 )(ShiftWeekTableComponent);
 
 export default ShiftWeekTable;

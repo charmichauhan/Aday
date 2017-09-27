@@ -15,6 +15,7 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import CreateShiftHelper from './CreateShiftHelper';
 import StartToEndTimePicker from './StartToEndTimePicker';
+import StartToEndDatePicker from './StartToEndDatePicker';
 import { Tooltip } from 'rebass';
 //import Tooltip from 'react-toolbox/lib/tooltip';
 
@@ -360,6 +361,16 @@ class DrawerHelper extends Component {
                   </label>
                   <ShiftDaySelector selectedDate={selectedDate} isRecurring={shift.recurringShift !== 'none'}
                                     startDate={weekStart} formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>}
+
+              {shift.recurringShift === 'weekly' && <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/shift-date.png" style={{ width: 28, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <StartToEndDatePicker startDate={weekStart} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>}
 

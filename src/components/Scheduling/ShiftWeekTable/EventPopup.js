@@ -15,13 +15,18 @@ import './shiftWeekTable.css';
 
 const uuidv4 = require('uuid/v4');
 
+const styles = {
+  drawer: {
+    width: 730
+  }
+};
+
 class EventPopupComponent extends Component {
   constructor(props) {
     super(props);
     const workplaceId = props.data.workplaceByWorkplaceId && props.data.workplaceByWorkplaceId.id;
     const brandId = props.data.positionByPositionId && props.data.positionByPositionId.brandByBrandId && props.data.positionByPositionId.brandByBrandId.id;
     const positionId = props.data.positionByPositionId && props.data.positionByPositionId.id;
-    debugger;
     this.state = {
       deleteModalPopped: false,
       editModalPopped: false,
@@ -238,14 +243,14 @@ class EventPopupComponent extends Component {
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
         <CreateShiftDrawer
-          width={700}
+          width={styles.drawer.width}
           open={this.state.editShiftModalOpen}
           shift={this.state.drawerShift}
           handleSubmit={this.handleShiftUpdateSubmit}
           handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeEditShiftModal} />
         <CreateShiftAdvanceDrawer
-          width={700}
+          width={styles.drawer.width}
           shift={this.state.drawerShift}
           open={this.state.isCreateShiftAdvanceOpen}
           handleBack={this.handleAdvanceToggle} />

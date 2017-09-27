@@ -59,41 +59,10 @@ class ShiftPublishComponent extends Component {
     });
   };
 
-  addTemplateclose = () => {
+  viewRecurring = () => {
      this.setState({ redirect: true })
   };
 
-  templateView = (view) => {
-    this.setState({ redirect: true })
-  };
-
-  addTemplateName = () => {
-    if (this.state.workplaceId && this.state.templateName) {
-      const that = this;
-      var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/shiftToTemplate'
-
-      var options = {
-        uri: uri,
-        method: 'POST',
-        json: {
-          'data': {
-            'weekPublishedId': this.props.publishId,
-            'brandId': localStorage.getItem('brandId'),
-            'workplaceId': this.state.workplaceId,
-            'creatorId': localStorage.getItem('userId'),
-            'name': this.state.templateName
-          }
-        }
-      };
-
-      rp(options)
-        .then(function (response) {
-          window.location.href = '/schedule/template/'
-        }).catch((error) => {
-        console.log('there was an error sending the query', error);
-      });
-    }
-  };
 
   automateSchedule = (publishId) => {
     console.log(publishId)
@@ -328,7 +297,7 @@ class ShiftPublishComponent extends Component {
       { type: 'blue', title: 'Confirm', handleClick: this.publishWeek, image: false }];
     if (this.state.redirect) {
       return (
-        <Redirect to={{ pathname: '/schedule/template', viewName: this.props.view }} />
+        <Redirect to={{ pathname: '/schedule/recurring', viewName: this.props.view }} />
       )
     }
 
@@ -346,12 +315,7 @@ class ShiftPublishComponent extends Component {
                                                  message={message}
                                                  action={publishModalOptions} closeAction={this.modalClose} />
         }
-        {this.state.addTemplateModalOpen && <AddAsTemplateModal addTemplateModalOpen={true}
-                                                                handleClose={this.addTemplateclose}
-                                                                addTemplate={this.addTemplateName}
-                                                                handleNameChange={this.handleNameChange}
-                                                                handleWorkplaceChange={this.handleWorkplaceChange} />
-        }
+
         <div className="col-md-12">
           <div className="col-sm-offset-3 col-sm-5 rectangle">
             { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
@@ -383,17 +347,13 @@ class ShiftPublishComponent extends Component {
               <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}>
                 <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
               </Button>}
-              {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+              {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
               {is_publish != 'none' &&
-              <Button className="btn-image flr" onClick={this.addTemplateModalOpen}>
-                <img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template" />
-              </Button>}
+                <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>}
             </div> :
             <div>
               {is_publish != 'none' &&
-              <Button className="btn-image flr" onClick={this.addTemplateModalOpen}>
-                <img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template" />
-              </Button>}
+              <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>}
             </div>
           }
 

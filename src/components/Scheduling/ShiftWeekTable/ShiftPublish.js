@@ -331,8 +331,9 @@ class ShiftPublishComponent extends Component {
         <Redirect to={{ pathname: '/schedule/template', viewName: this.props.view }} />
       )
     }
-    if(this.state.publishModalPopped && this.state.workplaceId != ""){
-      message="Are you sure that you want to publish the week's schedule on Workplace?"
+
+    if(this.state.publishModalPopped && localStorage.getItem('workplaceId') != ""){
+      message="Are you sure that you want to publish the week's schedule for this workplace?"
     }else {
       message="Are you sure that you want to publish the week's schedule?"
     }
@@ -353,8 +354,13 @@ class ShiftPublishComponent extends Component {
         }
         <div className="col-md-12">
           <div className="col-sm-offset-3 col-sm-5 rectangle">
-            {is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' : <img src={statusImg} />}
-            <p className="col-sm-offset-2">{status}</p>
+            { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
+             <div>
+                <img src={statusImg} />
+                <p className="col-sm-offset-2">
+                    {status}
+                </p>
+             </div> }
           </div>
         </div>
         <div className="btn-action">

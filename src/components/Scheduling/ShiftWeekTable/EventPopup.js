@@ -21,7 +21,6 @@ class EventPopupComponent extends Component {
     const workplaceId = props.data.workplaceByWorkplaceId && props.data.workplaceByWorkplaceId.id;
     const brandId = props.data.positionByPositionId && props.data.positionByPositionId.brandByBrandId && props.data.positionByPositionId.brandByBrandId.id;
     const positionId = props.data.positionByPositionId && props.data.positionByPositionId.id;
-    debugger;
     this.state = {
       deleteModalPopped: false,
       editModalPopped: false,

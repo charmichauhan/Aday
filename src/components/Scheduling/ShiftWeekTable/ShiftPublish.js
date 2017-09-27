@@ -9,7 +9,6 @@ import uuidv4 from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
 import CreateShiftButton from '../../Scheduling/AddShift/CreateShiftButton';
 import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftDrawer';
-import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
 import {
@@ -54,11 +53,6 @@ class ShiftPublishComponent extends Component {
     })
   };
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      publishModalPopped: false
-    });
-  }
   goBack = () => {
     this.setState({
       publishModalPopped: false
@@ -147,6 +141,7 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
+    const { date } = this.props;
     if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
         variables: {
@@ -158,22 +153,23 @@ class ShiftPublishComponent extends Component {
           }
         },
         updateQueries: {
-            allWeekPublisheds: (previousQueryResult, { mutationResult }) => {
-              const { date } = this.props;
-              let workplacePublished = mutationResult.data.createWorkplacePublished.workplacePublished;
-              previousQueryResult.allWeekPublisheds.nodes.forEach((value)=>{
-                if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
-                  || (moment(date).isSame(moment(value.start), 'day'))
-                  || (moment(date).isSame(moment(value.end), 'day'))
-                ) {
-                  value.workplacePublishedsByWeekPublishedId.edges = [...value.workplacePublishedsByWeekPublishedId.edges, {node:workplacePublished, __typename: "WorkplacePublishedsEdge"}];
-                }
-              });
-              return {
-                allWeekPublisheds: previousQueryResult.allWeekPublisheds
-              };
-            },
+          allWeekPublisheds: (previousQueryResult, { mutationResult }) => {
+            let workplacePublished = mutationResult.data.createWorkplacePublished.workplacePublished;
+
+            previousQueryResult.allWeekPublisheds.nodes.forEach(function (value) {
+
+              if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
+                || (moment(date).isSame(moment(value.start), 'day'))
+                || (moment(date).isSame(moment(value.end), 'day'))
+              ){
+                value.workplacePublishedsByWeekPublishedId.edges = [...value.workplacePublishedsByWeekPublishedId.edges, {node:workplacePublished, __typename: "WorkplacePublishedsEdge"}];
+              }
+            });
+            return {
+              allWeekPublisheds: previousQueryResult.allWeekPublisheds
+            };
           },
+        },
       }).then((res) => {
         console.log('Inside the data', res);
         this.modalClose();
@@ -239,7 +235,7 @@ class ShiftPublishComponent extends Component {
         },
       }).then(({ data }) => {
         days.forEach((day) => {
-          if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
+          if (shift.shiftDaysSelected[day] === true) {
             this.saveShift(shift, day, publishId);
           }
         })
@@ -260,44 +256,35 @@ class ShiftPublishComponent extends Component {
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
-  handleAdvanceToggle = (drawerShift) => {
-    this.setState((state) => ({
-      drawerShift,
-      isCreateShiftOpen: !state.isCreateShiftOpen,
-      isCreateShiftAdvanceOpen: !state.isCreateShiftAdvanceOpen
-    }));
-  };
-
   closeDrawerAndModal = () => {
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
   saveShift(shiftValue, day, weekPublishedId) {
     const shift = cloneDeep(shiftValue);
-    const shiftDay = moment.utc(day, 'MM-DD-YYYY');
+    const shiftDay = moment.utc(day, 'YYYY-MM-DD');
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-    const payload = {
-      id: uuidv4(),
-      workplaceId: shift.workplaceId,
-      positionId: shift.positionId,
-      workersRequestedNum: shift.numberOfTeamMembers,
-      creatorId: localStorage.getItem('userId'),
-      managersOnShift: [null],
-      startTime: moment.utc(shift.startTime),
-      endTime: moment.utc(shift.endTime),
-      shiftDateCreated: moment().format(),
-      weekPublishedId: weekPublishedId,
-      instructions: shift.instructions,
-      unpaidBreakTime: shift.unpaidBreak
-    };
     this.props.createShift({
       variables: {
         data: {
-          shift: payload
+          shift: {
+            id: uuidv4(),
+            workplaceId: shift.workplaceId,
+            positionId: shift.positionId,
+            workersRequestedNum: shift.numberOfTeamMembers,
+            creatorId: localStorage.getItem('userId'),
+            managersOnShift: [null],
+            startTime: moment.utc(shift.startTime),
+            endTime: moment.utc(shift.endTime),
+            shiftDateCreated: moment().format(),
+            weekPublishedId: weekPublishedId,
+            instructions: shift.instructions,
+            unpaidBreakTime: shift.unpaidBreak
+          }
         }
       },
       updateQueries: {
@@ -323,7 +310,8 @@ class ShiftPublishComponent extends Component {
     let publishId = this.props.publishId;
     let   message="";
     const startDate = this.props.date;
-    const isPublished = ( !this.props.isWorkplacePublished ||(!this.state.workplaceId && is_publish == false && is_publish != 'none'));
+    const isPublished =  (is_publish == false && is_publish != 'none') ? (this.props.isWorkplacePublished === false ? true:false) : false;
+
     const { notify, notificationMessage, notificationType } = this.state;
 
     let status = '';
@@ -340,10 +328,10 @@ class ShiftPublishComponent extends Component {
       { type: 'blue', title: 'Confirm', handleClick: this.publishWeek, image: false }];
     if (this.state.redirect) {
       return (
-        <Redirect to={{ pathname: '/schedule/recurring', viewName: this.props.view }} />
+        <Redirect to={{ pathname: '/schedule/template', viewName: this.props.view }} />
       )
     }
-    if(this.state.publishModalPopped && localStorage.getItem('workplaceId')!=""){
+    if(this.state.publishModalPopped && this.state.workplaceId != ""){
       message="Are you sure that you want to publish the week's schedule on Workplace?"
     }else {
       message="Are you sure that you want to publish the week's schedule?"
@@ -389,13 +377,17 @@ class ShiftPublishComponent extends Component {
               <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}>
                 <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
               </Button>}
-              {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+              {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/template"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
               {is_publish != 'none' &&
-              <Button  basic style={{width:150, height: 44}} onClick={() => this.addTemplateModalOpen()}>View Recurring Shifts</Button> }
+              <Button className="btn-image flr" onClick={this.addTemplateModalOpen}>
+                <img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template" />
+              </Button>}
             </div> :
             <div>
               {is_publish != 'none' &&
-              <Button basic style={{width:150, height: 44}} onClick={() => this.addTemplateModalOpen()}>View Recurring Shifts</Button> }
+              <Button className="btn-image flr" onClick={this.addTemplateModalOpen}>
+                <img className="btn-image flr" src="/assets/Buttons/add-as-template.png" alt="Add As Template" />
+              </Button>}
             </div>
           }
 
@@ -406,13 +398,7 @@ class ShiftPublishComponent extends Component {
           shift={this.state.drawerShift}
           weekStart={start}
           handleSubmit={this.handleCreateSubmit}
-          handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeDrawerAndModal} />
-        <CreateShiftAdvanceDrawer
-          width={styles.drawer.width}
-          shift={this.state.drawerShift}
-          open={this.state.isCreateShiftAdvanceOpen}
-          handleBack={this.handleAdvanceToggle} />
         <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </div>
     )

@@ -188,7 +188,6 @@ class ScheduleComponent extends Component {
     let isWorkplacePublished = false;
     const date = this.state.date;
     this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
-      console.log(value);
       if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
         || (moment(date).isSame(moment(value.start), 'day'))
         || (moment(date).isSame(moment(value.end), 'day'))

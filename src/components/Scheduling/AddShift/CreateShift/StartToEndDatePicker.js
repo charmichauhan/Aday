@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Calendar } from 'react-date-range';
+import { Icon } from 'semantic-ui-react';
 import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';
 
@@ -51,27 +52,21 @@ export default class StartToEndTimePicker extends Component {
             <span><i className="fa fa-clock-o clock-font" /></span>
           </p>
         </div>
-        <div className="date-wrapper">
+        <div className="date-wrapper border-wrapper" onClick={this.toggleEndSelector}>
           <label className="text-uppercase blue-heading">Ends On</label>
-          <div className="end-date">
-            <RaisedButton
-              disabled={!startDateValue}
-              onClick={() => this.handleShiftDatesChange('never', '')}
-              label="Never"
-              className="never-btn" />
-            <span className="or-text">OR</span>
-            <RaisedButton
-              disabled={!startDateValue}
-              onClick={this.toggleEndSelector}
-              label={endDateValue || "Choose Date"}
-              className="choose-btn pull-right"
-            />
-          </div>
+          <p className="start-date">{endDateValue || 'When does this shift end?'}
+            <span><i className="fa fa-clock-o clock-font" /></span>
+          </p>
         </div>
         <div className="date-selector-display" style={{ display: startDateSelector ? 'block' : 'none' }}>
           <Calendar date={startDate} onChange={(date) => this.handleShiftDatesChange('startDate', date)} />
         </div>
         <div className="date-selector-display end-date-selector" style={{ display: endDateSelector ? 'block' : 'none', right: 0 }}>
+          <RaisedButton label="Never"
+                        style={{ boxShadow: 'none' }}
+                        icon={<Icon name="genderless" className="floatLeft never-icon" /> }
+          />
+          <p className="text-center or-btn">OR</p>
           <Calendar date={endDate} onChange={(date) => this.handleShiftDatesChange('endDate', date)} />
         </div>
       </div>

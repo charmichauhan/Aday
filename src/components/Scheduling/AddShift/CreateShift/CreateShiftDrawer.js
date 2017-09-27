@@ -157,6 +157,7 @@ class DrawerHelper extends Component {
     if (!shift.startTime) shiftErrors['startTime'] = true;
     if (!shift.endTime) shiftErrors['endTime'] = true;
     if (!shift.numberOfTeamMembers) shiftErrors['NumberOfTeamMembers'] = true;
+    if (!shift.unpaidBreakInMinutes) shiftErrors['unpaidBreakInMinutes'] = true;
     if (!this.state.isEdit) {
       if (!shift.shiftDaysSelected) {
         shiftErrors['shiftDaysSelected'] = true;
@@ -197,6 +198,12 @@ class DrawerHelper extends Component {
         text: position.positionName,
         selected: this.state.shift.positionId === position.id
       }));
+      positionOptions.unshift({
+        key: 'manager',
+        value: 'manager',
+        text: 'Manager',
+        disabled: true
+      });
       positionOptions.unshift({
         key: 'selected',
         value: 0,

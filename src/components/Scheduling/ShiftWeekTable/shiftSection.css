@@ -137,6 +137,34 @@
   padding: 0 15px;
 }
 
+.shift-section .date-selector-display.end-date-selector .or-btn {
+  position: relative;
+  color: #e33821;
+  margin-bottom: 2px;
+}
+
+.shift-section .date-selector-display.end-date-selector .or-btn:before ,
+.shift-section .date-selector-display.end-date-selector .or-btn:after {
+  position: absolute;
+  content: '';
+  height: 1px;
+  width: 40%;
+  background: #cecece;
+  top: 10px;
+}
+
+.shift-section .date-selector-display.end-date-selector .or-btn:before {
+  left: 0;
+}
+
+.shift-section .date-selector-display.end-date-selector .or-btn:after {
+  right: 0;
+}
+
+.shift-section .date-selector-display.end-date-selector .never-icon {
+  font-size: 22px;
+}
+
 .shift-section .time-selector-wrapper .columns .id {
   display: none;
 }

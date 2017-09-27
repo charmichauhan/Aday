@@ -41,8 +41,8 @@ export default class StartToEndTimePicker extends Component {
   };
 
   isDisabled = () => {
-    const { startTime, endTime } = this.state;
-    return !startTime || !endTime;
+    const { startTimeValue, endTimeValue } = this.state;
+    return !startTimeValue || !endTimeValue;
   };
 
   render() {

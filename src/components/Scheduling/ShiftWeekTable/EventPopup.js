@@ -167,7 +167,7 @@ class EventPopupComponent extends Component {
         startTime = moment().hour(parseInt(start[0])).minute(parseInt(start[1])).format("hh:mm A");
         endTime = moment().hour(parseInt(end[0])).minute(parseInt(end[1])).format("hh:mm A");
     }
-            
+
     let h = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('HH');
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },

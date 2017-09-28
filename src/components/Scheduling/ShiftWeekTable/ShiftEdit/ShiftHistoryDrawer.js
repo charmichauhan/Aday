@@ -1,15 +1,15 @@
-import React, { Component } from 'react'
-import Drawer from 'material-ui/Drawer';
-import Paper from 'material-ui/Paper';
-import { find, pick } from 'lodash';
-import { Header, Grid, GridColumn, Icon, Dropdown, Image } from 'semantic-ui-react';
-import FlatButton from 'material-ui/FlatButton';
-import { gql, graphql } from 'react-apollo';
-import { Icon as Icon2 } from 'antd';
-import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
-
-import CircleButton from '../../../helpers/CircleButton';
-import Loading from '../../../helpers/Loading';
+import React, {Component} from "react";
+import Drawer from "material-ui/Drawer";
+import Paper from "material-ui/Paper";
+import moment from "moment";
+import {find, pick} from "lodash";
+import {Header, Grid, GridColumn, Icon, Dropdown, Image} from "semantic-ui-react";
+import FlatButton from "material-ui/FlatButton";
+import {gql, graphql} from "react-apollo";
+import {Icon as Icon2} from "antd";
+import {SortableContainer, SortableElement, arrayMove} from "react-sortable-hoc";
+import CircleButton from "../../../helpers/CircleButton";
+import Loading from "../../../helpers/Loading";
 
 const styles = {
   paperStyle: {
@@ -29,10 +29,10 @@ const unassignedTeamMember = {
   status: 'unassigned'
 };
 
-const User = ({ user }) => (
+const User = ({user}) => (
   <div className="content">
     <div className="avatar">
-      <Image avatar src={user.avatarUrl} />
+      <Image avatar src={user.avatarUrl}/>
     </div>
     <div className="label font16 text-uppercase">
       <b>{user.firstName}</b> {user.lastName}
@@ -40,7 +40,7 @@ const User = ({ user }) => (
   </div>
 );
 
-const SortableItem = SortableElement(({ history, index }) =>
+const SortableItem = SortableElement(({history, index}) =>
   (
     <Paper style={styles.paperStyle}
            zDepth={1}
@@ -63,7 +63,7 @@ const SortableItem = SortableElement(({ history, index }) =>
                                   <i className="fa fa-phone"></i>
                                 </span>
                           <span className="tick">
-                                    <Icon2 type="check" />
+                                    <Icon2 type="check"/>
                                   </span>
                           <span className="text text-uppercase">
                                     Called 12:49 am
@@ -73,10 +73,10 @@ const SortableItem = SortableElement(({ history, index }) =>
                       <Dropdown.Item>
                         <div className="called sub-menu">
                                   <span className="msg-icon">
-                                    <Icon2 type="message" />
+                                    <Icon2 type="message"/>
                                   </span>
                           <span className="tick">
-                                    <Icon2 type="close" />
+                                    <Icon2 type="close"/>
                                   </span>
                           <span className="text text-uppercase">
                                     Text Disabled
@@ -86,10 +86,10 @@ const SortableItem = SortableElement(({ history, index }) =>
                       <Dropdown.Item>
                         <div className="called sub-menu">
                                   <span className="phn-icon">
-                                    <Icon2 type="mobile" />
+                                    <Icon2 type="mobile"/>
                                   </span>
                           <span className="tick">
-                                    <Icon2 type="check" />
+                                    <Icon2 type="check"/>
                                   </span>
                           <span className="text text-uppercase">
                                     Seen 12:49 am
@@ -113,7 +113,7 @@ const SortableItem = SortableElement(({ history, index }) =>
           </div>
 
           <div className="wrapper-element text-left">
-            <User user={history.worker} />
+            <User user={history.worker}/>
           </div>
         </GridColumn>
         <GridColumn width={2}>
@@ -130,13 +130,13 @@ const SortableItem = SortableElement(({ history, index }) =>
         </GridColumn>
         <GridColumn width={1}>
           <div className="wrapper-element">
-            <Image src="/images/Sidebar/tick.png" className="history-img" />
+            <Image src="/images/Sidebar/tick.png" className="history-img"/>
             <span className="text-uppercase">Accepted</span>
           </div>
         </GridColumn>
         <GridColumn width={1}>
           <div className="wrapper-element">
-            <Icon2 type="up-circle-o" />
+            <Icon2 type="up-circle-o"/>
           </div>
         </GridColumn>
         <GridColumn width={3}>
@@ -147,22 +147,22 @@ const SortableItem = SortableElement(({ history, index }) =>
         </GridColumn>
         <GridColumn width={1}>
           <div className="wrapper-element">
-            <Icon2 type="down-circle-o" />
+            <Icon2 type="down-circle-o"/>
           </div>
         </GridColumn>
         <GridColumn width={1}>
           <div className="wrapper-element">
-            <Image src="/images/Sidebar/draggable.png" className="history-img" />
+            <Image src="/images/Sidebar/draggable.png" className="history-img"/>
           </div>
         </GridColumn>
       </Grid>
     </Paper>)
 );
 
-const SortableList = SortableContainer(({ historyDetails }) => {
+const SortableList = SortableContainer(({historyDetails}) => {
   return (
     <div>
-      {historyDetails.map((history, index) => <SortableItem index={index} history={history} />)}
+      {historyDetails.map((history, index) => <SortableItem index={index} history={history}/>)}
     </div>
   );
 });
@@ -170,18 +170,29 @@ const SortableList = SortableContainer(({ historyDetails }) => {
 class ShiftHistoryDrawerComponent extends Component {
   constructor(props) {
     super(props);
+    debugger;
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.data.loading && nextProps.data.allMarkets) {
-      const historyDetails = this.getInitialData(nextProps.data);
-      this.setState({ historyDetails });
+  componentWillMount() {
+    debugger
+    console.log(this.props);
+    if (!this.props.data.loading && this.props.data.allMarkets) {
+      const historyDetails = this.getInitialData(this.props.data);
+      this.setState({historyDetails});
     }
   }
 
-  getInitialData = ({ allMarkets = [] }) => {
+  componentWillReceiveProps(nextProps) {
+    debugger
+    if (!nextProps.data.loading && nextProps.data.allMarkets) {
+      const historyDetails = this.getInitialData(nextProps.data);
+      this.setState({historyDetails});
+    }
+  }
+
+  getInitialData = ({allMarkets = []}) => {
     const marketsByShiftId = allMarkets.nodes.map((shiftMarket = {}) => {
-      const market = { ...shiftMarket };
+      const market = {...shiftMarket};
       if (market.workerId) {
         market.worker = this.getUserById(market.workerId, true);
       }
@@ -202,14 +213,13 @@ class ShiftHistoryDrawerComponent extends Component {
 
       return market;
     });
-
     return marketsByShiftId;
   };
 
   getUserById = (id) => {
     const users = this.props.users;
     let foundWorker = find(users.allUsers.edges, (user) => user.node.id === id);
-    if (!foundWorker) foundWorker = { node: unassignedTeamMember.user };
+    if (!foundWorker) foundWorker = {node: unassignedTeamMember.user};
     return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
   };
 
@@ -220,58 +230,110 @@ class ShiftHistoryDrawerComponent extends Component {
 
   showDetails = (historyDetails, i) => {
     historyDetails[i].showDetails = !historyDetails[i].showDetails;
-    this.setState({ historyDetails });
+    this.setState({historyDetails});
   };
 
-  onSortEnd = ({ oldIndex, newIndex }) => {
-    this.setState({
-      historyDetails: arrayMove(this.state.historyDetails, oldIndex, newIndex),
+  onSortEnd = ({oldIndex, newIndex}) => {
+    console.log(this.state.historyDetails);
+    this.setState(() => {
+      return
+      {
+        historyDetails : arrayMove(this.state.historyDetails, oldIndex, newIndex)
+      }
     });
-  };
+    debugger;
 
-  render() {
-    const {
-      width = 750,
-      open,
-      openSecondary = true,
-      docked = false
-    } = this.props;
+    const varSortUser = [];
+    this.state.historyDetails.map((v,i)=>{
+      varSortUser.push(v.worker);
+    })
 
-    if (this.props.data.loading) {
-      return (<Loading />)
-    }
+debugger;
+    console.log(this.state.historyDetails);
 
-    const { historyDetails } = this.state;
+    var shift = this.props.shift;
+      var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/callEmployee/'
 
-    return (
-      <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
-              open={open}>
-        <div className="drawer-section brand-drawer-section">
-          <div className="drawer-heading drawer-head col-md-12">
+      var options = {
+        uri: uri,
+        method: 'POST',
+        json: {
+          "data": {
+            "sec": "QDVPZJk54364gwnviz921",
+            "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
+            "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+            "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+            "brand": shift.positionByPositionId.brandByBrandId.brandName,
+            "shiftLocation": shift.workplaceByWorkplaceId.workplaceName,
+            "shiftReward": "",
+            "shiftRole": shift.positionByPositionId.positionName,
+            "shiftAddress": shift.workplaceByWorkplaceId.address,
+            "weekPublishedId": shift.weekPublishedId,
+            "shiftId": shift.id,
+            "userId":
+              {
+                varSortUser
+              }
+          }
+        }
+      };
+      // rp(options)
+      //   .then(function (response) {
+      //     //that.setState({redirect:true})
+      //   }).catch((error) => {
+      //   console.log('there was an error sending the query', error);
+      // });
 
-            <FlatButton label="Back" onClick={this.handleBack}
-                        icon={<Icon name="chevron left" className="floatLeft" /> } />
-            <Header as='h2' textAlign='center'>
-              Shift History
-            </Header>
 
+
+
+  }
+
+
+    render()
+    {
+      const {
+        width = 750,
+        open,
+        openSecondary = true,
+        docked = false
+      } = this.props;
+
+      if (this.props.data.loading) {
+        return (<Loading />)
+      }
+
+      const {historyDetails} = this.state;
+      return (
+        <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
+                open={open}>
+          <div className="drawer-section brand-drawer-section">
+            <div className="drawer-heading drawer-head col-md-12">
+
+              <FlatButton label="Back" onClick={this.handleBack}
+                          icon={<Icon name="chevron left" className="floatLeft"/> }/>
+              <Header as='h2' textAlign='center'>
+                Shift History
+              </Header>
+
+            </div>
+            <div className="drawer-content history-drawer-content">
+              <SortableList historyDetails={historyDetails} onSortEnd={this.onSortEnd} pressDelay={200}/>
+            </div>
           </div>
-          <div className="drawer-content history-drawer-content">
-            <SortableList historyDetails={historyDetails} onSortEnd={this.onSortEnd} />
+          <div className="drawer-footer">
+            <div className="buttons text-center">
+              <CircleButton type="white" title="GO BACK" handleClick={this.handleBack}/>
+            </div>
           </div>
-        </div>
-        <div className="drawer-footer">
-          <div className="buttons text-center">
-            <CircleButton type="white" title="GO BACK" handleClick={this.handleBack} />
-          </div>
-        </div>
-      </Drawer>
-    );
-  };
-}
+        </Drawer>
+      );
+    };
+  }
 
 
-const allMarkets = gql`
+  const
+  allMarkets = gql`
   query allMarkets($shiftId: Uuid!) {
     allMarkets(condition: {shiftId: $shiftId }) {
       nodes {
@@ -296,12 +358,15 @@ const allMarkets = gql`
     }
   }`;
 
-const ShiftHistoryDrawer = graphql(allMarkets, {
-  options: (ownProps) => ({
-    variables: {
-      shiftId: ownProps.shift && ownProps.shift.id
-    }
-  }),
-})(ShiftHistoryDrawerComponent);
+  const
+  ShiftHistoryDrawer = graphql(allMarkets, {
+    options: (ownProps) => ({
+      variables: {
+        shiftId: ownProps.shift && ownProps.shift.id
+      }
+    }),
+  })(ShiftHistoryDrawerComponent);
 
-export default ShiftHistoryDrawer;
+  export
+  default
+  ShiftHistoryDrawer;

@@ -183,6 +183,12 @@ class ShiftWeekTableComponent extends Week {
              return (<div> Must Select A Workplace </div>)
         }
 
+        if (this.state.redirect){
+                return (
+                  <Redirect to={{ pathname: '/schedule/team', viewName: this.props.view }} />
+                )
+        }
+
         console.log(this.props)
         let recurring = this.props.data.allRecurrings
         let workplaceId = localStorage.getItem('workplaceId');

@@ -3,7 +3,7 @@ import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';
-import { Image, TextArea, Dropdown, Grid, Button } from 'semantic-ui-react';
+import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
 
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
@@ -11,9 +11,10 @@ import { closeButton } from '../../../styles';
 import Loading from '../../../helpers/Loading';
 import CircleButton from '../../../helpers/CircleButton';
 import dataHelper from '../../../helpers/common/dataHelper';
+import TeamMemberCard from '../../ShiftWeekTable/ShiftEdit/TeamMemberCard';
+import CreateShiftHelper from './CreateShiftHelper';
 import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
-import CreateShiftHelper from './CreateShiftHelper';
 import StartToEndTimePicker from './StartToEndTimePicker';
 import StartToEndDatePicker from './StartToEndDatePicker';
 import { Tooltip } from 'rebass';
@@ -27,16 +28,27 @@ const initialState = {
     recurringShift: 0,
     numberOfTeamMembers: 1,
     unpaidBreakInMinutes: 0,
+    shiftDaysSelected: {},
     tags: [],
     tagOptions: [],
     brandId: localStorage.getItem('brandId') || '',
     corporationId: localStorage.getItem('corporationId') || '',
-    workplaceId: localStorage.getItem('workplaceId') || ''
+    workplaceId: localStorage.getItem('workplaceId') || '',
+    positionId: ''
   },
   shiftErrors: {},
   brandId: localStorage.getItem('brandId') || '',
   corporationId: localStorage.getItem('corporationId') || '',
   workplaceId: localStorage.getItem('workplaceId') || ''
+};
+
+const unassignedTeamMember = {
+  id: 0,
+  firstName: 'Automated Shift',
+  lastName: '',
+  avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/icons/time-lapse-red.png',
+  content: 'Assign shift to override automation',
+  status: 'unassigned'
 };
 
 class DrawerHelper extends Component {
@@ -61,6 +73,7 @@ class DrawerHelper extends Component {
   componentDidMount() {
     this.getWorkplaces();
     this.getPositions();
+    this.getUsers();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -76,20 +89,36 @@ class DrawerHelper extends Component {
         };
         this.setState({ shift });
       }
+      if (nextProps.open !== this.props.open) {
+        this.setState((state) => ({
+          shift: {
+            ...state.shift,
+            advance: nextProps.shift.advance
+          }
+        }));
+      }
+    } else {
+      if (nextProps.open !== this.props.open) {
+        this.setState((state) => ({
+          shift: {
+            ...initialState.shift,
+            ...nextProps.shift
+          }
+        }));
+      }
     }
-    if (nextProps.open !== this.props.open) {
-      this.setState((state) => ({
-        shift: {
-          ...state.shift,
-          advance: nextProps.shift.advance
-        }
-      }));
-    }
+
   }
 
   getWorkplaces = () => {
     dataHelper.getCurrentWorkplaces()
-      .then((workplaces) => this.setState({ workplaces }))
+      .then(workplaces => this.setState({ workplaces }))
+      .catch(err => console.error(err));
+  };
+
+  getUsers = () => {
+    dataHelper.getUsers()
+      .then(users => this.setState({ users }))
       .catch(err => console.error(err));
   };
 
@@ -112,7 +141,10 @@ class DrawerHelper extends Component {
   };
 
   handleAddTeamMember = () => {
-
+    const { shift } = this.state;
+    if (!shift.teamMembers) shift.teamMembers = [];
+    shift.teamMembers.push(unassignedTeamMember);
+    this.setState({ shift });
   };
 
   handleNowSelect = () => {
@@ -143,8 +175,37 @@ class DrawerHelper extends Component {
 
   closeShiftDrawer = () => {
     const { closeDrawer } = this.props;
-    this.setState(initialState);
-    if (closeDrawer) closeDrawer();
+    this.setState({ ...initialState, isShiftInvalid: true }, () => {
+      if (closeDrawer) closeDrawer();
+    });
+  };
+
+  borderColor = status => {
+    if (status === 'accepted') return 'green';
+    if (status === 'unassigned') return 'red';
+    if (status === 'pending') return 'orange';
+    return 'orange';
+  };
+
+  removeTeamMember = (i) => {
+    const { teamMembers } = this.state.shift;
+    teamMembers.splice(i, 1);
+    this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
+  };
+
+  setTeamMember = (user, index) => {
+    const { teamMembers } = this.state.shift;
+    if (user.id) {
+      teamMembers[index] = {
+        ...teamMembers[index],
+        ...user,
+        content: '',
+        status: 'accepted'
+      }
+    } else {
+      teamMembers[index] = { ...unassignedTeamMember };
+    }
+    this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
   };
 
   validateShift = (shift) => {
@@ -157,7 +218,7 @@ class DrawerHelper extends Component {
     if (!shift.startTime) shiftErrors['startTime'] = true;
     if (!shift.endTime) shiftErrors['endTime'] = true;
     if (!shift.numberOfTeamMembers) shiftErrors['NumberOfTeamMembers'] = true;
-    if (!shift.unpaidBreakInMinutes) shiftErrors['unpaidBreakInMinutes'] = true;
+    if (shift.unpaidBreakInMinutes !== 0 && !shift.unpaidBreakInMinutes) shiftErrors['unpaidBreakInMinutes'] = true;
     if (!this.state.isEdit) {
       if (!shift.shiftDaysSelected) {
         shiftErrors['shiftDaysSelected'] = true;
@@ -167,18 +228,23 @@ class DrawerHelper extends Component {
         }
       }
     }
-    this.setState({ shiftErrors });
-  };
-
-  isShiftValid = () => {
-    const { shiftErrors } = this.state;
-    return Object.keys(shiftErrors).length > 0;
+    this.setState({ isShiftInvalid: Object.keys(shiftErrors).length });
   };
 
   render() {
 
     const { width, open, handleAdvance } = this.props;
-    const { shift, workplaces, positions, workplaceId, weekStart, selectedDate, isEdit } = this.state;
+    const {
+      shift,
+      workplaces,
+      positions,
+      workplaceId,
+      weekStart,
+      selectedDate,
+      users,
+      isEdit,
+      isShiftInvalid
+    } = this.state;
     let positionOptions = [{ key: 'select', value: 0, text: 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS' }];
 
     if (!workplaces) {
@@ -189,20 +255,19 @@ class DrawerHelper extends Component {
       key: workplace.id,
       value: workplace.id,
       text: workplace.workplaceName,
-      selected: this.state.shift.workplaceId === workplace.id
+      selected: shift.workplaceId === workplace.id
     }));
     if (positions) {
       positionOptions = positions.map(position => ({
         key: position.id,
         value: position.id,
         text: position.positionName,
-        selected: this.state.shift.positionId === position.id
+        selected: shift.positionId === position.id
       }));
       positionOptions.unshift({
         key: 'manager',
         value: 'manager',
-        text: 'Manager',
-        disabled: true
+        text: 'Manager'
       });
       positionOptions.unshift({
         key: 'selected',
@@ -240,6 +305,8 @@ class DrawerHelper extends Component {
       trainers: shift.numberOfTeamMembers,
       shadowers: shift.advance && shift.advance.allowShadowing && shift.numberOfTeamMembers || 0
     };
+
+    const isAddTeamMemberDisabled = shift.recurringShift !== 'none' || (shift.teamMembers && shift.teamMembers.length >= shift.numberOfTeamMembers);
 
     return (
       <Drawer
@@ -352,7 +419,7 @@ class DrawerHelper extends Component {
                          className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
-                  <StartToEndTimePicker startTime={shift.startTime} endTime={shift.endTime}
+                  <StartToEndTimePicker isEdit={isEdit} startTime={shift.startTime} endTime={shift.endTime}
                                         onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
@@ -417,12 +484,26 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
-                  {shift.recurringShift !== 'none' && <Tooltip className="tooltip-message"
-                                                               text=' &nbsp; Creating recurring shifts and adding team members cannot be done at the same time &nbsp;'>
-                    <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'}
-                                  onClick={this.handleAddTeamMember} />
-                  </Tooltip> || <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'}
-                                              onClick={this.handleAddTeamMember} />}
+                  {isAddTeamMemberDisabled
+                    && <Tooltip className="tooltip-message" text=' &nbsp; Creating recurring shifts and adding team members cannot be done at the same time &nbsp;'>
+                    <RaisedButton label="Add Team Member" disabled={isAddTeamMemberDisabled} />
+                  </Tooltip> || <RaisedButton label="Add Team Member" onClick={this.handleAddTeamMember} />}
+
+                  <br/>
+                  <div className="member-list">
+                    {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) => <TeamMemberCard
+                      avatarUrl={tm.avatarUrl}
+                      firstName={tm.firstName}
+                      lastName={tm.lastName}
+                      content={tm.content}
+                      users={users}
+                      color={this.borderColor(tm.status) + 'Border'}
+                      key={i}
+                      id={i}
+                      handleRemove={() => this.removeTeamMember(i)}
+                      onSelectChange={this.setTeamMember}
+                    />)}
+                  </div>
                 </Grid.Column>
               </Grid.Row>
 
@@ -462,7 +543,7 @@ class DrawerHelper extends Component {
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
-                <CircleButton disabled={this.isShiftValid(shift)} handleClick={() => this.handleShiftSubmit(shift)}
+                <CircleButton disabled={isShiftInvalid} handleClick={() => this.handleShiftSubmit(shift)}
                               type="blue" title="Add Hours" />
               </div>
             </div>

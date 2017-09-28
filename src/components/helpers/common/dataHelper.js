@@ -12,7 +12,20 @@ const queries = {
           isActive
         }
       }
-    }`
+    }`,
+  getUsers: gql`
+    query {
+      allUsers {
+        nodes {
+          id
+          firstName
+          lastName
+          avatarUrl
+          userEmail
+        }
+      }
+    }
+  `
 };
 
 function getCurrentWorkplaces(brandId = localStorage.getItem('brandId'), corporationId = localStorage.getItem('corporationId')) {
@@ -25,4 +38,12 @@ function getCurrentWorkplaces(brandId = localStorage.getItem('brandId'), corpora
   }).catch(err => Promise.reject(err));
 }
 
-export default { getCurrentWorkplaces };
+function getUsers() {
+  return client.query({
+    query: queries.getUsers
+  }).then((res) => {
+    if (res.data && res.data.allUsers) return res.data.allUsers.nodes;
+  }).catch(err => Promise.reject(err));
+}
+
+export default { getCurrentWorkplaces, getUsers };

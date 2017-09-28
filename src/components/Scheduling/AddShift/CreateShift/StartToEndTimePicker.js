@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { TimePicker } from 'rc-timepicker';
 import cloneDeep from 'lodash/cloneDeep';
+import moment from 'moment';
 
 import 'rc-timepicker/lib/css/styles.css';
 
@@ -9,7 +10,11 @@ export default class StartToEndTimePicker extends Component {
     super(props);
     this.state = {
       startTime: props.startTime,
+      startTimeValue: props.isEdit && moment(props.startTime).format('HH:mm'),
+      startTimeValueTop: props.isEdit && moment(props.startTime).format('HH:mm'),
       endTime: props.endTime,
+      endTimeValue: props.isEdit && moment(props.startTime).format('HH:mm'),
+      endTimeValueTop: props.isEdit && moment(props.startTime).format('HH:mm'),
       showSelector: false
     }
   }
@@ -20,8 +25,37 @@ export default class StartToEndTimePicker extends Component {
     formCallBack({ startTime, endTime });
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { startTime, endTime } =  this.state;
+    if (nextProps.startTime && nextProps.endTime) {
+      if (nextProps.startTime.valueOf() !== startTime.valueOf() || nextProps.endTime.valueOf() !== endTime.valueOf()) {
+        this.setState({
+          startTime: nextProps.startTime,
+          endTime: nextProps.endTime
+        });
+      }
+      if (nextProps.isEdit) {
+        this.setState({
+          startTimeValue: moment(nextProps.startTime).format('HH:mm'),
+          startTimeValueTop: moment(nextProps.startTime).format('HH:mm'),
+          endTimeValue: moment(nextProps.endTime).format('HH:mm'),
+          endTimeValueTop: moment(nextProps.endTime).format('HH:mm'),
+        });
+      }
+    } else {
+      this.setState({
+        startTime: moment(),
+        startTimeValue: '',
+        startTimeValueTop: '',
+        endTime: moment(),
+        endTimeValue: '',
+        endTimeValueTop: '',
+      });
+    }
+  }
+
   handleTimeChange = ({ name, value }) => {
-    const stateValue = cloneDeep(this.state[name]);
+    const stateValue = cloneDeep(this.state[name]) || moment();
     let [hour, min] = value.split(':');
     const dateTime = stateValue.hour(hour).minute(min);
     this.setState({ [name]: dateTime, [name + 'Value']: value });

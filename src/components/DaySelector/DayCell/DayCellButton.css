@@ -1,7 +1,13 @@
-.shift-modal-day-cell {
+.day-selector .shift-modal-day-cell {
   display: inline-block;
+  margin-right: 6px;
 }
-.shift-modal-day-cell .shift-modal-day-cell-button {
+
+.day-selector .shift-modal-day-cell:last-child {
+  margin-right: 0;
+}
+
+.day-selector .shift-modal-day-cell .shift-modal-day-cell-button {
     margin: 5px 5px;
     width: 70px;
     height: 70px;

@@ -1,174 +1,204 @@
 .window-selection-form {
-	position: fixed; /* Stay in place */
-	z-index: 5; /* Sit on top */
-	padding-top: 100px; /* Location of the box */
-	left: 0;
-	top: 0;
-	width: 100%; /* Full width */
-	height: 100%; /* Full height */
-	background-color: rgb(0,0,0); /* Fallback color */
-	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  position: fixed; /* Stay in place */
+  z-index: 5; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 }
+
 .modal-selection-form {
-	position:fixed;
-	z-index:1;
-	padding-top:100px;
-	left:0;
-	top:0;
-	width:600px;
-	height:365px;
-	overflow:auto;
-	background-color:rgb(0,0,0);
-	background-color:rgba(0,0,0,0.4);
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 600px;
+  height: 365px;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
 }
+
 .modal-content-form {
-	position:relative;
-	background-color: #fefefe;
-	margin:auto;
-	padding:0;
-	border:1px solid #888;
-	width:45%;
-	box-shadow:0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 45%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
 .form-close-button {
-	color:#000;
-	float:right;
-	font-size:28px;
-	font-weight:bold;
+  color: #000;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
+
 .form-close-button:hover,
 .form-close-button:focus {
-	color:#000;
-	text-decoration:none;
-	cursor:pointer;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
 }
+
 .header {
-	height: 17.53%;
-	width: 90%;
+  height: 17.53%;
+  width: 90%;
 }
-.closebtn{
-	width: 10%;
-	float:left;
-	margin-left: 20%;
+
+.closebtn {
+  width: 10%;
+  float: left;
+  margin-left: 20%;
   margin-top: -10%;
 }
-.heading{
-	color: #0022a1;
-	font-weight: 400;
-	font-family: sans-serif;
+
+.heading {
+  color: #0022a1;
+  font-weight: 400;
+  font-family: sans-serif;
 }
 
 .header div {
-	height: 9.59%;
-	width: 100%;
-	color: #0022A1;
-	font-family: "Roboto Condensed";
-	font-size: 28px;
-	line-height: 35px;
-	text-align: center;
+  height: 9.59%;
+  width: 100%;
+  color: #0022A1;
+  font-family: "Roboto Condensed";
+  font-size: 28px;
+  line-height: 35px;
+  text-align: center;
 }
+
 .line {
-    height: 1px;
-    width: 100%;
-    margin-left: 0px;
-		margin-top: -4%;
-    margin-bottom: 9%;
+  height: 1px;
+  width: 100%;
+  margin-left: 0px;
+  margin-top: -4%;
+  margin-bottom: 9%;
 }
+
 .modal-selection-body {
-	padding:2px 16px;
-	height:300px;
-	align-items: center;
+  padding: 2px 16px;
+  height: 300px;
+  align-items: center;
 }
-.modal-selection-footer{
-	padding:2px 16px;
-	background-color:#fff;
-	color:white;
+
+.modal-selection-footer {
+  padding: 2px 16px;
+  background-color: #fff;
+  color: white;
 }
+
 .button-employee {
-	height:60.27%;
-	width: 42.43%;
-	float:left;
+  height: 60.27%;
+  width: 42.43%;
+  float: left;
 
-	margin-left:5.87%;
-	margin-top:2%;
-	border-radius:0px 0px 10px 10px;
+  margin-left: 5.87%;
+  margin-top: 2%;
+  border-radius: 0px 0px 10px 10px;
 }
-.button-standard {
-	height: 60.27%;
-	width: 42.43%;
-	float:right;
 
-	margin-left: 4.16%;
-	margin-right:5.03%;
-	margin-top:2%;
-	border-radius:0px 0px 10px 10px;
+.button-standard {
+  height: 60.27%;
+  width: 42.43%;
+  float: right;
+
+  margin-left: 4.16%;
+  margin-right: 5.03%;
+  margin-top: 2%;
+  border-radius: 0px 0px 10px 10px;
 }
 
 .button-employee button {
-	height:100%;
-	width:100%;
-	font-size:15px;
+  height: 100%;
+  width: 100%;
+  font-size: 15px;
   color: #ffffff;
-	float:right;
-	box-shadow:0 10px 6px -6px black;
-	border-radius:0px 0px 10px 10px;
-	background-color: white;
+  float: right;
+  box-shadow: 0 10px 6px -6px black;
+  border-radius: 0px 0px 10px 10px;
+  background-color: white;
 }
-.button-standard button{
-	height:100%;
-	width:100%;
-	border:1px solid #999;
-	border-top:none;
-	font-size:15px;
-	color:#666;
-	float:right;
-	box-shadow:0 10px 6px -6px black;
-	border-radius:0px 0px 10px 10px;
-	background-color: white;
+
+.button-standard button {
+  height: 100%;
+  width: 100%;
+  border: 1px solid #999;
+  border-top: none;
+  font-size: 15px;
+  color: #666;
+  float: right;
+  box-shadow: 0 10px 6px -6px black;
+  border-radius: 0px 0px 10px 10px;
+  background-color: white;
 }
-.close{
-	width: 8%
+
+.close {
+  width: 8%
 }
+
 .full-box {
-	text-align:center;
-	width:100%;
-	margin:2px 0 -4px 0;
+  text-align: center;
+  width: 100%;
+  margin: 2px 0 -4px 0;
 }
+
 .full-box h3 {
-	color:#019;
+  color: #019;
 }
+
 ._arc {
-    position: fixed;
-    z-index: 10;
-    padding-top: 16px;
-    left: 27%;
-    top: 29%;
-    width: 44%;
-    height: 55%;
-    background-color: #ffffff;
-    border-bottom: black;
-    border-radius: 10px;
-    border: solid 1px;
-    box-shadow: 1px 1px 1px #ddd;
-		-webkit-animation-name: animatetop;
-		-webkit-animation-duration: 0.4s;
-		animation-name: animatetop;
-		animation-duration: 0.4s
+  position: fixed;
+  z-index: 10;
+  padding-top: 16px;
+  left: 27%;
+  top: 29%;
+  width: 44%;
+  height: 55%;
+  background-color: #ffffff;
+  border-bottom: black;
+  border-radius: 10px;
+  border: solid 1px;
+  box-shadow: 1px 1px 1px #ddd;
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
 }
+
 @-webkit-keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:0; opacity:1}
+  from {
+    top: -300px;
+    opacity: 0
+  }
+  to {
+    top: 0;
+    opacity: 1
+  }
 }
 
 @keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:26%; opacity:1}
+  from {
+    top: -300px;
+    opacity: 0
+  }
+  to {
+    top: 26%;
+    opacity: 1
+  }
 }
 
-.ui.default.dropdown,  .ui.dropdown{
-    color: "#838890" !important;
+.ui.default.dropdown, .ui.dropdown {
+  color: "#838890" !important;
 }
 
-.default{
+.default {
   color: "#838890" !important;
 }

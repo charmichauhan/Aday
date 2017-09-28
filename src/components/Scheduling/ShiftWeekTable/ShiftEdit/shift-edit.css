@@ -527,6 +527,14 @@ i.chevron.up.icon, i.chevron.down.icon {
   animation: anim 0.5s ease-in-out;
 }
 
+.rbc-calendar .shift-section .row:before {
+  display: none;
+}
+
+.shift-section .ui.dropdown > .text {
+  font-size: 14px;
+}
+
 .history-drawer-content {
   width: 100%;
   clear: both;

@@ -10,6 +10,7 @@ export const userQuery = gql `
     zipCode
     userPhoneConfirmed
     userPhoneNumber
+    userEmail
     aboutMeText
     userReferencesByUserId{
       edges{
@@ -89,6 +90,9 @@ export const userQuery = gql `
         deletionDate
         payrollNum
         primaryWorkplace
+        dayHourLimit
+        weekHourLimit
+        monthHourLimit
         workplaceByPrimaryWorkplace{
           id
           workplaceName
@@ -96,14 +100,14 @@ export const userQuery = gql `
       }
     }
   }
-  
- 
-  
+
+
+
   }
 }`
 
 export const releventPositionsQuery = gql`
-  query ($corporationId: Uuid, $brandId: Uuid, $userId: Uuid) {
+  query releventPositionsQuery($corporationId: Uuid, $brandId: Uuid, $userId: Uuid) {
     allPositions(condition: { corporationId: $corporationId, brandId: $brandId} ){
       nodes {
         id
@@ -149,17 +153,22 @@ query fetchPrimaryLocation ($corporationId: Uuid!) {
 `
 
 export const updateEmployeeById = gql`
-mutation ($id: Uuid!, $employeeInfo: EmployeePatch!) {  
+mutation ($id: Uuid!, $employeeInfo: EmployeePatch!) {
   updateEmployeeById (input: { id: $id, employeePatch: $employeeInfo }) {
   employee {
-    id
-    wage
-    hireDate
-    deletionDate
-    primaryWorkplace
-    dayHourLimit
-    weekHourLimit
-    monthHourLimit
+      id
+      wage
+      hireDate
+      deletionDate
+      payrollNum
+      primaryWorkplace
+      dayHourLimit
+      weekHourLimit
+      monthHourLimit
+      workplaceByPrimaryWorkplace{
+            id
+            workplaceName
+      }
     }
   }
 }

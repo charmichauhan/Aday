@@ -80,6 +80,7 @@ class EmployeeViewComponent extends Component {
             console.log(this.props.data.error)
             return (<div>An unexpected error occurred</div>)
         }
+        let isWorkplacePublished = false;
         let is_publish = "none";
         let publish_id = "";
         const date = this.state.date;
@@ -88,6 +89,13 @@ class EmployeeViewComponent extends Component {
             || (moment(date).isSame(moment(value.start), 'day'))
             || (moment(date).isSame(moment(value.end), 'day'))
             ){
+              if(value.workplacePublishedsByWeekPublishedId.edges.length > 0){
+                value.workplacePublishedsByWeekPublishedId.edges.map((value) => {
+                  if(value.node.workplaceId == localStorage.getItem("workplaceId")) {
+                    isWorkplacePublished = value.node.published;
+                  }
+                });
+              }
               is_publish = value.published;
               publish_id = value.id;
           }
@@ -99,7 +107,7 @@ class EmployeeViewComponent extends Component {
         return (
 			<div className="App row">
 
-				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={ publish_id }/> </div>
+				<div style={{height: '160px'}}> <ShiftPublish date={this.state.date} isWorkplacePublished={ isWorkplacePublished } isPublish={ is_publish } publishId={ publish_id }/> </div>
                 <Modal title="Confirm" isOpen={this.state.publishModalPopped}
 													  message = "Are you sure that you want to delete this shift?"
 													  action = {publishModalOptions} closeAction={this.modalClose}/>
@@ -174,6 +182,14 @@ const allWeekPublisheds = gql
             published
             start
             end
+            workplacePublishedsByWeekPublishedId{
+              edges{
+                node{
+                  workplaceId
+                  published
+                }
+              }
+            }
         }
     }
 }`

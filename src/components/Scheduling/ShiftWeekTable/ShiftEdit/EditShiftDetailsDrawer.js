@@ -53,8 +53,9 @@ class DrawerHelper extends Component {
         advance: { allowShadowing: true },
         workplaceId,
         brandId,
-        positionId
+        positionId,
       },
+      recurring: props.recurring || false,
       weekStart: props.weekStart,
       workplaceId,
       brandId,
@@ -238,14 +239,15 @@ class DrawerHelper extends Component {
             </div>
 
             <div style={{ flex: 10, alignSelf: 'center' }}>
-              <span className="drawer-title">Add Hours</span>
+              <span className="drawer-title">Edit Hours</span>
             </div>
-
+            { this.state.recurring? "" :
             <div style={{ flex: 3, alignSelf: 'center' }}>
               <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={() => handleAdvance(shift)}
                       color='red'>Advanced
               </button>
             </div>
+            }
           </div>
 
           <div className="col-md-12 form-div edit-drawer-content">
@@ -281,6 +283,7 @@ class DrawerHelper extends Component {
                     value={shift.workplaceId || 0}
                     fluid
                     selection
+                    disabled={this.state.recurring}
                     options={workplaceOptions} />
                 </Grid.Column>
               </Grid.Row>
@@ -311,13 +314,28 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Repeat Shift Weekly</label>
+                  {this.state.recurring && <Tooltip
+                      text=' &nbsp; A recurring shift must repeat weekly. &nbsp;'>
+                       <Dropdown
+                    name="recurringShift"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={this.state.recurring? 'weekly' : shift.recurringShift}
+                    fluid
+                    selection
+                    disabled={this.state.recurring}
+                    options={recurringOptions} />
+                  </Tooltip> ||
                   <Dropdown
                     name="recurringShift"
                     onChange={(_, data) => this.handleChange({ target: data })}
-                    value={shift.recurringShift}
+                    value={this.state.recurring? 'weekly' : shift.recurringShift}
                     fluid
                     selection
+                    disabled={this.state.recurring}
                     options={recurringOptions} />
+                  } 
+                 
+
                 </Grid.Column>
               </Grid.Row>
 
@@ -413,7 +431,7 @@ class DrawerHelper extends Component {
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
                 <CircleButton disabled={this.isShiftValid(shift)} handleClick={() => this.handleShiftSubmit(shift)}
-                              type="blue" title="Add Hours" />
+                              type="blue" title="Edit Hours" />
               </div>
             </div>
           </div>

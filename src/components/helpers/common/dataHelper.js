@@ -25,7 +25,25 @@ const queries = {
         }
       }
     }
-  `
+  `,
+  getManagers: gql`
+  query {
+    allManagers {
+      nodes {
+        id
+        nodeId
+        workplaceId
+        userByUserId {
+          id
+          avatarUrl
+          firstName
+          lastName
+          userEmail
+          userPhoneNumber
+        }
+      }
+    }
+  }`
 };
 
 function getCurrentWorkplaces(brandId = localStorage.getItem('brandId'), corporationId = localStorage.getItem('corporationId')) {
@@ -46,4 +64,12 @@ function getUsers() {
   }).catch(err => Promise.reject(err));
 }
 
-export default { getCurrentWorkplaces, getUsers };
+function getAllManagers() {
+  return client.query({
+    query: queries.getManagers
+  }).then((res) => {
+    if (res.data && res.data.allManagers) return res.data.allManagers.nodes;
+  }).catch(err => Promise.reject(err));
+}
+
+export default { getCurrentWorkplaces, getUsers, getAllManagers };

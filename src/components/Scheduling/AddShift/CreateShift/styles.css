@@ -1,7 +1,7 @@
 .tooltip-message::before {
   left: 182.5% !important;
   background-color: rgba(0, 0, 0, 0.75) !important;
-  padding: 5px !important;
+  padding: 5px 10px !important;
   border-radius: 2px !important;
   font-family: 'Varela Round';
 }

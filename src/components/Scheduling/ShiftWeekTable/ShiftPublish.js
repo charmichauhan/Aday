@@ -13,6 +13,7 @@ import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShift
 import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
+import dataHelper from '../../helpers/common/dataHelper';
 import {
   updateWeekPublishedNameMutation,
   createWeekPublishedMutation,
@@ -46,10 +47,27 @@ class ShiftPublishComponent extends Component {
     }
   }
 
+  componentDidMount() {
+    this.getUsers();
+    this.getManagers();
+  }
+
   modalClose = () => {
     this.setState({
       publishModalPopped: false
     })
+  };
+
+  getUsers = () => {
+    dataHelper.getUsers()
+      .then(users => this.setState({ users }))
+      .catch(err => console.error(err));
+  };
+
+  getManagers = () => {
+    dataHelper.getAllManagers()
+      .then(managers => this.setState({ managers }))
+      .catch(err => console.error(err));
   };
 
   goBack = () => {
@@ -366,6 +384,8 @@ class ShiftPublishComponent extends Component {
           width={styles.drawer.width}
           open={this.state.isCreateShiftOpen}
           shift={this.state.drawerShift}
+          users={this.state.users}
+          managers={this.state.managers}
           weekStart={start}
           handleSubmit={this.handleCreateSubmit}
           handleAdvance={this.handleAdvanceToggle}

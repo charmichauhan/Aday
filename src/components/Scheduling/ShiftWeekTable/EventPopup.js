@@ -163,6 +163,7 @@ class EventPopupComponent extends Component {
 
   render() {
     let { data, users } = this.props;
+    const mappedUsers = users && users.allUsers && users.allUsers.edges.map(({ node }) => node);
     let pastDate = moment().diff(data.startTime) > 0;
     let startTime = moment(data.startTime).format('h:mm A');
     let endTime = moment(data.endTime).format('h:mm A');
@@ -246,6 +247,8 @@ class EventPopupComponent extends Component {
           width={styles.drawer.width}
           open={this.state.editShiftModalOpen}
           shift={this.state.drawerShift}
+          users={mappedUsers}
+          managers={this.props.managers}
           handleSubmit={this.handleShiftUpdateSubmit}
           handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeEditShiftModal} />

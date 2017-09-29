@@ -62,7 +62,8 @@ class DrawerHelper extends Component {
       ...initialState,
       shift,
       isEdit: !!shift.id,
-      weekStart: props.weekStart
+      weekStart: props.weekStart,
+      users: props.users
     };
   }
 
@@ -73,7 +74,6 @@ class DrawerHelper extends Component {
   componentDidMount() {
     this.getWorkplaces();
     this.getPositions();
-    this.getUsers();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -108,17 +108,30 @@ class DrawerHelper extends Component {
       }
     }
 
+    if (nextProps.users && !this.state.users) {
+      this.setState({ users: nextProps.users });
+    }
+
+    if (nextProps.managers && !this.state.managers) {
+      this.setState({
+        managers: nextProps.managers.map(manager => {
+          const { id, workplaceId, userByUserId } = manager;
+          return {
+            id,
+            workplaceId,
+            userId: userByUserId.id,
+            avatarUrl: userByUserId.avatarUrl,
+            firstName: userByUserId.firstName,
+            lastName: userByUserId.lastName
+          };
+        })
+      });
+    }
   }
 
   getWorkplaces = () => {
     dataHelper.getCurrentWorkplaces()
       .then(workplaces => this.setState({ workplaces }))
-      .catch(err => console.error(err));
-  };
-
-  getUsers = () => {
-    dataHelper.getUsers()
-      .then(users => this.setState({ users }))
       .catch(err => console.error(err));
   };
 
@@ -241,6 +254,7 @@ class DrawerHelper extends Component {
       workplaceId,
       weekStart,
       selectedDate,
+      managers,
       users,
       isEdit,
       isShiftInvalid
@@ -306,7 +320,10 @@ class DrawerHelper extends Component {
       shadowers: shift.advance && shift.advance.allowShadowing && shift.numberOfTeamMembers || 0
     };
 
-    const isAddTeamMemberDisabled = shift.recurringShift !== 'none' || (shift.teamMembers && shift.teamMembers.length >= shift.numberOfTeamMembers);
+    const isRecurring = shift.recurringShift !== 'none';
+    const isTeamMembersFull = shift.teamMembers && shift.teamMembers.length >= shift.numberOfTeamMembers;
+    const addTeamMemberTooltip = isRecurring && 'Creating recurring shifts and adding team members cannot be done at the same time'
+      || (isTeamMembersFull && `${shift.numberOfTeamMembers} Team member(s) are already assigned to shift, increase number of team members to add more.`);
 
     return (
       <Drawer
@@ -484,19 +501,20 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
-                  {isAddTeamMemberDisabled
-                    && <Tooltip className="tooltip-message" text=' &nbsp; Creating recurring shifts and adding team members cannot be done at the same time &nbsp;'>
-                    <RaisedButton label="Add Team Member" disabled={isAddTeamMemberDisabled} />
-                  </Tooltip> || <RaisedButton label="Add Team Member" onClick={this.handleAddTeamMember} />}
+                  {(isRecurring || isTeamMembersFull)
+                  && <Tooltip className="tooltip-message" text={addTeamMemberTooltip}>
+                    <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull} />
+                  </Tooltip> || <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull}
+                                              onClick={this.handleAddTeamMember} />}
 
-                  <br/>
-                  <div className="member-list">
+                  <div className="member-list"
+                       style={{ display: (isRecurring || (shift.teamMembers && !shift.teamMembers.length)) && 'none' || 'block' }}>
                     {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) => <TeamMemberCard
                       avatarUrl={tm.avatarUrl}
                       firstName={tm.firstName}
                       lastName={tm.lastName}
                       content={tm.content}
-                      users={users}
+                      users={shift.positionId === 'manager' && managers || users}
                       color={this.borderColor(tm.status) + 'Border'}
                       key={i}
                       id={i}

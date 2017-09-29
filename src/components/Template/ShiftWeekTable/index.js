@@ -142,8 +142,6 @@ class ShiftWeekTableComponent extends Week {
 
       recurring.edges.map((value, index) => {
             let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
-            console.log(workplaceId)
-            console.log(value.node.workplaceByWorkplaceId.id)
              if (workplaceId != '') {
                if (workplaceId == value.node.workplaceByWorkplaceId.id) {
                 value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
@@ -175,9 +173,11 @@ class ShiftWeekTableComponent extends Week {
            if (this.props.data.error) {}
            return (<div>  No Template Selected</div>)
          }
+
          if (this.props.data.loading || this.props.allUsers.loading) {
              return (<div><Halogen.SyncLoader color='#00A863'/></div>)
          }
+
          if (this.props.data.error) {
              console.log(this.props.data.error)
              return (<div> Must Select A Workplace </div>)

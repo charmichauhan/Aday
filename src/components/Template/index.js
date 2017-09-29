@@ -92,7 +92,7 @@ export default class Template extends Component {
           <div className="App row">
               <div className="col-md-12">
                   <div className="col-sm-offset-3 col-sm-5 rectangle">
-                      <p className="col-sm-offset-2">Recurring Shifts</p>
+                      <p className="col-sm-offset-2">Repeating Shifts</p>
                   </div>
               </div>
 

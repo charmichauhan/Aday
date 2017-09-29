@@ -28,7 +28,9 @@ export default class DaySelector extends React.Component {
     });
 
     if (_.has(selectedState, selectedDate)) {
-      selectedState[selectedDate] = true;
+      selectedDate.map(function(day, i){
+        selectedState[selectedDate] = true;
+      })
     }
 
     this.setState({ selected: selectedState });
@@ -46,7 +48,9 @@ export default class DaySelector extends React.Component {
     }
     if (selected && nextProps.selectedDate && !selected[nextProps.selectedDate]) {
       this.setState(() => {
-        selected[nextProps.selectedDate] = true;
+        nextProps.selectedDate.map(function(s, i){
+          selected[s] = true;
+        })
         this.setState({ selected });
         if (props.callBack) {
           props.callBack({ shiftDaysSelected: selected });

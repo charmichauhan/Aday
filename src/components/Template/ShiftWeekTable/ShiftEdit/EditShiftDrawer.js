@@ -40,25 +40,37 @@ class DrawerHelper extends Component {
 
   constructor(props) {
     super(props);
-    console.log(this.props)
     const workplaceId = localStorage.getItem("workplaceId");
     const brandId = props.shift && props.shift.positionByPositionId && props.shift.positionByPositionId.brandByBrandId && props.shift.positionByPositionId.brandByBrandId.id;
     const positionId =  props.shift && props.shift.positionByPositionId && props.shift.positionByPositionId.id;
+    
+    let dayHash = {}
+    let weekStart = moment().startOf("week")
+    for(let i = 0; i <= 7; i++) {
+      dayHash[moment(weekStart).day(i).format("dddd").toUpperCase()] = moment(weekStart).day(i).format('MM-DD-YYYY')
+    }
+    let shiftDaysSelected = []
+    if ( props.shift.days ){
+      props.shift.days.map(function(d,i){
+        shiftDaysSelected.push(dayHash[d])
+      })
+    }
+
     this.state = {
       ...initialState,
       shift: {
         ...initialState.shift,
         ...props.shift,
         numberOfTeamMembers: props.shift && props.shift.workersCount || 0,
-        startTime: props.shift && moment(props.startTime) || "",
-        endTime: props.shift && moment(props.endTime) || "",
+        startTime: props.shift && moment(props.shift.start) || "",
+        endTime: props.shift && moment(props.shift.end) || "",
         advance: { allowShadowing: true },
         workplaceId,
         brandId,
         positionId,
       },
       edit: this.props.edit,
-      selectedDate: moment().format(),
+      selectedDate: shiftDaysSelected || "",
       weekStart: props.weekStart,
       workplaceId,
       brandId,
@@ -125,7 +137,6 @@ class DrawerHelper extends Component {
   };
 
   updateFormState = (dataValue) => {
-    console.log(dataValue)
     let selectedDate = this.state.selectedDate;
     if (dataValue.unpaidBreakInMinutes) {
       const hours = Math.floor(dataValue.unpaidBreakInMinutes / 60);
@@ -138,7 +149,6 @@ class DrawerHelper extends Component {
     if (dataValue.shiftDaysSelected) selectedDate = '';
     const shift = Object.assign(this.state.shift, dataValue);
     this.setState({ shift, selectedDate });
-    console.log(this.state.selectedDate)
     this.validateShift(shift);
   };
 
@@ -250,9 +260,6 @@ class DrawerHelper extends Component {
             </div>
             { this.state.recurring? "" :
             <div style={{ flex: 3, alignSelf: 'center' }}>
-              <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={() => handleAdvance(shift)}
-                      color='red'>Advanced
-              </button>
             </div>
             }
           </div>
@@ -285,7 +292,7 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Workplace</label>
                   <Tooltip className="tooltip-message"
-                      text=' &nbsp; To edit a shift for another workplace, select workplace from the sidebar. &nbsp;'>
+                      text=' &nbsp; This is the workplace selected in the main sidebar. &nbsp;'>
                   <Dropdown
                     name="workplaceId"
                     onChange={(_, data) => this.handleChange({ target: data })}
@@ -326,7 +333,7 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Repeat Shift Weekly</label>
                   <Tooltip className="tooltip-message"
-                      text=' &nbsp; A recurring shift must repeat weekly. &nbsp;'>
+                      text=' &nbsp; A repeating shift must repeat weekly. &nbsp;'>
                     <Dropdown
                     name="recurringShift"
                     onChange={(_, data) => this.handleChange({ target: data })}
@@ -346,9 +353,9 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">
-                    {(shift.recurringShift !== 'none' && 'REPEAT THIS SHIFT EVERY:') || 'SHIFT START DATE'}
+                    {(shift.recurringShift !== 'none' && 'THIS SHIFT REPEATS EVERY:') || 'SHIFT START DATE'}
                   </label>
-                  <ShiftDaySelector selectedDate={shift.days} isRecurring={true}
+                  <ShiftDaySelector selectedDate={this.state.selectedDate} isRecurring={true}
                                     startDate={moment().startOf('week')} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row> 
@@ -361,7 +368,8 @@ class DrawerHelper extends Component {
                          className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
-                  <StartToEndTimePicker onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
+                                     <StartToEndTimePicker isEdit={isEdit} startTime={shift.startTime} endTime={shift.endTime}
+                                        onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
 
@@ -401,12 +409,7 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
-                  {shift.recurringShift !== 'none' && <Tooltip className="tooltip-message"
-                                                               text=' &nbsp; Creating recurring shifts and adding team members cannot be done at the same time &nbsp;'>
-                    <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'}
-                                  onClick={this.handleAddTeamMember} />
-                  </Tooltip> || <RaisedButton label="Add Team Member" disabled={shift.recurringShift !== 'none'}
-                                              onClick={this.handleAddTeamMember} />}
+                 { localStorage.getItem("isUnion") && <RaisedButton label="Add Team Member" onClick={this.handleAddTeamMember} /> }
                 </Grid.Column>
               </Grid.Row>
 

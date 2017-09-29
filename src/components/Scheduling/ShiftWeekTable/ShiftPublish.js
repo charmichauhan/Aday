@@ -26,7 +26,7 @@ import './shiftSection.css';
 
 const styles = {
   drawer: {
-    width: 700
+    width: 730
   }
 };
 

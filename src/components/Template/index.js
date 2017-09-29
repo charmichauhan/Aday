@@ -12,6 +12,8 @@ import ShiftWeekTable from "./ShiftWeekTable";
 import "../Scheduling/style.css";
 import { gql, graphql, compose } from 'react-apollo';
 var Halogen = require('halogen');
+import CreateShiftButton from '../Scheduling/AddShift/CreateShiftButton';
+import EditShiftDetailsDrawer from './ShiftWeekTable/ShiftEdit/EditShiftDrawer';
 
 let templateName;
 let that;
@@ -25,7 +27,9 @@ export default class Template extends Component {
     this.state=({
       view:props.location.viewName,
       selectedTemplateId: "",
-      date: moment()
+      date: moment(),
+      isCreateShiftModalOpen: false,
+      isCreateShiftOpen: false,
     });
     this.handleSelectTemplate = this.handleSelectTemplate.bind(this);
     this.handleResetTemplate = this.handleResetTemplate.bind(this);
@@ -57,6 +61,19 @@ export default class Template extends Component {
     this.setState({date: start})
   };
 
+  openCreateShiftModal = () => {
+    this.setState({ isCreateShiftModalOpen: true });
+  };
+
+  openShiftDrawer = () => {
+    this.setState({ isCreateShiftOpen: true, isCreateShiftModalOpen: false });
+  };
+
+  closeDrawerAndModal = () => {
+    this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
+  };
+
+
   componentWillMount = () => {
     that = this;
     if(this.state.view == "job"){
@@ -78,6 +95,20 @@ export default class Template extends Component {
                       <p className="col-sm-offset-2">Recurring Shifts</p>
                   </div>
               </div>
+
+                <div className="btn-action">
+                      <div>
+                        { localStorage.getItem("workplaceId") && <Button className="btn-image">
+                          <CreateShiftButton
+                            open={this.state.isCreateShiftModalOpen}
+                            onButtonClick={this.openCreateShiftModal}
+                            onCreateShift={this.openShiftDrawer}
+                            onModalClose={this.closeDrawerAndModal}
+                            weekStart={moment().startOf('week') } />
+                        </Button>
+                        }
+                      </div>
+                </div>
               <div>
                   <BigCalendar events={[]}
                                culture='en-us'
@@ -95,7 +126,19 @@ export default class Template extends Component {
                                }}
                   />
               </div>
+
+              <EditShiftDetailsDrawer
+                    width={800}
+                    open={this.state.isCreateShiftOpen}
+                    shift={this.state}
+                    weekStart={moment().format()}
+                    handleSubmit={this.handleCreateSubmit}
+                    closeDrawer={this.closeDrawerAndModal}
+                    edit={false}
+                  />
           </div>
+
+
       );
   }
 }
@@ -125,6 +168,7 @@ class CustomToolbar extends Toolbar {
         );
     }
 }
+
 
 
 

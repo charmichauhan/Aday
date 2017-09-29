@@ -6,7 +6,7 @@ import { gql, graphql, compose } from 'react-apollo';
 import { updateRecurringShift } from './ShiftEdit/EditRecurringShift.graphql.js'
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
-import EditShiftDetailsDrawer from '../../Scheduling//ShiftWeekTable/ShiftEdit/EditShiftDetailsDrawer';
+import EditShiftDetailsDrawer from './ShiftEdit/EditShiftDrawer';
 import EditShiftDrawerContainer from '../../Scheduling/ShiftWeekTable/ShiftEdit/EditShiftDrawerContainer';
 
 import '../../Scheduling/style.css';
@@ -236,10 +236,11 @@ class EventPopupComponent extends Component {
           handlerClose={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
         <EditShiftDetailsDrawer
-          width={700}
+          width={800}
           open={this.state.editShiftModalOpen}
           shift={this.state.drawerShift}
           recurring={true}
+          edit={true}
           handleSubmit={this.handleShiftUpdateSubmit}
           handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeEditShiftModal} />

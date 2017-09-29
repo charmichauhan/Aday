@@ -15,6 +15,12 @@ import './shiftWeekTable.css';
 
 const uuidv4 = require('uuid/v4');
 
+const styles = {
+  drawer: {
+    width: 730
+  }
+};
+
 class EventPopupComponent extends Component {
   constructor(props) {
     super(props);
@@ -181,7 +187,7 @@ class EventPopupComponent extends Component {
 
     var workersCount = data.workersRequestedNum || data.workerCount
     this.openShift = workersCount - (data.workersAssigned.length + data.workersInvited.length );
-
+    console.log(data)
     return (
       <div className="day-item hov">
 
@@ -247,14 +253,14 @@ class EventPopupComponent extends Component {
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
         <CreateShiftDrawer
-          width={700}
+          width={styles.drawer.width}
           open={this.state.editShiftModalOpen}
           shift={this.state.drawerShift}
           handleSubmit={this.handleShiftUpdateSubmit}
           handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeEditShiftModal} />
         <CreateShiftAdvanceDrawer
-          width={700}
+          width={styles.drawer.width}
           shift={this.state.drawerShift}
           open={this.state.isCreateShiftAdvanceOpen}
           handleBack={this.handleAdvanceToggle} />

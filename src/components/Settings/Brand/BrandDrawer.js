@@ -121,7 +121,8 @@ class DrawerHelper extends Component {
           (<div>
             <Image
               className="uploaded-image"
-              src={(this.state.blob && this.state.blob.preview) || (DrawerBrand.brandIconUrl + "?" + new Date().getTime())}
+              src={(this.state.blob && this.state.blob.preview) ||
+                   (DrawerBrand.brandIconUrl + "?" + new Date().getTime())}
               size="large" />
             <RaisedButton
               backgroundColor={colors.primaryBlue}

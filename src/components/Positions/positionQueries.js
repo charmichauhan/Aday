@@ -67,6 +67,7 @@ const update_position=gql`
     updateOpportunityById(input:$input){
       opportunity{
         id
+        isPublic
       }
     }
     updatePositionById(input:$data){

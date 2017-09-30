@@ -6,12 +6,27 @@ export default class ToggleButton extends Component {
     super(props);
     this.handleToggleButton = this.handleToggleButton.bind(this);
     this.state = {
+      opportunityId: this.props.opportunityId,
       handleToggle: !this.props.initial,
       positive: this.props.initial,
       negative: !this.props.initial,
       label: this.props.initial? 'YES': 'NO',
       labelPosition: this.props.initial? 'right': 'left',
       value: this.props.initial || false
+    }
+  }
+  // make buttom refresh when new position is opened in drawer
+  componentWillReceiveProps(newProps){
+    if(newProps.opportunityId != this.props.opportunityId) {
+      this.setState({
+        opportunityId: newProps.opportunityId,
+        handleToggle: !newProps.initial,
+        positive: newProps.initial,
+        negative: !newProps.initial,
+        label: newProps.initial? 'YES': 'NO',
+        labelPosition: newProps.initial? 'right': 'left',
+        value: newProps.initial || false
+      });
     }
   }
   componentWillMount(){

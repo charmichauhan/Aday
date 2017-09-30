@@ -8,9 +8,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import cloneDeep from 'lodash/cloneDeep';
 import Dropzone from 'react-dropzone';
 import ToggleButton from './ToggleButton';
+import SuperAgent from 'superagent';
 import "./drawer.css"
-
-
 
 import { closeButton, colors } from '../../styles';
 import CircleButton from '../../helpers/CircleButton/index';
@@ -76,13 +75,6 @@ for(const i=14;i<=21;i++){
 
 class DrawerHelper extends Component {
   static propTypes = {
-    /*
-    data: React.PropTypes.shape({
-      loading: React.PropTypes.bool,
-      error: React.PropTypes.object,
-      allEmployees: React.PropTypes.object,
-    }).isRequired,
-    */
   }
   constructor(props) {
     super(props);
@@ -96,7 +88,6 @@ class DrawerHelper extends Component {
                     props.mode == "edit" &&
                     props.position.exchangeLevel != "WORKPLACE_SPECIFIC")
     };
-    // console.log(this.state.ageOptions,this.state.weightOptions);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -110,22 +101,32 @@ class DrawerHelper extends Component {
       }
     }
     this.setState({ position, permission });
-    // console.log(nextProps.data.allEmployees.nodes);
-    /*
-    const options=[];
-    nextProps.data.allEmployees.nodes.map((employee)=>{
-      console.log(employee);
-      var option={
-        value:employee.userByUserId.id,
-        key:employee.id,
-        text:`${employee.userByUserId.firstName} ${employee.userByUserId.lastName}`
-      }
-      options.push(option);
-    })
-    console.log(options);
-    this.setState({teamMembers:options});
-    */
   }
+
+  handleImageUpload = (files) => {
+    console.log(files);
+    // prod endpoint: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
+    // dev/test endpoint: http://localhost:8080/api/uploadImage
+    SuperAgent.post('http://localhost:8080/api/uploadImage')
+    .field('keyword', 'position')
+    .field('id', this.state.position.id)
+    .attach("theseNamesMustMatch", files[0])
+    .end((err, res) => {
+      if (err) console.log(err);
+      else {
+        const position = Object.assign(this.state.position, { positionIconUrl : res.text });
+        this.setState({position: position});
+        alert('File uploaded!');
+        this.setState({ blob: files[0] });
+      }
+    })
+  };
+
+  handleNewImageUpload = (files) => {
+    files[0].preview = window.URL.createObjectURL(files[0]);
+    this.setState({ blob: files[0] });
+    this.handleImageUpload(files);
+  };
 
   handleSubmitEvent = (event) => {
     // Resetting the field values.
@@ -153,39 +154,20 @@ class DrawerHelper extends Component {
       this.setState({ position });
     }
   };
-  /*
-  handleTeamMembers=(e, { value })=>{
-    const position = Object.assign(this.state.position, { teamMembers: value });
-    this.setState({ position });
-    //console.log(position.teamMembers);
+  // function to help identify which opportunity to edit
+  workplaceMatch =(opportunity)=> {
+    const workplaceId = localStorage.getItem('workplaceId');
+    return opportunity.workplaceId == workplaceId;
   }
-  */
-
-  /* - phasing out opportunity wage
-  handleWageChange=(event)=>{
-    const { name, value } = event.target;
-    //console.log(name,value);
-    this.state.position.opportunitiesByPositionId.nodes[0][name]= parseFloat(value);
-    const position=this.state.position;
-    this.setState({ position });
-  }
-  */
-
   togglePublic=(dataValue)=>{
-    this.state.position.opportunitiesByPositionId.nodes[0].isPublic= dataValue.value;
-    const position=this.state.position;
+    const position = this.state.position;
+    var relevant_index = position.opportunitiesByPositionId.nodes.findIndex(this.workplaceMatch);
+    if (relevant_index >= 0) {
+      position.opportunitiesByPositionId.nodes[relevant_index].isPublic = dataValue.value;
+    }
     this.setState({ position });
     //console.log(dataValue,position);
   }
-
-  /* - Plan to use left dropdown to determine exchange level instead so this will be deleted
-  toggleExchangeLevel=(dataValue)=>{
-    const cur = this.state.position.exchangeLevel;
-    const position = Object.assign(this.state.position, { exchangeLevel: cur == "CORPORATION_BRAND_WIDE" ?
-                                                          "WORKPLACE_SPECIFIC": "CORPORATION_BRAND_WIDE"});
-    this.setState({ position });
-  }
-  */
   render() {
     const {
       position = {},
@@ -199,27 +181,18 @@ class DrawerHelper extends Component {
       title: (positionId && 'Update Position') || 'Add Position',
       buttonText: (positionId && 'Update Position') || 'Add Position'
     };
-
+    //console.log(position);
     const DrawerPosition = this.state.position;
-    /*
-    if(this.props.data.loading){
-      return (
-        <div>Loading..</div>
-      )
-    }
-    if (this.props.data.error) {
-      console.log(this.props.data.error)
-      return (<div>An unexpected error occurred</div>)
-    }
-    */
     // console.log(this.state.teamMembers);
-    console.log(DrawerPosition);
+    // console.log(DrawerPosition);
     const formValid=DrawerPosition.positionName != "" &&
                     DrawerPosition.positionDescription != "" &&
                     DrawerPosition.minimiumAge != "" &&
                     DrawerPosition.partTimeWage !== "" && DrawerPosition.partTimeWage >= 0 &&
                     DrawerPosition.traineeHours !== "" && DrawerPosition.traineeHours >= 0 &&
                     !(this.props.mode == "create" && localStorage.getItem("workplaceId") != "");
+    var relevant_opportunity = DrawerPosition.opportunitiesByPositionId.nodes.find(this.workplaceMatch);
+    //console.log(relevant_opportunity);
     return (
       <Drawer
         docked={docked}
@@ -240,7 +213,44 @@ class DrawerHelper extends Component {
             <h2 className="text-center text-uppercase">{messages.title}</h2>
           </div>
         </div>
-
+        {/* image uploading - copied code from settings, investigate styling (in development)
+        {!DrawerPosition.positionIconUrl && !this.state.blob && this.state.position.id &&
+        <div className="upload-wrapper col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 text-center">
+          <Dropzone
+            multiple={false}
+            accept="image/*"
+            onDrop={this.handleImageUpload}
+            style={{}}>
+            <Image src='/images/cloudshare.png' size="small" className="upload-img" />
+            <RaisedButton
+              containerElement='label'
+              className="upload-btn"
+              label="Upload Position Icon"
+              backgroundColor="#0022A1"
+              labelColor="#fff"
+            />
+            <p className="text-uppercase upload-desc">
+              Or Drag and Drop File
+            </p>
+          </Dropzone>
+        </div>}
+        {DrawerPosition.positionIconUrl && !this.state.blob &&
+        <Image className="uploaded-image" src={DrawerPosition.positionIconUrl + "?" + new Date().getTime()}
+         alt={position.positionName} size="large" />
+        }
+        {this.state.blob &&
+        <Image className="uploaded-image" src={this.state.blob.preview} size="large" />
+        }
+        {(DrawerPosition.positionIconUrl || this.state.blob) && <RaisedButton
+          backgroundColor={colors.primaryBlue}
+          labelColor="#fafafa"
+          className='upload-btn'
+          containerElement='label'
+          label='Change image'>
+          <input type='file' onChange={(e) => this.handleNewImageUpload(e.target.files)} />
+        </RaisedButton>}
+        */}
+        {/* detail fields*/}
         <div className="position-form">
           <div>
             <p className="position-label">POSITION NAME</p>
@@ -309,47 +319,6 @@ class DrawerHelper extends Component {
               label={{ basic: true, content: '$ PER HOUR' }}
               labelPosition='right'/>
           </div>
-          {localStorage.getItem("workplaceId") != "" &&
-             <div  className="position-row">
-               <div className="position-label"> ACCEPT APPLICATIONS? </div>
-               <ToggleButton formCallBack={ this.togglePublic } initial={true}/>
-             </div>
-             /*
-             <div  className="position-row" style={{marginTop: 75}}>
-               <p className="position-label">NEW APPLICANT WAGE</p>
-               <Input
-                type="number"
-                fluid style={style.input}
-                value={DrawerPosition.opportunitiesByPositionId.nodes.length && DrawerPosition.opportunitiesByPositionId.nodes[0].opportunityWage}
-                name="opportunityWage"
-                onChange={this.handleWageChange}
-                label={{ basic: true, content: '$ PER HOUR' }}
-                labelPosition='right' />
-             </div>
-             */
-          }
-          {/*
-          <div>
-          <p className="position-label">TEAM MEMBERS</p>
-          <Dropdown
-            placeholder='SELECT MEMBER'
-            fluid style={style.input}
-            multiple selection search
-            name="teamMembers"
-            options={this.state.teamMembers}
-            onChange={this.handleTeamMembers}/>
-          </div>
-          */}
-          {/*
-          <div className="position-row">
-            <div className="position-label" style={{float: 'left', width: 200}}>ACCEPT APPLICATIONS?
-              <ToggleButton formCallBack={ this.togglePublic } initial={true}/>
-            </div>
-            <div className="position-label" style={{marginLeft: 300}}>CORPORATION/BRAND WIDE?
-              <ToggleButton formCallBack={ this.toggleExchangeLevel } initial={true}/>
-            </div>
-          </div>
-          */}
           {(this.props.mode == "create" && localStorage.getItem("workplaceId") != "") &&
             <div className="position-row" style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
               Workplace-Specific Positions Coming Soon,
@@ -365,45 +334,28 @@ class DrawerHelper extends Component {
           }
           {!this.state.permission &&
             <div className="position-row" style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
-              Cannot Edit Corporation-Brand Wide Position Details Under Specific Workplace,
-              (to edit, deselect workplace on sidebar)
+              Cannot Edit Corporation-Brand Wide Position Details (above) Under Specific Workplace,
+              (to edit, deselect workplace on sidebar) <br/> <br/>
             </div>
           }
-          <div  className="position-row" style={{textAlign:"center",marginTop:"20px"}} >
+          {(localStorage.getItem("workplaceId") != "" && relevant_opportunity) &&
+             <div  className="position-row">
+               <div className="position-label"> ACCEPT APPLICATIONS? </div>
+               <ToggleButton formCallBack={ this.togglePublic }
+                opportunityId={relevant_opportunity.id}
+                initial={relevant_opportunity.isPublic}/>
+             </div>
+          }
+          <div className="position-row" style={{textAlign:"center",marginTop:"20px"}} >
               <CircleButton
               disabled={!formValid}
               type="blue"
               handleClick={this.handleSubmitEvent}
-              title={messages.buttonText} />
+              title={messages.buttonText}/>
           </div>
         </div>
       </Drawer>
     );
   };
 }
-/*
-  const all_team_members=gql`
-    query fetchTeamMembers($corporationId: Uuid!) {
-      allEmployees(condition:{corporationId: $corporationId}){
-        nodes{
-          id
-          userByUserId{
-            id
-            firstName
-            lastName
-          }
-        }
-      }
-    }`
-
-const Position_Drawer = compose(
-  graphql(all_team_members,{
-    options:(ownProps)=>({
-      variables:{
-       corporationId:"3b14782b-c220-4927-b059-f4f22d01c230"
-      }
-    })
-  })
-)(DrawerHelper);
-*/
 export default DrawerHelper;

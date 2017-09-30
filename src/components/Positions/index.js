@@ -19,8 +19,7 @@ export class PositionsSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 'positions',
-      refetching: false
+      value: 'positions'
     };
   }
 
@@ -119,11 +118,12 @@ export class PositionsSection extends Component {
       };
       this.props.createPosition({
         variables: variables,
+        // do a quick UI update to make it seem fast
         updateQueries: {
           fetchRelevantPositions: (previousQueryResult, { mutationResult }) => {
             console.log(mutationResult);
             let new_position = mutationResult.data.createPosition.position;
-            // add a placeholder with random string to signify that it's waiting for refetch
+            // add a placeholder to signify that it's waiting for refetch to prevent edits
             new_position.positionDescription = "placeholder - waiting for refetch";
             new_position.opportunitiesByPositionId.nodes.push({
               workplaceId: localStorage.getItem("workplaceId"),
@@ -131,13 +131,13 @@ export class PositionsSection extends Component {
               isPublic: null,
               __typename: 'Opportunity'
             });
-
             previousQueryResult.fetchRelevantPositions.nodes.push(new_position);
             return {
               fetchRelevantPositions: previousQueryResult.fetchRelevantPositions
             };
           }
         },
+        // initialize slow refetch to actually update
         refetchQueries: [{query: all_positions,
                           variables: {
                             workplaceId: localStorage.getItem('workplaceId') == "" ?
@@ -147,21 +147,7 @@ export class PositionsSection extends Component {
                           }}]
       })
       .then(({ data }) => {
-        console.log(data);
-        const newPosition=newData;
-        newPosition.opportunitiesByPositionId=position.opportunitiesByPositionId;
-        newPosition.opportunitiesByPositionId.nodes[0].id=opportunityId;
-        // set temp data
-        newData.trainingTracks=0;
-        newData.jobsByPositionId={
-          nodes:[]
-        };
-        /*
-        // add team members - this feature is on hold
-        position.teamMembers.forEach(function(userId) {
-          this.createJob(userId,positionId);
-        }, this);
-        */
+        // console.log(data);
       })
       .catch((error) => {
         console.error('There was an error sending the query', error);
@@ -170,7 +156,9 @@ export class PositionsSection extends Component {
     else {
     // update a current position and opportunity
       delete newData.id;
-
+      //console.log(position.opportunitiesByPositionId.nodes);
+      //console.log(localStorage.getItem("workplaceId"));
+      var relevant_opportunity = position.opportunitiesByPositionId.nodes.find(workplaceMatch);
       this.props.updatePosition({
         variables: {
           "data": {
@@ -178,9 +166,9 @@ export class PositionsSection extends Component {
             "positionPatch": newData
           },
           "input": {
-            "id": position.opportunitiesByPositionId.nodes.find(workplaceMatch).id,
+            "id": relevant_opportunity.id,
             "opportunityPatch": {
-              "isPublic": position.opportunitiesByPositionId.nodes[0].isPublic,
+              "isPublic": relevant_opportunity.isPublic,
             }
           }
         }

@@ -88,7 +88,7 @@ export default class Brand extends Component {
           this.props.brands.map((brand) =>
             <Grid key={brand.id}>
               <GridColumn className="list-left-image-wrapper" width={2}>
-                <img className="list-left-image" src={brand.brandIconUrl} alt={brand.brandName} />
+                <img className="list-left-image" src={brand.brandIconUrl + "?" + new Date().getTime()} alt={brand.brandName} />
               </GridColumn>
               <GridColumn width={14}>
                 <ListItem

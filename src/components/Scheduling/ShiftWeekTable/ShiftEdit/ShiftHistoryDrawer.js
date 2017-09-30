@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import Drawer from "material-ui/Drawer";
 import Paper from "material-ui/Paper";
 import moment from "moment";
+import rp from "request-promise";
 import {find, pick} from "lodash";
 import {Header, Grid, GridColumn, Icon, Dropdown, Image} from "semantic-ui-react";
 import FlatButton from "material-ui/FlatButton";
@@ -170,20 +171,14 @@ const SortableList = SortableContainer(({historyDetails}) => {
 class ShiftHistoryDrawerComponent extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      historyDetails: [],
+      isSorted: true
+    }
     debugger;
   }
 
-  componentWillMount() {
-    debugger
-    console.log(this.props);
-    if (!this.props.data.loading && this.props.data.allMarkets) {
-      const historyDetails = this.getInitialData(this.props.data);
-      this.setState({historyDetails});
-    }
-  }
-
   componentWillReceiveProps(nextProps) {
-    debugger
     if (!nextProps.data.loading && nextProps.data.allMarkets) {
       const historyDetails = this.getInitialData(nextProps.data);
       this.setState({historyDetails});
@@ -228,6 +223,46 @@ class ShiftHistoryDrawerComponent extends Component {
     this.props.handleBack();
   };
 
+  handleSaveList = () => {
+    const userId = [],{isSorted} = this.state;
+    this.state.historyDetails && this.state.historyDetails.forEach(historyDetails => {
+      userId.push(historyDetails.worker);
+    });
+
+    console.log(this.state.historyDetails);
+
+    var shift = this.props.shift;
+    var uri = 'https://forward-chess-157313.appspot.com/api/callEmployee/';
+
+    var options = {
+      uri: uri,
+      method: 'POST',
+      json: {
+        "data": {
+          "sec": "QDVPZJk54364gwnviz921",
+          "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
+          "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+          "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+          "brand": shift.positionByPositionId.brandByBrandId.brandName,
+          "shiftLocation": shift.workplaceByWorkplaceId.workplaceName,
+          "shiftReward": "",
+          "shiftRole": shift.positionByPositionId.positionName,
+          "shiftAddress": shift.workplaceByWorkplaceId.address,
+          "weekPublishedId": shift.weekPublishedId,
+          "shiftId": shift.id,
+          "isSorted" :isSorted,
+          userId
+        }
+      }
+    };
+    rp(options)
+      .then(function (response) {
+        //that.setState({redirect:true})
+      }).catch((error) => {
+      console.log('there was an error sending the query', error);
+    });
+  };
+
   showDetails = (historyDetails, i) => {
     historyDetails[i].showDetails = !historyDetails[i].showDetails;
     this.setState({historyDetails});
@@ -235,104 +270,72 @@ class ShiftHistoryDrawerComponent extends Component {
 
   onSortEnd = ({oldIndex, newIndex}) => {
     console.log(this.state.historyDetails);
-    this.setState(() => {
-      return
-      {
-        historyDetails : arrayMove(this.state.historyDetails, oldIndex, newIndex)
-      }
-    });
-    debugger;
-
-    const varSortUser = [];
-    this.state.historyDetails.map((v,i)=>{
-      varSortUser.push(v.worker);
-    })
-
-debugger;
-    console.log(this.state.historyDetails);
-
-    var shift = this.props.shift;
-      var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/callEmployee/'
-
-      var options = {
-        uri: uri,
-        method: 'POST',
-        json: {
-          "data": {
-            "sec": "QDVPZJk54364gwnviz921",
-            "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
-            "shiftStartHour": moment(shift.startTime).format("h:mm a"),
-            "shiftEndHour": moment(shift.endTime).format("h:mm a"),
-            "brand": shift.positionByPositionId.brandByBrandId.brandName,
-            "shiftLocation": shift.workplaceByWorkplaceId.workplaceName,
-            "shiftReward": "",
-            "shiftRole": shift.positionByPositionId.positionName,
-            "shiftAddress": shift.workplaceByWorkplaceId.address,
-            "weekPublishedId": shift.weekPublishedId,
-            "shiftId": shift.id,
-            "userId":
-              {
-                varSortUser
-              }
-          }
-        }
-      };
-      // rp(options)
-      //   .then(function (response) {
-      //     //that.setState({redirect:true})
-      //   }).catch((error) => {
-      //   console.log('there was an error sending the query', error);
-      // });
-
-
-
-
+    this.setState((prevState) => ({
+      historyDetails: arrayMove(prevState.historyDetails, oldIndex, newIndex),
+      isSorted: true
+    }));
   }
 
 
-    render()
-    {
-      const {
-        width = 750,
-        open,
-        openSecondary = true,
-        docked = false
-      } = this.props;
+  render() {
+    const {
+      width = 750,
+      open,
+      openSecondary = true,
+      docked = false
+    } = this.props;
 
-      if (this.props.data.loading) {
-        return (<Loading />)
-      }
+    if (this.props.data.loading) {
+      return (<Loading />)
+    }
 
-      const {historyDetails} = this.state;
-      return (
-        <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
-                open={open}>
-          <div className="drawer-section brand-drawer-section">
-            <div className="drawer-heading drawer-head col-md-12">
+    const {historyDetails} = this.state;
 
-              <FlatButton label="Back" onClick={this.handleBack}
-                          icon={<Icon name="chevron left" className="floatLeft"/> }/>
-              <Header as='h2' textAlign='center'>
-                Shift History
-              </Header>
+    const actionTypes = [{
+      type: 'white',
+      title: 'GO BACK',
+      handleClick: this.handleBack
+    }, {
+      type: 'blue',
+      title: 'POST LIST',
+      handleClick: this.handleSaveList,
+      image: '/assets/Icons/save-icon.png'
+    }];
 
-            </div>
-            <div className="drawer-content history-drawer-content">
-              <SortableList historyDetails={historyDetails} onSortEnd={this.onSortEnd} pressDelay={200}/>
-            </div>
+    const actions = actionTypes.map((action, index) =>
+      (<CircleButton key={index} type={action.type} title={action.title} handleClick={action.handleClick}
+                     image={action.image} imageSize={action.imageSize}/>)
+    );
+    return (
+      <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
+              open={open}>
+        <div className="drawer-section brand-drawer-section">
+          <div className="drawer-heading drawer-head col-md-12">
+
+            <FlatButton label="Back" onClick={this.handleBack}
+                        icon={<Icon name="chevron left" className="floatLeft"/> }/>
+            <Header as='h2' textAlign='center'>
+              Shift History
+            </Header>
+
           </div>
-          <div className="drawer-footer">
-            <div className="buttons text-center">
-              <CircleButton type="white" title="GO BACK" handleClick={this.handleBack}/>
-            </div>
+          <div className="drawer-content history-drawer-content">
+            {historyDetails &&
+            <SortableList historyDetails={historyDetails} onSortEnd={this.onSortEnd} pressDelay={200}/>}
           </div>
-        </Drawer>
-      );
-    };
-  }
+        </div>
+        <div className="drawer-footer">
+          <div className="buttons text-center">
+            {actions}
+          </div>
+        </div>
+      </Drawer>
+    );
+  };
+}
 
 
-  const
+const
   allMarkets = gql`
   query allMarkets($shiftId: Uuid!) {
     allMarkets(condition: {shiftId: $shiftId }) {
@@ -358,15 +361,12 @@ debugger;
     }
   }`;
 
-  const
-  ShiftHistoryDrawer = graphql(allMarkets, {
-    options: (ownProps) => ({
-      variables: {
-        shiftId: ownProps.shift && ownProps.shift.id
-      }
-    }),
-  })(ShiftHistoryDrawerComponent);
+const ShiftHistoryDrawer = graphql(allMarkets, {
+  options: (ownProps) => ({
+    variables: {
+      shiftId: ownProps.shift && ownProps.shift.id
+    }
+  }),
+})(ShiftHistoryDrawerComponent);
 
-  export
-  default
-  ShiftHistoryDrawer;
+export default ShiftHistoryDrawer;

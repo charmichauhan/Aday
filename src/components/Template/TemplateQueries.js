@@ -30,6 +30,11 @@ const allTemplateShifts = gql`
                   edges{
                     node{
                       userId
+                      userByUserId{
+                        firstName
+                        lastName
+                        avatarUrl
+                      }
                     }
                   }
                 }

@@ -97,7 +97,7 @@ class EventPopupComponent extends Component {
       id: shiftValue.id,
       workplaceId: shift.workplaceId,
       positionId: shift.positionId,
-      workersRequestedNum: shift.numberOfTeamMembers,
+      workersRequestedNum: shift.workersCount,
       creatorId: localStorage.getItem('userId'),
       startTime: moment.utc(shift.startTime),
       endTime: moment.utc(shift.endTime),
@@ -260,11 +260,6 @@ class EventPopupComponent extends Component {
             <a>
               <i onClick={() => this.onPopupOpen('editShiftModal')}>
                 <img src="/assets/Icons/edit-shift.png" alt="edit" />
-              </i>
-            </a>
-            <a>
-              <i onClick={() => this.onPopupOpen('newShiftModalPopped')}>
-                <img src="/assets/Icons/create-shift.png" alt="create" />
               </i>
             </a>
           </div>

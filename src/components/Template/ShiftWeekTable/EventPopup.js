@@ -28,8 +28,8 @@ class EventPopupComponent extends Component {
       drawerShift: {
         ...props.data,
         numberOfTeamMembers: props.data.workersRequestedNum,
-        startTime: moment(props.data.startTime),
-        endTime: moment(props.data.endTime),
+        startTime: props.data.startTime,
+        endTime: props.data.endTime,
         advance: { allowShadowing: true },
         workplaceId,
         brandId,
@@ -87,20 +87,14 @@ class EventPopupComponent extends Component {
 
   handleShiftUpdateSubmit = (shiftValue) => {
     const shift = cloneDeep(shiftValue);
-    const shiftDay = shiftValue.startTime;
-    const shiftDate = shiftDay.date();
-    const shiftMonth = shiftDay.month();
-    const shiftYear = shiftDay.year();
-    shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-    shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+   
     const payload = {
       id: shiftValue.id,
-      workplaceId: shift.workplaceId,
       positionId: shift.positionId,
-      workersRequestedNum: shift.workersCount,
+      workerCount: shift.numberOfTeamMembers,
       creatorId: localStorage.getItem('userId'),
-      startTime: moment.utc(shift.startTime),
-      endTime: moment.utc(shift.endTime),
+      startTime: moment.utc(shift.startTime).format('HH:mm'),
+      endTime: moment.utc(shift.endTime).format('HH:mm'),
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak
     };
@@ -111,7 +105,7 @@ class EventPopupComponent extends Component {
           shiftPatch: payload
         }
       },
-      updateQueries: {
+    /*  updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
           const shiftHash = mutationResult.data.updateShiftById.shift;
           previousQueryResult.allShifts.edges =
@@ -120,7 +114,7 @@ class EventPopupComponent extends Component {
             allShifts: previousQueryResult.allShifts
           };
         },
-      },
+      },*/
     }).then(({ data }) => {
       console.log('got data', data);
     }).catch(err => {

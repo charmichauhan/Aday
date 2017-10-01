@@ -16,6 +16,7 @@ import UnpaidBreakInMinutes from '../../../Scheduling/AddShift/CreateShift/Unpai
 import CreateShiftHelper from '../../../Scheduling/AddShift/CreateShift/CreateShiftHelper';
 import StartToEndTimePicker from '../../../Scheduling/AddShift/CreateShift/StartToEndTimePicker';
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
+import StartToEndDatePicker from '../../../Scheduling/AddShift/CreateShift/StartToEndDatePicker';
 
 import { Tooltip } from 'rebass';
 
@@ -81,15 +82,26 @@ class DrawerHelper extends Component {
       })
     }
 
+    let shiftStart = ""
+    let shiftEnd = ""
+
+    if (this.props.shift && this.props.shift.startTime){
+      let start = this.props.shift.startTime.split(":")
+      let end =  this.props.shift.endTime.split(":")
+      shiftStart = moment().hour(parseInt(start[0])).minute(parseInt(start[1])) 
+      shiftEnd = moment().hour(parseInt(end[0])).minute(parseInt(end[1]))
+    }
     props.shift.unpaidBreakTime
     this.state = {
       ...initialState,
       shift: {
         ...initialState.shift,
         ...props.shift,
-        numberOfTeamMembers: props.shift && props.shift.workerCount || 1,
-        startTime: props.shift && moment(props.shift.start) || "",
-        endTime: props.shift && moment(props.shift.end) || "",
+        numberOfTeamMembers: props.shift && props.shift.workerCount || 0,
+        startTime:  shiftStart,
+        endTime: shiftEnd,
+        startDate: props.shift && moment(props.shift.startDate) || "",
+        expiration: props.shift && moment(props.shift.endDate) || "",
         advance: { allowShadowing: true },
         teamMembers: teamMembers, 
         workplaceId,
@@ -191,7 +203,7 @@ class DrawerHelper extends Component {
   handleShiftSubmit = (shift) => {
     const { handleSubmit } = this.props;
     if (handleSubmit) handleSubmit(shift);
-    this.setState(initialState);
+    //this.setState(initialState);
   };
 
   updateFormState = (dataValue) => {
@@ -267,7 +279,7 @@ class DrawerHelper extends Component {
     const { width, open, handleAdvance } = this.props;
     const { shift, workplaces, users, positions, workplaceId, isEdit, isShiftInvalid } = this.state;
     let positionOptions = [{ key: 'select', value: 0, text: 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS' }];
-
+   
     if (!workplaces) {
       return (<Loading />);
     }
@@ -455,8 +467,19 @@ class DrawerHelper extends Component {
                          className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
-                                     <StartToEndTimePicker isEdit={isEdit} startTime={shift.startTime} endTime={shift.endTime}
+                                     <StartToEndTimePicker isEdit={this.state.edit} startTime={shift.startTime} endTime={shift.endTime}
                                         onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>
+
+
+              <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/shift-date.png" style={{ width: 28, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <StartToEndDatePicker startDate={shift.startDate} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>
 

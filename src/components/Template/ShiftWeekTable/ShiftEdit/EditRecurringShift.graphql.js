@@ -23,8 +23,8 @@ export const updateRecurringShift = gql`
     {
       recurringShift {
         id
-        start
-        end
+        startTime
+        endTime
       }
     }
   }`;

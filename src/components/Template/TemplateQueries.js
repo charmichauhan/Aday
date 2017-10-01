@@ -14,6 +14,7 @@ const allTemplateShifts = gql`
           recurringShiftsByRecurringId{
             edges{
               node{
+                id
                 startTime
                 endTime
                 workerCount

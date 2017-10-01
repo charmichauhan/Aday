@@ -213,7 +213,7 @@ export class PositionsSection extends Component {
   }
   */
   render() {
-    console.log(this.props.data.networkStatus);
+    //console.log(this.props.data.networkStatus);
     if (!this.props.data.fetchRelevantPositions) {
       return  (
       <div style={{marginTop:"30%",marginLeft:"0"}}>
@@ -221,8 +221,8 @@ export class PositionsSection extends Component {
       </div> )
     }
     const positions = this.props.data.fetchRelevantPositions.nodes;
-    console.log(positions);
-    console.log(this.props);
+    //console.log(positions);
+    //console.log(this.props);
     return (
       <section className="positions">
         <Tabs

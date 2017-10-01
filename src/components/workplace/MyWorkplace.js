@@ -58,7 +58,8 @@ class MyWorkplace extends Component {
 							</div>
 						</div>
 
-						<WorkplaceListings className="workplace-listings" />
+						<WorkplaceListings className="workplace-listings" brandIcon={this.props.data.workplaceById.brandByBrandId.brandIcon}
+						 opportunities={this.props.data.workplaceById.opportunitiesByWorkplaceId.nodes}/>
 						<div className="workplace-subheader" style={{paddingBottom:10}}>WORKPLACE REVIEWS</div>
 						 <WorkplaceReviews className="workplace-reviews"/>
 					</div>
@@ -85,6 +86,27 @@ const workplaceInfo = gql`
 			}
 			address
 			workplaceImageUrl
+			isRatingsPublic
+			opportunitiesByWorkplaceId (condition: {isPublic: true}){
+				nodes{
+					positionByPositionId{
+						positionName
+						positionIconUrl
+					}
+				}
+			}
+			ratingsByWorkplaceId{
+				nodes{
+				rating
+				ratingDate
+				comment
+				userByRaterId{
+					firstName
+					lastName
+					avatarUrl
+				}
+			}
+			}
 		}
 	}
 `

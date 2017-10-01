@@ -159,11 +159,11 @@ class DrawerHelper extends Component {
     const workplaceId = localStorage.getItem('workplaceId');
     return opportunity.workplaceId == workplaceId;
   }
-  togglePublic=(dataValue)=>{
-    const position = this.state.position;
+  togglePublic=(bool)=>{
+    var position = this.state.position;
     var relevant_index = position.opportunitiesByPositionId.nodes.findIndex(this.workplaceMatch);
     if (relevant_index >= 0) {
-      position.opportunitiesByPositionId.nodes[relevant_index].isPublic = dataValue.value;
+      position.opportunitiesByPositionId.nodes[relevant_index].isPublic = bool;
     }
     this.setState({ position });
     //console.log(dataValue,position);

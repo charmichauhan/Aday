@@ -11,10 +11,8 @@ export default class StartToEndTimePicker extends Component {
     this.state = {
       startTime: props.startTime,
       startTimeValue: props.isEdit && moment(props.startTime).format('HH:mm'),
-      startTimeValueTop: props.isEdit && moment(props.startTime).format('HH:mm'),
       endTime: props.endTime,
       endTimeValue: props.isEdit && moment(props.startTime).format('HH:mm'),
-      endTimeValueTop: props.isEdit && moment(props.startTime).format('HH:mm'),
       showSelector: false
     }
   }
@@ -37,19 +35,15 @@ export default class StartToEndTimePicker extends Component {
       if (nextProps.isEdit) {
         this.setState({
           startTimeValue: moment(nextProps.startTime).format('HH:mm'),
-          startTimeValueTop: moment(nextProps.startTime).format('HH:mm'),
           endTimeValue: moment(nextProps.endTime).format('HH:mm'),
-          endTimeValueTop: moment(nextProps.endTime).format('HH:mm'),
         });
       }
     } else {
       this.setState({
         startTime: moment(),
         startTimeValue: '',
-        startTimeValueTop: '',
         endTime: moment(),
         endTimeValue: '',
-        endTimeValueTop: '',
       });
     }
   }
@@ -64,9 +58,9 @@ export default class StartToEndTimePicker extends Component {
   setCallbackData = () => {
     const { formCallBack } = this.props;
     if (formCallBack) {
-      const { startTime, startTimeValue, endTime, endTimeValue } = this.state;
+      const { startTime, endTime } = this.state;
       formCallBack({ startTime, endTime });
-      this.setState({ startTimeValueTop: startTimeValue, endTimeValueTop: endTimeValue, showSelector: !this.state.showSelector });
+      this.setState({ showSelector: !this.state.showSelector });
     }
   };
 
@@ -80,7 +74,7 @@ export default class StartToEndTimePicker extends Component {
   };
 
   render() {
-    const { showSelector, startTime, startTimeValue, startTimeValueTop, endTime, endTimeValue, endTimeValueTop } = this.state;
+    const { showSelector, startTime, startTimeValue, endTime, endTimeValue } = this.state;
     const { onNowSelect } = this.props;
     return (
       <div className="time-selector-wrapper">
@@ -91,19 +85,17 @@ export default class StartToEndTimePicker extends Component {
           <label className="text-uppercase blue-heading">End Time</label>
         </div>
         <div className="label-wrapper" onClick={this.toggleSelector}>
-          <p>{startTimeValueTop || 'When does this shift start?'}</p>
-          <p>{endTimeValueTop || 'When does this shift end?'}</p>
+          <p>{startTimeValue || 'When does this shift start?'}</p>
+          <p>{endTimeValue || 'When does this shift end?'}</p>
           <p>
             <i className="fa fa-clock-o" />
           </p>
         </div>
         <div className="time-selector-display" style={{ display: showSelector ? 'block' : 'none' }}>
           <div className="time-wrapper">
-            <p style={{ background: '#ffffff', padding: '0 0 10px 10px', marginBottom: 0  }}>{startTimeValue || 'Start'}</p>
             <TimePicker date={startTime} getTime={(value) => this.handleTimeChange({ name: 'startTime', value })} />
           </div>
           <div className="time-wrapper">
-            <p style={{ background: '#ffffff', padding: '0 0 10px 10px', marginBottom: 0 }}>{endTimeValue || 'End'}</p>
             <TimePicker date={endTime} getTime={(value) => this.handleTimeChange({ name: 'endTime', value })} />
           </div>
           <div className="time-actions-wrapper text-uppercase">

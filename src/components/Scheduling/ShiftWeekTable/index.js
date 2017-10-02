@@ -190,7 +190,7 @@ class ShiftWeekTableComponent extends Week {
 
             const dayOfWeek = moment(value.node.startTime).format('dddd').toUpperCase();;
 
-            let assigned = value.node.workersAssigned 
+            let assigned = value.node.workersAssigned
             if (value.node.workersAssigned == null) {
               assigned = [];
             }
@@ -267,12 +267,12 @@ class ShiftWeekTableComponent extends Week {
         if (workplaceId == value.node.workplaceByWorkplaceId.id) {
             value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
                     const positionName = shift.node.positionByPositionId.positionName;
-                    shift.node.days.map((day, dayIndex) => {    
+                    shift.node.days.map((day, dayIndex) => {
                         let assigned = []
                         shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
                             assigned.push(assignees.node.userId)
                         })
-                        
+
                         if (assigned.length < shift.node.workerCount) {
                           const rowHash = {};
                           rowHash['weekday'] = day
@@ -306,12 +306,12 @@ class ShiftWeekTableComponent extends Week {
         } else {
             value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
                     const positionName = shift.node.positionByPositionId.positionName;
-                    shift.node.days.map((day, dayIndex) => {    
+                    shift.node.days.map((day, dayIndex) => {
                         let assigned = []
                         shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
                             assigned.push(assignees.node.userId)
                         })
-                        
+
                         if (assigned.length < shift.node.workerCount) {
                           const rowHash = {};
                           rowHash['weekday'] = day
@@ -384,7 +384,7 @@ class ShiftWeekTableComponent extends Week {
              if (workplaceId == value.node.workplaceByWorkplaceId.id) {
               value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
                 const positionName = shift.node.positionByPositionId.positionName;
-                shift.node.days.map((day, dayIndex) => {    
+                shift.node.days.map((day, dayIndex) => {
                      const rowHash = {};
                      rowHash['weekday'] = day
                      rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
@@ -403,7 +403,7 @@ class ShiftWeekTableComponent extends Week {
             } else {
               value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
                 const positionName = shift.node.positionByPositionId.positionName;
-                shift.node.days.map((day, dayIndex) => {    
+                shift.node.days.map((day, dayIndex) => {
                      const rowHash = {};
                      rowHash['weekday'] = day
                      rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
@@ -424,7 +424,7 @@ class ShiftWeekTableComponent extends Week {
   };
 
   render() {
-    if (this.props.data.loading || this.props.allUsers.loading || this.props.unappliedRecurring.loading) { 
+    if (this.props.data.loading || this.props.allUsers.loading || this.props.unappliedRecurring.loading) {
       return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
 

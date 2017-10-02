@@ -51,6 +51,15 @@ const unassignedTeamMember = {
   status: 'unassigned'
 };
 
+const unassignedManager = {
+  id: 0,
+  firstName: 'Select team member',
+  lastName: '',
+  avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/anonymous-profile.png',
+  content: 'Assign shift to a team member',
+  status: 'unassigned'
+};
+
 class DrawerHelper extends Component {
 
   constructor(props) {
@@ -74,6 +83,7 @@ class DrawerHelper extends Component {
   componentDidMount() {
     this.getWorkplaces();
     this.getPositions();
+    this.filterManagers(this.state.shift.workplaceId);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -113,18 +123,20 @@ class DrawerHelper extends Component {
     }
 
     if (nextProps.managers && !this.state.managers) {
+      const managers = nextProps.managers.map(manager => {
+        const { id, workplaceId, userByUserId } = manager;
+        return {
+          id,
+          workplaceId,
+          userId: userByUserId.id,
+          avatarUrl: userByUserId.avatarUrl,
+          firstName: userByUserId.firstName,
+          lastName: userByUserId.lastName
+        };
+      });
       this.setState({
-        managers: nextProps.managers.map(manager => {
-          const { id, workplaceId, userByUserId } = manager;
-          return {
-            id,
-            workplaceId,
-            userId: userByUserId.id,
-            avatarUrl: userByUserId.avatarUrl,
-            firstName: userByUserId.firstName,
-            lastName: userByUserId.lastName
-          };
-        })
+        managers,
+        filteredManagers: managers
       });
     }
   }
@@ -148,15 +160,34 @@ class DrawerHelper extends Component {
     const { name, value } = event.target;
     shift[name] = value;
     if (name === 'tags') shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
+    if (name === 'workplaceId') {
+      this.getPositions(value);
+      this.filterManagers(value);
+    }
+    if (name === 'positionId') {
+      this.filterManagers(shift.workplaceId);
+      if (shift.teamMembers) {
+        shift.teamMembers = shift.teamMembers.map((manager) => {
+          if (manager.id == 0) {
+            if (value === 'manager') return unassignedManager;
+            else return unassignedTeamMember;
+          }
+          return manager;
+        });
+      }
+    }
     this.setState({ shift });
-    if (name === 'workplaceId') this.getPositions(value);
     this.validateShift(shift);
   };
 
   handleAddTeamMember = () => {
     const { shift } = this.state;
     if (!shift.teamMembers) shift.teamMembers = [];
-    shift.teamMembers.push(unassignedTeamMember);
+    if (shift.positionId === 'manager') {
+      shift.teamMembers.push(unassignedManager);
+    } else {
+      shift.teamMembers.push(unassignedTeamMember);
+    }
     this.setState({ shift });
   };
 
@@ -168,6 +199,15 @@ class DrawerHelper extends Component {
     const { handleSubmit } = this.props;
     if (handleSubmit) handleSubmit(shift);
     this.setState(initialState);
+  };
+
+  filterManagers = (workplaceId) => {
+    const { managers } = this.state;
+    if (managers) {
+      if (!workplaceId) return this.setState({ filteredManagers: managers });
+      let filteredManagers = managers.filter(manager => manager.workplaceId === workplaceId);
+      this.setState({ filteredManagers });
+    }
   };
 
   updateFormState = (dataValue) => {
@@ -254,7 +294,7 @@ class DrawerHelper extends Component {
       workplaceId,
       weekStart,
       selectedDate,
-      managers,
+      filteredManagers,
       users,
       isEdit,
       isShiftInvalid
@@ -385,11 +425,13 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Workplace</label>
                   <Dropdown
+                    fluid
+                    selection
                     name="workplaceId"
                     onChange={(_, data) => this.handleChange({ target: data })}
                     value={shift.workplaceId || 0}
-                    fluid
-                    selection
+                    selectOnBlur={false}
+                    forceSelection={false}
                     options={workplaceOptions} />
                 </Grid.Column>
               </Grid.Row>
@@ -402,12 +444,14 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Position</label>
                   <Dropdown
+                    fluid
+                    selection
                     placeholder="Select Position"
                     name="positionId"
                     onChange={(_, data) => this.handleChange({ target: data })}
                     value={shift.positionId || 0}
-                    fluid
-                    selection
+                    selectOnBlur={false}
+                    forceSelection={false}
                     disabled={!positions}
                     options={positionOptions} />
                 </Grid.Column>
@@ -421,11 +465,13 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Repeat Shift Weekly</label>
                   <Dropdown
+                    fluid
+                    selection
                     name="recurringShift"
                     onChange={(_, data) => this.handleChange({ target: data })}
                     value={shift.recurringShift}
-                    fluid
-                    selection
+                    selectOnBlur={false}
+                    forceSelection={false}
                     options={recurringOptions} />
                 </Grid.Column>
               </Grid.Row>
@@ -514,7 +560,8 @@ class DrawerHelper extends Component {
                       firstName={tm.firstName}
                       lastName={tm.lastName}
                       content={tm.content}
-                      users={shift.positionId === 'manager' && managers || users}
+                      isManager={shift.positionId === 'manager'}
+                      users={shift.positionId === 'manager' && filteredManagers || users}
                       color={this.borderColor(tm.status) + 'Border'}
                       key={i}
                       id={i}

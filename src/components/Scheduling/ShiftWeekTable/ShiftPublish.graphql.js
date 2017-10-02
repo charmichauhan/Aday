@@ -77,3 +77,25 @@ export const createShiftMutation = gql`
       }
     }
   }`;
+
+export const createWorkplacePublishedMutation = gql`
+mutation createWorkplacePublished($workplacePublished: WorkplacePublishedInput!) {
+ createWorkplacePublished(input: {workplacePublished: $workplacePublished}){
+   workplacePublished {   
+     id
+     published
+     workplaceId
+     weekPublishedId
+   }
+ }
+}`
+
+export const updateWorkplacePublishedIdMutation = gql`
+mutation($id: Uuid!, $workplacePublishedPatch: WorkplacePublishedPatch!){
+  updateWorkplacePublishedById(input:{id:$id, workplacePublishedPatch: $workplacePublishedPatch}){
+    workplacePublished{
+      id
+      published
+    }
+  }
+}`

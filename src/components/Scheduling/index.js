@@ -1,18 +1,22 @@
-import React, { Component } from 'react';
-import moment from 'moment';
-import BigCalendar from 'react-big-calendar';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import Toolbar from 'react-big-calendar/lib/Toolbar';
-import ShiftWeekTable from './ShiftWeekTable';
-import './style.css';
-import {Modal} from 'semantic-ui-react';
-import ShiftPublish from './ShiftWeekTable/ShiftPublish';
-import 'fullcalendar/dist/fullcalendar.min.css';
-import 'fullcalendar/dist/fullcalendar.min.js';
-import 'fullcalendar-scheduler/dist/scheduler.css';
-import 'fullcalendar-scheduler/dist/scheduler.js';
-import { gql, graphql, compose } from 'react-apollo';
-import ApolloClient from 'apollo-client';
+import React, {Component} from "react";
+import moment from "moment";
+import BigCalendar from "react-big-calendar";
+import {gql, graphql} from "react-apollo";
+import {CSVLink} from "react-csv";
+import {groupBy,findIndex, cloneDeep} from "lodash";
+import {Modal} from "semantic-ui-react";
+import Toolbar from "react-big-calendar/lib/Toolbar";
+import json2csv from 'json2csv';
+import ShiftWeekTable from "./ShiftWeekTable";
+import ShiftPublish from "./ShiftWeekTable/ShiftPublish";
+
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "fullcalendar/dist/fullcalendar.min.css";
+import "fullcalendar/dist/fullcalendar.min.js";
+import "fullcalendar-scheduler/dist/scheduler.css";
+import "fullcalendar-scheduler/dist/scheduler.js";
+import "./style.css";
+
 var Halogen = require('halogen');
 
 const style = {
@@ -38,7 +42,7 @@ const style = {
 let that;
 let viewName="Employee View";
 let currentView = "job";
-
+let csvData = "";
 class ScheduleComponent extends Component {
     constructor(props){
         super(props);
@@ -48,7 +52,8 @@ class ScheduleComponent extends Component {
 			templateName:"",
             redirect:false,
             view:"job",
-            date: moment(this.props.match.params.date) ||  moment()
+            date: moment(this.props.match.params.date) ||  moment(),
+          dataReceived: true
         }
     }
 
@@ -62,6 +67,8 @@ class ScheduleComponent extends Component {
    * @return {view} sets the state of currentView, which switches calendar view
    */
   customEvent  = (currentlyView) => {
+    console.log("On scheduling page");
+
     if(currentlyView == "job"){
       viewName="Job View";
       currentView="employee";
@@ -72,7 +79,9 @@ class ScheduleComponent extends Component {
       this.setState({view:currentView});
     }
   };
-
+  csvDataDownload = () => {
+    this.setState({ dataReceived:false });
+  };
   onViewChange = () =>{
     return this.state.view;
   };
@@ -98,6 +107,68 @@ class ScheduleComponent extends Component {
     that = this
   };
 
+  getCSVData = (csvData) => {
+    let displayCsvData = [];
+    displayCsvData.push({
+      FirstName:'',
+      LastName:'',
+      PositionName:'',
+      Sunday:'',
+      Monday:'',
+      Tuesday:'',
+      Wednesday:'',
+      Thursday:'',
+      Friday:'',
+      Saturday:''
+  });
+
+    const displayData ={};
+    csvData.forEach((value) => {
+      const userId = value.userId;
+      const positionId = value.positionId;
+      delete value.userId;
+      delete value.positionId;
+
+      if(displayData[positionId]) {
+        if (displayData[positionId][userId]) {
+          ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach((day) => {
+            if (displayData[positionId][userId][day]) {
+              if (value[day]) {
+                value[day] = `${displayData[positionId][userId][day]} & ${value[day]}`;
+              } else {
+                value[day] = `${displayData[positionId][userId][day]}`;
+              }
+            }
+          });
+          Object.assign(displayData[positionId][userId], value);
+        } else {
+
+          displayData[positionId][userId] = value;
+        }
+      }else{
+        var objuser = {};
+        objuser[userId]=value;
+        displayData[positionId] = objuser;
+      }
+
+    });
+    Object.values(displayData).map((value)=>{
+      displayCsvData = displayCsvData.concat(Object.values(value));
+    })
+    this.setState({ csvData: displayCsvData, dataReceived: true });
+
+    if(!this.state.dataReceived){
+
+      var result = json2csv({ data: displayCsvData });
+
+      var hiddenElement = document.createElement('a');
+      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(result);
+      hiddenElement.target = '_blank';
+      hiddenElement.download = moment(new Date()).format('MM/DD/YYYY, H:mm:ss') + '.csv';
+      hiddenElement.click();
+    }
+  };
+
   render() {
     BigCalendar.momentLocalizer(moment);
 
@@ -110,16 +181,24 @@ class ScheduleComponent extends Component {
       return (<div>An unexpected error occurred</div>)
     }
 
+    csvData = this.state.csvData;
     let events= [];
     let is_publish = "none";
     let publish_id = "";
+    let isWorkplacePublished = false;
     const date = this.state.date;
-
     this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
       if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
         || (moment(date).isSame(moment(value.start), 'day'))
         || (moment(date).isSame(moment(value.end), 'day'))
       ) {
+        if(value.workplacePublishedsByWeekPublishedId.edges.length > 0){
+          value.workplacePublishedsByWeekPublishedId.edges.map((value) => {
+            if(value.node.workplaceId == localStorage.getItem("workplaceId")) {
+              isWorkplacePublished = value.node.published;
+            }
+          });
+        }
         is_publish = value.published;
         publish_id = value.id;
       }
@@ -132,7 +211,7 @@ class ScheduleComponent extends Component {
     return (
         <div style={{maxWidth: '1750px'}}>
             <div style={{height: '160px'}}>
-              <ShiftPublish date={this.state.date} isPublish={ is_publish } publishId={ publish_id } view={this.state.view}/>
+              <ShiftPublish date={this.state.date} isWorkplacePublished={ isWorkplacePublished } isPublish={ is_publish } publishId={ publish_id } view={this.state.view}/>
             </div>
             <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                    message="Are you sure that you want to delete this shift?"
@@ -144,6 +223,8 @@ class ScheduleComponent extends Component {
                    endAccessor='endDate'
                    defaultView='week'
                    date={this.state.date}
+                   setCSVData={this.getCSVData}
+                   dataReceived={this.state.dataReceived}
                    views={{today: true, week: ShiftWeekTable, day: true}}
                    eventPropGetter={this.onViewChange}
                    onNavigate={(start) => this.onNavigate(start)}
@@ -159,7 +240,9 @@ class ScheduleComponent extends Component {
 }
 
 class CustomToolbar extends Toolbar {
+
   render() {
+    // const { csvData } = this.state;
     let month = moment(this.props.date).format("MMMM YYYY");
     return (
       <div>
@@ -176,6 +259,7 @@ class CustomToolbar extends Toolbar {
               </div>
               <ul className="nav navbar-nav">
                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
+                <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.csvDataDownload()}>Download CSV</button>
               </ul>
               <div className="maintitle">
                 {month}
@@ -215,9 +299,19 @@ const allWeekPublisheds = gql
             published
             start
             end
+            workplacePublishedsByWeekPublishedId
+            {
+              edges{
+                node{
+                  workplaceId
+                  published
+                  id
+                }
+              }
+            }
+            }
         }
-    }
-}`
+  }`
 
 const Schedule = graphql(allWeekPublisheds, {
   options: (ownProps) => ({

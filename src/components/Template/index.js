@@ -11,7 +11,6 @@ import Modal from '../helpers/Modal';
 import ShiftWeekTable from "./ShiftWeekTable";
 import "../Scheduling/style.css";
 import { gql, graphql, compose } from 'react-apollo';
-import { allTemplates, allWeekPublisheds, editTemplateNameMutation } from './TemplateQueries';
 var Halogen = require('halogen');
 
 let templateName;
@@ -19,7 +18,8 @@ let that;
 let viewName="Employee View";
 let currentView = "job";
 
-class TemplateComponent extends Component {
+export default class Template extends Component {
+
   constructor(props){
     super(props);
     this.state=({
@@ -69,32 +69,17 @@ class TemplateComponent extends Component {
   };
 
     render() {
-
-      if (this.props.data.loading) {
-        return (<div><Halogen.SyncLoader color='#00A863'/></div>)
-      }
-      if (this.props.data.error) {
-        console.log(this.props.data.error);
-        return (<div>An unexpected error occurred</div>)
-      }
-      templateName = this.props.location.templateName;
       BigCalendar.momentLocalizer(moment);
       const date = this.state.date;
-      let publishId = null;
-      this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
-      if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))) {
-        publishId = value.id;
-      }
-    });
       return (
           <div className="App row">
               <div className="col-md-12">
                   <div className="col-sm-offset-3 col-sm-5 rectangle">
-                      <p className="col-sm-offset-2">TEMPLATE PREVIEW</p>
+                      <p className="col-sm-offset-2">Recurring Shifts</p>
                   </div>
               </div>
               <div>
-                  <BigCalendar events={[this.props.history, this.state.selectedTemplateId, publishId, this.handleResetTemplate]}
+                  <BigCalendar events={[]}
                                culture='en-us'
                                startAccessor='startDate'
                                endAccessor='endDate'
@@ -116,47 +101,10 @@ class TemplateComponent extends Component {
 }
 
 
-class CustomToolbarComponent extends Toolbar {
-  constructor(props){
-    super(props);
-    this.state=({
-      editNamePopped: false,
-      newName: ""
-    });
-    this.editName = this.editName.bind(this);
-  }
-
-  editName() {
-    this.props.mutate({
-     variables: {id: this.props.selectedTemplateId, templateName: this.state.newName },
-     optimisticResponse: {
-       __typename: 'Mutation',
-       updateTemplateById: {
-         template: {
-           id: this.props.selectedTemplateId,
-           templateName: this.state.newName,
-           __typename: 'Template'
-         },
-         __typename:"UpdateTemplatePayload"
-       }
-     }
-   }).then(this.setState({editNamePopped: false}));
-  }
+class CustomToolbar extends Toolbar {
   render() {
-      if (this.props.data.loading) {
-          return (<div><Halogen.SyncLoader color='#00A863'/></div>)
-      }
-      if (this.props.data.error) {
-          console.log(this.props.data.error)
-          return (<div>An unexpected error occurred</div>)
-      }
       let { date } = this.props
       let month = moment(this.props.date).format("MMMM YYYY");
-      let editNameAction =[{type:"white",title:"Cancel",handleClick:() => this.setState({editNamePopped: false}),image:false},
-                           {type:"blue",title:"Rename Template",handleClick:this.editName,image:false}];
-      let workplaceId = localStorage.getItem("workplaceId");
-      let templates = this.props.data.allTemplates.edges;
-      templates = templates.filter((t) => workplaceId == "" || t.node.workplaceId == workplaceId);
       return (
           <div>
               <nav className="navbar weeklynavbar weekly_nav_height">
@@ -167,44 +115,8 @@ class CustomToolbarComponent extends Toolbar {
                                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
                               </li>
                           </ul>
-                          <div className="dropdown_select">
-                              <ul className="nav navbar-nav dropdown_job">
-                                  <li className="dropdownweeky">
-                                      <select className="dropdown" value={this.props.selectedTemplateId} onChange={this.props.handleSelectTemplate}>
-                                        <option value={""} key={0}> Select a Template </option>
-                                      { templates.map((value,index) =>
-                                          <option value={ value.node.id } key={index + 1}> { value.node.templateName }</option>
-                                          )
-                                      }
-                                      </select>
-                                  </li>
-                              </ul>
-                          </div>
+                        
                           <ul className="nav navbar-nav navbar-right">
-                              <li>
-                                  <button type="button" onClick={() => this.setState({editNamePopped: true})}
-                                          className="btn btn-default btnnav navbar-btn m8 "><strong>Edit name</strong>
-                                  </button>
-                                  <Modal
-                                    title="Confirm"
-                                    isOpen={this.state.editNamePopped && this.props.selectedTemplateId != ""}
-                                    message="Enter a new name for this template:"
-                                    action={editNameAction}
-                                    closeAction={() => this.setState({editNamePopped: false})}>
-                                    <Input fluid type="text" placeholder="New Name" style={{marginLeft: 20, marginRight: 20}}
-                                                 onChange = {(e) => this.setState({newName: e.target.value})}/>
-                                  </Modal>
-                              </li>
-                              <li>
-                                  <button type="button "
-                                          className="btn btn-default navbar-btn btnnav nav-next glyphicon glyphicon-arrow-left"
-                                          onClick={() => this.navigate("PREV")}/>
-                              </li>
-                              <li>
-                                  <button type="button"
-                                          className="btn btn-default navbar-btn btnnav nav-prv glyphicon glyphicon-arrow-right"
-                                          onClick={() => this.navigate("NEXT")}/>
-                              </li>
                           </ul>
                       </div>
                   </div>
@@ -214,18 +126,8 @@ class CustomToolbarComponent extends Toolbar {
     }
 }
 
-const CustomToolbar = compose(
-  graphql(allTemplates),
-  graphql(editTemplateNameMutation)
-  )(CustomToolbarComponent);
 
 
-const Template = graphql(allWeekPublisheds, {
-  options: (ownProps) => ({
-    variables: {
-      brandid: localStorage.getItem('brandId') ,
-    }
-  }),
-  })(TemplateComponent)
 
-export default Template
+
+

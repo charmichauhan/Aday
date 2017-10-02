@@ -151,13 +151,13 @@ handleChange = e => this.setState({ rating: e.target.value })
                             <div>
                                 <span>INCLUDE EXTERNAL PROFILES</span><br />
                                 <div style={{height:5}} />
-                                <Switch defaultChecked={false} onChange={this.onChange}
-                                     className="switchStyle" checkedChildren="YES" unCheckedChildren="NO"/>
+                                <Switch defName="switchStyle" checkedChildren="YES" unCheckedChildren="NO"/>
                              </div>
                              <div style={{height:21}} />
                              <div>
                                  <span style={{marginBottom:5}}>COMPLETED PROFILES ONLY?</span><br />
-                                 <div style={{height:5}} />
+                                 <daultChecked onChange={this.onChange}
+                                               classiv style={{height:5}} />
                                  <Switch defaultChecked={false} onChange={this.onChange}
                                       className="switchStyle" checkedChildren="YES" unCheckedChildren="NO"/>
                               </div>

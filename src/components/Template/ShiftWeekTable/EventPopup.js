@@ -84,11 +84,11 @@ class EventPopupComponent extends Component{
                     <span className="fa fa-map-marker mr5" aria-hidden="true">
                         <a onClick={()=>this.onLocationClick()}/>
                     </span>
-                    <span>{data.workplace || ""}</span>
+                    <span>{data.workplaceByWorkplaceId.workplaceName || ""}</span>
                   </div>:
                   <div className="location">
                     <span><img src="/assets/Icons/cashier.png" alt="jobtype"/></span>
-                    <span className="jobType">{data.workplace}</span>
+                    <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
                   </div>
               }
               {

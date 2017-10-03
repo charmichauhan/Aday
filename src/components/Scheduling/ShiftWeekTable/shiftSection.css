@@ -1,4 +1,12 @@
 /* Drawers */
+*::placeholder {
+  color: #999999;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-family: Roboto, sans-serif;
+}
+
 .shift-section .drawer-heading {
   margin: 0 0 10px 0;
   padding-bottom: 10px;
@@ -54,7 +62,7 @@
   width: 95%;
   position: absolute;
   z-index: 9;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 10px, rgba(0, 0, 0, 0.23) 0px 3px 10px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 10px, rgba(0, 0, 0, 0.23) 0 3px 10px;
 }
 
 .shift-section .time-actions-wrapper {
@@ -73,15 +81,27 @@
 .shift-section .time-selector-wrapper .label-wrapper,
 .shift-section .date-selector-wrapper .label-wrapper {
   border: 1px solid #CCCCCC;
-  padding: 8px 5px;
+  padding: 8px 12px;
   margin-bottom: 10px;
   border-radius: 4px;
+  position: relative;
+}
+
+.shift-section .time-selector-wrapper .label-wrapper {
+  margin-bottom: 2px;
 }
 
 .shift-section .time-selector-wrapper .label-wrapper p,
 .shift-section .date-selector-wrapper .label-wrapper p {
   display: inline-block;
   margin-bottom: 0;
+  width: 50%;
+}
+
+.shift-section .time-selector-wrapper .label-wrapper p input {
+  border: 0 none;
+  padding: 0;
+  width: 100%;
 }
 
 .shift-section .end-date .choose-btn, .shift-section .end-date .never-btn {
@@ -111,12 +131,16 @@
   float: left;
 }
 
-.shift-section .time-selector-wrapper .label-wrapper p:last-child,
 .shift-section .date-selector-wrapper .label-wrapper p:last-child {
   float: right;
 }
 
-.shift-section .time-selector-wrapper .label-wrapper p:nth-child(2),
+.shift-section .time-selector-wrapper .label-wrapper p:last-child {
+  position: absolute;
+  right: 12px;
+  width: auto;
+}
+
 .shift-section .date-selector-wrapper .label-wrapper p:nth-child(2) {
   width: 50%;
   text-align: right;

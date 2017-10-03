@@ -51,8 +51,9 @@ export default class StartToEndTimePicker extends Component {
   handleTimeChange = ({ name, value }) => {
     const stateValue = cloneDeep(this.state[name]) || moment();
     let [hour, min] = value.split(':');
-    const dateTime = stateValue.hour(hour).minute(min);
-    this.setState({ [name]: dateTime, [name + 'Value']: value });
+    if (hour) stateValue.hour(hour);
+    if (min) stateValue.minute(min);
+    this.setState({ [name]: stateValue, [name + 'Value']: value });
   };
 
   setCallbackData = () => {
@@ -81,12 +82,26 @@ export default class StartToEndTimePicker extends Component {
         <div className="time-wrapper">
           <label className="text-uppercase blue-heading">Start Time</label>
         </div>
-        <div className="time-wrapper" style={{marginLeft:-10}}>
+        <div className="time-wrapper">
           <label className="text-uppercase blue-heading">End Time</label>
         </div>
         <div className="label-wrapper" onClick={this.toggleSelector}>
-          <p>{startTimeValue || 'When does this shift start?'}</p>
-          <p>{endTimeValue || 'When does this shift end?'}</p>
+          <p>
+            <input
+              type="text"
+              name="startTime"
+              value={startTimeValue || ''}
+              onChange={({ target }) => this.handleTimeChange(target)}
+              placeholder="When does this shift start? (08:30)" />
+          </p>
+          <p>
+            <input
+              type="text"
+              name="endTime"
+              value={endTimeValue || ''}
+              onChange={({ target }) => this.handleTimeChange(target)}
+              placeholder="When does this shift end? (15:00)" />
+          </p>
           <p>
             <i className="fa fa-clock-o" />
           </p>

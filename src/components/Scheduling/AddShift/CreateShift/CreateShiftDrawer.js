@@ -3,6 +3,8 @@ import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';
+import { Tooltip } from 'rebass';
+import { find, pick, times } from 'lodash';
 import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
 
@@ -17,8 +19,6 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import StartToEndTimePicker from './StartToEndTimePicker';
 import StartToEndDatePicker from './StartToEndDatePicker';
-import { Tooltip } from 'rebass';
-//import Tooltip from 'react-toolbox/lib/tooltip';
 
 import './select.css';
 
@@ -67,6 +67,21 @@ class DrawerHelper extends Component {
     let shift = { ...initialState.shift, ...props.shift, advance: { allowShadowing: true } };
     shift.startTime = moment(shift.startTime);
     shift.endTime = moment(shift.endTime);
+    if (shift.id) {
+      if (shift.workersAssigned) {
+        shift.teamMembers = shift.workersAssigned.map((id) => {
+          let foundWorker = find(props.users, { id });
+          if (!foundWorker) foundWorker = unassignedTeamMember;
+          return {
+            ...pick(foundWorker, ['id', 'avatarUrl', 'firstName', 'lastName']),
+            status: 'accepted',
+            content: ''
+          };
+        });
+      } else {
+        shift.teamMembers = shift.workersRequestedNum && times(shift.workersRequestedNum, () => unassignedTeamMember);
+      }
+    }
     this.state = {
       ...initialState,
       shift,
@@ -111,6 +126,7 @@ class DrawerHelper extends Component {
       if (nextProps.open !== this.props.open) {
         this.setState((state) => ({
           shift: {
+            ...state.shift,
             ...initialState.shift,
             ...nextProps.shift
           }
@@ -362,7 +378,7 @@ class DrawerHelper extends Component {
 
     const isRecurring = shift.recurringShift !== 'none';
     const isTeamMembersFull = shift.teamMembers && shift.teamMembers.length >= shift.numberOfTeamMembers;
-    const addTeamMemberTooltip = isRecurring && 'Creating recurring shifts and adding team members cannot be done at the same time'
+    const addTeamMemberTooltip = (!isEdit && isRecurring && 'Creating recurring shifts and adding team members cannot be done at the same time')
       || (isTeamMembersFull && `${shift.numberOfTeamMembers} Team member(s) are already assigned to shift, increase number of team members to add more.`);
 
     return (
@@ -554,7 +570,7 @@ class DrawerHelper extends Component {
                                               onClick={this.handleAddTeamMember} />}
 
                   <div className="member-list"
-                       style={{ display: (isRecurring || (shift.teamMembers && !shift.teamMembers.length)) && 'none' || 'block' }}>
+                       style={{ display: ((isRecurring && !isEdit) || (shift.teamMembers && !shift.teamMembers.length)) && 'none' || 'block' }}>
                     {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) => <TeamMemberCard
                       avatarUrl={tm.avatarUrl}
                       firstName={tm.firstName}

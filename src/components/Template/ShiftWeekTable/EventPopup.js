@@ -27,7 +27,7 @@ class EventPopupComponent extends Component {
       isCreateShiftAdvanceOpen: false,
       drawerShift: {
         ...props.data,
-        numberOfTeamMembers: props.data.workersRequestedNum,
+        numberOfTeamMembers: props.data.workersCount,
         startTime: props.data.startTime,
         endTime: props.data.endTime,
         advance: { allowShadowing: true },
@@ -85,36 +85,28 @@ class EventPopupComponent extends Component {
     this.setState({ newShiftModalPopped: !this.state.newShiftModalPopped });
   };
 
-  handleShiftUpdateSubmit = (shiftValue) => {
+  handleShiftUpdateSubmit = (shiftValue, recurringId) => {
     const shift = cloneDeep(shiftValue);
    
     const payload = {
       id: shiftValue.id,
       positionId: shift.positionId,
       workerCount: shift.numberOfTeamMembers,
-      creatorId: localStorage.getItem('userId'),
-      startTime: moment.utc(shift.startTime).format('HH:mm'),
-      endTime: moment.utc(shift.endTime).format('HH:mm'),
+      creator: localStorage.getItem('userId'),
+      startTime: moment(shift.startTime).format('HH:mm'),
+      endTime: moment(shift.endTime).format('HH:mm'),
       instructions: shift.instructions,
-      unpaidBreakTime: shift.unpaidBreak
+      unpaidBreakTime: shift.unpaidBreak,
+      expiration: shift.endDate,
+      startDate: shift.startDate
     };
     this.props.updateRecurringShift({
       variables: {
         data: {
           id: shiftValue.id,
-          shiftPatch: payload
+          recurringShiftPatch: payload
         }
       },
-    /*  updateQueries: {
-        allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-          const shiftHash = mutationResult.data.updateShiftById.shift;
-          previousQueryResult.allShifts.edges =
-            [...previousQueryResult.allShifts.edges, { 'node': shiftHash, '__typename': 'ShiftsEdge' }];
-          return {
-            allShifts: previousQueryResult.allShifts
-          };
-        },
-      },*/
     }).then(({ data }) => {
       console.log('got data', data);
     }).catch(err => {

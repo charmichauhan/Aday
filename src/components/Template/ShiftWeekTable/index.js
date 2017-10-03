@@ -86,12 +86,11 @@ class ShiftWeekTableComponent extends Week {
       });
     } 
 
-    recurring.edges.map((value, index) => {
-        let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
-        let workplaceId = value.node.workplaceByWorkplaceId.id
+    let workplaceName = recurring.workplaceByWorkplaceId.workplaceName
+
         if (workplaceId != '') {
-          if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+          if (workplaceId == recurring.workplaceByWorkplaceId.id) {
+              recurring.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
                       const positionName = shift.node.positionByPositionId.positionName;
                       shift.node.days.map((day, dayIndex) => {    
                           let assigned = []
@@ -132,7 +131,6 @@ class ShiftWeekTableComponent extends Week {
               })
             }
         } 
-     })
 
     return calendarHash;
   };
@@ -140,11 +138,10 @@ class ShiftWeekTableComponent extends Week {
     getTemplateDataJob = (workplaceId, recurring) => {
       let calendarHash = {};
 
-      recurring.edges.map((value, index) => {
-            let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+            let workplaceName = recurring.workplaceByWorkplaceId.workplaceName
              if (workplaceId != '') {
-               if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-                value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+               if (workplaceId == recurring.workplaceByWorkplaceId.id) {
+                recurring.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
                   const positionName = shift.node.positionByPositionId.positionName;
                   shift.node.days.map((day, dayIndex) => {    
                        const rowHash = {};
@@ -164,7 +161,6 @@ class ShiftWeekTableComponent extends Week {
                 })
               }
               } 
-      })
       return calendarHash;
     };
 
@@ -190,7 +186,7 @@ class ShiftWeekTableComponent extends Week {
         }
 
         console.log(this.props)
-        let recurring = this.props.data.allRecurrings
+        let recurring = this.props.data.recurringById
         let workplaceId = localStorage.getItem('workplaceId');
         let jobData = this.state.view=="job" ? this.getTemplateDataJob(workplaceId, recurring) :this.getTemplateDataEmployee(workplaceId, this.props.allUsers, recurring);
         let jobDataKeys = Object.keys(jobData)
@@ -289,8 +285,7 @@ const ShiftWeekTable = compose(
   graphql(allTemplateShifts, {
     options: (ownProps) => ({
       variables: {
-        workplaceId:localStorage.getItem('workplaceId'),
-        brandId: localStorage.getItem('brandId'),
+        id: ownProps.events[0]
       }
     })
   }),

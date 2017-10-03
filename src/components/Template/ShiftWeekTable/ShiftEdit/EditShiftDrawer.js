@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -82,6 +82,7 @@ class DrawerHelper extends Component {
       })
     }
 
+
     let shiftStart = ""
     let shiftEnd = ""
 
@@ -101,12 +102,13 @@ class DrawerHelper extends Component {
         startTime:  shiftStart,
         endTime: shiftEnd,
         startDate: props.shift && moment(props.shift.startDate) || "",
-        expiration: props.shift && moment(props.shift.endDate) || "",
+        endDate: props.shift && moment(props.shift.endDate) || "",
         advance: { allowShadowing: true },
         teamMembers: teamMembers, 
         workplaceId,
         brandId,
         positionId,
+        instructions: props.shift.instructions || ""
       },
       edit: this.props.edit,
       selectedDate: shiftDaysSelected || "",
@@ -202,8 +204,8 @@ class DrawerHelper extends Component {
 
   handleShiftSubmit = (shift) => {
     const { handleSubmit } = this.props;
-    if (handleSubmit) handleSubmit(shift);
-    //this.setState(initialState);
+    if (handleSubmit) handleSubmit(shift, this.props.recurringId);
+    this.setState(initialState);
   };
 
   updateFormState = (dataValue) => {
@@ -330,9 +332,13 @@ class DrawerHelper extends Component {
     const teamMembers = {
       total: (shift.numberOfTeamMembers * (shift.advance && shift.advance.allowShadowing && 2 || 1)),
       trainers: shift.numberOfTeamMembers,
-      shadowers: shift.advance && shift.advance.allowShadowing && shift.numberOfTeamMembers || 0
+      shadowers: shift.advance && shift.advance.allowShadowing && shift.numberOfTeamMembers || ""
     };
     const isAddTeamMemberDisabled = !localStorage.getItem("isUnion") || shift.teamMembers && shift.teamMembers.length >= shift.numberOfTeamMembers;
+    
+    let buttonTitle = this.props.edit? "Edit Shifts" : "Create Shifts"
+
+
     return (
       <Drawer
         width={width}
@@ -528,7 +534,7 @@ class DrawerHelper extends Component {
              
                  <br/>
                   <div className="member-list">
-                    {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) => <TeamMemberCard
+                    { shift.teamMembers && shift.teamMembers.map((tm, i) => <TeamMemberCard
                       avatarUrl={tm.avatarUrl}
                       firstName={tm.firstName}
                       lastName={tm.lastName}
@@ -572,7 +578,7 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Instructions</label>
-                  <TextArea className="form-control" name="instructions"
+                  <TextArea className="form-control" name="instructions" value={shift.instructions}
                             onChange={(_, data) => this.handleChange({ target: data })} rows="3" />
                 </Grid.Column>
               </Grid.Row>
@@ -581,8 +587,8 @@ class DrawerHelper extends Component {
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
-                <CircleButton disabled={this.isShiftInvalid} handleClick={() => this.handleShiftSubmit(shift)}
-                              type="blue" title="Edit Hours" />
+                <CircleButton handleClick={() => this.handleShiftSubmit(shift)}
+                              type="blue" title={ buttonTitle } />
               </div>
             </div>
           </div>

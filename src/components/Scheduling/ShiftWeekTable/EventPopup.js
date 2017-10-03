@@ -31,6 +31,7 @@ class EventPopupComponent extends Component {
       editModalPopped: false,
       newShiftModalPopped: false,
       shiftHistoryDrawer: false,
+      isSorted: true,
       isCreateShiftAdvanceOpen: false,
       drawerShift: {
         ...props.data,
@@ -84,7 +85,7 @@ class EventPopupComponent extends Component {
       this.setState({ editShiftModalOpen: true });
     }
     else if (modal == 'newShiftModalPopped') {
-      this.setState({ newShiftModalPopped: true });
+      this.setState({ newShiftModalPopped: true , isSorted: false});
     }
   };
   handleHistoryDrawer = () => {
@@ -249,6 +250,7 @@ class EventPopupComponent extends Component {
           shift={data}
           users={users}
           open={this.state.shiftHistoryDrawer}
+          isSorted={this.state.isSorted}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
         <CreateShiftDrawer

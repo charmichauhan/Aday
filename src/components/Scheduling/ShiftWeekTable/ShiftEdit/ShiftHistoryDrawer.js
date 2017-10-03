@@ -173,23 +173,10 @@ class ShiftHistoryDrawerComponent extends Component {
     super(props);
     this.state = {
       historyDetails: [],
-      isSorted: true
-    }
-    debugger;
-  }
-
-  componentWillMount() {
-    console.log(this.props);
-    debugger;
-    if (!this.props.data.loading && this.props.data.allMarkets) {
-      const historyDetails = this.getInitialData(this.props.data);
-      debugger;
-      this.setState({historyDetails});
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    debugger
     if (!nextProps.data.loading && nextProps.data.allMarkets) {
       const historyDetails = this.getInitialData(nextProps.data);
       this.setState({historyDetails});
@@ -253,13 +240,11 @@ class ShiftHistoryDrawerComponent extends Component {
       this.setState((prevState) => ({
         historyDetails: arrayMove(prevState.historyDetails, oldIndex, newIndex)
       }));
-      debugger;
       const varSortUser = [];
       this.state.historyDetails.forEach((v, i) => {
         varSortUser.push(v.worker);
       });
 
-      debugger;
       console.log(this.state.historyDetails);
 
       var shift = this.props.shift;

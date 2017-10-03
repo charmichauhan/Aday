@@ -116,6 +116,8 @@ class DrawerHelper extends Component {
   };
 
   handleShiftHistoryDrawer = () => {
+    console.log("History button clicked");
+    debugger;
     this.props.handlerClose();
     this.props.handleHistory();
   };
@@ -333,7 +335,6 @@ class DrawerHelper extends Component {
       content: foundWorker.node.content
     };
   };
-
 
   getInitialData = ({ shift: { workersAssigned = [], workersInvited = [], workersRequestedNum = 0 } }) => {
     workersAssigned = workersAssigned.map(worker => {

@@ -178,7 +178,18 @@ class ShiftHistoryDrawerComponent extends Component {
     debugger;
   }
 
+  componentWillMount() {
+    console.log(this.props);
+    debugger;
+    if (!this.props.data.loading && this.props.data.allMarkets) {
+      const historyDetails = this.getInitialData(this.props.data);
+      debugger;
+      this.setState({historyDetails});
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
+    debugger
     if (!nextProps.data.loading && nextProps.data.allMarkets) {
       const historyDetails = this.getInitialData(nextProps.data);
       this.setState({historyDetails});
@@ -224,119 +235,125 @@ class ShiftHistoryDrawerComponent extends Component {
   };
 
   handleSaveList = () => {
-    const userId = [],{isSorted} = this.state;
+    const userId = [], {isSorted} = this.state;
     this.state.historyDetails && this.state.historyDetails.forEach(historyDetails => {
       userId.push(historyDetails.worker);
     });
-
-    console.log(this.state.historyDetails);
-
-    var shift = this.props.shift;
-    var uri = 'https://forward-chess-157313.appspot.com/api/callEmployee/';
-
-    var options = {
-      uri: uri,
-      method: 'POST',
-      json: {
-        "data": {
-          "sec": "QDVPZJk54364gwnviz921",
-          "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
-          "shiftStartHour": moment(shift.startTime).format("h:mm a"),
-          "shiftEndHour": moment(shift.endTime).format("h:mm a"),
-          "brand": shift.positionByPositionId.brandByBrandId.brandName,
-          "shiftLocation": shift.workplaceByWorkplaceId.workplaceName,
-          "shiftReward": "",
-          "shiftRole": shift.positionByPositionId.positionName,
-          "shiftAddress": shift.workplaceByWorkplaceId.address,
-          "weekPublishedId": shift.weekPublishedId,
-          "shiftId": shift.id,
-          "isSorted" :isSorted,
-          userId
-        }
-      }
-    };
-    rp(options)
-      .then(function (response) {
-        //that.setState({redirect:true})
-      }).catch((error) => {
-      console.log('there was an error sending the query', error);
-    });
-  };
-
-  showDetails = (historyDetails, i) => {
-    historyDetails[i].showDetails = !historyDetails[i].showDetails;
-    this.setState({historyDetails});
-  };
-
-  onSortEnd = ({oldIndex, newIndex}) => {
-    console.log(this.state.historyDetails);
-    this.setState((prevState) => ({
-      historyDetails: arrayMove(prevState.historyDetails, oldIndex, newIndex),
-      isSorted: true
-    }));
   }
 
+  demoSaveList = () => {
+    const userId = ['27c22da1-6fce-4da5-9eea-5bee984f70fb','26597166-9e4a-4191-b424-2370e8fdf599'];
+    this.state.historyDetails && this.state.historyDetails.forEach(historyDetails => {
+      userId.push(historyDetails.worker);
+    });
+  }
 
-  render() {
-    const {
-      width = 750,
-      open,
-      openSecondary = true,
-      docked = false
-    } = this.props;
+  onSortEnd = ({oldIndex, newIndex}) => {
+      console.log(this.state.historyDetails);
+      this.setState((prevState) => ({
+        historyDetails: arrayMove(prevState.historyDetails, oldIndex, newIndex)
+      }));
+      debugger;
+      const varSortUser = [];
+      this.state.historyDetails.forEach((v, i) => {
+        varSortUser.push(v.worker);
+      });
 
-    if (this.props.data.loading) {
-      return (<Loading />)
+      debugger;
+      console.log(this.state.historyDetails);
+
+      var shift = this.props.shift;
+      var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/callEmployee/'
+
+      var options = {
+        uri: uri,
+        method: 'POST',
+        json: {
+          "data": {
+            "sec": "QDVPZJk54364gwnviz921",
+            "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
+            "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+            "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+            "brand": shift.positionByPositionId.brandByBrandId.brandName,
+            "shiftLocation": shift.workplaceByWorkplaceId.workplaceName,
+            "shiftReward": "",
+            "shiftRole": shift.positionByPositionId.position1000000000000000Name,
+            "shiftAddress": shift.workplaceByWorkplaceId.address,
+            "weekPublishedId": shift.weekPublishedId,
+            "shiftId": shift.id,
+            "userId": {
+              varSortUser
+            }
+          }
+        }
+      };
+      rp(options)
+        .then(function (response) {
+          //that.setState({redirect:true})
+        }).catch((error) => {
+        console.log('there was an error sending the query', error);
+      });
     }
 
-    const {historyDetails} = this.state;
+  render() {
+      const {
+        width = 750,
+        open,
+        openSecondary = true,
+        docked = false
+      } = this.props;
 
-    const actionTypes = [{
-      type: 'white',
-      title: 'GO BACK',
-      handleClick: this.handleBack
-    }, {
-      type: 'blue',
-      title: 'POST LIST',
-      handleClick: this.handleSaveList,
-      image: '/assets/Icons/save-icon.png'
-    }];
+      if (this.props.data.loading) {
+        return (<Loading />)
+      }
 
-    const actions = actionTypes.map((action, index) =>
-      (<CircleButton key={index} type={action.type} title={action.title} handleClick={action.handleClick}
-                     image={action.image} imageSize={action.imageSize}/>)
-    );
-    return (
-      <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
-              open={open}>
-        <div className="drawer-section brand-drawer-section">
-          <div className="drawer-heading drawer-head col-md-12">
+      const {historyDetails} = this.state;
 
-            <FlatButton label="Back" onClick={this.handleBack}
-                        icon={<Icon name="chevron left" className="floatLeft"/> }/>
-            <Header as='h2' textAlign='center'>
-              Shift History
-            </Header>
+      const actionTypes = [{
+        type: 'white',
+        title: 'GO BACK',
+        handleClick: this.handleBack
+      }, {
+        type: 'blue',
+        title: 'POST LIST',
+        // handleClick: this.handleSaveShift,
+        image: '/assets/Icons/save-icon.png'
+      }];
 
+      const actions = actionTypes.map((action, index) =>
+        (<CircleButton key={index} type={action.type} title={action.title} handleClick={action.handleClick}
+                       image={action.image} imageSize={action.imageSize}/>)
+      );
+
+      return (
+        <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
+                open={open}>
+          <div className="drawer-section brand-drawer-section">
+            <div className="drawer-heading drawer-head col-md-12">
+
+              <FlatButton label="Back" onClick={this.handleBack}
+                          icon={<Icon name="chevron left" className="floatLeft"/> }/>
+              <Header as='h2' textAlign='center'>
+                Shift History
+              </Header>
+
+            </div>
+            <div className="drawer-content history-drawer-content">
+              {historyDetails &&
+              <SortableList historyDetails={historyDetails} onSortEnd={this.onSortEnd} pressDelay={200}/>}
+            </div>
           </div>
-          <div className="drawer-content history-drawer-content">
-            {historyDetails &&
-            <SortableList historyDetails={historyDetails} onSortEnd={this.onSortEnd} pressDelay={200}/>}
+          <div className="drawer-footer">
+            <div className="buttons text-center">
+              {actions}
+            </div>
           </div>
-        </div>
-        <div className="drawer-footer">
-          <div className="buttons text-center">
-            {actions}
-          </div>
-        </div>
-      </Drawer>
-    );
-  };
+        </Drawer>
+      );
+    }
+
 }
-
-
-const
-  allMarkets = gql`
+const allMarkets = gql`
   query allMarkets($shiftId: Uuid!) {
     allMarkets(condition: {shiftId: $shiftId }) {
       nodes {

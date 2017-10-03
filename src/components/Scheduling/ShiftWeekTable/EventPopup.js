@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import cloneDeep from 'lodash/cloneDeep';
 import { gql, graphql, compose } from 'react-apollo';
-
 import { updateShiftMutation } from './ShiftEdit/EditShiftDrawer.graphql';
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawer from '../AddShift/CreateShift/CreateShiftAdvanceDrawer';
@@ -129,7 +128,7 @@ class EventPopupComponent extends Component {
             [...previousQueryResult.allShifts.edges, { 'node': shiftHash, '__typename': 'ShiftsEdge' }];
           return {
             allShifts: previousQueryResult.allShifts
-          };
+            };
         },
       },
     }).then(({ data }) => {

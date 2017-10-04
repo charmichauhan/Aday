@@ -29,25 +29,59 @@ export const updateRecurringShift = gql`
     }
   }`;
 
+export const createRecurring = gql`
+  mutation createRecurring($data: CreateRecurringInput!){
+    createRecurring(input:$data)
+    {
+      recurring {
+        id
+        brandId
+        workplaceId
+      }
+    }
+  }`;
+
 export const createRecurringShift = gql`
   mutation createRecurringShift($data: CreateRecurringShiftInput!){
     createRecurringShift(input:$data)
     {
       recurringShift {
         id
-        startTime
-        endTime
+                startTime
+                endTime
+                workerCount
+                isTraineeShift
+                unpaidBreakTime
+                instructions
+                days
+                positionByPositionId{
+                  id
+                  positionName
+                  positionIconUrl
+                }
+                recurringShiftAssigneesByRecurringShiftId {
+                  edges{
+                    node{
+                      userId
+                      userByUserId{
+                        firstName
+                        lastName
+                        avatarUrl
+                      }
+                    }
+                  }
+              }
       }
     }
   }`;
 
   export const createRecurringShiftAssignee = gql`
   mutation createRecurringShiftAssignee($data: CreateRecurringShiftAssigneeInput!){
-    createRecurringShiftAssignees(input:$data)
+    createRecurringShiftAssignee(input:$data)
     {
       recurringShiftAssignee {
-        recurring_shift_id
-        user_id
+        recurringShiftId
+        userId
       }
     }
   }`;

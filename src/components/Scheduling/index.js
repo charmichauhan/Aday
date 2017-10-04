@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import moment from "moment";
 import BigCalendar from "react-big-calendar";
 import {gql, graphql} from "react-apollo";
-import {CSVLink} from "react-csv";
 import {groupBy,findIndex, cloneDeep} from "lodash";
 import {Modal} from "semantic-ui-react";
 import Toolbar from "react-big-calendar/lib/Toolbar";

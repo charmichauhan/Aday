@@ -168,7 +168,7 @@ const SortableList = SortableContainer(({historyDetails}) => {
   );
 });
 
-class ShiftHistoryDrawerComponent extends Component {
+export default class ShiftHistoryDrawer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -176,9 +176,9 @@ class ShiftHistoryDrawerComponent extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.data.loading && nextProps.data.allMarkets) {
-      const historyDetails = this.getInitialData(nextProps.data);
+  componentWillMount(){
+    if(this.props.MarketsData){
+      const historyDetails = this.getInitialData(this.props.MarketsData);
       this.setState({historyDetails});
     }
   }
@@ -288,12 +288,7 @@ class ShiftHistoryDrawerComponent extends Component {
         docked = false
       } = this.props;
 
-      if (this.props.data.loading) {
-        return (<Loading />)
-      }
-
       const {historyDetails} = this.state;
-
       const actionTypes = [{
         type: 'white',
         title: 'GO BACK',
@@ -363,12 +358,12 @@ const allMarkets = gql`
     }
   }`;
 
-const ShiftHistoryDrawer = graphql(allMarkets, {
-  options: (ownProps) => ({
-    variables: {
-      shiftId: ownProps.shift && ownProps.shift.id
-    }
-  }),
-})(ShiftHistoryDrawerComponent);
-
-export default ShiftHistoryDrawer;
+// const ShiftHistoryDrawer = graphql(allMarkets, {
+//   options: (ownProps) => ({
+//     variables: {
+//       shiftId: ownProps.shift && ownProps.shift.id
+//     }
+//   }),
+// })(ShiftHistoryDrawerComponent);
+//
+// export default ShiftHistoryDrawer;

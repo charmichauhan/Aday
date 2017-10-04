@@ -7,7 +7,7 @@ import Delete from 'material-ui/svg-icons/action/delete';
 import {leftCloseButton} from "../../styles";
 import Checkbox from 'material-ui/Checkbox';
 import { gql, graphql, compose } from 'react-apollo';
-import { releventPositionsQuery } from "../Team.graphql";
+
 const uuidv1 = require('uuid/v1');
 var Halogen = require('halogen');
 

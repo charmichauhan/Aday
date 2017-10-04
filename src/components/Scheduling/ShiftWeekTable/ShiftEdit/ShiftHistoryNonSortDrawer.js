@@ -182,7 +182,6 @@ export default class ShiftHistoryNonSortDrawer extends Component {
   };
 
   render() {
-    debugger;
     const {
       width = 600,
       open,

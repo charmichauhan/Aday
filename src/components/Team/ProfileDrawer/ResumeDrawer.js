@@ -9,9 +9,8 @@ import {find, pick} from "lodash";
 import {leftCloseButton} from "../../styles";
 import '../team.css';
 const uuidv4 = require('uuid/v4');
-import {userQuery, releventPositionsQuery, updateEmployeeById} from "../Team.graphql";
+import {userQuery, updateEmployeeById} from "../Team.graphql";
 import {graphql, compose, gql} from "react-apollo";
-
 import Experience from "./Resume/Experience";
 import Education from "./Resume/Education";
 import Reference from "./Resume/Reference";

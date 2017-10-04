@@ -21,7 +21,7 @@ class ShiftHistoryDrawerContainerComponent extends Component {
       return (<div><Halogen.SyncLoader color='#00A863'/></div>);
     }
     if (this.props.open) {
-      const isSorted = this.props.isSorted;
+      const { isSorted } = this.props;
       return (
         isSorted ?
           <ShiftHistoryDrawer
@@ -30,7 +30,9 @@ class ShiftHistoryDrawerContainerComponent extends Component {
             open={this.props.open}
             handleBack={this.props.handleBack}
             handlerClose={this.props.handlerClose}
-            handleHistory={this.props.handleHistory}/> :
+            handleHistory={this.props.handleHistory}
+            MarketsData={this.state.MarketsData}/>
+           :
           <ShiftHistoryNonSortDrawer
             shift={this.props.shift}
             users={this.props.users}

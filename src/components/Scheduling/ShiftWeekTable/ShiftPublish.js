@@ -279,6 +279,9 @@ class ShiftPublishComponent extends Component {
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak
     };
+    if (shift.teamMembers && shift.teamMembers.length) {
+      payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
+    }
     this.props.createShift({
       variables: {
         data: {

@@ -53,6 +53,10 @@ export default class StartToEndTimePicker extends Component {
     let [hour, min] = value.split(':');
     if (hour) stateValue.hour(hour);
     if (min) stateValue.minute(min);
+    const { formCallBack } = this.props;
+    if (formCallBack && hour && min) {
+      formCallBack({ [name]: stateValue });
+    }
     this.setState({ [name]: stateValue, [name + 'Value']: value });
   };
 

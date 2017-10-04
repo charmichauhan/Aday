@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep, findLastIndex } from 'lodash';
 import { gql, graphql, compose } from 'react-apollo';
 
 import { updateShiftMutation } from './ShiftEdit/EditShiftDrawer.graphql';
@@ -115,6 +115,9 @@ class EventPopupComponent extends Component {
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak
     };
+    if (shift.teamMembers && shift.teamMembers.length) {
+      payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
+    }
     this.props.updateShiftMutation({
       variables: {
         data: {
@@ -125,8 +128,10 @@ class EventPopupComponent extends Component {
       updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
           const shiftHash = mutationResult.data.updateShiftById.shift;
-          previousQueryResult.allShifts.edges =
-            [...previousQueryResult.allShifts.edges, { 'node': shiftHash, '__typename': 'ShiftsEdge' }];
+          const shiftHashIndex = findLastIndex(previousQueryResult.allShifts.edges, ({ node }) => node.id = shiftHash.id);
+          if (shiftHashIndex !== -1) {
+            previousQueryResult.allShifts.edges[shiftHashIndex].node = shiftHash;
+          }
           return {
             allShifts: previousQueryResult.allShifts
           };

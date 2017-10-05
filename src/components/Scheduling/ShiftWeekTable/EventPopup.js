@@ -8,7 +8,7 @@ import CreateShiftAdvanceDrawer from '../AddShift/CreateShift/CreateShiftAdvance
 import CreateShiftDrawer from '../AddShift/CreateShift/CreateShiftDrawer';
 import EditShiftDrawerContainer from './ShiftEdit/EditShiftDrawerContainer';
 import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer';
-
+import DeleteRecuringPopUp from './DeleteRecuringPopUp';
 import '../style.css';
 import './shiftWeekTable.css';
 
@@ -166,6 +166,7 @@ class EventPopupComponent extends Component {
     let pastDate = moment().diff(data.startTime) > 0;
     let startTime = moment(data.startTime).format('h:mm A');
     let endTime = moment(data.endTime).format('h:mm A');
+    let {recurringShiftId} = this.props.data;
 
     if (startTime == "Invalid date"){
         let start = data.startTime.split(":")
@@ -178,6 +179,8 @@ class EventPopupComponent extends Component {
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
       { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
+    let deleteShiftRenderAction = [{ type: 'red', title: 'All Following', handleClick: this.deleteShift, image: '/images/modal/close.png' },
+      { type: 'red', title: 'Only this', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
     if (data.workersAssigned == null) {
       data.workersAssigned = [];
     }
@@ -234,12 +237,28 @@ class EventPopupComponent extends Component {
             </div>
           </div>
         }
-        <Modal
-          title="Confirm"
-          isOpen={this.state.deleteModalPopped}
-          message="Are you sure that you want to delete this shift?"
-          action={deleteShiftAction}
-          closeAction={this.modalClose} />
+
+
+        {recurringShiftId ?
+          <Modal
+            title="delete"
+            isOpen={this.state.deleteModalPopped}
+            message="Instance events will be delete?"
+            action={deleteShiftAction}
+            closeAction={this.modalClose} />:
+          <DeleteRecuringPopUp
+            title="Confirm"
+            isOpen={this.state.deleteModalPopped}
+            message="Are you sure that you want to delete this shift?"
+            action={deleteShiftRenderAction}
+            closeAction={this.modalClose} />}
+
+        {/*<*/}
+          {/*title="ConfirmConfirmConfirmConfirm"*/}
+          {/*isOpen={this.state.deleteModalPopped}*/}
+          {/*message="Are you sure that you want to delete this shift?"*/}
+          {/*action={deleteShiftAction}*/}
+          {/*closeAction={this.modalClose} />*/}
         <EditShiftDrawerContainer
           shift={data}
           users={users}

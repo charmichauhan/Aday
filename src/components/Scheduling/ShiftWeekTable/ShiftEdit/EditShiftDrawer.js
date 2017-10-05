@@ -353,15 +353,18 @@ class DrawerHelper extends Component {
   };
 
   setTeamMember = (user, index) => {
-    const { teamMembers } = this.state;
+    const { teamMembers } = this.state.shift;
     if (user.id) {
-      teamMembers[index].user = user;
-      teamMembers[index].content = '     ';
-      teamMembers[index].status = 'accepted';
+      teamMembers[index] = {
+        ...teamMembers[index],
+        ...user,
+        content: '',
+        status: 'accepted'
+      }
     } else {
       teamMembers[index] = { ...unassignedTeamMember };
     }
-    this.setState({ teamMembers });
+    this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
   };
 
   addJobShadower = () => {

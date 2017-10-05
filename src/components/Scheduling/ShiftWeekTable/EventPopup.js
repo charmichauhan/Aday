@@ -187,7 +187,7 @@ class EventPopupComponent extends Component {
 
     var workersCount = data.workersRequestedNum || data.workerCount
     this.openShift = workersCount - (data.workersAssigned.length + data.workersInvited.length );
-
+    console.log(data)
     return (
       <div className="day-item hov">
 

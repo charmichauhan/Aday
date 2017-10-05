@@ -15,10 +15,9 @@ import jobsData from './jobs.json';
 import '../style.css';
 import allShiftsByWeeksPublished from './shiftsByWeeksPublishedQuery'
 var Halogen = require('halogen');
-
-
-/*import EditShift from './ShiftEdit/Edit';
- import DeleteShift from './ShiftEdit/DeleteShift';
+/*
+import EditShift from './ShiftEdit/Edit';
+import DeleteShift from './ShiftEdit/DeleteShift';
  */
 
 

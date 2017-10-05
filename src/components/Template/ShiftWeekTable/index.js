@@ -55,7 +55,7 @@ class ShiftWeekTableComponent extends Week {
             view:this.props.eventPropGetter(),
             redirect:false,
             confirmApplyTemplateModal: false,
-            applyingTemplateModal: false
+            applyingTemplateModal: false,
         };
     }
 
@@ -86,11 +86,11 @@ class ShiftWeekTableComponent extends Week {
       });
     } 
 
-    recurring.edges.map((value, index) => {
-        let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+    let workplaceName = recurring.workplaceByWorkplaceId.workplaceName
+
         if (workplaceId != '') {
-          if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+          if (workplaceId == recurring.workplaceByWorkplaceId.id) {
+              recurring.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
                       const positionName = shift.node.positionByPositionId.positionName;
                       shift.node.days.map((day, dayIndex) => {    
                           let assigned = []
@@ -101,7 +101,8 @@ class ShiftWeekTableComponent extends Week {
                           if (assigned.length < shift.node.workerCount) {
                             const rowHash = {};
                             rowHash['weekday'] = day
-                            rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                            rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName, 'id': workplaceId }
+                            rowHash['workplaceId'] = workplaceId
                             rowHash['userFirstName'] = 'Open'
                             rowHash['userLastName'] = 'Shifts'
                             rowHash['userAvatar'] = '/assets/Icons/search.png'
@@ -115,7 +116,8 @@ class ShiftWeekTableComponent extends Week {
                             const rowHash = {}
                             rowHash['weekday'] = day;
                             const userName = userHash[v];
-                            rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                            rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName, 'id': workplaceId}
+                            rowHash['workplaceId'] = workplaceId
                             rowHash['userFirstName'] = userHash[v][0]
                             rowHash['userLastName'] = userHash[v][1]
                             rowHash['userAvatar'] = userHash[v][2]
@@ -129,7 +131,6 @@ class ShiftWeekTableComponent extends Week {
               })
             }
         } 
-     })
 
     return calendarHash;
   };
@@ -137,18 +138,16 @@ class ShiftWeekTableComponent extends Week {
     getTemplateDataJob = (workplaceId, recurring) => {
       let calendarHash = {};
 
-      recurring.edges.map((value, index) => {
-            let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
-            console.log(workplaceId)
-            console.log(value.node.workplaceByWorkplaceId.id)
+            let workplaceName = recurring.workplaceByWorkplaceId.workplaceName
              if (workplaceId != '') {
-               if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-                value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+               if (workplaceId == recurring.workplaceByWorkplaceId.id) {
+                recurring.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
                   const positionName = shift.node.positionByPositionId.positionName;
                   shift.node.days.map((day, dayIndex) => {    
                        const rowHash = {};
                        rowHash['weekday'] = day
-                       rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                       rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName, 'id': workplaceId }
+                       rowHash['workplaceId'] = workplaceId
                        rowHash['workersAssigned'] = []
                        shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
                             rowHash['workersAssigned'].push(assignees.node.userId)
@@ -162,7 +161,6 @@ class ShiftWeekTableComponent extends Week {
                 })
               }
               } 
-      })
       return calendarHash;
     };
 
@@ -171,16 +169,24 @@ class ShiftWeekTableComponent extends Week {
            if (this.props.data.error) {}
            return (<div>  No Template Selected</div>)
          }
+
          if (this.props.data.loading || this.props.allUsers.loading) {
              return (<div><Halogen.SyncLoader color='#00A863'/></div>)
          }
+
          if (this.props.data.error) {
              console.log(this.props.data.error)
              return (<div> Must Select A Workplace </div>)
         }
 
+        if (this.state.redirect){
+                return (
+                  <Redirect to={{ pathname: '/schedule/team', viewName: this.props.view }} />
+                )
+        }
+
         console.log(this.props)
-        let recurring = this.props.data.allRecurrings
+        let recurring = this.props.data.recurringById
         let workplaceId = localStorage.getItem('workplaceId');
         let jobData = this.state.view=="job" ? this.getTemplateDataJob(workplaceId, recurring) :this.getTemplateDataEmployee(workplaceId, this.props.allUsers, recurring);
         let jobDataKeys = Object.keys(jobData)
@@ -238,7 +244,7 @@ class ShiftWeekTableComponent extends Week {
                                   data={jobData[value]}
                                   key={value}
                                   users={this.props.allUsers}
-                                  view={this.state.calendarView}/>
+                                  view={this.state.view}/>
                               )
                             )
                             }
@@ -248,7 +254,7 @@ class ShiftWeekTableComponent extends Week {
                               data={jobData['Open Shifts']}
                               key={'Open Shifts'}
                               users={this.props.allUsers}
-                              view={this.state.calendarView}/>
+                              view={this.state.view}/>
                             }
                     </TableBody>
                     <TableFooter adjustForCheckbox={false}>
@@ -279,8 +285,7 @@ const ShiftWeekTable = compose(
   graphql(allTemplateShifts, {
     options: (ownProps) => ({
       variables: {
-        workplaceId:localStorage.getItem('workplaceId'),
-        brandId: localStorage.getItem('brandId'),
+        id: ownProps.events[0]
       }
     })
   }),

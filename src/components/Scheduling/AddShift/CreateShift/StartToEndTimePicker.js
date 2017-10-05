@@ -110,8 +110,8 @@ export default class StartToEndTimePicker extends Component {
           <p>
             <i className="fa fa-clock-o" />
           </p>
-          <p style={{flex: 1}}>{startTimeValueTop || <span className='placeholder-text'>WHEN WILL THE SHIFT START?</span>}</p>
-          <p style={{flex: 1, textAlign:'left'}}>{endTimeValueTop || <span className='placeholder-text'>WHEN WILL THE SHIFT END?</span>}</p>
+          {/*<p style={{flex: 1}}>{startTimeValueTop || <span className='placeholder-text'>WHEN WILL THE SHIFT START?</span>}</p>*/}
+          {/*<p style={{flex: 1, textAlign:'left'}}>{endTimeValueTop || <span className='placeholder-text'>WHEN WILL THE SHIFT END?</span>}</p>*/}
         </div>
         <div className="time-selector-display" style={{ display: showSelector ? 'block' : 'none' }}>
           <div className="time-wrapper">

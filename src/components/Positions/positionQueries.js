@@ -52,16 +52,6 @@ const add_position=gql`
   }
   ${position_fragment}
 `;
-/*
-const add_job=gql`
-mutation createJob($input:CreateJobInput!){
-  createJob(input:$input){
-    job{
-      id
-    }
-  }
-}`
-*/
 const update_position=gql`
   mutation updatePosition($input:UpdateOpportunityByIdInput!,$data:UpdatePositionByIdInput!){
     updateOpportunityById(input:$input){

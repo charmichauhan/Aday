@@ -29,12 +29,13 @@ const initialState = {
     brandId: localStorage.getItem('brandId') || '',
     workplaceId: localStorage.getItem('workplaceId') || '',
     positionId: '',
-    recurringShift: 0,
+    recurringShift: '',
     shiftDaysSelected: {},
     numberOfTeamMembers: 1,
     unpaidBreakInMinutes: 0,
     tags: [],
     tagOptions: [],
+    duration: { hours: 0, minutes: 0 }
   },
   shiftErrors: {},
   brandId: localStorage.getItem('brandId') || '',
@@ -250,6 +251,9 @@ class DrawerHelper extends Component {
       }
       dataValue.unpaidBreak = hours + ':' + minutes;
     }
+    if ((dataValue.startTime || dataValue.endTime) && this.state.shift.startTime && this.state.shift.endTime) {
+
+    }
     if (dataValue.shiftDaysSelected) selectedDate = '';
     const shift = Object.assign(this.state.shift, dataValue);
     this.setState({ shift, selectedDate });
@@ -329,7 +333,7 @@ class DrawerHelper extends Component {
       isEdit,
       isShiftInvalid
     } = this.state;
-    let positionOptions = [{ key: 'select', value: 0, text: 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS' }];
+    let positionOptions;
 
     if (!workplaces) {
       return (<Loading />);
@@ -353,28 +357,8 @@ class DrawerHelper extends Component {
         value: 'manager',
         text: 'Manager'
       });
-      positionOptions.unshift({
-        key: 'selected',
-        value: 0,
-        text: 'WHICH POSITION CERTIFICATION MUST THE TEAM MEMBER HAVE?',
-        disabled: true
-      });
-    }
-    if (!workplaceId) {
-      workplaceOptions.unshift({
-        key: 'selected',
-        value: 0,
-        text: 'CHOOSE WORKPLACE',
-        disabled: true
-      });
     }
     const recurringOptions = [{
-      key: 'select',
-      value: 0,
-      text: 'WILL YOU HAVE TO SCHEDULE THESE WORKING HOURS EVERY WEEK?',
-      disabled: true,
-      selected: true
-    }, {
       key: 'none',
       value: 'none',
       text: 'NO',
@@ -461,8 +445,9 @@ class DrawerHelper extends Component {
                     fluid
                     selection
                     name="workplaceId"
+                    placeholder="CHOOSE WORKPLACE"
                     onChange={(_, data) => this.handleChange({ target: data })}
-                    value={shift.workplaceId || 0}
+                    value={shift.workplaceId}
                     selectOnBlur={false}
                     forceSelection={false}
                     options={workplaceOptions} />
@@ -479,10 +464,13 @@ class DrawerHelper extends Component {
                   <Dropdown
                     fluid
                     selection
-                    placeholder="Select Position"
+                    placeholder={
+                      !shift.workplaceId && "WHICH POSITION CERTIFICATION MUST THE TEAM MEMBER HAVE?"
+                      || "SELECT WORKPLACE TO SEE AVAILABLE POSITIONS"
+                    }
                     name="positionId"
                     onChange={(_, data) => this.handleChange({ target: data })}
-                    value={shift.positionId || 0}
+                    value={shift.positionId}
                     selectOnBlur={false}
                     forceSelection={false}
                     disabled={!positions}
@@ -501,6 +489,7 @@ class DrawerHelper extends Component {
                     fluid
                     selection
                     name="recurringShift"
+                    placeholder="WILL YOU HAVE TO SCHEDULE THESE WORKING HOURS EVERY WEEK?"
                     onChange={(_, data) => this.handleChange({ target: data })}
                     value={shift.recurringShift}
                     selectOnBlur={false}

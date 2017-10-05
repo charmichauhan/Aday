@@ -116,6 +116,8 @@ class DrawerHelper extends Component {
   };
 
   handleShiftHistoryDrawer = () => {
+    console.log("History button clicked");
+    debugger;
     this.props.handlerClose();
     this.props.handleHistory();
   };
@@ -334,7 +336,6 @@ class DrawerHelper extends Component {
     };
   };
 
-
   getInitialData = ({ shift: { workersAssigned = [], workersInvited = [], workersRequestedNum = 0 } }) => {
     workersAssigned = workersAssigned.map(worker => {
       if (typeof worker === 'string') return this.getUserById(worker, true);
@@ -352,15 +353,18 @@ class DrawerHelper extends Component {
   };
 
   setTeamMember = (user, index) => {
-    const { teamMembers } = this.state;
+    const { teamMembers } = this.state.shift;
     if (user.id) {
-      teamMembers[index].user = user;
-      teamMembers[index].content = '     ';
-      teamMembers[index].status = 'accepted';
+      teamMembers[index] = {
+        ...teamMembers[index],
+        ...user,
+        content: '',
+        status: 'accepted'
+      }
     } else {
       teamMembers[index] = { ...unassignedTeamMember };
     }
-    this.setState({ teamMembers });
+    this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
   };
 
   addJobShadower = () => {

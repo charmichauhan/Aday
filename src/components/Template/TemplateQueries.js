@@ -2,10 +2,8 @@ import { gql } from 'react-apollo';
 
 
 const allTemplateShifts = gql`
-  query allRecurrings ($brandId: Uuid!, $workplaceId: Uuid!) {
-    allRecurrings(condition: { brandId: $brandId, workplaceId: $workplaceId } ){
-      edges{
-        node{
+  query recurringById ($id: Uuid!) {
+    recurringById(id: $id){
           id
           workplaceByWorkplaceId{
             id
@@ -14,6 +12,7 @@ const allTemplateShifts = gql`
           recurringShiftsByRecurringId{
             edges{
               node{
+                id
                 startTime
                 endTime
                 workerCount
@@ -30,16 +29,31 @@ const allTemplateShifts = gql`
                   edges{
                     node{
                       userId
+                      userByUserId{
+                        firstName
+                        lastName
+                        avatarUrl
+                      }
                     }
                   }
                 }
               }
             }
           }
-        }
-      }
       }
 }`
+
+
+const findRecurring = gql`
+  query  findRecurring($brandId: Uuid!, $workplaceId: Uuid!) {
+    allRecurrings(condition: { brandId: $brandId, workplaceId: $workplaceId } ){
+      edges{
+        node{
+          id
+        }
+      }
+    }
+  }`
 
   const allUsers = gql`
       query allUsers {
@@ -57,4 +71,4 @@ const allTemplateShifts = gql`
       `
 
 
-export { allTemplateShifts, allUsers }
+export { allTemplateShifts, allUsers, findRecurring }

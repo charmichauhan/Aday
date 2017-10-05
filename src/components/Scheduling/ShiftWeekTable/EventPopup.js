@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { cloneDeep, findLastIndex } from 'lodash';
 import { gql, graphql, compose } from 'react-apollo';
-
 import { updateShiftMutation } from './ShiftEdit/EditShiftDrawer.graphql';
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawer from '../AddShift/CreateShift/CreateShiftAdvanceDrawer';
@@ -32,6 +31,7 @@ class EventPopupComponent extends Component {
       editModalPopped: false,
       newShiftModalPopped: false,
       shiftHistoryDrawer: false,
+      isSorted: true,
       isCreateShiftAdvanceOpen: false,
       drawerShift: {
         ...props.data,
@@ -85,7 +85,7 @@ class EventPopupComponent extends Component {
       this.setState({ editShiftModalOpen: true });
     }
     else if (modal == 'newShiftModalPopped') {
-      this.setState({ newShiftModalPopped: true });
+      this.setState({ newShiftModalPopped: true , isSorted: false});
     }
   };
   handleHistoryDrawer = () => {
@@ -134,7 +134,7 @@ class EventPopupComponent extends Component {
           }
           return {
             allShifts: previousQueryResult.allShifts
-          };
+            };
         },
       },
     }).then(({ data }) => {
@@ -193,7 +193,7 @@ class EventPopupComponent extends Component {
 
     var workersCount = data.workersRequestedNum || data.workerCount
     this.openShift = workersCount - (data.workersAssigned.length + data.workersInvited.length );
-
+    console.log(data)
     return (
       <div className="day-item hov">
 
@@ -256,6 +256,7 @@ class EventPopupComponent extends Component {
           shift={data}
           users={users}
           open={this.state.shiftHistoryDrawer}
+          isSorted={this.state.isSorted}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
         <CreateShiftDrawer

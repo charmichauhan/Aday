@@ -116,9 +116,7 @@ export class AddShiftForm extends Component{
                   console.log('got data', data);
                   /*
                   var shift = data.createShift.shift
-                  if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
-                  var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/callEmployee/'
-
+                  if ((moment(shift.startTime).diff(moment().format(), 'days')) <=
                      var options = {
                         uri: uri,
                         method: 'POST',
@@ -257,13 +255,13 @@ export class AddShiftForm extends Component{
          <div style={{width: '33%', float: 'left'}}>
             ADD SHIFT
          </div>
-        <div style={{width: '33%', float: 'left'}}>
-        <Image
-          src="/images/Assets/Icons/Buttons/delete-round-small.png"
-          shape="circular"
-          onClick={ this.handleCloseFunc }
-          style={{marginLeft: '250px', width:'45px' }}
-        />
+           <div style={{width: '33%', float: 'left'}}>
+             <Image
+               src="/images/Assets/Icons/Buttons/delete-round-small.png"
+               shape="circular"
+               onClick={ this.handleCloseFunc }
+               style={{marginLeft: '250px', width:'45px' }}
+             />
         </div>
       </Header>
         )
@@ -326,14 +324,15 @@ export class AddShiftForm extends Component{
               <ManagerSelectOption formCallBack={ this.updateFormState } />
             </div>
              <div style={{marginTop:'10px', height: '130px', width: '100%'}} >
-              <p className="shift-form-title">INSTRUCTIONS - <span style={{ color:'RED' }}>OPTIONAL</span></p>
-              <TextArea rows={3} style={{width:'100%'}} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={this.onInstructions} />
+             <p className="shift-form-title">INSTRUCTIONS - <span style={{ color:'RED' }}>OPTIONAL</span></p>
+             <TextArea rows={3} style={{width:'100%'}} placeholder='ENTER ADDITIONAL INFORMATION ABOUT THE SHIFT' onChange={this.onInstructions} />
+
              </div>
              </div>
              </div>
              </div>
-            </Form>
-         <div>
+          </Form>
+        <div>
           <Image.Group style={{ marginLeft:'36%',float:'left',marginBottom:'4px'}}>
            <Image
              src="/images/Assets/Icons/Buttons/cancel-shift.png"
@@ -355,15 +354,12 @@ export class AddShiftForm extends Component{
   }
 }
 
-
 /*
              <div style={{marginTop:'10px', height: '80px', width: '100%'}} >
               <p className="shift-form-title">MAXIMUM WAGE FOR SHIFT,INCLUDING SURGE WAGE</p>
               <Input type="number" min="0" disabled fluid placeholder="$0.00" icon={<Icon name="sort" />} style={{ marginTop:'-2%',backgroundColor:'lightgrey' }} />
              </div>
 */
-
-
 
 const createShiftMutation = gql`
  mutation createShift($data:CreateShiftInput!){

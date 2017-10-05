@@ -498,7 +498,7 @@ class DrawerHelper extends Component {
                          className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
-                  <StartToEndTimePicker isEdit={isEdit} startTime={shift.startTime} endTime={shift.endTime}
+                  <StartToEndTimePicker isEdit={true} startTime={shift.startTime} endTime={shift.endTime}
                                         onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>

@@ -15,22 +15,22 @@ import jobsData from './jobs.json';
 import '../style.css';
 import allShiftsByWeeksPublished from './shiftsByWeeksPublishedQuery'
 var Halogen = require('halogen');
-
-
-/*import EditShift from './ShiftEdit/Edit';
- import DeleteShift from './ShiftEdit/DeleteShift';
+/*
+import EditShift from './ShiftEdit/Edit';
+import DeleteShift from './ShiftEdit/DeleteShift';
  */
 
 
 function shiftReducer(state = {}, action) {
   switch (action.type) {
     case 'SUBMIT_NEW_SHIFT':
-      return Object.assign({}, state, {
-        shifts: [
-          ...(state.shifts || []),
-          {
-            //date: action.date,
-            workplace: action.workplace,
+    return Object.assign({}, state, {
+      shifts: [
+        ...(state.shifts || []),
+        {
+          //date: action.date,
+          workplace: action.workplace,
+
             /*template: action.template,
              certification: action.certification,
              start: action.start,
@@ -615,7 +615,7 @@ class ShiftWeekTableComponent extends Week {
               </TableRow>
             </TableFooter>
           </Table>
-        </div>
+  </div>
       </Provider>
     );
   }

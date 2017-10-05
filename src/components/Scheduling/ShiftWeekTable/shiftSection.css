@@ -84,7 +84,9 @@
   padding: 8px 12px;
   margin-bottom: 10px;
   border-radius: 4px;
-  position: relative;
+  height: 38px;
+  display: flex;
+  flex-direction: row;
 }
 
 .shift-section .time-selector-wrapper .label-wrapper {

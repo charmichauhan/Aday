@@ -25,16 +25,16 @@ import './select.css';
 const initialState = {
   shift: {
     shiftMethod: 'standard',
+    corporationId: localStorage.getItem('corporationId') || '',
+    brandId: localStorage.getItem('brandId') || '',
+    workplaceId: localStorage.getItem('workplaceId') || '',
+    positionId: '',
     recurringShift: 0,
+    shiftDaysSelected: {},
     numberOfTeamMembers: 1,
     unpaidBreakInMinutes: 0,
-    shiftDaysSelected: {},
     tags: [],
     tagOptions: [],
-    brandId: localStorage.getItem('brandId') || '',
-    corporationId: localStorage.getItem('corporationId') || '',
-    workplaceId: localStorage.getItem('workplaceId') || '',
-    positionId: ''
   },
   shiftErrors: {},
   brandId: localStorage.getItem('brandId') || '',
@@ -42,6 +42,9 @@ const initialState = {
   workplaceId: localStorage.getItem('workplaceId') || ''
 };
 
+/**
+ * When the shift is to be assigned via automation, the data below represents this to the user
+ */
 const unassignedTeamMember = {
   id: 0,
   firstName: 'Automated Shift',
@@ -60,6 +63,11 @@ const unassignedManager = {
   status: 'unassigned'
 };
 
+/**
+ * [shift description]
+ * @author Raj Kapoor
+ * @since Sep 15, 2017
+ */
 class DrawerHelper extends Component {
 
   constructor(props) {
@@ -420,7 +428,10 @@ class DrawerHelper extends Component {
           </div>
 
           <div className="col-md-12 form-div edit-drawer-content">
+
+
             <Grid columns={2}>
+{/*
               <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
                   <Image src="/assets/Icons/scheduling-method.png" style={{ width: 28, height: 'auto' }}
@@ -438,7 +449,7 @@ class DrawerHelper extends Component {
                     options={[{ key: 'standard', value: 'standard', text: 'STANDARD' }]} />
                 </Grid.Column>
               </Grid.Row>
-
+*/}
               <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
                   <Image src="/assets/Icons/workplace.png" style={{ width: 26, height: 'auto' }}
@@ -506,6 +517,11 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <StartToEndTimePicker isEdit={isEdit} startTime={shift.startTime} endTime={shift.endTime}
                                         onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
+                    <div className="performance-tagline">
+                      <p>
+                          Shift Length: 0 Hours 0 Minutes
+                      </p>
+                    </div>
                 </Grid.Column>
               </Grid.Row>
 

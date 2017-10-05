@@ -4,6 +4,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import moment from 'moment';
 
 import 'rc-timepicker/lib/css/styles.css';
+import './select.css';
 
 export default class StartToEndTimePicker extends Component {
   constructor(props) {
@@ -86,7 +87,7 @@ export default class StartToEndTimePicker extends Component {
         <div className="time-wrapper">
           <label className="text-uppercase blue-heading">Start Time</label>
         </div>
-        <div className="time-wrapper">
+        <div className="time-wrapper" style={{marginLeft:-5}}>
           <label className="text-uppercase blue-heading">End Time</label>
         </div>
         <div className="label-wrapper" onClick={this.toggleSelector}>
@@ -109,6 +110,8 @@ export default class StartToEndTimePicker extends Component {
           <p>
             <i className="fa fa-clock-o" />
           </p>
+          <p style={{flex: 1}}>{startTimeValueTop || <span className='placeholder-text'>WHEN WILL THE SHIFT START?</span>}</p>
+          <p style={{flex: 1, textAlign:'left'}}>{endTimeValueTop || <span className='placeholder-text'>WHEN WILL THE SHIFT END?</span>}</p>
         </div>
         <div className="time-selector-display" style={{ display: showSelector ? 'block' : 'none' }}>
           <div className="time-wrapper">
@@ -120,6 +123,9 @@ export default class StartToEndTimePicker extends Component {
           <div className="time-actions-wrapper text-uppercase">
             <div className="left-picker-group">
                 <button className="now-picker-button" onClick={onNowSelect}>NOW</button>
+            </div>
+            <div className="center-footer-group">
+              <span>Shift Length: 8 hours 30 minutes</span>
             </div>
             <div className="right-picker-group">
                 <div style={{alignSelf:'center'}}>

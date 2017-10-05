@@ -12,7 +12,7 @@ export default class WorkplaceListingsComponent extends Component {
 		const ListingCard = (props) => {
 			 return (
 				 <div className="workplace-card-spacing">
-					 <Card className="workplace-listing-card" href="listing">
+					 <Card className="workplace-listing-card" href={"listing/"+props.workplaceId+"/"+props.opportunityId}>
 					   <Card.Content style={{margin:-15}}>
 						   <div className="workplace-listing-upper">
 							   <div className="workplace-listing-head">
@@ -46,6 +46,8 @@ export default class WorkplaceListingsComponent extends Component {
 								<ListingCard key={i}
 									brandIcon={opportunity.positionByPositionId.positionIconUrl}
 									jobTitle={opportunity.positionByPositionId.positionName}
+									workplaceId={localStorage.getItem("workplaceId")}
+									opportunityId={opportunity.id}
 									location="Harvard Business School, Restaurant Associates"
 									travelTime="125 Batten Way, Boston • 0 miles away"
 								/>

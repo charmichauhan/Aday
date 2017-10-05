@@ -13,8 +13,11 @@ const workplaceInfo = gql`
 			isRatingsPublic
 			opportunitiesByWorkplaceId (condition: {isPublic: true}){
 				nodes{
+					id
 					positionByPositionId{
+						id
 						positionName
+						positionDescription
 						positionIconUrl
 					}
 				}

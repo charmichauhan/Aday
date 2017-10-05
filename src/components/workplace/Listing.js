@@ -6,6 +6,7 @@ import WorkplaceMap from '../maps/Workplace'
 import WorkplacePhotos from './WorkplacePhotos'
 import { gql, graphql} from 'react-apollo';
 import CircleButton from '../helpers/CircleButton';
+import { workplaceInfo } from './workplaceQueries';
 
 const styles = {
   circleButton: {
@@ -15,16 +16,25 @@ const styles = {
 }};
 
 class MyWorkplace extends Component {
+  // function to help identify which opportunity is coded in the url
+  opportunityMatch =(opportunity)=> {
+    const opportunityId = this.props.match.params.opportunityId;
+    return opportunity.id == opportunityId;
+  }
 	render() {
 		if (this.props.data.loading) {
 			return (<div>Loading...</div>);
 		}
 		if (this.props.data.error) {
-			if (localStorage.getItem("workplaceId") != "") {
-				return (<div>An Unexpected Error Occurred</div>);
-			}
+			return (<div>An Unexpected Error Occurred</div>);
 		}
-
+    const opportunities = this.props.data.workplaceById.opportunitiesByWorkplaceId.nodes;
+    const opportunity = opportunities.find(this.opportunityMatch);
+    console.log(opportunities);
+    console.log(this.props.match.params.opportunityId);
+    if (!opportunity) {
+      return (<div>An Unexpected Error Occurred</div>);
+    }
 		return (
 			<div>
 				<div className="col-md-12 page-title-rectangle">
@@ -60,10 +70,10 @@ class MyWorkplace extends Component {
 							</div>
 						</div>
 					</div>
-					<div className="workplace-subheader" style={{paddingBottom:10}}>CASHIER POSITION</div>
+					<div className="workplace-subheader" style={{paddingBottom:10}}>{opportunity.positionByPositionId.positionName}</div>
 					<div>
 						<div className="job-description">
-							<span style={{flex:14}}>Performs cashiering duties, including making cash transactions, verifying cash drawer, giving change, counting cash receipts and completing cash reports. May also perform general food service work. Maintains sanitation standards in the preparation, service and dining room facilities. </span>
+							<span style={{flex:14}}>{opportunity.positionByPositionId.positionDescription} </span>
 							<div style={{alignSelf:"center"}}>
 								<CircleButton style={styles.circleButton} type="green" title="Apply"/>
 							</div>
@@ -76,24 +86,10 @@ class MyWorkplace extends Component {
 	}
 }
 
-const workplaceInfo = gql`
-	query($workplaceId: Uuid!){
-		workplaceById(id:$workplaceId){
-			workplaceName
-			brandByBrandId{
-				brandName
-				brandIconUrl
-			}
-			address
-			workplaceImageUrl
-		}
-	}
-`
-
 export default graphql(workplaceInfo, {
 	options: (ownProps) => ({
 		variables: {
-			workplaceId: localStorage.getItem('workplaceId') ,
+			workplaceId: ownProps.match.params.workplaceId,
 		}
 	}),
 })(MyWorkplace);

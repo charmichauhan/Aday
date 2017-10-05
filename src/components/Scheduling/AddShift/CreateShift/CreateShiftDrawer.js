@@ -81,6 +81,12 @@ class DrawerHelper extends Component {
       } else {
         shift.teamMembers = shift.workersRequestedNum && times(shift.workersRequestedNum, () => unassignedTeamMember);
       }
+      shift.recurringShift = shift.recurringShiftId && 'weekly' || 'none';
+      if ([null, undefined, ''].indexOf(shift.unpaidBreakTime) !== -1) {
+        shift.unpaidBreakInMinutes = 0;
+      } else {
+        shift.unpaidBreakInMinutes = shift.unpaidBreakTime || 0;
+      }
     }
     this.state = {
       ...initialState,
@@ -124,13 +130,13 @@ class DrawerHelper extends Component {
       }
     } else {
       if (nextProps.open !== this.props.open) {
-        this.setState((state) => ({
-          shift: {
-            ...state.shift,
-            ...initialState.shift,
-            ...nextProps.shift
-          }
-        }));
+        let shift = {
+          ...initialState.shift,
+          ...this.state.shift,
+          ...nextProps.shift
+        };
+        this.setState({ shift });
+        this.validateShift(shift);
       }
     }
 
@@ -498,7 +504,7 @@ class DrawerHelper extends Component {
                          className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
-                  <StartToEndTimePicker isEdit={true} startTime={shift.startTime} endTime={shift.endTime}
+                  <StartToEndTimePicker isEdit={isEdit} startTime={shift.startTime} endTime={shift.endTime}
                                         onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>

@@ -12,7 +12,7 @@ export default class UnpaidBreakInMinutes extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedValue: ''
+      selectedValue: 0
     }
   }
 

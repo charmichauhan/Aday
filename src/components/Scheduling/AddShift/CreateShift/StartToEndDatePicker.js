@@ -3,6 +3,7 @@ import { Calendar } from 'react-date-range';
 import { Icon } from 'semantic-ui-react';
 import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';
+import './styles.css';
 
 export default class StartToEndTimePicker extends Component {
   constructor(props) {
@@ -48,14 +49,14 @@ export default class StartToEndTimePicker extends Component {
       <div className="time-selector-wrapper">
         <div className="date-wrapper border-wrapper" onClick={this.toggleStartSelector}>
           <label className="text-uppercase blue-heading">Starts On</label>
-          <p className="start-date">{startDateValue || 'When does this shift start?'}
-            <span><i className="fa fa-clock-o clock-font" /></span>
+          <p className="start-date">{startDateValue || <span className="placeholderText">WHEN DO THESE SHIFTS BEGIN?</span>}
+            {/*<span><i className="fa fa-clock-o clock-font" /></span>*/}
           </p>
         </div>
         <div className="date-wrapper border-wrapper" onClick={this.toggleEndSelector}>
           <label className="text-uppercase blue-heading">Ends On</label>
-          <p className="start-date">{endDateValue || 'When does this shift end?'}
-            <span><i className="fa fa-clock-o clock-font" /></span>
+          <p className="start-date">{endDateValue || <span className="placeholderText">WHEN DO THESE SHIFTS END?</span>}
+            {/*<span><i className="fa fa-clock-o clock-font" /></span>*/}
           </p>
         </div>
         <div className="date-selector-display" style={{ display: startDateSelector ? 'block' : 'none' }}>
@@ -63,7 +64,7 @@ export default class StartToEndTimePicker extends Component {
         </div>
         <div className="date-selector-display end-date-selector" style={{ display: endDateSelector ? 'block' : 'none', right: 0 }}>
           <RaisedButton label="Never"
-                        style={{ boxShadow: 'none' }}
+                        style={{ boxShadow: 'none', marginTop:10 }}
                         icon={<Icon name="genderless" className="floatLeft never-icon" /> }
           />
           <p className="text-center or-btn">OR</p>

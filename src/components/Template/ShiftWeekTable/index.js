@@ -176,7 +176,11 @@ class ShiftWeekTableComponent extends Week {
 
          if (this.props.data.error) {
              console.log(this.props.data.error)
-             return (<div> Must Select A Workplace </div>)
+            if (localStorage.getItem('workplaceId')){
+             return ( <div> This Workplace Has No Repeating Shifts. </div>)
+            } else { 
+              return (<div> Must Select A Workplace. </div>)
+            }
         }
 
         if (this.state.redirect){

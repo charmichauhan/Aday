@@ -212,7 +212,7 @@ class EventPopupComponent extends Component {
         <Modal
           title="Confirm"
           isOpen={this.state.deleteModalPopped}
-          message="Are you sure that you want to delete this recurring shift?"
+          message="Are you sure that you want to delete this repeating shift?"
           action={deleteShiftAction}
           closeAction={this.modalClose} />
         <EditShiftDrawerContainer

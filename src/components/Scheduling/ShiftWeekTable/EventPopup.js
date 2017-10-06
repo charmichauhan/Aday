@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import cloneDeep from 'lodash/cloneDeep';
 import { gql, graphql, compose } from 'react-apollo';
-import { updateShiftMutation } from './ShiftEdit/EditShiftDrawer.graphql';
+import {
+  updateShiftMutation,
+  deleteShiftMutation,
+  deleteRecurringShiftById
+} from './ShiftEdit/EditShiftDrawer.graphql';
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawer from '../AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import CreateShiftDrawer from '../AddShift/CreateShift/CreateShiftDrawer';
@@ -63,6 +67,27 @@ class EventPopupComponent extends Component {
     let that = this;
     that.props.deleteShiftById(uuidv4(), id)
       .then(({ data }) => {
+        console.log('Delete Data', data);
+      }).catch((error) => {
+      console.log('there was an error sending the query', error);
+    });
+    that.setState({ deleteModalPopped: false });
+  };
+  // deleteRecurringShiftById
+
+  deleteRecurringShift = () => {
+    let {id} = this.props.data;
+    let {recurringShiftId} = this.props.data;
+    let that = this;
+
+    that.props.deleteShiftById(uuidv4(), id)
+      .then(({ data }) => {
+        that.props.deleteRecurringShiftById(recurringShiftId)
+          .then(({ data }) => {
+            console.log('Delete Data', data);
+          }).catch((error) => {
+          console.log('there was an error sending the query deleteRecurringShift', error);
+        });
         console.log('Delete Data', data);
       }).catch((error) => {
       console.log('there was an error sending the query', error);
@@ -179,7 +204,7 @@ class EventPopupComponent extends Component {
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
       { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
-    let deleteShiftRenderAction = [{ type: 'red', title: 'All Following', handleClick: this.deleteShift, image: '/images/modal/close.png' },
+    let deleteShiftRenderAction = [{ type: 'red', title: 'All Following',   handleClick: this.deleteRecurringShift, image: '/images/modal/close.png' },
       { type: 'red', title: 'Only this', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
     if (data.workersAssigned == null) {
       data.workersAssigned = [];
@@ -240,25 +265,19 @@ class EventPopupComponent extends Component {
 
 
         {recurringShiftId ?
+          <DeleteRecuringPopUp
+          title="Confirm"
+          isOpen={this.state.deleteModalPopped}
+          message="Are you sure that you want to delete this shift?"
+          action={deleteShiftRenderAction}
+          closeAction={this.modalClose} />:
           <Modal
             title="delete"
             isOpen={this.state.deleteModalPopped}
             message="Instance events will be delete?"
             action={deleteShiftAction}
-            closeAction={this.modalClose} />:
-          <DeleteRecuringPopUp
-            title="Confirm"
-            isOpen={this.state.deleteModalPopped}
-            message="Are you sure that you want to delete this shift?"
-            action={deleteShiftRenderAction}
-            closeAction={this.modalClose} />}
-
-        {/*<*/}
-          {/*title="ConfirmConfirmConfirmConfirm"*/}
-          {/*isOpen={this.state.deleteModalPopped}*/}
-          {/*message="Are you sure that you want to delete this shift?"*/}
-          {/*action={deleteShiftAction}*/}
-          {/*closeAction={this.modalClose} />*/}
+            closeAction={this.modalClose} />
+          }
         <EditShiftDrawerContainer
           shift={data}
           users={users}
@@ -309,18 +328,7 @@ class EventPopupComponent extends Component {
   }
 }
 
-const deleteShift = gql`
-  mutation($clientMutationId: String,$id: Uuid!){
-    deleteShiftById(
-    input: {clientMutationId: $clientMutationId,
-    id: $id}){
-            shift{
-                id
-            }
-    }
-  }`;
-
-const EventPopup = compose(graphql(deleteShift, {
+const EventPopup = compose(graphql(deleteShiftMutation, {
   props: ({ ownProps, mutate }) => ({
     deleteShiftById: (clientMutationId, id) => mutate({
       variables: { clientMutationId: clientMutationId, id: id },
@@ -339,10 +347,30 @@ const EventPopup = compose(graphql(deleteShift, {
         },
       },
     }),
-
   }),
-}), graphql(updateShiftMutation, {
-  name: 'updateShiftMutation'
+}), graphql(deleteRecurringShiftById, {
+  props: ({ ownProps, mutate }) => ({
+    deleteRecurringShiftById: (recurringShiftId) => mutate({
+      variables: { id: recurringShiftId },
+      updateQueries: {
+        allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+          let newEdges = []
+          previousQueryResult.allShifts.edges.map((value) => {
+            if (value.node.recurringShiftId != mutationResult.data.deleteRecurringShiftById.shift.recurringShiftId) {
+              value.node.recurringShiftId = null;
+              newEdges.push(value);
+            }
+          })
+          previousQueryResult.allShifts.edges = newEdges
+          return {
+            allShifts: previousQueryResult.allShifts
+          };
+        },
+      },
+    }),
+  }),
+}),graphql(updateShiftMutation, {
+    name: 'updateShiftMutation'
 }))(EventPopupComponent);
 
 export default EventPopup;

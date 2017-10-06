@@ -43,14 +43,21 @@ export const updateShiftMarket = gql`
     }
   }`;
 
-  
-
 export const deleteShiftMutation = gql`
   mutation($clientMutationId: String,$id: Uuid!){
     deleteShiftById(
       input: {clientMutationId: $clientMutationId,
         id: $id}){
       shift{
+        id
+      }
+    }
+  }`;
+
+export const deleteRecurringShiftById = gql`
+  mutation($id: Uuid!){
+    deleteRecurringShiftById(input: {id: $id}){
+      recurringByRecurringId{
         id
       }
     }
@@ -81,6 +88,7 @@ export const updateShiftMutation = gql`
         traineesRequestedNum
         managersOnShift
         unpaidBreakTime
+        recurringShiftId
         positionByPositionId{
           id
           positionName

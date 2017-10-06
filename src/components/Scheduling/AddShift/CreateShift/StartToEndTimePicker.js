@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TimePicker } from 'rc-timepicker';
 import cloneDeep from 'lodash/cloneDeep';
 import moment from 'moment';
+import InputMask from 'react-input-mask';
 
 import 'rc-timepicker/lib/css/styles.css';
 import './select.css';
@@ -14,7 +15,8 @@ export default class StartToEndTimePicker extends Component {
       startTimeValue: props.isEdit && moment(props.startTime).format('HH:mm'),
       endTime: props.endTime,
       endTimeValue: props.isEdit && moment(props.startTime).format('HH:mm'),
-      showSelector: false
+      showSelector: false,
+      duration: { hours: 0, minutes: 0 }
     }
   }
 
@@ -50,15 +52,44 @@ export default class StartToEndTimePicker extends Component {
   }
 
   handleTimeChange = ({ name, value }) => {
+    function escapeMarkings(unsafe) {
+      return unsafe.replace(/_/g, '');
+    }
+
     const stateValue = cloneDeep(this.state[name]) || moment();
-    let [hour, min] = value.split(':');
-    if (hour) stateValue.hour(hour);
-    if (min) stateValue.minute(min);
+    let [hour, min] = escapeMarkings(value).split(':');
+    if (hour && hour >= 0 && hour <= 24) {
+      stateValue.hour(hour);
+    }
+    if (min && min >= 0 && min <= 60) {
+      stateValue.minute(min);
+    }
     const { formCallBack } = this.props;
     if (formCallBack && hour && min) {
       formCallBack({ [name]: stateValue });
     }
-    this.setState({ [name]: stateValue, [name + 'Value']: value });
+
+    const startTime = name === 'startTime' && stateValue || this.state.startTime;
+    const endTime = name === 'endTime' && stateValue || this.state.endTime;
+    const { startTimeValue, endTimeValue } = this.state;
+    const stateToUpdate = { [name]: stateValue, [name + 'Value']: value };
+    if (startTime && startTime.isValid() && startTimeValue
+      && endTime && endTime.isValid() && (endTimeValue || name === 'endTime')) {
+      let minDiff = endTime.diff(startTime, 'minutes');
+      if (minDiff > 0) {
+        stateToUpdate.duration = {
+          hours: (minDiff - (minDiff % 60) ) / 60,
+          minutes: minDiff % 60
+        };
+      }
+    }
+
+    this.setState(stateToUpdate, () => {
+      const { formCallBack } = this.props, { startTime, endTime } = this.state;
+      if (formCallBack && startTime && startTime.isValid() && endTime && endTime.isValid()) {
+        formCallBack({ startTime, endTime });
+      }
+    });
   };
 
   setCallbackData = () => {
@@ -80,7 +111,7 @@ export default class StartToEndTimePicker extends Component {
   };
 
   render() {
-    const { showSelector, startTime, startTimeValue, endTime, endTimeValue } = this.state;
+    const { duration, showSelector, startTime, startTimeValue, endTime, endTimeValue } = this.state;
     const { onNowSelect } = this.props;
     return (
       <div className="time-selector-wrapper">
@@ -92,20 +123,22 @@ export default class StartToEndTimePicker extends Component {
         </div>
         <div className="label-wrapper" onClick={this.toggleSelector}>
           <p>
-            <input
+            <InputMask
               type="text"
               name="startTime"
               value={startTimeValue || ''}
               onChange={({ target }) => this.handleTimeChange(target)}
-              placeholder="When does this shift start? (08:30)" />
+              placeholder="When does this shift start? (08:30)"
+              mask="99:99" maskChar="_" />
           </p>
           <p>
-            <input
+            <InputMask
               type="text"
               name="endTime"
               value={endTimeValue || ''}
               onChange={({ target }) => this.handleTimeChange(target)}
-              placeholder="When does this shift end? (15:00)" />
+              placeholder="When does this shift end? (15:00)"
+              mask="99:99" maskChar="_" />
           </p>
           <p>
             <i className="fa fa-clock-o" />
@@ -125,7 +158,7 @@ export default class StartToEndTimePicker extends Component {
                 <button className="now-picker-button" onClick={onNowSelect}>NOW</button>
             </div>
             <div className="center-footer-group">
-              <span>Shift Length: 8 hours 30 minutes</span>
+              <span>Shift Length: {duration.hours} hours {duration.minutes} minutes</span>
             </div>
             <div className="right-picker-group">
                 <div style={{alignSelf:'center'}}>

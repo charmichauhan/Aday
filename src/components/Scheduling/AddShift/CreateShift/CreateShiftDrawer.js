@@ -207,6 +207,7 @@ class DrawerHelper extends Component {
         });
       }
     }
+    if (name === 'recurringShift') shift.shiftDaysSelected = {};
     this.setState({ shift });
     this.validateShift(shift);
   };
@@ -251,8 +252,16 @@ class DrawerHelper extends Component {
       }
       dataValue.unpaidBreak = hours + ':' + minutes;
     }
-    if ((dataValue.startTime || dataValue.endTime) && this.state.shift.startTime && this.state.shift.endTime) {
-
+    const startTime = dataValue.startTime || this.state.shift.startTime;
+    const endTime = dataValue.endTime || this.state.shift.endTime;
+    if (startTime && startTime.isValid() && endTime && endTime.isValid()) {
+      let minDiff = endTime.diff(startTime, 'minutes');
+      if (minDiff > 0) {
+        dataValue.duration = {
+          hours: (minDiff - (minDiff % 60) ) / 60,
+          minutes: minDiff % 60
+        };
+      }
     }
     if (dataValue.shiftDaysSelected) selectedDate = '';
     const shift = Object.assign(this.state.shift, dataValue);
@@ -325,7 +334,6 @@ class DrawerHelper extends Component {
       shift,
       workplaces,
       positions,
-      workplaceId,
       weekStart,
       selectedDate,
       filteredManagers,
@@ -507,9 +515,7 @@ class DrawerHelper extends Component {
                   <StartToEndTimePicker isEdit={isEdit} startTime={shift.startTime} endTime={shift.endTime}
                                         onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
                     <div className="performance-tagline">
-                      <p>
-                          Shift Length: 0 Hours 0 Minutes
-                      </p>
+                      <p>Shift Length: {shift.duration.hours} Hours {shift.duration.minutes} Minutes</p>
                     </div>
                 </Grid.Column>
               </Grid.Row>

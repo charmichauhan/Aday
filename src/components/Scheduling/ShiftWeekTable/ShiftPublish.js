@@ -305,7 +305,8 @@ class ShiftPublishComponent extends Component {
       startDate: shift.startDate,
       days: days,
       recurringId: recurringId,
-      isTraineeShift: false
+      isTraineeShift: false,
+      expired: false
     };
     this.props.createRecurringShift({
       variables: {

@@ -44,13 +44,14 @@ const allTemplateShifts = gql`
 }`
 
 
-const findRecurring = gql`
-  query  findRecurring($brandId: Uuid!) {
+const allRecurrings = gql`
+  query  allRecurrings($brandId: Uuid!) {
     allRecurrings(condition: { brandId: $brandId } ){
       edges{
         node{
           id
           workplaceId
+          brandId
         }
       }
     }
@@ -72,4 +73,4 @@ const findRecurring = gql`
       `
 
 
-export { allTemplateShifts, allUsers, findRecurring }
+export { allTemplateShifts, allUsers, allRecurrings }

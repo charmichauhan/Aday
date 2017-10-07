@@ -16,7 +16,7 @@ var Halogen = require('halogen');
 import CreateShiftButton from '../Scheduling/AddShift/CreateShiftButton';
 import  EditShiftDrawerContainer from './ShiftWeekTable/ShiftEdit/recurringShiftDrawerContainer';
 import cloneDeep from 'lodash/cloneDeep';
-import { findRecurring, allTemplateShifts } from './TemplateQueries';
+import { allRecurrings, allTemplateShifts } from './TemplateQueries';
 const uuidv4 = require('uuid/v4');
 var rp = require('request-promise');
 
@@ -92,11 +92,10 @@ class TemplateComponent extends Component {
   };
 
   handleCreateSubmit = (shiftValue, recurringId) => {
-
     if(recurringId == null) {
         let recurring = uuidv4();
         const payload = {
-          id: recurring, 
+         id: recurring, 
           workplaceId: localStorage.getItem("workplaceId"),
           brandId: localStorage.getItem("brandId"),
           lastWeekApplied: moment().add(7, "weeks").endOf('week').format()
@@ -106,6 +105,15 @@ class TemplateComponent extends Component {
           data: {
             recurring: payload
           }
+        },
+        updateQueries: {
+          allRecurrings: (previousQueryResult, { mutationResult }) => {
+            const recurring = mutationResult.data.createRecurring.recurring
+            previousQueryResult.allRecurrings.edges = [...previousQueryResult.allRecurrings.edges, {node: recurring, __typename: "RecurringsEdge"}];
+            return {
+              allRecurrings: previousQueryResult.allRecurrings
+            };
+          },
         },
       }).then(({ data }) => {
            this.createRecurringShift(shiftValue, recurring)
@@ -130,7 +138,6 @@ class TemplateComponent extends Component {
         }
       })
 
-      console.log("END DATE: !!!!!! " + shift.endDate)
       const payload = {
         id: id,
         positionId: shift.positionId,
@@ -157,7 +164,7 @@ class TemplateComponent extends Component {
           recurringById: (previousQueryResult, { mutationResult }) => {
             const recurringShift = mutationResult.data.createRecurringShift.recurringShift
             previousQueryResult.recurringById.recurringShiftsByRecurringId.edges = [...previousQueryResult.recurringById.recurringShiftsByRecurringId.edges, {node: recurringShift, __typename: "RecurringShiftsEdge"}];
-            console.log(previousQueryResult.recurringById.recurringShiftsByRecurringId.edges)
+
             return {
               recurringById: previousQueryResult.recurringById
             };
@@ -166,6 +173,7 @@ class TemplateComponent extends Component {
       }).then(({ data }) => {
 
       if (shiftValue.teamMembers && shiftValue.teamMembers.length > 0){
+          const memberCount = shiftValue.teamMembers.length -1
           shiftValue.teamMembers.map(function(member, i) {
             const assignee_payload = {
               recurringShiftId: id,
@@ -178,44 +186,43 @@ class TemplateComponent extends Component {
                   }
                 },
                 updateQueries: {
-                /*  recurringById: (previousQueryResult, { mutationResult }) => {
+                  recurringById: (previousQueryResult, { mutationResult }) => {
                     const recurringShiftAssignee = mutationResult.data.createRecurringShiftAssignee.recurringShiftAssignee
-                    const recurringShift = recurringShiftAssignee.reccuringShiftId
+                    const recurringShift = recurringShiftAssignee.recurringShiftId
                     previousQueryResult.recurringById.recurringShiftsByRecurringId.edges.map(function(shift, i){
-                      if (shift.id == recurringShift){
-                                reutrn 
+                      if (shift.node.id == recurringShift){
+                                shift.node.recurringShiftAssigneesByRecurringShiftId.edges = [ ...shift.node.recurringShiftAssigneesByRecurringShiftId.edges, {node: recurringShiftAssignee, __typename: "RecurringShiftAssigneesEdge"}]
                       }
-  
                     })
-                    previousQueryResult.recurringById.recurringShiftsByRecurringId.edges = [...previousQueryResult.recurringById.recurringShiftsByRecurringId.edges, {node: recurringShift, __typename: "RecurringShiftsEdge"}];
-                    console.log(previousQueryResult.recurringById.recurringShiftsByRecurringId.edges)
                     return {
                       recurringById: previousQueryResult.recurringById
                     };
-                  }, */
+                  }, 
                 },
 
             }).then(({ data }) => {
 
-                    var uri = 'http://localhost:8080/api/newRecurring'
-
-                     var options = {
-                        uri: uri,
-                        method: 'POST',
-                        json: {
-                            "data": {
-                              "sec": "QDVPZJk54364gwnviz921",
-                              "recurringShiftId": id,
-                              "startsOn": shift.startDate || moment().format()
-                            }
-                        }
-                    };
-                      rp(options)
-                        .then(function(response) {
-                               //that.setState({redirect:true})
-                          }).catch((error) => {
-                              console.log('there was an error sending the query', error);
-                          });   
+              if (memberCount == i) {
+                var uri = 'http://localhost:8080/api/newRecurring'
+                  
+                  var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {
+                      "data": {
+                      "sec": "QDVPZJk54364gwnviz921",
+                      "recurringShiftId": id,
+                      "startsOn": shift.startDate || moment().format()
+                      }
+                    }
+                  };
+                  rp(options)
+                  .then(function(response) {
+                    //that.setState({redirect:true})
+                  }).catch((error) => {
+                      console.log('there was an error sending the query', error);
+                  });  
+              } 
     
             }).catch(err => {
                 console.log('There was error in saving recurring shift assignee', err);
@@ -253,13 +260,14 @@ class TemplateComponent extends Component {
 
 
     render() {
-      if (this.props.data.loading) {
+      console.log(this.props)
+      if (this.props.recurrings.loading) {
           return (<div><Halogen.SyncLoader color='#00A863'/></div>)
       }
 
       let recurring = null;
-      if (this.props.data.allRecurrings.edges[0]){
-        this.props.data.allRecurrings.edges.map(function(shift, i){
+      if (this.props.recurrings.allRecurrings.edges[0]){
+        this.props.recurrings.allRecurrings.edges.map(function(shift, i){
             if (shift.node.workplaceId == localStorage.getItem('workplaceId')){
               recurring = shift.node.id
             };
@@ -353,12 +361,13 @@ class CustomToolbar extends Toolbar {
 
 
 const Template = compose(
-  graphql(findRecurring, {
+  graphql(allRecurrings, {
     options: (ownProps) => ({
       variables: {
         brandId: localStorage.getItem('brandId'),
-      }
-    })
+      },
+    }),
+    name: 'recurrings'
   }),
 graphql(createRecurringShift, {
   name: 'createRecurringShift'

@@ -13,6 +13,7 @@
   font-size: 20px;
   font-weight: bolder;
   line-height: 24px;
+  letter-spacing: 0.5px;
 }
 
 .lastName {
@@ -20,8 +21,9 @@
   color: #666666;
   font-family: "Roboto Condensed";
   font-size: 20px;
-  font-weight: lighter;
+  font-weight: normal;
   line-height: 24px;
+  letter-spacing: 0.5px;
 }
 
 .text-uppercase {
@@ -103,6 +105,12 @@
   margin-bottom: 0;
 }
 
+/*Rahkeem: will increase specificity of selector later*/
+.member-list {
+  margin-left: -35px !important;
+  margin-bottom: 5px
+}
+
 .member-list .teamMemberOption.option .label b,
 .member-list .teamMemberOption.option .label span {
   color: #666666;
@@ -128,15 +136,15 @@
 }
 
 .greenBorder {
-  border: 2px solid #00A863;
+  border: 1px solid #00A863;
 }
 
 .redBorder {
-  border: 2px solid #E33821;
+  border: 1px solid #E33821;
 }
 
 .orangeBorder {
-  border: 2px solid #FFAD33;
+  border: 1px solid #FFAD33;
 }
 
 .blue-text {
@@ -181,6 +189,7 @@
 .teamMemberCard {
   display: flex;
   margin-bottom: 10px;
+  width: 638px;
 }
 
 .teamMemberCard > .edits {
@@ -350,8 +359,8 @@
 }
 
 .member-list .teamMemberCard .description {
-  color: #999999;
-  font-family: Lato;
+  color: #000;
+  font-family: Lato-Light;
   font-size: 15px;
   line-height: 15px;
 }

@@ -48,8 +48,8 @@ const initialState = {
  */
 const unassignedTeamMember = {
   id: 0,
-  firstName: 'Automated Shift',
-  lastName: '',
+  firstName: '',
+  lastName: 'Automated Shift',
   avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/icons/time-lapse-red.png',
   content: 'Assign shift to override automation',
   status: 'unassigned'
@@ -57,10 +57,10 @@ const unassignedTeamMember = {
 
 const unassignedManager = {
   id: 0,
-  firstName: 'Select team member',
+  firstName: 'Select Manager',
   lastName: '',
   avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/anonymous-profile.png',
-  content: 'Assign shift to a team member',
+  content: 'Assign shift to a manager',
   status: 'unassigned'
 };
 
@@ -102,7 +102,7 @@ class DrawerHelper extends Component {
       shift,
       isEdit: !!shift.id,
       weekStart: props.weekStart,
-      users: props.users
+      users: props.users,
     };
   }
 
@@ -424,6 +424,7 @@ class DrawerHelper extends Component {
 
             <Grid columns={2}>
 {/*
+  * Removed by Rahkeem, will re-introduce once new scheduling method is implemented
               <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
                   <Image src="/assets/Icons/scheduling-method.png" style={{ width: 28, height: 'auto' }}
@@ -536,7 +537,7 @@ class DrawerHelper extends Component {
 
               {shift.recurringShift === 'weekly' && <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
-                  <Image src="/assets/Icons/shift-date.png" style={{ width: 28, height: 'auto' }}
+                  <Image src="/assets/Icons/startend-dates.png" style={{ width: 28, height: 'auto' }}
                          className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
@@ -580,28 +581,36 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
+
+                  <div className="member-list"
+                       style={{ display: ((isRecurring && !isEdit) || (shift.teamMembers && !shift.teamMembers.length)) && 'none' || 'block' }}>
+
+                    {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) =>
+                      <TeamMemberCard
+                        avatarUrl={tm.avatarUrl}
+                        firstName={tm.firstName}
+                        lastName={tm.lastName}
+                        content={tm.content}
+                        isManager={shift.positionId === 'manager'}
+                        users={shift.positionId === 'manager' && filteredManagers || users}
+                        color={this.borderColor(tm.status) + 'Border'}
+                        key={i}
+                        id={i}
+                        handleRemove={() => this.removeTeamMember(i)}
+                        onSelectChange={this.setTeamMember}
+                      />)
+                    }
+
+                  </div>
+
                   {(isRecurring || isTeamMembersFull)
                   && <Tooltip className="tooltip-message" text={addTeamMemberTooltip}>
                     <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull} />
                   </Tooltip> || <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull}
                                               onClick={this.handleAddTeamMember} />}
 
-                  <div className="member-list"
-                       style={{ display: ((isRecurring && !isEdit) || (shift.teamMembers && !shift.teamMembers.length)) && 'none' || 'block' }}>
-                    {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) => <TeamMemberCard
-                      avatarUrl={tm.avatarUrl}
-                      firstName={tm.firstName}
-                      lastName={tm.lastName}
-                      content={tm.content}
-                      isManager={shift.positionId === 'manager'}
-                      users={shift.positionId === 'manager' && filteredManagers || users}
-                      color={this.borderColor(tm.status) + 'Border'}
-                      key={i}
-                      id={i}
-                      handleRemove={() => this.removeTeamMember(i)}
-                      onSelectChange={this.setTeamMember}
-                    />)}
-                  </div>
+
+
                 </Grid.Column>
               </Grid.Row>
 
@@ -613,15 +622,18 @@ class DrawerHelper extends Component {
                 <Grid.Column className="tag-dropdown" width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Tags</label>
                   <Dropdown
-                    multiple
-                    name="tags"
-                    fluid
-                    placeholder='Add tags'
-                    search
-                    selection
-                    allowAdditions
-                    options={shift.tagOptions}
-                    onChange={(_, data) => this.handleChange({ target: data })} />
+                      options={shift.tagOptions}
+                      placeholder='Add Tags'
+                      search
+                      selection
+                      fluid
+                      multiple
+                      allowAdditions
+                      additionLabel='Add New Tag: '
+                      value={shift.currentValue}
+                      onAddItem={this.handleAddition}
+                      name="tags"
+                      onChange={(_, data) => this.handleChange({ target: data })}/>
                 </Grid.Column>
               </Grid.Row>
 

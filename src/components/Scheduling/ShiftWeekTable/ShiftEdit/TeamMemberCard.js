@@ -59,17 +59,15 @@ export default class TeamMemberCard extends Component {
     return (
       <div className="teamMemberCard">
         <div className="edits">
-        <Image
-             src="https://s3.us-east-2.amazonaws.com/aday-website/icons/exit-x.png"
-             height="15"
-             width="15"
-             floated='left'
-             onClick={handleRemove}
-             style={{marginLeft:7, cursor:'pointer'}}
-
-        />
+          <Image
+               src="https://s3.us-east-2.amazonaws.com/aday-website/icons/exit-x.png"
+               height="15"
+               width="15"
+               floated='left'
+               onClick={handleRemove}
+               style={{marginLeft:7, cursor:'pointer'}}
+          />
         </div>
-
         <Dropdown
           placeholder="Team Member"
           name="team-member"

@@ -128,7 +128,7 @@ export default class StartToEndTimePicker extends Component {
               name="startTime"
               value={startTimeValue || ''}
               onChange={({ target }) => this.handleTimeChange(target)}
-              placeholder="When does this shift start? (08:30)"
+              placeholder="When does this shift start?"
               mask="99:99" maskChar="_" />
           </p>
           <p>
@@ -137,7 +137,7 @@ export default class StartToEndTimePicker extends Component {
               name="endTime"
               value={endTimeValue || ''}
               onChange={({ target }) => this.handleTimeChange(target)}
-              placeholder="When does this shift end? (15:00)"
+              placeholder="When does this shift end?"
               mask="99:99" maskChar="_" />
           </p>
           <p>

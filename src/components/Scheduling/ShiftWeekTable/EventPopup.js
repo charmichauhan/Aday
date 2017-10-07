@@ -5,7 +5,7 @@ import { gql, graphql, compose } from 'react-apollo';
 import {
   updateShiftMutation,
   deleteShiftMutation,
-  deleteRecurringShiftById
+  updateRecurringShiftById
 } from './ShiftEdit/EditShiftDrawer.graphql';
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawer from '../AddShift/CreateShift/CreateShiftAdvanceDrawer';
@@ -76,22 +76,19 @@ class EventPopupComponent extends Component {
   // deleteRecurringShiftById
 
   deleteRecurringShift = () => {
-    let {id} = this.props.data;
+    let {id} = this.props.data, {startTime} = this.props.data;
     let {recurringShiftId} = this.props.data;
     let that = this;
 
-    that.props.deleteShiftById(uuidv4(), id)
+    that.props.updateRecurringShiftById(recurringShiftId,startTime)
       .then(({ data }) => {
-        that.props.deleteRecurringShiftById(recurringShiftId)
-          .then(({ data }) => {
-            console.log('Delete Data', data);
-          }).catch((error) => {
-          console.log('there was an error sending the query deleteRecurringShift', error);
-        });
-        console.log('Delete Data', data);
+        console.log('Updated', data);
+        that.deleteShift();
       }).catch((error) => {
-      console.log('there was an error sending the query', error);
+      console.log('there was an error sending the query deleteRecurringShift', error);
     });
+
+
     that.setState({ deleteModalPopped: false });
   };
 
@@ -141,12 +138,12 @@ class EventPopupComponent extends Component {
       unpaidBreakTime: shift.unpaidBreak
     };
     this.props.updateShiftMutation({
-      variables: {
-        data: {
-          id: shiftValue.id,
-          shiftPatch: payload
-        }
-      },
+        variables: {
+          data: {
+            id: shiftValue.id,
+            shiftPatch: payload
+          }
+        },
       updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
           const shiftHash = mutationResult.data.updateShiftById.shift;
@@ -216,6 +213,7 @@ class EventPopupComponent extends Component {
     var workersCount = data.workersRequestedNum || data.workerCount
     this.openShift = workersCount - (data.workersAssigned.length + data.workersInvited.length );
     console.log(data)
+    debugger;
     return (
       <div className="day-item hov">
 
@@ -348,15 +346,20 @@ const EventPopup = compose(graphql(deleteShiftMutation, {
       },
     }),
   }),
-}), graphql(deleteRecurringShiftById, {
+}), graphql(updateRecurringShiftById, {
   props: ({ ownProps, mutate }) => ({
-    deleteRecurringShiftById: (recurringShiftId) => mutate({
-      variables: { id: recurringShiftId },
+    updateRecurringShiftById: (recurringShiftId, startTime) => mutate({
+      variables: {
+        data: {
+          id: recurringShiftId,
+          recurringShiftPatch: {expiration: startTime},
+        }
+      },
       updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
           let newEdges = []
           previousQueryResult.allShifts.edges.map((value) => {
-            if (value.node.recurringShiftId != mutationResult.data.deleteRecurringShiftById.shift.recurringShiftId) {
+            if (value.node.recurringShiftId === mutationResult.data.updateRecurringShiftById.recurringShift.id) {
               value.node.recurringShiftId = null;
               newEdges.push(value);
             }

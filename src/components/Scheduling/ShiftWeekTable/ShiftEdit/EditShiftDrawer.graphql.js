@@ -54,14 +54,15 @@ export const deleteShiftMutation = gql`
     }
   }`;
 
-export const deleteRecurringShiftById = gql`
-  mutation($id: Uuid!){
-    deleteRecurringShiftById(input: {id: $id}){
-      recurringByRecurringId{
-        id
-      }
+export const updateRecurringShiftById = gql`
+  mutation updateRecurringShiftById($data:UpdateRecurringShiftByIdInput!) {
+  updateRecurringShiftById(input : $data){
+    recurringShift{
+      id
+      expiration
     }
-  }`;
+  }
+}`;
 
 export const createShiftMarket = gql`
  mutation createMarket($data:CreateMarketInput!){

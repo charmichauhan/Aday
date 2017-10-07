@@ -241,27 +241,26 @@ class ShiftPublishComponent extends Component {
   };
 
   submitShifts = ({ days, shift, publishId }) => {
-    console.log( this.props);
     let shiftRecure = shift;
     if(shift.recurringShift!=="none"){
       this.saveRecurringShift(shiftRecure, shift,(res)=>{
-        shiftRecure.recurringId = res;
+        shiftRecure.recurringShiftId = res;
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             this.saveShift(shiftRecure, day, publishId);
           }
         });
       });
-    }else {
-      //
+    }
+    else {
       days.forEach((day) => {
         if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
           this.saveShift(shift, day, publishId);
         }
       });
+
     }
   };
-
   saveRecurringShift(days, shift,callback){
     this.props.client.query({
       query: findRecurring,
@@ -288,9 +287,7 @@ class ShiftPublishComponent extends Component {
         });
       }
     });
-
   }
-
   createRecurringShift(shiftValue, recurringId,days,callback){
     const shift = cloneDeep(shiftValue);
     let id = uuidv4();
@@ -339,7 +336,7 @@ class ShiftPublishComponent extends Component {
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
-    const recurringId = shift.recurringId;
+    const recurringShiftId = shift.recurringShiftId;
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     const payload = {
@@ -353,7 +350,7 @@ class ShiftPublishComponent extends Component {
       endTime: moment.utc(shift.endTime),
       shiftDateCreated: moment().format(),
       weekPublishedId: weekPublishedId,
-      recurringId: recurringId ? recurringId : null,
+      recurringShiftId: recurringShiftId ? recurringShiftId : null,
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak
     };

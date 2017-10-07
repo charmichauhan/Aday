@@ -1,4 +1,12 @@
 /* Drawers */
+*::placeholder {
+  color: #999999;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-family: Roboto, sans-serif;
+}
+
 .shift-section .drawer-heading {
   margin: 0 0 10px 0;
   padding-bottom: 10px;
@@ -54,7 +62,7 @@
   width: 95%;
   position: absolute;
   z-index: 9;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 10px, rgba(0, 0, 0, 0.23) 0px 3px 10px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 10px, rgba(0, 0, 0, 0.23) 0 3px 10px;
 }
 
 .shift-section .time-actions-wrapper {
@@ -73,15 +81,29 @@
 .shift-section .time-selector-wrapper .label-wrapper,
 .shift-section .date-selector-wrapper .label-wrapper {
   border: 1px solid #CCCCCC;
-  padding: 8px 5px;
+  padding: 8px 12px;
   margin-bottom: 10px;
   border-radius: 4px;
+  height: 38px;
+  display: flex;
+  flex-direction: row;
+}
+
+.shift-section .time-selector-wrapper .label-wrapper {
+  margin-bottom: 2px;
 }
 
 .shift-section .time-selector-wrapper .label-wrapper p,
 .shift-section .date-selector-wrapper .label-wrapper p {
   display: inline-block;
   margin-bottom: 0;
+  width: 50%;
+}
+
+.shift-section .time-selector-wrapper .label-wrapper p input {
+  border: 0 none;
+  padding: 0;
+  width: 100%;
 }
 
 .shift-section .end-date .choose-btn, .shift-section .end-date .never-btn {
@@ -91,9 +113,13 @@
 .shift-section .time-selector-wrapper .date-wrapper .start-date {
   border: 1px solid #CCCCCC;
   border-radius: 4px;
-  padding: 5px 20px 5px 5px;
+  padding: 8px 20px 8px 5px;
   margin-right: 20px;
   position: relative;
+}
+
+.shift-section .time-selector-wrapper .date-wrapper .start-date:hover {
+  border-color: #49a9ee !important;
 }
 
 .shift-section .time-selector-wrapper .date-wrapper .start-date .clock-font {
@@ -111,12 +137,16 @@
   float: left;
 }
 
-.shift-section .time-selector-wrapper .label-wrapper p:last-child,
 .shift-section .date-selector-wrapper .label-wrapper p:last-child {
   float: right;
 }
 
-.shift-section .time-selector-wrapper .label-wrapper p:nth-child(2),
+.shift-section .time-selector-wrapper .label-wrapper p:last-child {
+  position: absolute;
+  right: 25px;
+  width: auto;
+}
+
 .shift-section .date-selector-wrapper .label-wrapper p:nth-child(2) {
   width: 50%;
   text-align: right;
@@ -187,13 +217,12 @@
 }
 
 .edit-drawer-section .edit-drawer-content .day-selector {
-  padding-bottom: 15px;
-  margin-bottom: 5px;
+  padding-bottom: 5px;
 }
 
 .edit-drawer-section .edit-drawer-content .ui.input.extra-min {
   display: inline-block;
-  width: 50px;
+  width: 60px;
   height: 50px;
   margin-top: 5px;
   margin-left: 10px !important;
@@ -201,8 +230,33 @@
 }
 
 .edit-drawer-section .edit-drawer-content .ui.input.extra-min input {
-  padding: 10px;
+  text-align: center;
+  font-size: 15px !important;
+  font-family: Lato;
+  margin-left: 5px;
+  margin-top: -3px;
+  width: 60px !important;
 }
+
+/*.edit-drawer-section .edit-drawer-content .ui.input.extra-min input {
+    margin: 0;
+    max-width: 100%;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 0 auto;
+    flex: 1 0 auto;
+    outline: 0;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    text-align: left;
+    line-height: 1.21428571em;
+    font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+    padding: .67857143em 1em;
+    background: #fff;
+    border: 1px solid rgba(34,36,38,.15);
+    color: rgba(0,0,0,.87);
+    border-radius: .28571429rem;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}*/
 
 .edit-drawer-section .edit-drawer-content .alert-danger {
   background: rgba(255, 118, 118, 0.4);
@@ -226,3 +280,7 @@
 .edit-drawer-content .tag-dropdown .ui.multiple.search.dropdown > input {
   text-transform: uppercase;
 }
+
+.instance-following { display: inline-table; margin-bottom: 5px;}
+.instance-following button { display: table-cell; padding: 5px 8px;}
+.confirm-popup-body .instance-following p { display: table-cell; font-size: 16px; padding-left: 8px;}

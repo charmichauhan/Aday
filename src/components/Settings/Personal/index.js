@@ -122,7 +122,7 @@ class Personal extends Component {
   };
 
   handleInputChange = (event) => {
-    function escapeHtml(unsafe) {
+    function escapeMarkings(unsafe) {
       return unsafe
         .replace(/\+/g, '')
         .replace(/-/g, '')
@@ -132,7 +132,7 @@ class Personal extends Component {
     }
 
     const { name, value } = event.target;
-    let phoneNumber = name === personalFields.userPhoneNumber && escapeHtml(value);
+    let phoneNumber = name === personalFields.userPhoneNumber && escapeMarkings(value);
     const isValid = hasError(name, value);
     const userInfo = Object.assign({}, this.state.userInfo, { [name]: phoneNumber || value });
     const errorFields = Object.assign({}, this.state.errorFields, { [name]: isValid });

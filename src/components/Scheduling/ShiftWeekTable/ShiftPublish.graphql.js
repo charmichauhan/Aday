@@ -38,7 +38,9 @@ export const createShiftMutation = gql`
         managersOnShift
         traineesRequestedNum
         unpaidBreakTime
+        recurringShiftId
         weekPublishedId
+        recurringShiftId
         positionByPositionId {
           id
           positionName
@@ -90,6 +92,7 @@ mutation createWorkplacePublished($workplacePublished: WorkplacePublishedInput!)
  }
 }`
 
+
 export const updateWorkplacePublishedIdMutation = gql`
 mutation($id: Uuid!, $workplacePublishedPatch: WorkplacePublishedPatch!){
   updateWorkplacePublishedById(input:{id:$id, workplacePublishedPatch: $workplacePublishedPatch}){
@@ -99,3 +102,63 @@ mutation($id: Uuid!, $workplacePublishedPatch: WorkplacePublishedPatch!){
     }
   }
 }`
+
+
+export const findRecurring = gql`
+  query ($brandId: Uuid!, $workplaceId: Uuid!) {
+    allRecurrings(condition: { brandId: $brandId, workplaceId: $workplaceId }) {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+  }`;
+
+export const createRecurring = gql`
+  mutation createRecurring($data: CreateRecurringInput!) {
+    createRecurring(input:$data) {
+      recurring {
+        id
+        workplaceId        
+        brandId
+      }
+    }
+  }`;
+
+export const createRecurringShift = gql`
+  mutation createRecurringShift($data: CreateRecurringShiftInput!){
+    createRecurringShift(input:$data)
+    {
+      recurringShift {
+        id
+        startTime
+        endTime
+        workerCount
+        isTraineeShift
+        unpaidBreakTime
+        days
+        instructions
+        positionByPositionId{
+          id
+          positionName
+          positionIconUrl
+        }
+        recurringShiftAssigneesByRecurringShiftId {
+          edges{
+            node{
+              userId
+              userByUserId{
+                firstName
+                lastName
+                avatarUrl
+              }
+            }
+          }
+        }
+      }
+    }
+  }`;
+
+
+

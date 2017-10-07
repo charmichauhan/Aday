@@ -7,16 +7,22 @@ import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 import uuidv4 from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
+
 import CreateShiftButton from '../../Scheduling/AddShift/CreateShiftButton';
 import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftDrawer';
+import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
+import dataHelper from '../../helpers/common/dataHelper';
 import {
   updateWeekPublishedNameMutation,
   createWeekPublishedMutation,
   createShiftMutation,
   createWorkplacePublishedMutation,
-  updateWorkplacePublishedIdMutation
+  updateWorkplacePublishedIdMutation,
+  findRecurring,
+  createRecurring,
+  createRecurringShift
 } from './ShiftPublish.graphql';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 var rp = require('request-promise');
@@ -46,11 +52,28 @@ class ShiftPublishComponent extends Component {
     }
   }
 
+  componentDidMount() {
+    this.getUsers();
+    this.getManagers();
+  }
+
   modalClose = () => {
     this.setState({
       workplaceId: localStorage.getItem('workplaceId'),
       publishModalPopped: false
     })
+  };
+
+  getUsers = () => {
+    dataHelper.getUsers()
+      .then(users => this.setState({ users }))
+      .catch(err => console.error(err));
+  };
+
+  getManagers = () => {
+    dataHelper.getAllManagers()
+      .then(managers => this.setState({ managers }))
+      .catch(err => console.error(err));
   };
 
   goBack = () => {
@@ -203,11 +226,7 @@ class ShiftPublishComponent extends Component {
           },
         },
       }).then(({ data }) => {
-        days.forEach((day) => {
-          if (shift.shiftDaysSelected[day] === true) {
-            this.saveShift(shift, day, publishId);
-          }
-        })
+        this.submitShifts({ days, shift, publishId });
       }).catch((error) => {
         console.log('there was an error sending the query', error);
         this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
@@ -216,13 +235,96 @@ class ShiftPublishComponent extends Component {
     }
     // else create all shifts with existing week published
     else {
+      this.submitShifts({ days, shift, publishId });
+    }
+    this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
+  };
+
+  submitShifts = ({ days, shift, publishId }) => {
+    let shiftRecure = shift;
+    if(shift.recurringShift!=="none"){
+      this.saveRecurringShift(shiftRecure, shift,(res)=>{
+        shiftRecure.recurringShiftId = res;
+        days.forEach((day) => {
+          if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
+            this.saveShift(shiftRecure, day, publishId);
+          }
+        });
+      });
+    }
+    else {
       days.forEach((day) => {
         if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
           this.saveShift(shift, day, publishId);
         }
-      })
+      });
+
     }
-    this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
+  };
+  saveRecurringShift(days, shift,callback){
+    this.props.client.query({
+      query: findRecurring,
+      variables: { brandId: localStorage.getItem('brandId'), workplaceId: localStorage.getItem('workplaceId')}
+    }).then((res)=>{
+      let recurring = uuidv4();
+      if(res.data.allRecurrings.edges.length !== 0){
+        return this.createRecurringShift(shift, res.data.allRecurrings.edges[0].node.id,days,callback);
+      }else {
+        const payload = {
+          id: recurring,
+          workplaceId: localStorage.getItem("workplaceId"),
+          brandId: localStorage.getItem("brandId"),
+          lastWeekApplied: moment().startOf('week').format()
+        };
+        this.props.createRecurring({
+          variables: {
+            data: {
+              recurring: payload
+            }
+          }}).then((res)=>{
+          console.log("createRecurring res",res);
+          return this.createRecurringShift(shift, recurring,days,callback);
+        });
+      }
+    });
+  }
+  createRecurringShift(shiftValue, recurringId,days,callback){
+    const shift = cloneDeep(shiftValue);
+    let id = uuidv4();
+
+    const payload = {
+      id: id,
+      positionId: shift.positionId,
+      workerCount: shift.numberOfTeamMembers,
+      creator: localStorage.getItem('userId'),
+      startTime: moment(shift.startTime).format('HH:mm'),
+      endTime: moment(shift.endTime).format('HH:mm'),
+      instructions: shift.instructions,
+      unpaidBreakTime: shift.unpaidBreak,
+      expiration: shift.endDate,
+      startDate: shift.startDate,
+      days: days,
+      recurringId: recurringId,
+      isTraineeShift: false,
+      expired: false
+    };
+    this.props.createRecurringShift({
+      variables: {
+        data: {
+          recurringShift: payload
+        }
+      }
+    }).then(({data})=>{
+      return callback(id);
+    });
+  }
+
+  handleAdvanceToggle = (drawerShift) => {
+    this.setState((state) => ({
+      drawerShift,
+      isCreateShiftOpen: !state.isCreateShiftOpen,
+      isCreateShiftAdvanceOpen: !state.isCreateShiftAdvanceOpen
+    }));
   };
 
   closeDrawerAndModal = () => {
@@ -231,34 +333,40 @@ class ShiftPublishComponent extends Component {
 
   saveShift(shiftValue, day, weekPublishedId) {
     const shift = cloneDeep(shiftValue);
-    const shiftDay = moment.utc(day, 'YYYY-MM-DD');
+    const shiftDay = moment.utc(day, 'MM-DD-YYYY');
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
+    const recurringShiftId = shift.recurringShiftId;
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    const payload = {
+      id: uuidv4(),
+      workplaceId: shift.workplaceId,
+      positionId: shift.positionId,
+      workersRequestedNum: shift.numberOfTeamMembers,
+      creatorId: localStorage.getItem('userId'),
+      managersOnShift: [null],
+      startTime: moment.utc(shift.startTime),
+      endTime: moment.utc(shift.endTime),
+      shiftDateCreated: moment().format(),
+      weekPublishedId: weekPublishedId,
+      recurringShiftId: recurringShiftId ? recurringShiftId : null,
+      instructions: shift.instructions,
+      unpaidBreakTime: shift.unpaidBreak
+    };
+    if (shift.teamMembers && shift.teamMembers.length) {
+      payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
+    }
     this.props.createShift({
       variables: {
         data: {
-          shift: {
-            id: uuidv4(),
-            workplaceId: shift.workplaceId,
-            positionId: shift.positionId,
-            workersRequestedNum: shift.numberOfTeamMembers,
-            creatorId: localStorage.getItem('userId'),
-            managersOnShift: [null],
-            startTime: moment.utc(shift.startTime),
-            endTime: moment.utc(shift.endTime),
-            shiftDateCreated: moment().format(),
-            weekPublishedId: weekPublishedId,
-            instructions: shift.instructions,
-            unpaidBreakTime: shift.unpaidBreak
-          }
+          shift: payload
         }
       },
       updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-          const shiftHash = mutationResult.data.createShift.shift;
+          let shiftHash = mutationResult.data.createShift.shift;
           previousQueryResult.allShifts.edges =
             [...previousQueryResult.allShifts.edges, { 'node': shiftHash, '__typename': 'ShiftsEdge' }];
           return {
@@ -270,6 +378,7 @@ class ShiftPublishComponent extends Component {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
       console.log('got data', data);
     }).catch(err => {
+      console.log('There was error in saving shift', err);
       this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
     });
   }
@@ -362,9 +471,17 @@ class ShiftPublishComponent extends Component {
           width={styles.drawer.width}
           open={this.state.isCreateShiftOpen}
           shift={this.state.drawerShift}
+          users={this.state.users}
+          managers={this.state.managers}
           weekStart={start}
           handleSubmit={this.handleCreateSubmit}
+          handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeDrawerAndModal} />
+        <CreateShiftAdvanceDrawer
+          width={styles.drawer.width}
+          shift={this.state.drawerShift}
+          open={this.state.isCreateShiftAdvanceOpen}
+          handleBack={this.handleAdvanceToggle} />
         <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </div>
     )
@@ -393,7 +510,12 @@ const ShiftPublish = compose(
   }),
   graphql(updateWorkplacePublishedIdMutation, {
     name: 'updateWorkplacePublishedIdMutation'
-  })
-  )(ShiftPublishComponent);
+  }),
+  graphql(createRecurring, {
+    name: 'createRecurring'
+  }),
+  graphql(createRecurringShift, {
+    name: 'createRecurringShift'
+  }))(ShiftPublishComponent);
 
-export default ShiftPublish;
+export default withApollo(ShiftPublish);

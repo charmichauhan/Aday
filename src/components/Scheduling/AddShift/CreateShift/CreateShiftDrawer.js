@@ -3,6 +3,8 @@ import Drawer from 'material-ui/Drawer';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';
+import { Tooltip } from 'rebass';
+import { find, pick, times } from 'lodash';
 import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
 
@@ -17,24 +19,23 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import StartToEndTimePicker from './StartToEndTimePicker';
 import StartToEndDatePicker from './StartToEndDatePicker';
-import { Tooltip } from 'rebass';
-//import Tooltip from 'react-toolbox/lib/tooltip';
 
 import './select.css';
 
 const initialState = {
   shift: {
     shiftMethod: 'standard',
-    recurringShift: 0,
+    corporationId: localStorage.getItem('corporationId') || '',
+    brandId: localStorage.getItem('brandId') || '',
+    workplaceId: localStorage.getItem('workplaceId') || '',
+    positionId: '',
+    recurringShift: '',
+    shiftDaysSelected: {},
     numberOfTeamMembers: 1,
     unpaidBreakInMinutes: 0,
-    shiftDaysSelected: {},
     tags: [],
     tagOptions: [],
-    brandId: localStorage.getItem('brandId') || '',
-    corporationId: localStorage.getItem('corporationId') || '',
-    workplaceId: localStorage.getItem('workplaceId') || '',
-    positionId: ''
+    duration: { hours: 0, minutes: 0 }
   },
   shiftErrors: {},
   brandId: localStorage.getItem('brandId') || '',
@@ -42,15 +43,32 @@ const initialState = {
   workplaceId: localStorage.getItem('workplaceId') || ''
 };
 
+/**
+ * When the shift is to be assigned via automation, the data below represents this to the user
+ */
 const unassignedTeamMember = {
   id: 0,
-  firstName: 'Automated Shift',
-  lastName: '',
+  firstName: '',
+  lastName: 'Automated Shift',
   avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/icons/time-lapse-red.png',
   content: 'Assign shift to override automation',
   status: 'unassigned'
 };
 
+const unassignedManager = {
+  id: 0,
+  firstName: 'Select Manager',
+  lastName: '',
+  avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/anonymous-profile.png',
+  content: 'Assign shift to a manager',
+  status: 'unassigned'
+};
+
+/**
+ * [shift description]
+ * @author Raj Kapoor
+ * @since Sep 15, 2017
+ */
 class DrawerHelper extends Component {
 
   constructor(props) {
@@ -58,11 +76,33 @@ class DrawerHelper extends Component {
     let shift = { ...initialState.shift, ...props.shift, advance: { allowShadowing: true } };
     shift.startTime = moment(shift.startTime);
     shift.endTime = moment(shift.endTime);
+    if (shift.id) {
+      if (shift.workersAssigned) {
+        shift.teamMembers = shift.workersAssigned.map((id) => {
+          let foundWorker = find(props.users, { id });
+          if (!foundWorker) foundWorker = unassignedTeamMember;
+          return {
+            ...pick(foundWorker, ['id', 'avatarUrl', 'firstName', 'lastName']),
+            status: 'accepted',
+            content: ''
+          };
+        });
+      } else {
+        shift.teamMembers = shift.workersRequestedNum && times(shift.workersRequestedNum, () => unassignedTeamMember);
+      }
+      shift.recurringShift = shift.recurringShiftId && 'weekly' || 'none';
+      if ([null, undefined, ''].indexOf(shift.unpaidBreakTime) !== -1) {
+        shift.unpaidBreakInMinutes = 0;
+      } else {
+        shift.unpaidBreakInMinutes = shift.unpaidBreakTime || 0;
+      }
+    }
     this.state = {
       ...initialState,
       shift,
       isEdit: !!shift.id,
-      weekStart: props.weekStart
+      weekStart: props.weekStart,
+      users: props.users,
     };
   }
 
@@ -73,7 +113,7 @@ class DrawerHelper extends Component {
   componentDidMount() {
     this.getWorkplaces();
     this.getPositions();
-    this.getUsers();
+    this.filterManagers(this.state.shift.workplaceId);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -99,26 +139,42 @@ class DrawerHelper extends Component {
       }
     } else {
       if (nextProps.open !== this.props.open) {
-        this.setState((state) => ({
-          shift: {
-            ...initialState.shift,
-            ...nextProps.shift
-          }
-        }));
+        let shift = {
+          ...initialState.shift,
+          ...this.state.shift,
+          ...nextProps.shift
+        };
+        this.setState({ shift });
+        this.validateShift(shift);
       }
     }
 
+    if (nextProps.users && !this.state.users) {
+      this.setState({ users: nextProps.users });
+    }
+
+    if (nextProps.managers && !this.state.managers) {
+      const managers = nextProps.managers.map(manager => {
+        const { id, workplaceId, userByUserId } = manager;
+        return {
+          id,
+          workplaceId,
+          userId: userByUserId.id,
+          avatarUrl: userByUserId.avatarUrl,
+          firstName: userByUserId.firstName,
+          lastName: userByUserId.lastName
+        };
+      });
+      this.setState({
+        managers,
+        filteredManagers: managers
+      });
+    }
   }
 
   getWorkplaces = () => {
     dataHelper.getCurrentWorkplaces()
       .then(workplaces => this.setState({ workplaces }))
-      .catch(err => console.error(err));
-  };
-
-  getUsers = () => {
-    dataHelper.getUsers()
-      .then(users => this.setState({ users }))
       .catch(err => console.error(err));
   };
 
@@ -135,15 +191,35 @@ class DrawerHelper extends Component {
     const { name, value } = event.target;
     shift[name] = value;
     if (name === 'tags') shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
+    if (name === 'workplaceId') {
+      this.getPositions(value);
+      this.filterManagers(value);
+    }
+    if (name === 'positionId') {
+      this.filterManagers(shift.workplaceId);
+      if (shift.teamMembers) {
+        shift.teamMembers = shift.teamMembers.map((manager) => {
+          if (manager.id == 0) {
+            if (value === 'manager') return unassignedManager;
+            else return unassignedTeamMember;
+          }
+          return manager;
+        });
+      }
+    }
+    if (name === 'recurringShift') shift.shiftDaysSelected = {};
     this.setState({ shift });
-    if (name === 'workplaceId') this.getPositions(value);
     this.validateShift(shift);
   };
 
   handleAddTeamMember = () => {
     const { shift } = this.state;
     if (!shift.teamMembers) shift.teamMembers = [];
-    shift.teamMembers.push(unassignedTeamMember);
+    if (shift.positionId === 'manager') {
+      shift.teamMembers.push(unassignedManager);
+    } else {
+      shift.teamMembers.push(unassignedTeamMember);
+    }
     this.setState({ shift });
   };
 
@@ -157,6 +233,15 @@ class DrawerHelper extends Component {
     this.setState(initialState);
   };
 
+  filterManagers = (workplaceId) => {
+    const { managers } = this.state;
+    if (managers) {
+      if (!workplaceId) return this.setState({ filteredManagers: managers });
+      let filteredManagers = managers.filter(manager => manager.workplaceId === workplaceId);
+      this.setState({ filteredManagers });
+    }
+  };
+
   updateFormState = (dataValue) => {
     let selectedDate = this.state.selectedDate;
     if (dataValue.unpaidBreakInMinutes) {
@@ -166,6 +251,17 @@ class DrawerHelper extends Component {
         minutes = '0' + minutes;
       }
       dataValue.unpaidBreak = hours + ':' + minutes;
+    }
+    const startTime = dataValue.startTime || this.state.shift.startTime;
+    const endTime = dataValue.endTime || this.state.shift.endTime;
+    if (startTime && startTime.isValid() && endTime && endTime.isValid()) {
+      let minDiff = endTime.diff(startTime, 'minutes');
+      if (minDiff > 0) {
+        dataValue.duration = {
+          hours: (minDiff - (minDiff % 60) ) / 60,
+          minutes: minDiff % 60
+        };
+      }
     }
     if (dataValue.shiftDaysSelected) selectedDate = '';
     const shift = Object.assign(this.state.shift, dataValue);
@@ -238,14 +334,14 @@ class DrawerHelper extends Component {
       shift,
       workplaces,
       positions,
-      workplaceId,
       weekStart,
       selectedDate,
+      filteredManagers,
       users,
       isEdit,
       isShiftInvalid
     } = this.state;
-    let positionOptions = [{ key: 'select', value: 0, text: 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS' }];
+    let positionOptions;
 
     if (!workplaces) {
       return (<Loading />);
@@ -269,28 +365,8 @@ class DrawerHelper extends Component {
         value: 'manager',
         text: 'Manager'
       });
-      positionOptions.unshift({
-        key: 'selected',
-        value: 0,
-        text: 'WHICH POSITION CERTIFICATION MUST THE TEAM MEMBER HAVE?',
-        disabled: true
-      });
-    }
-    if (!workplaceId) {
-      workplaceOptions.unshift({
-        key: 'selected',
-        value: 0,
-        text: 'CHOOSE WORKPLACE',
-        disabled: true
-      });
     }
     const recurringOptions = [{
-      key: 'select',
-      value: 0,
-      text: 'WILL YOU HAVE TO SCHEDULE THESE WORKING HOURS EVERY WEEK?',
-      disabled: true,
-      selected: true
-    }, {
       key: 'none',
       value: 'none',
       text: 'NO',
@@ -306,7 +382,10 @@ class DrawerHelper extends Component {
       shadowers: shift.advance && shift.advance.allowShadowing && shift.numberOfTeamMembers || 0
     };
 
-    const isAddTeamMemberDisabled = shift.recurringShift !== 'none' || (shift.teamMembers && shift.teamMembers.length >= shift.numberOfTeamMembers);
+    const isRecurring = shift.recurringShift !== 'none';
+    const isTeamMembersFull = shift.teamMembers && shift.teamMembers.length >= shift.numberOfTeamMembers;
+    const addTeamMemberTooltip = (!isEdit && isRecurring && 'Creating recurring shifts and adding team members cannot be done at the same time')
+      || (isTeamMembersFull && `${shift.numberOfTeamMembers} Team member(s) are already assigned to shift, increase number of team members to add more.`);
 
     return (
       <Drawer
@@ -341,7 +420,11 @@ class DrawerHelper extends Component {
           </div>
 
           <div className="col-md-12 form-div edit-drawer-content">
+
+
             <Grid columns={2}>
+{/*
+  * Removed by Rahkeem, will re-introduce once new scheduling method is implemented
               <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
                   <Image src="/assets/Icons/scheduling-method.png" style={{ width: 28, height: 'auto' }}
@@ -359,7 +442,7 @@ class DrawerHelper extends Component {
                     options={[{ key: 'standard', value: 'standard', text: 'STANDARD' }]} />
                 </Grid.Column>
               </Grid.Row>
-
+*/}
               <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
                   <Image src="/assets/Icons/workplace.png" style={{ width: 26, height: 'auto' }}
@@ -368,11 +451,14 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Workplace</label>
                   <Dropdown
-                    name="workplaceId"
-                    onChange={(_, data) => this.handleChange({ target: data })}
-                    value={shift.workplaceId || 0}
                     fluid
                     selection
+                    name="workplaceId"
+                    placeholder="CHOOSE WORKPLACE"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={shift.workplaceId}
+                    selectOnBlur={false}
+                    forceSelection={false}
                     options={workplaceOptions} />
                 </Grid.Column>
               </Grid.Row>
@@ -385,12 +471,17 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Position</label>
                   <Dropdown
-                    placeholder="Select Position"
-                    name="positionId"
-                    onChange={(_, data) => this.handleChange({ target: data })}
-                    value={shift.positionId || 0}
                     fluid
                     selection
+                    placeholder={
+                      !shift.workplaceId && "WHICH POSITION CERTIFICATION MUST THE TEAM MEMBER HAVE?"
+                      || "SELECT WORKPLACE TO SEE AVAILABLE POSITIONS"
+                    }
+                    name="positionId"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={shift.positionId}
+                    selectOnBlur={false}
+                    forceSelection={false}
                     disabled={!positions}
                     options={positionOptions} />
                 </Grid.Column>
@@ -404,11 +495,14 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Repeat Shift Weekly</label>
                   <Dropdown
-                    name="recurringShift"
-                    onChange={(_, data) => this.handleChange({ target: data })}
-                    value={shift.recurringShift}
                     fluid
                     selection
+                    name="recurringShift"
+                    placeholder="WILL YOU HAVE TO SCHEDULE THESE WORKING HOURS EVERY WEEK?"
+                    onChange={(_, data) => this.handleChange({ target: data })}
+                    value={shift.recurringShift}
+                    selectOnBlur={false}
+                    forceSelection={false}
                     options={recurringOptions} />
                 </Grid.Column>
               </Grid.Row>
@@ -419,8 +513,11 @@ class DrawerHelper extends Component {
                          className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
-                  <StartToEndTimePicker isEdit={true} startTime={shift.startTime} endTime={shift.endTime}
+                  <StartToEndTimePicker isEdit={isEdit} startTime={shift.startTime} endTime={shift.endTime}
                                         onNowSelect={this.handleNowSelect} formCallBack={this.updateFormState} />
+                    <div className="performance-tagline">
+                      <p>Shift Length: {shift.duration.hours} Hours {shift.duration.minutes} Minutes</p>
+                    </div>
                 </Grid.Column>
               </Grid.Row>
 
@@ -440,7 +537,7 @@ class DrawerHelper extends Component {
 
               {shift.recurringShift === 'weekly' && <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
-                  <Image src="/assets/Icons/shift-date.png" style={{ width: 28, height: 'auto' }}
+                  <Image src="/assets/Icons/startend-dates.png" style={{ width: 28, height: 'auto' }}
                          className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
@@ -484,26 +581,36 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
-                  {isAddTeamMemberDisabled
-                    && <Tooltip className="tooltip-message" text=' &nbsp; Creating recurring shifts and adding team members cannot be done at the same time &nbsp;'>
-                    <RaisedButton label="Add Team Member" disabled={isAddTeamMemberDisabled} />
-                  </Tooltip> || <RaisedButton label="Add Team Member" onClick={this.handleAddTeamMember} />}
 
-                  <br/>
-                  <div className="member-list">
-                    {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) => <TeamMemberCard
-                      avatarUrl={tm.avatarUrl}
-                      firstName={tm.firstName}
-                      lastName={tm.lastName}
-                      content={tm.content}
-                      users={users}
-                      color={this.borderColor(tm.status) + 'Border'}
-                      key={i}
-                      id={i}
-                      handleRemove={() => this.removeTeamMember(i)}
-                      onSelectChange={this.setTeamMember}
-                    />)}
+                  <div className="member-list"
+                       style={{ display: ((isRecurring && !isEdit) || (shift.teamMembers && !shift.teamMembers.length)) && 'none' || 'block' }}>
+
+                    {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) =>
+                      <TeamMemberCard
+                        avatarUrl={tm.avatarUrl}
+                        firstName={tm.firstName}
+                        lastName={tm.lastName}
+                        content={tm.content}
+                        isManager={shift.positionId === 'manager'}
+                        users={shift.positionId === 'manager' && filteredManagers || users}
+                        color={this.borderColor(tm.status) + 'Border'}
+                        key={i}
+                        id={i}
+                        handleRemove={() => this.removeTeamMember(i)}
+                        onSelectChange={this.setTeamMember}
+                      />)
+                    }
+
                   </div>
+
+                  {(isRecurring || isTeamMembersFull)
+                  && <Tooltip className="tooltip-message" text={addTeamMemberTooltip}>
+                    <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull} />
+                  </Tooltip> || <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull}
+                                              onClick={this.handleAddTeamMember} />}
+
+
+
                 </Grid.Column>
               </Grid.Row>
 
@@ -515,15 +622,18 @@ class DrawerHelper extends Component {
                 <Grid.Column className="tag-dropdown" width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Tags</label>
                   <Dropdown
-                    multiple
-                    name="tags"
-                    fluid
-                    placeholder='Add tags'
-                    search
-                    selection
-                    allowAdditions
-                    options={shift.tagOptions}
-                    onChange={(_, data) => this.handleChange({ target: data })} />
+                      options={shift.tagOptions}
+                      placeholder='Add Tags'
+                      search
+                      selection
+                      fluid
+                      multiple
+                      allowAdditions
+                      additionLabel='Add New Tag: '
+                      value={shift.currentValue}
+                      onAddItem={this.handleAddition}
+                      name="tags"
+                      onChange={(_, data) => this.handleChange({ target: data })}/>
                 </Grid.Column>
               </Grid.Row>
 

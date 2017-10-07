@@ -19,7 +19,10 @@ import {
   createWeekPublishedMutation,
   createShiftMutation,
   createWorkplacePublishedMutation,
-  updateWorkplacePublishedIdMutation
+  updateWorkplacePublishedIdMutation,
+  findRecurring,
+  createRecurring,
+  createRecurringShift
 } from './ShiftPublish.graphql';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 var rp = require('request-promise');
@@ -223,11 +226,7 @@ class ShiftPublishComponent extends Component {
           },
         },
       }).then(({ data }) => {
-        days.forEach((day) => {
-          if (shift.shiftDaysSelected[day] === true) {
-            this.saveShift(shift, day, publishId);
-          }
-        })
+        this.submitShifts({ days, shift, publishId });
       }).catch((error) => {
         console.log('there was an error sending the query', error);
         this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
@@ -236,14 +235,90 @@ class ShiftPublishComponent extends Component {
     }
     // else create all shifts with existing week published
     else {
+      this.submitShifts({ days, shift, publishId });
+    }
+    this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
+  };
+
+  submitShifts = ({ days, shift, publishId }) => {
+    console.log( this.props);
+    let shiftRecure = shift;
+    if(shift.recurringShift!=="none"){
+      this.saveRecurringShift(shiftRecure, shift,(res)=>{
+        shiftRecure.recurringShiftId = res;
+        days.forEach((day) => {
+          if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
+            this.saveShift(shiftRecure, day, publishId);
+          }
+        });
+      });
+    }else {
       days.forEach((day) => {
         if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
           this.saveShift(shift, day, publishId);
         }
-      })
+      });
     }
-    this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
+
+  saveRecurringShift(days, shift,callback){
+    this.props.client.query({
+      query: findRecurring,
+      variables: { brandId: localStorage.getItem('brandId'), workplaceId: localStorage.getItem('workplaceId')}
+    }).then((res)=>{
+      let recurring = uuidv4();
+      if(res.data.allRecurrings.edges.length !== 0){
+        return this.createRecurringShift(shift, res.data.allRecurrings.edges[0].node.id,days,callback);
+      }else {
+        const payload = {
+          id: recurring,
+          workplaceId: localStorage.getItem("workplaceId"),
+          brandId: localStorage.getItem("brandId"),
+          lastWeekApplied: moment().startOf('week').format()
+        };
+        this.props.createRecurring({
+          variables: {
+            data: {
+              recurring: payload
+            }
+          }}).then((res)=>{
+          console.log("createRecurring res",res);
+          return this.createRecurringShift(shift, recurring,days,callback);
+        });
+      }
+    });
+
+  }
+
+  createRecurringShift(shiftValue, recurringId,days,callback){
+    const shift = cloneDeep(shiftValue);
+    let id = uuidv4();
+
+    const payload = {
+      id: id,
+      positionId: shift.positionId,
+      workerCount: shift.numberOfTeamMembers,
+      creator: localStorage.getItem('userId'),
+      startTime: moment(shift.startTime).format('HH:mm'),
+      endTime: moment(shift.endTime).format('HH:mm'),
+      instructions: shift.instructions,
+      unpaidBreakTime: shift.unpaidBreak,
+      expiration: shift.endDate,
+      startDate: shift.startDate,
+      days: days,
+      recurringId: recurringId,
+      isTraineeShift: false
+    };
+    this.props.createRecurringShift({
+      variables: {
+        data: {
+          recurringShift: payload
+        }
+      }
+    }).then(({data})=>{
+      return callback(id);
+    });
+  }
 
   handleAdvanceToggle = (drawerShift) => {
     this.setState((state) => ({
@@ -263,6 +338,7 @@ class ShiftPublishComponent extends Component {
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
+    const recurringShiftId = shift.recurringShiftId;
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     const payload = {
@@ -276,6 +352,7 @@ class ShiftPublishComponent extends Component {
       endTime: moment.utc(shift.endTime),
       shiftDateCreated: moment().format(),
       weekPublishedId: weekPublishedId,
+      recurringShiftId: recurringShiftId ? recurringShiftId : null,
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak
     };
@@ -290,7 +367,7 @@ class ShiftPublishComponent extends Component {
       },
       updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-          const shiftHash = mutationResult.data.createShift.shift;
+          let shiftHash = mutationResult.data.createShift.shift;
           previousQueryResult.allShifts.edges =
             [...previousQueryResult.allShifts.edges, { 'node': shiftHash, '__typename': 'ShiftsEdge' }];
           return {
@@ -434,7 +511,12 @@ const ShiftPublish = compose(
   }),
   graphql(updateWorkplacePublishedIdMutation, {
     name: 'updateWorkplacePublishedIdMutation'
-  })
-  )(ShiftPublishComponent);
+  }),
+  graphql(createRecurring, {
+    name: 'createRecurring'
+  }),
+  graphql(createRecurringShift, {
+    name: 'createRecurringShift'
+  }))(ShiftPublishComponent);
 
-export default ShiftPublish;
+export default withApollo(ShiftPublish);

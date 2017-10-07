@@ -29,7 +29,14 @@ const initialState = {
     tagOptions: [],
     brandId: localStorage.getItem('brandId') || '',
     corporationId: localStorage.getItem('corporationId') || '',
-    workplaceId: localStorage.getItem('workplaceId') || ''
+    workplaceId: localStorage.getItem('workplaceId') || '',
+    numberOfTeamMembers: 0,
+    startTime:  null,
+    endTime: null,
+    startDate: null,
+    endDate: null,
+    teamMembers: [], 
+    instructions: ""
   },
   shiftErrors: {},
   brandId: localStorage.getItem('brandId') || '',
@@ -57,9 +64,10 @@ class DrawerHelper extends Component {
     
     let dayHash = {}
     let weekStart = moment().startOf("week")
-    for(let i = 0; i <= 7; i++) {
+    for(let i = 0; i <= 6; i++) {
       dayHash[moment(weekStart).day(i).format("dddd").toUpperCase()] = moment(weekStart).day(i).format('MM-DD-YYYY')
     }
+    
     let shiftDaysSelected = []
     if ( props.shift.days ){
       props.shift.days.map(function(d,i){
@@ -102,7 +110,7 @@ class DrawerHelper extends Component {
         startTime:  shiftStart,
         endTime: shiftEnd,
         startDate: props.shift && moment(props.shift.startDate) || "",
-        endDate: props.shift && moment(props.shift.endDate) || "",
+        endDate: props.shift && moment(props.shift.endDate) || null,
         advance: { allowShadowing: true },
         teamMembers: teamMembers, 
         workplaceId,

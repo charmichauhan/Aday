@@ -14,7 +14,7 @@ import { createRecurringShift, createRecurringShiftAssignee, createRecurring } f
 import { gql, graphql, compose } from 'react-apollo';
 var Halogen = require('halogen');
 import CreateShiftButton from '../Scheduling/AddShift/CreateShiftButton';
-import EditShiftDetailsDrawer from './ShiftWeekTable/ShiftEdit/EditShiftDrawer';
+import  EditShiftDrawerContainer from './ShiftWeekTable/ShiftEdit/recurringShiftDrawerContainer';
 import cloneDeep from 'lodash/cloneDeep';
 import { findRecurring, allTemplateShifts } from './TemplateQueries';
 const uuidv4 = require('uuid/v4');
@@ -119,14 +119,18 @@ class TemplateComponent extends Component {
 
   createRecurringShift = (shiftValue, recurringId) => {
       const shift = cloneDeep(shiftValue);
+
       let id = uuidv4();
       const props = this.props;
 
       let days = []
       Object.keys(shift.shiftDaysSelected).map(function(day, i){
-        days.push(moment(day).format('dddd').toUpperCase())
+        if (shift.shiftDaysSelected[day] == true) {
+            days.push(moment(day).format('dddd').toUpperCase())
+        }
       })
 
+      console.log("END DATE: !!!!!! " + shift.endDate)
       const payload = {
         id: id,
         positionId: shift.positionId,
@@ -136,11 +140,12 @@ class TemplateComponent extends Component {
         endTime: moment(shift.endTime).format('HH:mm'),
         instructions: shift.instructions,
         unpaidBreakTime: shift.unpaidBreak,
-        expiration: shift.endDate,
+        expiration: shift.endDate || null,
         startDate: shift.startDate,
         days: days,
         recurringId: recurringId,
-        isTraineeShift: false
+        isTraineeShift: false,
+        expired: false
       };
       this.props.createRecurringShift({
         variables: {
@@ -303,7 +308,7 @@ class TemplateComponent extends Component {
                   />
               </div>
 
-              <EditShiftDetailsDrawer
+              <EditShiftDrawerContainer
                     width={800}
                     open={this.state.isCreateShiftOpen}
                     shift={this.state}

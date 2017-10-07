@@ -9,7 +9,7 @@ const allTemplateShifts = gql`
             id
             workplaceName
           }
-          recurringShiftsByRecurringId{
+          recurringShiftsByRecurringId(condition: { expired: false }){
             edges{
               node{
                 id

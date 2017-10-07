@@ -74,7 +74,7 @@ class ShiftWeekTableComponent extends Week {
         });
     };
     backToCalendarView = () => {
-      this.setState({redirect:true});
+      window.location.href = '/schedule/team'
     }
 
   getTemplateDataEmployee = (workplaceId, allUsers, recurring) => {

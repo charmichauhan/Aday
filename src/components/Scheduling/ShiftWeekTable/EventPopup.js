@@ -2,13 +2,17 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { cloneDeep, findLastIndex } from 'lodash';
 import { gql, graphql, compose } from 'react-apollo';
-import { updateShiftMutation } from './ShiftEdit/EditShiftDrawer.graphql';
+import {
+  updateShiftMutation,
+  deleteShiftMutation,
+  updateRecurringShiftById
+} from './ShiftEdit/EditShiftDrawer.graphql';
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawer from '../AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import CreateShiftDrawer from '../AddShift/CreateShift/CreateShiftDrawer';
 import EditShiftDrawerContainer from './ShiftEdit/EditShiftDrawerContainer';
 import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer';
-
+import DeleteRecuringPopUp from './DeleteRecuringPopUp';
 import '../style.css';
 import './shiftWeekTable.css';
 
@@ -69,6 +73,24 @@ class EventPopupComponent extends Component {
     });
     that.setState({ deleteModalPopped: false });
   };
+  // deleteRecurringShiftById
+
+  deleteRecurringShift = () => {
+    let {id} = this.props.data, {startTime} = this.props.data;
+    let {recurringShiftId} = this.props.data;
+    let that = this;
+
+    that.props.updateRecurringShiftById(recurringShiftId,startTime)
+      .then(({ data }) => {
+        console.log('Updated', data);
+        that.deleteShift();
+      }).catch((error) => {
+      console.log('there was an error sending the query deleteRecurringShift', error);
+    });
+
+
+    that.setState({ deleteModalPopped: false });
+  };
 
   closeEditShiftModal = () => {
     this.setState({ editShiftModalOpen: false });
@@ -119,12 +141,12 @@ class EventPopupComponent extends Component {
       payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
     }
     this.props.updateShiftMutation({
-      variables: {
-        data: {
-          id: shiftValue.id,
-          shiftPatch: payload
-        }
-      },
+        variables: {
+          data: {
+            id: shiftValue.id,
+            shiftPatch: payload
+          }
+        },
       updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
           const shiftHash = mutationResult.data.updateShiftById.shift;
@@ -172,6 +194,7 @@ class EventPopupComponent extends Component {
     let pastDate = moment().diff(data.startTime) > 0;
     let startTime = moment(data.startTime).format('h:mm A');
     let endTime = moment(data.endTime).format('h:mm A');
+    let {recurringShiftId} = this.props.data;
 
     if (startTime == "Invalid date"){
         let start = data.startTime.split(":")
@@ -184,6 +207,8 @@ class EventPopupComponent extends Component {
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
       { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
+    let deleteShiftRenderAction = [{ type: 'red', title: 'All Following',   handleClick: this.deleteRecurringShift, image: '/images/modal/close.png' },
+      { type: 'red', title: 'Only this', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
     if (data.workersAssigned == null) {
       data.workersAssigned = [];
     }
@@ -194,6 +219,7 @@ class EventPopupComponent extends Component {
     var workersCount = data.workersRequestedNum || data.workerCount
     this.openShift = workersCount - (data.workersAssigned.length + data.workersInvited.length );
     console.log(data)
+
     return (
       <div className="day-item hov">
 
@@ -240,12 +266,22 @@ class EventPopupComponent extends Component {
             </div>
           </div>
         }
-        <Modal
+
+
+        {recurringShiftId ?
+          <DeleteRecuringPopUp
           title="Confirm"
           isOpen={this.state.deleteModalPopped}
           message="Are you sure that you want to delete this shift?"
-          action={deleteShiftAction}
-          closeAction={this.modalClose} />
+          action={deleteShiftRenderAction}
+          closeAction={this.modalClose} />:
+          <Modal
+            title="delete"
+            isOpen={this.state.deleteModalPopped}
+            message="Delete only this shift?"
+            action={deleteShiftAction}
+            closeAction={this.modalClose} />
+          }
         <EditShiftDrawerContainer
           shift={data}
           users={users}
@@ -298,18 +334,7 @@ class EventPopupComponent extends Component {
   }
 }
 
-const deleteShift = gql`
-  mutation($clientMutationId: String,$id: Uuid!){
-    deleteShiftById(
-    input: {clientMutationId: $clientMutationId,
-    id: $id}){
-            shift{
-                id
-            }
-    }
-  }`;
-
-const EventPopup = compose(graphql(deleteShift, {
+const EventPopup = compose(graphql(deleteShiftMutation, {
   props: ({ ownProps, mutate }) => ({
     deleteShiftById: (clientMutationId, id) => mutate({
       variables: { clientMutationId: clientMutationId, id: id },
@@ -328,10 +353,35 @@ const EventPopup = compose(graphql(deleteShift, {
         },
       },
     }),
-
   }),
-}), graphql(updateShiftMutation, {
-  name: 'updateShiftMutation'
+}), graphql(updateRecurringShiftById, {
+  props: ({ ownProps, mutate }) => ({
+    updateRecurringShiftById: (recurringShiftId, startTime) => mutate({
+      variables: {
+        data: {
+          id: recurringShiftId,
+          recurringShiftPatch: {expiration: startTime},
+        }
+      },
+      updateQueries: {
+        allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+          let newEdges = []
+          previousQueryResult.allShifts.edges.map((value) => {
+            if (value.node.recurringShiftId === mutationResult.data.updateRecurringShiftById.recurringShift.id) {
+              value.node.recurringShiftId = null;
+              newEdges.push(value);
+            }
+          })
+          previousQueryResult.allShifts.edges = newEdges
+          return {
+            allShifts: previousQueryResult.allShifts
+          };
+        },
+      },
+    }),
+  }),
+}),graphql(updateShiftMutation, {
+    name: 'updateShiftMutation'
 }))(EventPopupComponent);
 
 export default EventPopup;

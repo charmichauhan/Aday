@@ -18,6 +18,7 @@ const allShiftsByWeeksPublished = gql`
           traineesRequestedNum
           recurringShiftId
           weekPublishedId
+          recurringShiftId
           positionByPositionId {
             id
             positionName

@@ -40,6 +40,7 @@ export const createShiftMutation = gql`
         unpaidBreakTime
         recurringShiftId
         weekPublishedId
+        recurringShiftId
         positionByPositionId {
           id
           positionName

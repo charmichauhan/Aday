@@ -201,7 +201,14 @@ class ShiftPublishComponent extends Component {
 
   handleCreateSubmit = (shift) => {
     let { publishId } = this.props;
-    let days = Object.keys(shift.shiftDaysSelected);
+
+    let days = []
+    Object.keys(shift.shiftDaysSelected).map(function(day, i){
+        if (shift.shiftDaysSelected[day] == true) {
+            days.push(moment(day).format('dddd').toUpperCase())
+        }
+    })
+
     if (!publishId) {
       publishId = uuidv4();
       this.props.createWeekPublished({

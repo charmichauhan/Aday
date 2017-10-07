@@ -245,7 +245,7 @@ class ShiftPublishComponent extends Component {
     let shiftRecure = shift;
     if(shift.recurringShift!=="none"){
       this.saveRecurringShift(shiftRecure, shift,(res)=>{
-        shiftRecure.recurringShiftId = res;
+        shiftRecure.recurringId = res;
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             this.saveShift(shiftRecure, day, publishId);
@@ -253,6 +253,7 @@ class ShiftPublishComponent extends Component {
         });
       });
     }else {
+      //
       days.forEach((day) => {
         if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
           this.saveShift(shift, day, publishId);
@@ -338,7 +339,7 @@ class ShiftPublishComponent extends Component {
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
-    const recurringShiftId = shift.recurringShiftId;
+    const recurringId = shift.recurringId;
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     const payload = {
@@ -352,7 +353,7 @@ class ShiftPublishComponent extends Component {
       endTime: moment.utc(shift.endTime),
       shiftDateCreated: moment().format(),
       weekPublishedId: weekPublishedId,
-      recurringShiftId: recurringShiftId ? recurringShiftId : null,
+      recurringId: recurringId ? recurringId : null,
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak
     };

@@ -181,6 +181,8 @@ class DrawerHelper extends Component {
       title: (positionId && 'Update Position') || 'Add Position',
       buttonText: (positionId && 'Update Position') || 'Add Position'
     };
+    {/* drawer just for image uploading - opened by clicking on position icon
+      copied code from settings, investigate styling (in development) */}
     //console.log(position);
     const DrawerPosition = this.state.position;
     // console.log(this.state.teamMembers);
@@ -192,7 +194,7 @@ class DrawerHelper extends Component {
                     DrawerPosition.traineeHours !== "" && DrawerPosition.traineeHours >= 0 &&
                     !(this.props.mode == "create" && localStorage.getItem("workplaceId") != "");
     var relevant_opportunity = DrawerPosition.opportunitiesByPositionId.nodes.find(this.workplaceMatch);
-    //console.log(relevant_opportunity);
+    //console.log(DrawerPosition);
     return (
       <Drawer
         docked={docked}
@@ -212,139 +214,147 @@ class DrawerHelper extends Component {
             </IconButton>
             <h2 className="text-center text-uppercase">{messages.title}</h2>
           </div>
-        </div>
-        {/* image uploading - copied code from settings, investigate styling (in development)
-        {!DrawerPosition.positionIconUrl && !this.state.blob && this.state.position.id &&
-        <div className="upload-wrapper col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 text-center">
-          <Dropzone
-            multiple={false}
-            accept="image/*"
-            onDrop={this.handleImageUpload}
-            style={{}}>
-            <Image src='/images/cloudshare.png' size="small" className="upload-img" />
-            <RaisedButton
-              containerElement='label'
-              className="upload-btn"
-              label="Upload Position Icon"
-              backgroundColor="#0022A1"
-              labelColor="#fff"
-            />
-            <p className="text-uppercase upload-desc">
-              Or Drag and Drop File
-            </p>
-          </Dropzone>
-        </div>}
-        {DrawerPosition.positionIconUrl && !this.state.blob &&
-        <Image className="uploaded-image" src={DrawerPosition.positionIconUrl + "?" + new Date().getTime()}
-         alt={position.positionName} size="large" />
-        }
-        {this.state.blob &&
-        <Image className="uploaded-image" src={this.state.blob.preview} size="large" />
-        }
-        {(DrawerPosition.positionIconUrl || this.state.blob) && <RaisedButton
-          backgroundColor={colors.primaryBlue}
-          labelColor="#fafafa"
-          className='upload-btn'
-          containerElement='label'
-          label='Change image'>
-          <input type='file' onChange={(e) => this.handleNewImageUpload(e.target.files)} />
-        </RaisedButton>}
-        */}
-        {/* detail fields*/}
-        <div className="position-form">
-          <div>
-            <p className="position-label">POSITION NAME</p>
-            <Input type="text"
-              name="positionName"
-              onChange={this.handleChange}
-              value={DrawerPosition.positionName}
-              fluid style={style.input}   />
-          </div>
-          <div>
-            <p className="position-label">DESCRIPTION</p>
-            <TextArea
-              rows="3"
-              name="positionDescription"
-              value={DrawerPosition.positionDescription}
-              onChange={this.handleChange}
-              style={style.input} />
-          </div>
-          <div className="position-row">
-            <p className="position-label">MINIMUM REQUIRED HOURS OF JOB SHADOWING TRAINING</p>
-            <Input
-              type="number"
-              name="traineeHours"
-              value={DrawerPosition.traineeHours}
-              onChange={this.handleChange}
-              label={{ basic: true, content: 'HOURS' }}
-              labelPosition='right'
-              fluid style={style.input}  />
-          </div>
-          <div>
-            <Grid columns={2}>
-              <Grid.Column>
-                <div>
-                  <p className="position-label">MINIMUM WEIGHT ABILITY</p>
-                  <Dropdown
-                  placeholder='SELECT WEIGHT'
-                  name="minimumLiftWeight"
-                  value={DrawerPosition.minimumLiftWeight}
-                  onChange={this.handleDropdownChange}
-                  fluid style={style.input} selection
-                  options={this.state.weightOptions} />
-                </div>
-              </Grid.Column>
-              <Grid.Column>
-                <div>
-                  <p className="position-label">MINIMUM AGE</p>
-                  <Dropdown
-                    placeholder='SELECT MINIMUM AGE'
-                    name="minimumAge"
-                    value={DrawerPosition.minimumAge}
-                    onChange={this.handleDropdownChange}
-                    fluid style={style.input} selection
-                    options={this.state.ageOptions} />
-                </div>
-              </Grid.Column>
-            </Grid>
-          </div>
-          <div className="position-row">
-            <p className="position-label">PART-TIME WAGE</p>
-            <Input
-              type="number"
-              fluid style={style.input}
-              value={DrawerPosition.partTimeWage}
-              name="partTimeWage"
-              onChange={this.handleChange}
-              label={{ basic: true, content: '$ PER HOUR' }}
-              labelPosition='right'/>
-          </div>
-          {(this.props.mode == "create" && localStorage.getItem("workplaceId") != "") &&
-            <div className="position-row" style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
-              Workplace-Specific Positions Coming Soon,
-              (currently can only create corporation-brand wide positions
-              by deselecting workplace on sidebar)
+          {/* image uploading drawer mode */}
+          {this.props.mode == "image" &&
+            <div>
+              {!DrawerPosition.positionIconUrl && !this.state.blob && this.state.position.id &&
+              <div className="upload-wrapper col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 text-center">
+                <Dropzone
+                  multiple={false}
+                  accept="image/*"
+                  onDrop={this.handleImageUpload}
+                  style={{}}>
+                  <Image src='/images/cloudshare.png' size="small" className="upload-img" />
+                  <RaisedButton
+                    containerElement='label'
+                    className="upload-btn"
+                    label="Upload Position Icon"
+                    backgroundColor="#0022A1"
+                    labelColor="#fff"
+                  />
+                  <p className="text-uppercase upload-desc">
+                    Or Drag and Drop File
+                  </p>
+                </Dropzone>
+              </div>}
+              {DrawerPosition.positionIconUrl && !this.state.blob &&
+              <Image className="uploaded-image" src={DrawerPosition.positionIconUrl + "?" + new Date().getTime()}
+               alt={position.positionName} size="large" />
+              }
+              {this.state.blob &&
+              <Image className="uploaded-image" src={this.state.blob.preview} size="large" />
+              }
+              {(DrawerPosition.positionIconUrl || this.state.blob) && <RaisedButton
+                backgroundColor={colors.primaryBlue}
+                labelColor="#fafafa"
+                className='upload-btn'
+                containerElement='label'
+                label='Change image'>
+                <input type='file' onChange={(e) => this.handleNewImageUpload(e.target.files)} />
+              </RaisedButton>}
             </div>
           }
-          {(this.props.mode == "create" && localStorage.getItem("workplaceId") == "") &&
-            <div className="position-row"> *Creating Corporation-Brand Wide Position* </div>
-          }
-          {(this.props.mode == "edit" && localStorage.getItem("workplaceId") == "") &&
-            <div className="position-row"> To Edit Opportunity Settings, Select Workplace on Sidebar </div>
-          }
-          {!this.state.permission &&
-            <div className="position-row" style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
-              Cannot Edit Corporation-Brand Wide Position Details (above) Under Specific Workplace,
-              (to edit, deselect workplace on sidebar) <br/> <br/>
+          {/* add/update position info drawer mode */}
+          {(this.props.mode == "edit" || this.props.mode == "create") &&
+            <div>
+              {/* detail fields*/}
+              <div className="position-form">
+                <div>
+                  <p className="position-label">POSITION NAME</p>
+                  <Input type="text"
+                    name="positionName"
+                    onChange={this.handleChange}
+                    value={DrawerPosition.positionName}
+                    fluid style={style.input}   />
+                </div>
+                <div>
+                  <p className="position-label">DESCRIPTION</p>
+                  <TextArea
+                    rows="3"
+                    name="positionDescription"
+                    value={DrawerPosition.positionDescription}
+                    onChange={this.handleChange}
+                    style={style.input} />
+                </div>
+                <div className="position-row">
+                  <p className="position-label">MINIMUM REQUIRED HOURS OF JOB SHADOWING TRAINING</p>
+                  <Input
+                    type="number"
+                    name="traineeHours"
+                    value={DrawerPosition.traineeHours}
+                    onChange={this.handleChange}
+                    label={{ basic: true, content: 'HOURS' }}
+                    labelPosition='right'
+                    fluid style={style.input}  />
+                </div>
+                <div>
+                  <Grid columns={2}>
+                    <Grid.Column>
+                      <div>
+                        <p className="position-label">MINIMUM WEIGHT ABILITY</p>
+                        <Dropdown
+                        placeholder='SELECT WEIGHT'
+                        name="minimumLiftWeight"
+                        value={DrawerPosition.minimumLiftWeight}
+                        onChange={this.handleDropdownChange}
+                        fluid style={style.input} selection
+                        options={this.state.weightOptions} />
+                      </div>
+                    </Grid.Column>
+                    <Grid.Column>
+                      <div>
+                        <p className="position-label">MINIMUM AGE</p>
+                        <Dropdown
+                          placeholder='SELECT MINIMUM AGE'
+                          name="minimumAge"
+                          value={DrawerPosition.minimumAge}
+                          onChange={this.handleDropdownChange}
+                          fluid style={style.input} selection
+                          options={this.state.ageOptions} />
+                      </div>
+                    </Grid.Column>
+                  </Grid>
+                </div>
+                <div className="position-row">
+                  <p className="position-label">PART-TIME WAGE</p>
+                  <Input
+                    type="number"
+                    fluid style={style.input}
+                    value={DrawerPosition.partTimeWage}
+                    name="partTimeWage"
+                    onChange={this.handleChange}
+                    label={{ basic: true, content: '$ PER HOUR' }}
+                    labelPosition='right'/>
+                </div>
+                {(this.props.mode == "create" && localStorage.getItem("workplaceId") != "") &&
+                  <div className="position-row" style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
+                    Workplace-Specific Positions Coming Soon,
+                    (currently can only create corporation-brand wide positions
+                    by deselecting workplace on sidebar)
+                  </div>
+                }
+                {(this.props.mode == "create" && localStorage.getItem("workplaceId") == "") &&
+                  <div className="position-row"> *Creating Corporation-Brand Wide Position* </div>
+                }
+                {(this.props.mode == "edit" && localStorage.getItem("workplaceId") == "") &&
+                  <div className="position-row"> To Edit Opportunity Settings, Select Workplace on Sidebar </div>
+                }
+                {!this.state.permission &&
+                  <div className="position-row" style = {{color:'red', fontWeight:'bold', fontSize: 18}}>
+                    Cannot Edit Corporation-Brand Wide Position Details (above) Under Specific Workplace,
+                    (to edit, deselect workplace on sidebar) <br/> <br/>
+                  </div>
+                }
+                {(localStorage.getItem("workplaceId") != "" && relevant_opportunity) &&
+                   <div  className="position-row">
+                     <div className="position-label"> ACCEPT APPLICATIONS? </div>
+                     <ToggleButton formCallBack={ this.togglePublic }
+                      opportunityId={relevant_opportunity.id}
+                      initial={relevant_opportunity.isPublic}/>
+                   </div>
+                }
+              </div>
             </div>
-          }
-          {(localStorage.getItem("workplaceId") != "" && relevant_opportunity) &&
-             <div  className="position-row">
-               <div className="position-label"> ACCEPT APPLICATIONS? </div>
-               <ToggleButton formCallBack={ this.togglePublic }
-                opportunityId={relevant_opportunity.id}
-                initial={relevant_opportunity.isPublic}/>
-             </div>
           }
           <div className="position-row" style={{textAlign:"center",marginTop:"20px"}} >
               <CircleButton

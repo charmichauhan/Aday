@@ -95,7 +95,7 @@ export class PositionsSection extends Component {
       "positionDescription": position.positionDescription,
       "minimumLiftWeight": position.minimumLiftWeight,
       "traineeHours": position.traineeHours,
-      "positionIconUrl": null,
+      "positionIconUrl": position.positionIconUrl,
       "minimumAge": position.minimumAge,
       "partTimeWage": position.partTimeWage,
       "exchangeLevel": "CORPORATION_BRAND_WIDE",

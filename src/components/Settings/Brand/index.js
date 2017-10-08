@@ -78,6 +78,7 @@ export default class Brand extends Component {
   };
 
   render() {
+    console.log(this.props);
     return (
       <div className="content brands-content">
         <div className="brand-add-button">

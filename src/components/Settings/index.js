@@ -47,7 +47,7 @@ class Settings extends Component {
         if (brandNodes) {
           const brands = brandNodes.map(({ node }) => {
             let brand = pick(node, brandFields);
-            if (!brand.brandIconUrl) brand.brandIconUrl = '/images/brands/ra.png';
+            //if (!brand.brandIconUrl) brand.brandIconUrl = '/images/brands/ra.png';
             const workplaceNodes = node.workplacesByBrandId && node.workplacesByBrandId.edges;
             if (workplaceNodes && workplaceNodes.length) {
               brand.workplaces = workplaceNodes.map(({ node: { id, workplaceName } }) => {

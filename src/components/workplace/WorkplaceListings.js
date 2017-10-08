@@ -35,7 +35,7 @@ export default class WorkplaceListingsComponent extends Component {
 				 </div>
 			 )
 	  };
-		console.log(this.props.opportunities);
+		//console.log(this.props);
 		return (
 			<div>
 				<label className="workplace-subheader">POSITIONS ACCEPTING APPLICATIONS</label>
@@ -44,7 +44,7 @@ export default class WorkplaceListingsComponent extends Component {
 						<Card.Group itemsPerRow={2}>
 							{this.props.opportunities.map((opportunity, i) =>
 								<ListingCard key={i}
-									brandIcon={opportunity.positionByPositionId.positionIconUrl}
+									brandIcon={this.props.brandIcon}
 									jobTitle={opportunity.positionByPositionId.positionName}
 									workplaceId={localStorage.getItem("workplaceId")}
 									opportunityId={opportunity.id}
@@ -55,7 +55,7 @@ export default class WorkplaceListingsComponent extends Component {
 							}
 						</Card.Group>
 					</div>
-					{/* hard-coded opportunities */}
+					{/* hard-coded opportunities
 					<div className="workplace-card-group">
 	    				<Card.Group itemsPerRow={2}>
 							<ListingCard
@@ -96,6 +96,7 @@ export default class WorkplaceListingsComponent extends Component {
 							/>
 						</Card.Group>
 				</div>
+				*/}
             </div>
         )
     }

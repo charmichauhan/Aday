@@ -541,6 +541,7 @@ class DrawerHelper extends Component {
                 
              
                  <br/>
+
                   <div className="member-list">
                     { shift.teamMembers && shift.teamMembers.map((tm, i) => <TeamMemberCard
                       avatarUrl={tm.avatarUrl}

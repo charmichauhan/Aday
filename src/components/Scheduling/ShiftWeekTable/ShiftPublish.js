@@ -9,7 +9,7 @@ import uuidv4 from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
 
 import CreateShiftButton from '../../Scheduling/AddShift/CreateShiftButton';
-import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftDrawer';
+import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftDrawerContainer';
 import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
@@ -202,10 +202,13 @@ class ShiftPublishComponent extends Component {
   handleCreateSubmit = (shift) => {
     let { publishId } = this.props;
 
-    let days = []
+    let dayNames = []
+    let days = Object.keys(shift.shiftDaysSelected)
+    console.log(shift.shiftDaysSelected)
+
     Object.keys(shift.shiftDaysSelected).map(function(day, i){
         if (shift.shiftDaysSelected[day] == true) {
-            days.push(moment(day).format('dddd').toUpperCase())
+            dayNames.push(moment(day).format('dddd').toUpperCase())
         }
     })
 
@@ -233,7 +236,7 @@ class ShiftPublishComponent extends Component {
           },
         },
       }).then(({ data }) => {
-        this.submitShifts({ days, shift, publishId });
+        this.submitShifts({ dayNames, days, shift, publishId });
       }).catch((error) => {
         console.log('there was an error sending the query', error);
         this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
@@ -242,12 +245,12 @@ class ShiftPublishComponent extends Component {
     }
     // else create all shifts with existing week published
     else {
-      this.submitShifts({ days, shift, publishId });
+      this.submitShifts({ dayNames, days, shift, publishId });
     }
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
-  submitShifts = ({ days, shift, publishId }) => {
+  submitShifts = ({ dayNames, days, shift, publishId }) => {
     let shiftRecure = shift;
     if(shift.recurringShift!=="none"){
       this.saveRecurringShift(shiftRecure, shift,(res)=>{
@@ -268,7 +271,7 @@ class ShiftPublishComponent extends Component {
 
     }
   };
-  saveRecurringShift(days, shift,callback){
+  saveRecurringShift(dayNames, days, shift,callback){
     this.props.client.query({
       query: findRecurring,
       variables: { brandId: localStorage.getItem('brandId'), workplaceId: localStorage.getItem('workplaceId')}
@@ -290,12 +293,12 @@ class ShiftPublishComponent extends Component {
             }
           }}).then((res)=>{
           console.log("createRecurring res",res);
-          return this.createRecurringShift(shift, recurring,days,callback);
+          return this.createRecurringShift(shift, recurring, dayNames, days, callback);
         });
       }
     });
   }
-  createRecurringShift(shiftValue, recurringId,days,callback){
+  createRecurringShift(shiftValue, recurringId, dayNames, days,callback){
     const shift = cloneDeep(shiftValue);
     let id = uuidv4();
 
@@ -310,7 +313,7 @@ class ShiftPublishComponent extends Component {
       unpaidBreakTime: shift.unpaidBreak,
       expiration: shift.endDate,
       startDate: shift.startDate,
-      days: days,
+      days: dayNames,
       recurringId: recurringId,
       isTraineeShift: false,
       expired: false
@@ -455,21 +458,20 @@ class ShiftPublishComponent extends Component {
                   weekPublishedId={publishId}
                   weekStart={start} />
               </Button>
+              <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
               {isPublished &&
               <Button className="btn-image flr" onClick={this.onPublish}>
                 <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
-              </Button>}
+              </Button> }
               {(is_publish != 'none') &&
               <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}>
                 <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
               </Button>}
               {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
-              {is_publish != 'none' &&
-                <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>}
+            
             </div> :
             <div>
-              {is_publish != 'none' &&
-              <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>}
+                 <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
             </div>
           }
 

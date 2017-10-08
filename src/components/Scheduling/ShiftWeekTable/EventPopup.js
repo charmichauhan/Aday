@@ -8,8 +8,8 @@ import {
   updateRecurringShiftById
 } from './ShiftEdit/EditShiftDrawer.graphql';
 import Modal from '../../helpers/Modal';
-import CreateShiftAdvanceDrawer from '../AddShift/CreateShift/CreateShiftAdvanceDrawer';
-import CreateShiftDrawer from '../AddShift/CreateShift/CreateShiftDrawer';
+import CreateShiftAdvanceDrawerContainer from '../AddShift/CreateShift/CreateShiftAdvanceDrawerContainer';
+import CreateShiftDrawerContainer from '../AddShift/CreateShift/CreateShiftDrawerContainer';
 import EditShiftDrawerContainer from './ShiftEdit/EditShiftDrawerContainer';
 import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer';
 import DeleteRecuringPopUp from './DeleteRecuringPopUp';
@@ -282,7 +282,7 @@ class EventPopupComponent extends Component {
             action={deleteShiftAction}
             closeAction={this.modalClose} />
           }
-        <EditShiftDrawerContainer
+         <EditShiftDrawerContainer
           shift={data}
           users={users}
           open={this.state.newShiftModalPopped}
@@ -295,7 +295,7 @@ class EventPopupComponent extends Component {
           isSorted={this.state.isSorted}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
-        <CreateShiftDrawer
+        <CreateShiftDrawerContainer
           width={styles.drawer.width}
           open={this.state.editShiftModalOpen}
           shift={this.state.drawerShift}
@@ -303,8 +303,8 @@ class EventPopupComponent extends Component {
           managers={this.props.managers}
           handleSubmit={this.handleShiftUpdateSubmit}
           handleAdvance={this.handleAdvanceToggle}
-          closeDrawer={this.closeEditShiftModal} />
-        <CreateShiftAdvanceDrawer
+          closeDrawer={this.closeEditShiftModal} /> 
+        <CreateShiftAdvanceDrawerContainer
           width={styles.drawer.width}
           shift={this.state.drawerShift}
           open={this.state.isCreateShiftAdvanceOpen}

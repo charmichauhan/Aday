@@ -7,7 +7,7 @@ import { Tooltip } from 'rebass';
 import { find, pick, times } from 'lodash';
 import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
-
+import WorkplaceSelector from '../../../Scheduling/AddShift/CreateShift/workplaceSelector'
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
 import Loading from '../../../helpers/Loading';
@@ -111,7 +111,6 @@ class DrawerHelper extends Component {
   }
 
   componentDidMount() {
-    this.getWorkplaces();
     this.getPositions();
     this.filterManagers(this.state.shift.workplaceId);
   }
@@ -171,12 +170,6 @@ class DrawerHelper extends Component {
       });
     }
   }
-
-  getWorkplaces = () => {
-    dataHelper.getCurrentWorkplaces()
-      .then(workplaces => this.setState({ workplaces }))
-      .catch(err => console.error(err));
-  };
 
   getPositions = (workplaceId = this.state.shift.workplaceId) => {
     if (workplaceId) {
@@ -327,12 +320,16 @@ class DrawerHelper extends Component {
     this.setState({ isShiftInvalid: Object.keys(shiftErrors).length });
   };
 
+  handleWorkplaceChange = (e) => {
+      this.setState((state) => ({ shift: { ...state.shift, workplaceId: e.workplace}}));
+      this.getPositions(e.workplace);
+  };
+
   render() {
 
     const { width, open, handleAdvance } = this.props;
     const {
       shift,
-      workplaces,
       positions,
       weekStart,
       selectedDate,
@@ -343,16 +340,7 @@ class DrawerHelper extends Component {
     } = this.state;
     let positionOptions;
 
-    if (!workplaces) {
-      return (<Loading />);
-    }
 
-    const workplaceOptions = workplaces.map(workplace => ({
-      key: workplace.id,
-      value: workplace.id,
-      text: workplace.workplaceName,
-      selected: shift.workplaceId === workplace.id
-    }));
     if (positions) {
       positionOptions = positions.map(position => ({
         key: position.id,
@@ -450,16 +438,7 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Workplace</label>
-                  <Dropdown
-                    fluid
-                    selection
-                    name="workplaceId"
-                    placeholder="CHOOSE WORKPLACE"
-                    onChange={(_, data) => this.handleChange({ target: data })}
-                    value={shift.workplaceId}
-                    selectOnBlur={false}
-                    forceSelection={false}
-                    options={workplaceOptions} />
+                  <WorkplaceSelector workplace={this.props.shift.workplaceId} overRideCurrent={true} formCallBack={ this.handleWorkplaceChange }/>
                 </Grid.Column>
               </Grid.Row>
 
@@ -474,7 +453,7 @@ class DrawerHelper extends Component {
                     fluid
                     selection
                     placeholder={
-                      !shift.workplaceId && "WHICH POSITION CERTIFICATION MUST THE TEAM MEMBER HAVE?"
+                      shift.workplaceId && "WHICH POSITION CERTIFICATION MUST THE TEAM MEMBER HAVE?"
                       || "SELECT WORKPLACE TO SEE AVAILABLE POSITIONS"
                     }
                     name="positionId"
@@ -665,4 +644,4 @@ class DrawerHelper extends Component {
   }
 }
 
-export default withApollo(DrawerHelper);
+export default withApollo(DrawerHelper)

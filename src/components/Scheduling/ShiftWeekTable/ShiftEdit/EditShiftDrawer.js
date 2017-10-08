@@ -464,7 +464,7 @@ class DrawerHelper extends Component {
             </div>
             <br />
 
-              {teamMembers && teamMembers.map((tm, i) => (
+              {teamMembers && teamMembers.length && teamMembers.map((tm, i) => (
                 <TeamMemberCard
                   avatarUrl={tm.user.avatarUrl}
                   firstName={tm.user.firstName}

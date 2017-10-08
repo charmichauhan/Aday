@@ -7,21 +7,23 @@
 }
 
 .firstName {
-    height: 28px;
-    color: #000;
-    font-family: "Roboto Condensed";
-    font-size: 20px;
-    font-weight: bolder;
-    line-height: 24px;
+  height: 28px;
+  color: #000;
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  font-weight: bolder;
+  line-height: 24px;
+  letter-spacing: 0.5px;
 }
 
 .lastName {
-    height: 28px;
-    color: #666666;
-    font-family: "Roboto Condensed";
-    font-size: 20px;
-    font-weight: lighter;
-    line-height: 24px;
+  height: 28px;
+  color: #666666;
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 24px;
+  letter-spacing: 0.5px;
 }
 
 .text-uppercase {
@@ -103,6 +105,12 @@
   margin-bottom: 0;
 }
 
+/*Rahkeem: will increase specificity of selector later*/
+.member-list {
+  margin-left: -35px !important;
+  margin-bottom: 5px
+}
+
 .member-list .teamMemberOption.option .label b,
 .member-list .teamMemberOption.option .label span {
   color: #666666;
@@ -128,15 +136,43 @@
 }
 
 .greenBorder {
-  border: 2px solid #00A863;
+  border: 1px solid #00A863;
 }
 
 .redBorder {
-  border: 2px solid #E33821;
+  border: 1px solid #E33821;
 }
 
 .orangeBorder {
-  border: 2px solid #FFAD33;
+  border: 1px solid #FFAD33;
+}
+
+.blue-text {
+  color: #0022a1 !important;
+}
+
+.light-gray-text {
+  color: #999999 !important;
+}
+
+.font13 {
+  font-size: 13px;
+}
+
+.font14 {
+  font-size: 14px;
+}
+
+.font16 {
+  font-size: 16px;
+}
+
+.font18 {
+  font-size: 18px;
+}
+
+.font20 {
+  font-size: 20px;
 }
 
 .shiftDetails {
@@ -153,6 +189,7 @@
 .teamMemberCard {
   display: flex;
   margin-bottom: 10px;
+  width: 638px;
 }
 
 .teamMemberCard > .edits {
@@ -223,7 +260,7 @@
   width: 100%;
 }
 
-.shift-details-header{
+.shift-details-header {
   display: table;
   margin-left: 0px;
   padding-bottom: 10px;
@@ -322,8 +359,8 @@
 }
 
 .member-list .teamMemberCard .description {
-  color: #999999;
-  font-family: Lato;
+  color: #000;
+  font-family: Lato-Light;
   font-size: 15px;
   line-height: 15px;
 }
@@ -497,6 +534,103 @@ i.chevron.up.icon, i.chevron.down.icon {
 .show-details {
   display: table-row;
   animation: anim 0.5s ease-in-out;
+}
+
+.rbc-calendar .shift-section .row:before {
+  display: none;
+}
+
+.shift-section .ui.dropdown > .text {
+  font-size: 14px;
+}
+
+.history-drawer-content {
+  width: 100%;
+  clear: both;
+}
+
+.shift-history.content-row .ui.grid .column:not(.row) {
+  padding-top: 0;
+}
+
+.history-drawer-content .shift-history.content-row .ui.grid {
+  padding: 0 10px;
+}
+
+.shift-history.content-row .ui.grid {
+  margin-left: 0;
+  margin-right: 0;
+  display: table;
+  padding: 0 10px;
+}
+
+.shift-history.content-row .content .avatar {
+  display: inline-block;
+}
+
+.shift-history.content-row .ui.grid {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.shift-history.content-row .wrapper-element.text-left .label,
+.shift-history.content-row .wrapper-element p {
+  color: #4A4A4A;
+  padding: 4px;
+}
+
+.shift-history.content-row .wrapper-element.text-left {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.shift-history.content-row .ui.grid .wide.column .ui.dropdown-team i.fa-ellipsis-v {
+  width: auto;
+  margin-right: 4px;
+}
+
+.shift-history.content-row .ui.grid .wide.column {
+  padding: 0 !important;
+  vertical-align: middle;
+  display: table-cell;
+}
+
+.shift-history.content-row .ui.grid .one.wide.column {
+  width: 4% !important;
+  padding: 0 !important;
+}
+
+.shift-history.content-row .ui.grid .two.wide.column {
+  height: auto;
+}
+
+.shift-history.content-row .ui.grid .wide.column .ui.dropdown-team i,
+.shift-history.content-row .ui.grid .wide.column .anticon {
+  font-size: 25px;
+}
+
+.shift-history.content-row .ui.grid .wide.column .wrapper-element,
+.shift-history.content-row .ui.grid .wide.column .wrapper-element .history-text {
+  margin-bottom: 0;
+}
+
+.shift-history.content-row .ui.grid .wide.column .sub-menu span {
+  margin: 0 10px;
+  color: #4a4a4a;
+}
+
+.shift-history.content-row .ui.grid .wide.column .sub-menu .text {
+  font-size: 12px;
+}
+
+.shift-history.content-row .dropdown-team .menu .ui.dropdown {
+  position: static;
+}
+
+.shift-history.content-row .history-img {
+  margin: 0 auto;
+  width: 25px;
+  height: 25px;
 }
 
 @keyframes anim {

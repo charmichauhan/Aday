@@ -1,26 +1,29 @@
-import React,{Component} from 'react';
+import React, { Component } from 'react';
 import moment from 'moment';
 import DaySelector from './DaySelector/DaySelector';
 
 export default class ShiftDaySelector extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.handleData=this.handleData.bind(this);
   }
-  handleData(value){
+
+  handleData = (value) => {
     this.props.formCallBack(value);
-  }
-  render(){
-    const tableSize=7;
-    const selectedDate=moment().format('MM-DD-YYYY');
-    return(
-       <DaySelector
+  };
+
+  render() {
+    const { startDate, isRecurring, selectedDate } = this.props;
+    const tableSize = 7;
+    return (
+      <div className="day-selector">
+        <DaySelector
           tableSize={tableSize}
-          startDate={this.props.startDate}
+          isRecurring={isRecurring}
+          startDate={startDate}
           selectedDate={selectedDate}
-          callBack={ this.handleData }
-      />
+          callBack={this.handleData}
+        />
+      </div>
     );
   }
 }
-

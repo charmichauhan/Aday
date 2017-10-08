@@ -44,9 +44,13 @@ export class WorkplaceSelector extends Component{
 
       let workplacesArray=this.props.data.allWorkplaces.nodes;
       let workplaceId = localStorage.getItem("workplaceId");
-      //if (workplaceId != "") {
-      //  workplacesArray = workplacesArray.filter((w) => w.id == workplaceId);
-      // }
+
+      if(this.props.overRideCurrent){
+        if (workplaceId != "") {
+          workplacesArray = workplacesArray.filter((w) => w.id == workplaceId);
+        }
+      }
+
       workplacesArray.forEach(function(workplace,index) {
         this.state.workplaces.push({
           text:workplace.workplaceName,
@@ -54,6 +58,10 @@ export class WorkplaceSelector extends Component{
           key:workplace.id
         })
       }, this);
+
+
+
+
     }
     }
 

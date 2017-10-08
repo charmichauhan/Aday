@@ -10,9 +10,15 @@ import {Button, Input} from "semantic-ui-react";
 import Modal from '../helpers/Modal';
 import ShiftWeekTable from "./ShiftWeekTable";
 import "../Scheduling/style.css";
+import { createRecurringShift, createRecurringShiftAssignee, createRecurring } from "./ShiftWeekTable/ShiftEdit/EditRecurringShift.graphql"
 import { gql, graphql, compose } from 'react-apollo';
-import { allTemplates, allWeekPublisheds, editTemplateNameMutation } from './TemplateQueries';
 var Halogen = require('halogen');
+import CreateShiftButton from '../Scheduling/AddShift/CreateShiftButton';
+import  EditShiftDrawerContainer from './ShiftWeekTable/ShiftEdit/recurringShiftDrawerContainer';
+import cloneDeep from 'lodash/cloneDeep';
+import { allRecurrings, allTemplateShifts } from './TemplateQueries';
+const uuidv4 = require('uuid/v4');
+var rp = require('request-promise');
 
 let templateName;
 let that;
@@ -20,12 +26,16 @@ let viewName="Employee View";
 let currentView = "job";
 
 class TemplateComponent extends Component {
+
   constructor(props){
     super(props);
     this.state=({
       view:props.location.viewName,
       selectedTemplateId: "",
-      date: moment()
+      date: moment(),
+      isCreateShiftModalOpen: false,
+      isCreateShiftOpen: false,
+      recurringId: null
     });
     this.handleSelectTemplate = this.handleSelectTemplate.bind(this);
     this.handleResetTemplate = this.handleResetTemplate.bind(this);
@@ -57,6 +67,19 @@ class TemplateComponent extends Component {
     this.setState({date: start})
   };
 
+  openCreateShiftModal = () => {
+    this.setState({ isCreateShiftModalOpen: true });
+  };
+
+  openShiftDrawer = () => {
+    this.setState({ isCreateShiftOpen: true, isCreateShiftModalOpen: false });
+  };
+
+  closeDrawerAndModal = () => {
+    this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
+  };
+
+
   componentWillMount = () => {
     that = this;
     if(this.state.view == "job"){
@@ -68,33 +91,215 @@ class TemplateComponent extends Component {
     }
   };
 
-    render() {
+  handleCreateSubmit = (shiftValue, recurringId) => {
+    if(recurringId == null) {
+        let recurring = uuidv4();
+        const payload = {
+         id: recurring, 
+          workplaceId: localStorage.getItem("workplaceId"),
+          brandId: localStorage.getItem("brandId"),
+          lastWeekApplied: moment().add(7, "weeks").endOf('week').format()
+        }
+        this.props.createRecurring({
+        variables: {
+          data: {
+            recurring: payload
+          }
+        },
+        updateQueries: {
+          allRecurrings: (previousQueryResult, { mutationResult }) => {
+            const recurring = mutationResult.data.createRecurring.recurring
+            previousQueryResult.allRecurrings.edges = [...previousQueryResult.allRecurrings.edges, {node: recurring, __typename: "RecurringsEdge"}];
+            return {
+              allRecurrings: previousQueryResult.allRecurrings
+            };
+          },
+        },
+      }).then(({ data }) => {
+           this.createRecurringShift(shiftValue, recurring)
+      })
 
-      if (this.props.data.loading) {
-        return (<div><Halogen.SyncLoader color='#00A863'/></div>)
+    } else {
+      this.createRecurringShift(shiftValue, recurringId)
+    }         
+  };
+
+
+  createRecurringShift = (shiftValue, recurringId) => {
+      const shift = cloneDeep(shiftValue);
+
+      let id = uuidv4();
+      const props = this.props;
+
+      let days = []
+      Object.keys(shift.shiftDaysSelected).map(function(day, i){
+        if (shift.shiftDaysSelected[day] == true) {
+            days.push(moment(day).format('dddd').toUpperCase())
+        }
+      })
+
+      const payload = {
+        id: id,
+        positionId: shift.positionId,
+        workerCount: shift.numberOfTeamMembers,
+        creator: localStorage.getItem('userId'),
+        startTime: moment(shift.startTime).format('HH:mm'),
+        endTime: moment(shift.endTime).format('HH:mm'),
+        instructions: shift.instructions,
+        unpaidBreakTime: shift.unpaidBreak,
+        expiration: shift.endDate || null,
+        startDate: shift.startDate,
+        days: days,
+        recurringId: recurringId,
+        isTraineeShift: false,
+        expired: false
+      };
+      this.props.createRecurringShift({
+        variables: {
+          data: {
+            recurringShift: payload
+          }
+        },
+        updateQueries: {
+          recurringById: (previousQueryResult, { mutationResult }) => {
+            const recurringShift = mutationResult.data.createRecurringShift.recurringShift
+            previousQueryResult.recurringById.recurringShiftsByRecurringId.edges = [...previousQueryResult.recurringById.recurringShiftsByRecurringId.edges, {node: recurringShift, __typename: "RecurringShiftsEdge"}];
+
+            return {
+              recurringById: previousQueryResult.recurringById
+            };
+          },
+        },
+      }).then(({ data }) => {
+
+      if (shiftValue.teamMembers && shiftValue.teamMembers.length > 0){
+          const memberCount = shiftValue.teamMembers.length -1
+          shiftValue.teamMembers.map(function(member, i) {
+            const assignee_payload = {
+              recurringShiftId: id,
+              userId: member.id
+            }
+            props.createRecurringShiftAssignee({
+                 variables: {
+                  data: {
+                    recurringShiftAssignee: assignee_payload
+                  }
+                },
+                updateQueries: {
+                  recurringById: (previousQueryResult, { mutationResult }) => {
+                    const recurringShiftAssignee = mutationResult.data.createRecurringShiftAssignee.recurringShiftAssignee
+                    const recurringShift = recurringShiftAssignee.recurringShiftId
+                    previousQueryResult.recurringById.recurringShiftsByRecurringId.edges.map(function(shift, i){
+                      if (shift.node.id == recurringShift){
+                                shift.node.recurringShiftAssigneesByRecurringShiftId.edges = [ ...shift.node.recurringShiftAssigneesByRecurringShiftId.edges, {node: recurringShiftAssignee, __typename: "RecurringShiftAssigneesEdge"}]
+                      }
+                    })
+                    return {
+                      recurringById: previousQueryResult.recurringById
+                    };
+                  }, 
+                },
+
+            }).then(({ data }) => {
+
+              if (memberCount == i) {
+                var uri = 'http://localhost:8080/api/newRecurring'
+                  
+                  var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {
+                      "data": {
+                      "sec": "QDVPZJk54364gwnviz921",
+                      "recurringShiftId": id,
+                      "startsOn": shift.startDate || moment().format()
+                      }
+                    }
+                  };
+                  rp(options)
+                  .then(function(response) {
+                    //that.setState({redirect:true})
+                  }).catch((error) => {
+                      console.log('there was an error sending the query', error);
+                  });  
+              } 
+    
+            }).catch(err => {
+                console.log('There was error in saving recurring shift assignee', err);
+              })
+          })
+        } else{
+
+             var uri = 'http://localhost:8080/api/newRecurring'
+
+                     var options = {
+                        uri: uri,
+                        method: 'POST',
+                        json: {
+                            "data": {
+                              "sec": "QDVPZJk54364gwnviz921",
+                              "recurringShiftId": id,
+                              "startsOn": shift.startDate || moment().format(),
+                              "workplaceId": localStorage.getItem("workplaceId")
+                            }
+                        }
+                    };
+                      rp(options)
+                        .then(function(response) {
+                               //that.setState({redirect:true})
+                          }).catch((error) => {
+                              console.log('there was an error sending the query', error);
+                          });   
+
+        }
+      }).catch(err => {
+        console.log('There was error in saving recurring shift', err);
+      });
+      this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false })
+  }
+
+
+    render() {
+      console.log(this.props)
+      if (this.props.recurrings.loading) {
+          return (<div><Halogen.SyncLoader color='#00A863'/></div>)
       }
-      if (this.props.data.error) {
-        console.log(this.props.data.error);
-        return (<div>An unexpected error occurred</div>)
+
+      let recurring = null;
+      if (this.props.recurrings.allRecurrings.edges[0]){
+        this.props.recurrings.allRecurrings.edges.map(function(shift, i){
+            if (shift.node.workplaceId == localStorage.getItem('workplaceId')){
+              recurring = shift.node.id
+            };
+        })
       }
-      templateName = this.props.location.templateName;
+
       BigCalendar.momentLocalizer(moment);
       const date = this.state.date;
-      let publishId = null;
-      this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
-      if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))) {
-        publishId = value.id;
-      }
-    });
       return (
           <div className="App row">
               <div className="col-md-12">
                   <div className="col-sm-offset-3 col-sm-5 rectangle">
-                      <p className="col-sm-offset-2">TEMPLATE PREVIEW</p>
+                      <p className="col-sm-offset-2">Repeating Shifts</p>
                   </div>
               </div>
+
+                <div className="btn-action">
+                      <div>
+                        { localStorage.getItem("workplaceId") && <Button className="btn-image">
+                          <CreateShiftButton
+                            open={this.state.isCreateShiftModalOpen}
+                            onButtonClick={this.openCreateShiftModal}
+                            onCreateShift={this.openShiftDrawer}
+                            onModalClose={this.closeDrawerAndModal}
+                            weekStart={moment().startOf('week') }
+                            />
+                        </Button>
+                        }
+                      </div>
+                </div>
               <div>
-                  <BigCalendar events={[this.props.history, this.state.selectedTemplateId, publishId, this.handleResetTemplate]}
+                  <BigCalendar events={[recurring]}
                                culture='en-us'
                                startAccessor='startDate'
                                endAccessor='endDate'
@@ -110,101 +315,41 @@ class TemplateComponent extends Component {
                                }}
                   />
               </div>
+
+              <EditShiftDrawerContainer
+                    width={800}
+                    open={this.state.isCreateShiftOpen}
+                    shift={this.state}
+                    weekStart={moment().format()}
+                    handleSubmit={this.handleCreateSubmit}
+                    closeDrawer={this.closeDrawerAndModal}
+                    recurringId={ recurring }
+                    edit={false}
+                  />
           </div>
+
+
       );
   }
 }
 
 
-class CustomToolbarComponent extends Toolbar {
-  constructor(props){
-    super(props);
-    this.state=({
-      editNamePopped: false,
-      newName: ""
-    });
-    this.editName = this.editName.bind(this);
-  }
-
-  editName() {
-    this.props.mutate({
-     variables: {id: this.props.selectedTemplateId, templateName: this.state.newName },
-     optimisticResponse: {
-       __typename: 'Mutation',
-       updateTemplateById: {
-         template: {
-           id: this.props.selectedTemplateId,
-           templateName: this.state.newName,
-           __typename: 'Template'
-         },
-         __typename:"UpdateTemplatePayload"
-       }
-     }
-   }).then(this.setState({editNamePopped: false}));
-  }
+class CustomToolbar extends Toolbar {
   render() {
-      if (this.props.data.loading) {
-          return (<div><Halogen.SyncLoader color='#00A863'/></div>)
-      }
-      if (this.props.data.error) {
-          console.log(this.props.data.error)
-          return (<div>An unexpected error occurred</div>)
-      }
       let { date } = this.props
       let month = moment(this.props.date).format("MMMM YYYY");
-      let editNameAction =[{type:"white",title:"Cancel",handleClick:() => this.setState({editNamePopped: false}),image:false},
-                           {type:"blue",title:"Rename Template",handleClick:this.editName,image:false}];
-      let workplaceId = localStorage.getItem("workplaceId");
-      let templates = this.props.data.allTemplates.edges;
-      templates = templates.filter((t) => workplaceId == "" || t.node.workplaceId == workplaceId);
       return (
           <div>
               <nav className="navbar weeklynavbar weekly_nav_height">
                   <div className="container-fluid">
                       <div className="wrapper-div text-center">
-                          <ul className="nav navbar-nav dropdown_job m8">
+                         <ul className="nav navbar-nav dropdown_job m8">
                               <li>
                                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
                               </li>
                           </ul>
-                          <div className="dropdown_select">
-                              <ul className="nav navbar-nav dropdown_job">
-                                  <li className="dropdownweeky">
-                                      <select className="dropdown" value={this.props.selectedTemplateId} onChange={this.props.handleSelectTemplate}>
-                                        <option value={""} key={0}> Select a Template </option>
-                                      { templates.map((value,index) =>
-                                          <option value={ value.node.id } key={index + 1}> { value.node.templateName }</option>
-                                          )
-                                      }
-                                      </select>
-                                  </li>
-                              </ul>
-                          </div>
+                        
                           <ul className="nav navbar-nav navbar-right">
-                              <li>
-                                  <button type="button" onClick={() => this.setState({editNamePopped: true})}
-                                          className="btn btn-default btnnav navbar-btn m8 "><strong>Edit name</strong>
-                                  </button>
-                                  <Modal
-                                    title="Confirm"
-                                    isOpen={this.state.editNamePopped && this.props.selectedTemplateId != ""}
-                                    message="Enter a new name for this template:"
-                                    action={editNameAction}
-                                    closeAction={() => this.setState({editNamePopped: false})}>
-                                    <Input fluid type="text" placeholder="New Name" style={{marginLeft: 20, marginRight: 20}}
-                                                 onChange = {(e) => this.setState({newName: e.target.value})}/>
-                                  </Modal>
-                              </li>
-                              <li>
-                                  <button type="button "
-                                          className="btn btn-default navbar-btn btnnav nav-next glyphicon glyphicon-arrow-left"
-                                          onClick={() => this.navigate("PREV")}/>
-                              </li>
-                              <li>
-                                  <button type="button"
-                                          className="btn btn-default navbar-btn btnnav nav-prv glyphicon glyphicon-arrow-right"
-                                          onClick={() => this.navigate("NEXT")}/>
-                              </li>
                           </ul>
                       </div>
                   </div>
@@ -214,18 +359,31 @@ class CustomToolbarComponent extends Toolbar {
     }
 }
 
-const CustomToolbar = compose(
-  graphql(allTemplates),
-  graphql(editTemplateNameMutation)
-  )(CustomToolbarComponent);
 
-
-const Template = graphql(allWeekPublisheds, {
-  options: (ownProps) => ({
-    variables: {
-      brandid: localStorage.getItem('brandId') ,
-    }
+const Template = compose(
+  graphql(allRecurrings, {
+    options: (ownProps) => ({
+      variables: {
+        brandId: localStorage.getItem('brandId'),
+      },
+    }),
+    name: 'recurrings'
   }),
-  })(TemplateComponent)
+graphql(createRecurringShift, {
+  name: 'createRecurringShift'
+}),
+graphql(createRecurringShiftAssignee, {
+  name: 'createRecurringShiftAssignee'
+}),
+graphql(createRecurring, {
+  name: 'createRecurring'
+}),
+)(TemplateComponent);
 
-export default Template
+export default Template;
+
+
+
+
+
+

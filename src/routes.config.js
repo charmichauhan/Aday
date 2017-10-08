@@ -60,7 +60,7 @@ const routes = [
             // component: EmployeeView
 				// 	},
 					{
-            path: '/schedule/template',
+            path: '/schedule/recurring',
             exact: true,
             component: Template
 					},

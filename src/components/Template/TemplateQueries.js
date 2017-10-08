@@ -1,76 +1,61 @@
 import { gql } from 'react-apollo';
 
-const allTemplates = gql`
-  query allTemplates {
-    allTemplates {
-        edges{
-            node{
-              id
-              templateName
-              workplaceId
-            }
-        }
-    }
-}`
 
-const allWeekPublisheds = gql
-  `query allWeekPublisheds($brandid: Uuid!){
-        allWeekPublisheds(condition: { brandId: $brandid }){
-            nodes{
+const allTemplateShifts = gql`
+  query recurringById ($id: Uuid!) {
+    recurringById(id: $id){
+          id
+          workplaceByWorkplaceId{
             id
-            published
-            start
-            end
-        }
-    }
+            workplaceName
+          }
+          recurringShiftsByRecurringId(condition: { expired: false }){
+            edges{
+              node{
+                id
+                startTime
+                endTime
+                workerCount
+                isTraineeShift
+                unpaidBreakTime
+                instructions
+                days
+                positionByPositionId{
+                  id
+                  positionName
+                  positionIconUrl
+                }
+                recurringShiftAssigneesByRecurringShiftId {
+                  edges{
+                    node{
+                      userId
+                      userByUserId{
+                        firstName
+                        lastName
+                        avatarUrl
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+      }
 }`
 
 
-const editTemplateNameMutation = gql`
-  mutation ($id: Uuid!,  $templateName: String!){
-    updateTemplateById (input: {id: $id, templatePatch: {templateName:$templateName}}){
-      template{
-        id
-        templateName
+const allRecurrings = gql`
+  query  allRecurrings($brandId: Uuid!) {
+    allRecurrings(condition: { brandId: $brandId } ){
+      edges{
+        node{
+          id
+          workplaceId
+          brandId
+        }
       }
     }
   }`
-
-const allTemplateShifts = gql`
-  query allTemplateShifts($id: Uuid!){
-    templateById(id: $id) {
-              id
-              templateName
-              workplaceByWorkplaceId{
-                workplaceName
-              }
-                templateShiftsByTemplateId{
-                    edges{
-                      node{
-                        id
-                        dayOfWeek
-                        startTime
-                        endTime
-                        workerCount
-                        positionByPositionId{
-                            positionName
-                        }
-                        templateShiftAssigneesByTemplateShiftId{
-                            edges{
-                              node{
-                                userByUserId {
-                                  firstName
-                                  lastName
-                                  avatarUrl
-                                }
-                              }
-                            }
-                        }
-                      }
-                    }
-            }
-    }
-}`
 
   const allUsers = gql`
       query allUsers {
@@ -87,27 +72,5 @@ const allTemplateShifts = gql`
       }
       `
 
-  const createWeekPublishedMutation = gql`
-   mutation createWeekPublished($data:CreateWeekPublishedInput!){
-    createWeekPublished(input:$data)
-      {
-      weekPublished{
-        id
-        start
-        end
-        published
-      }
-    }
-  }`
 
-  const deleteTemplateMutation = gql`
-    mutation ($templateId: Uuid!){
-      deleteTemplateById(input: {id: $templateId}){
-        template{
-    			id
-        }
-      }
-    }`
-
-export { allTemplates, allWeekPublisheds, editTemplateNameMutation,
-         allTemplateShifts, allUsers, createWeekPublishedMutation, deleteTemplateMutation}
+export { allTemplateShifts, allUsers, allRecurrings }

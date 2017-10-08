@@ -7,7 +7,7 @@ import Delete from 'material-ui/svg-icons/action/delete';
 import {leftCloseButton} from "../../styles";
 import Checkbox from 'material-ui/Checkbox';
 import { gql, graphql, compose } from 'react-apollo';
-import { releventPositionsQuery } from "../Team.graphql";
+
 const uuidv1 = require('uuid/v1');
 var Halogen = require('halogen');
 
@@ -81,7 +81,7 @@ class TeamMemberPositionDetailsComponent extends Component {
               console.log(data)
         })
       }
-      
+
       this.props.update({
           variables: {
             id: e.target.value,
@@ -117,7 +117,7 @@ class TeamMemberPositionDetailsComponent extends Component {
   }
 
   removePosition = (position, jobID) =>{
-      // REMOVING IT FROM THE STATE  
+      // REMOVING IT FROM THE STATE
       let releventPositionsQuery = [];
       let releventfilteredPositions= [];
       let positions = this.state.releventPositionsQuery.concat(this.state.releventfilteredPositions)
@@ -127,9 +127,9 @@ class TeamMemberPositionDetailsComponent extends Component {
                 } else {
                   if (w.jobsByPositionId.nodes[0] && w.jobsByPositionId.nodes[0].id == jobID){
                       let newPosition = {
-                        id: w.id, 
-                        positionName: w.positionName, 
-                        traineeHours: w.traineeHours, 
+                        id: w.id,
+                        positionName: w.positionName,
+                        traineeHours: w.traineeHours,
                         jobsByPositionId: { nodes: [] }
                       }
                      releventfilteredPositions.push(newPosition)
@@ -139,8 +139,8 @@ class TeamMemberPositionDetailsComponent extends Component {
                 }
           })
       this.setState({ releventPositionsQuery: releventPositionsQuery })
-      this.setState({ releventfilteredPositions: releventfilteredPositions })  
-    // REMOVING IT FROM DB AND PROPS 
+      this.setState({ releventfilteredPositions: releventfilteredPositions })
+    // REMOVING IT FROM DB AND PROPS
     this.props.update({
       variables: {
         id: jobID,
@@ -208,9 +208,9 @@ class TeamMemberPositionDetailsComponent extends Component {
                   if (w.jobsByPositionId.nodes.length > 0 || w.id == v) {
                        if(w.id == v){
                          let newPosition = {
-                            id: w.id, 
-                            positionName: w.positionName, 
-                            traineeHours: w.traineeHours, 
+                            id: w.id,
+                            positionName: w.positionName,
+                            traineeHours: w.traineeHours,
                             jobsByPositionId: { nodes: [data.createJob.job] }
                           }
                          releventPositionsQuery.push(newPosition)
@@ -222,7 +222,7 @@ class TeamMemberPositionDetailsComponent extends Component {
                     }
               })
               this.setState({ releventPositionsQuery: releventPositionsQuery })
-              this.setState({ releventfilteredPositions: releventfilteredPositions })  
+              this.setState({ releventfilteredPositions: releventfilteredPositions })
         })
       }
   }
@@ -397,7 +397,7 @@ const createJob = gql
         }
   }`
 
-const TeamMemberPositionDetails= compose( 
+const TeamMemberPositionDetails= compose(
    graphql(updateJobActive, {name: "update"}),
    graphql(createJob, {name: "create"})
    )(TeamMemberPositionDetailsComponent)

@@ -2,18 +2,35 @@ import React, { Component } from 'react';
 import { Image, Dropdown } from 'semantic-ui-react';
 import TeamMemberOption from './TeamMemberOption';
 
+const automatedShift = {
+  id: 0,
+  firstName: 'Automate Shift',
+  lastName: '',
+  avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/icons/time-lapse-red.png',
+};
+
 export default class TeamMemberCard extends Component {
 
   constructor(props) {
     super(props);
+    const users = [ ...props.users];
+    if (!props.isManager) {
+      users.unshift(automatedShift);
+    }
     this.state = {
       searchText: '',
-      users: [{
-        id: 0,
-        firstName: 'Automate Shift',
-        lastName: '',
-        avatarUrl: 'https://s3.us-east-2.amazonaws.com/aday-website/icons/time-lapse-red.png',
-      }, ...props.users]
+      isManager: props.isManager,
+      users
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isManager !== this.state.isManager) {
+      const users = [ ...nextProps.users];
+      if (!nextProps.isManager) {
+        users.unshift(automatedShift);
+      }
+      this.setState({ isManager: nextProps.isManager, users: nextProps.users });
     }
   }
 
@@ -42,17 +59,15 @@ export default class TeamMemberCard extends Component {
     return (
       <div className="teamMemberCard">
         <div className="edits">
-        <Image
-             src="https://s3.us-east-2.amazonaws.com/aday-website/icons/exit-x.png"
-             height="15"
-             width="15"
-             floated='left'
-             onClick={handleRemove}
-             style={{marginLeft:7, cursor:'pointer'}}
-
-        />
+          <Image
+               src="https://s3.us-east-2.amazonaws.com/aday-website/icons/exit-x.png"
+               height="15"
+               width="15"
+               floated='left'
+               onClick={handleRemove}
+               style={{marginLeft:7, cursor:'pointer'}}
+          />
         </div>
-
         <Dropdown
           placeholder="Team Member"
           name="team-member"

@@ -57,6 +57,7 @@ class ScheduleComponent extends Component {
     }
 
   onNavigate = (start) => {
+    this.props.data.refetch();
     this.setState({date: start})
   };
 

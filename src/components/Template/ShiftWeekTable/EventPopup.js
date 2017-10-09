@@ -274,6 +274,7 @@ class EventPopupComponent extends Component {
       }).catch(err => {
         console.log('There was error in saving shift', err);
       });
+      this.props.data.refetch()
   };
 
   handleAdvanceToggle = (drawerShift) => {

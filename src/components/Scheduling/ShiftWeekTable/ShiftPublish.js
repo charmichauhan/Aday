@@ -134,6 +134,7 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
+    const {publishId} = this.props
     const { date } = this.props;
     if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
@@ -166,12 +167,48 @@ class ShiftPublishComponent extends Component {
       }).then((res) => {
         console.log('Inside the data', res);
         this.modalClose();
+        var uri = 'http://localhost:8080/api/kronosApi'
+
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {         
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "assignSchedule",
+                          "week_published_id": publishId
+                      }
+                 };
+                 rp(options)
+                  .then(function(response) {
+                      //that.setState({redirect:true})
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });   
+
       }).catch(err => console.log('An error occurred.', err));
     }else{
       this.props.updateWeekPublishedNameMutation({
         variables: { id: this.props.publishId, date: moment().format() }
       }).then((res)=>{
         this.modalClose();
+        var uri = 'http://localhost:8080/api/kronosApi'
+
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {         
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "assignSchedule",
+                          "week_published_id": publishId,
+                          "brand_id": localStorage.getItem('brandId')
+                      }
+                 };
+                 rp(options)
+                  .then(function(response) {
+                      //that.setState({redirect:true})
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });   
       });
     }
   };

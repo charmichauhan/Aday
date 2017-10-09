@@ -40,6 +40,7 @@ class ShiftPublishComponent extends Component {
 
   constructor(props) {
     super(props);
+    
     this.state = {
       publishModalPopped: false,
       addTemplateModalOpen: false,
@@ -48,7 +49,7 @@ class ShiftPublishComponent extends Component {
       redirect: false,
       isCreateShiftModalOpen: false,
       isCreateShiftOpen: false,
-      drawerShift: { advance: { allowShadowing: true } }
+      drawerShift: { advance: { allowShadowing: true }},
     }
   }
 
@@ -260,15 +261,55 @@ class ShiftPublishComponent extends Component {
             this.saveShift(shiftRecure, day, publishId);
           }
         });
-      });
+      }); 
     }
     else {
       days.forEach((day) => {
         if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
           this.saveShift(shift, day, publishId);
-        }
-      });
+        } 
 
+        let is_publish = this.props.isPublish;
+        if (is_publish == 'none'){
+          is_publish = false
+        }
+
+        if (is_publish == true){
+            const shiftDay = moment.utc(day, 'MM-DD-YYYY');
+            const shiftDate = shiftDay.date();
+            const shiftMonth = shiftDay.month();
+            const shiftYear = shiftDay.year();
+            const recurringShiftId = shift.recurringShiftId;
+            shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+            shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+            
+            let workersAssigned = shift.teamMembers.map(({ id }) => id);
+            workersAssigned.map(function(user, i){
+                var uri = 'http://localhost:8080/api/kronosApi'
+
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {         
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "assignShift",
+                          "testing": true,
+                          "user_id": user,
+                          "date": moment.utc(shift.startTime).format('YYYY/MM/DD'),
+                          "startTime": moment.utc(shift.startTime).format('HH:mm'),
+                          "endTime": moment.utc(shift.endTime).format('HH:mm'),
+                          "singlEdit": false
+                      }
+                 };
+                 rp(options)
+                  .then(function(response) {
+                      //that.setState({redirect:true})
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });   
+           })
+          }
+      });
     }
   };
   saveRecurringShift(dayNames, days, shift,callback){
@@ -396,21 +437,21 @@ class ShiftPublishComponent extends Component {
   }
 
   render() {
+
     let is_publish = this.props.isPublish;
     let publishId = this.props.publishId;
     let   message="";
     const startDate = this.props.date;
-    const isPublished =  (is_publish == false && is_publish != 'none') ? (this.props.isWorkplacePublished === false ? true:false) : false;
 
     const { notify, notificationMessage, notificationType } = this.state;
 
     let status = '';
     let statusImg = '';
-    if (isPublished) {
+    if (is_publish == false) {
       status = 'UNPUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/unpublished.png';
     }
-    else if (!isPublished) {
+    else if (is_publish == true) {
       status = 'PUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/published.png';
     }
@@ -461,7 +502,7 @@ class ShiftPublishComponent extends Component {
                   weekStart={start} />
               </Button>
               <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
-              {isPublished &&
+              {(is_publish == false) &&
               <Button className="btn-image flr" onClick={this.onPublish}>
                 <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
               </Button> }

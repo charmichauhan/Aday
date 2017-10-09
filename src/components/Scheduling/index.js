@@ -198,7 +198,7 @@ class ScheduleComponent extends Component {
             }
           });
         }
-        is_publish = value.published;
+        is_publish = value.published || isWorkplacePublished;
         publish_id = value.id;
       }
     });

@@ -295,9 +295,9 @@ class ShiftPublishComponent extends Component {
                           "actionType": "assignShift",
                           "testing": true,
                           "user_id": user,
-                          "date": moment.utc(shift.startTime).format('YYYY/MM/DD'),
-                          "startTime": moment.utc(shift.startTime).format('HH:mm'),
-                          "endTime": moment.utc(shift.endTime).format('HH:mm'),
+                          "date": moment(shift.startTime).format('YYYY/MM/DD'),
+                          "startTime": moment(shift.startTime).format('HH:mm'),
+                          "endTime": moment(shift.endTime).format('HH:mm'),
                           "singlEdit": false
                       }
                  };

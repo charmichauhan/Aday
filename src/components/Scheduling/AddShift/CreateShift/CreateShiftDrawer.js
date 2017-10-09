@@ -112,7 +112,7 @@ class DrawerHelper extends Component {
 
   componentDidMount() {
     this.getWorkplaces();
-    this.getPositions();
+    this.getWorkplacePositions();
     this.filterManagers(this.state.shift.workplaceId);
   }
 
@@ -178,7 +178,7 @@ class DrawerHelper extends Component {
       .catch(err => console.error(err));
   };
 
-  getPositions = (workplaceId = this.state.shift.workplaceId) => {
+  getWorkplacePositions = (workplaceId = this.state.shift.workplaceId) => {
     if (workplaceId) {
       CreateShiftHelper.getRelevantPositions(workplaceId)
         .then((positions) => this.setState({ positions }))
@@ -186,13 +186,21 @@ class DrawerHelper extends Component {
     }
   };
 
+  getAllPositionsForUser = (userId) => {
+    return CreateShiftHelper.getAllPositionsForUser(userId)
+      .then(userPositions => userPositions)
+      .catch(err => console.error(err));
+  };
+
   handleChange = (event) => {
     const { shift } = this.state;
     const { name, value } = event.target;
     shift[name] = value;
-    if (name === 'tags') shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
+    if (name === 'tags') {
+      shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
+    }
     if (name === 'workplaceId') {
-      this.getPositions(value);
+      this.getWorkplacePositions(value);
       this.filterManagers(value);
     }
     if (name === 'positionId') {
@@ -224,7 +232,7 @@ class DrawerHelper extends Component {
   };
 
   handleNowSelect = () => {
-    this.setState({ selectedDate: moment().format('MM-DD-YYYY') });
+    this.setState(state => ({ selectedDate: moment().format('MM-DD-YYYY'), shift: { ...state.shift, recurringShift: 'none' } }));
   };
 
   handleShiftSubmit = (shift) => {
@@ -290,18 +298,27 @@ class DrawerHelper extends Component {
   };
 
   setTeamMember = (user, index) => {
-    const { teamMembers } = this.state.shift;
+    const { teamMembers, positionId } = this.state.shift;
     if (user.id) {
-      teamMembers[index] = {
-        ...teamMembers[index],
-        ...user,
-        content: '',
-        status: 'accepted'
-      }
+      this.getAllPositionsForUser(user.id).then((userPositions) => {
+        const isPositionAssigned = find(userPositions, { id: positionId });
+        if (isPositionAssigned) {
+          teamMembers[index] = {
+            ...teamMembers[index],
+            ...user,
+            content: '',
+            status: 'accepted'
+          };
+          this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
+        } else {
+          // TODO : Show popup to user for notifying that the user does not have relevent positions in the profile.
+          console.log('// TODO : Show popup to user for notifying that the user does not have relevent positions in the profile.');
+        }
+      });
     } else {
       teamMembers[index] = { ...unassignedTeamMember };
+      this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
     }
-    this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
   };
 
   validateShift = (shift) => {
@@ -311,6 +328,10 @@ class DrawerHelper extends Component {
     if (!shift.corporationId) shiftErrors['corporationId'] = true;
     if (!shift.positionId) shiftErrors['positionId'] = true;
     if (!shift.recurringShift) shiftErrors['recurringShift'] = true;
+    if (shift.recurringShift && shift.recurringShift.toLowerCase() === 'weekly') {
+      if (!shift.startDate) shiftErrors['recurringShiftStartDate'] = true;
+      if (shift.endDate === undefined) shiftErrors['recurringShiftEndDate'] = true;
+    }
     if (!shift.startTime) shiftErrors['startTime'] = true;
     if (!shift.endTime) shiftErrors['endTime'] = true;
     if (!shift.numberOfTeamMembers) shiftErrors['NumberOfTeamMembers'] = true;
@@ -608,9 +629,6 @@ class DrawerHelper extends Component {
                     <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull} />
                   </Tooltip> || <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull}
                                               onClick={this.handleAddTeamMember} />}
-
-
-
                 </Grid.Column>
               </Grid.Row>
 
@@ -630,8 +648,7 @@ class DrawerHelper extends Component {
                       multiple
                       allowAdditions
                       additionLabel='Add New Tag: '
-                      value={shift.currentValue}
-                      onAddItem={this.handleAddition}
+                      value={shift.tags}
                       name="tags"
                       onChange={(_, data) => this.handleChange({ target: data })}/>
                 </Grid.Column>
@@ -659,7 +676,6 @@ class DrawerHelper extends Component {
             </div>
           </div>
         </div>
-
       </Drawer>
     );
   }

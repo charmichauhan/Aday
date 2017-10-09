@@ -293,7 +293,9 @@ class ShiftPublishComponent extends Component {
     let id = uuidv4();
 
     const payload = {
-      id: id,
+      id,
+      days,
+      recurringId,
       positionId: shift.positionId,
       workerCount: shift.numberOfTeamMembers,
       creator: localStorage.getItem('userId'),
@@ -303,8 +305,6 @@ class ShiftPublishComponent extends Component {
       unpaidBreakTime: shift.unpaidBreak,
       expiration: shift.endDate,
       startDate: shift.startDate,
-      days: days,
-      recurringId: recurringId,
       isTraineeShift: false
     };
     this.props.createRecurringShift({

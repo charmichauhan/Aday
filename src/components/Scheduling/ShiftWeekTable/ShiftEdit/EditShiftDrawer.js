@@ -117,7 +117,6 @@ class DrawerHelper extends Component {
 
   handleShiftHistoryDrawer = () => {
     console.log("History button clicked");
-    debugger;
     this.props.handlerClose();
     this.props.handleHistory();
   };

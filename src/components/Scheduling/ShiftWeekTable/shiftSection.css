@@ -211,6 +211,14 @@
   margin: 0 auto;
 }
 
+.edit-drawer-section .ui .column .dropdown.disabled {
+  background: rgb(229, 229, 229);
+}
+
+.edit-drawer-section .ui .column .dropdown.disabled .default.text {
+  color: rgba(0,0,0,1);
+}
+
 /* Spacing between day selector buttons */
 .edit-drawer-section .edit-drawer-content .shift-modal-day-cell .shift-modal-day-cell-button {
   margin: 0 5px;

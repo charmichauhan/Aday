@@ -51,7 +51,7 @@ export default class StartToEndTimePicker extends Component {
     }
   }
 
-  handleTimeChange = ({ name, value }) => {
+  handleTimeChange = ({ name, value }, cb) => {
     function escapeMarkings(unsafe) {
       return unsafe.replace(/_/g, '');
     }
@@ -88,6 +88,7 @@ export default class StartToEndTimePicker extends Component {
       const { formCallBack } = this.props, { startTime, endTime } = this.state;
       if (formCallBack && startTime && startTime.isValid() && endTime && endTime.isValid()) {
         formCallBack({ startTime, endTime });
+        if (cb && typeof cb === 'function') cb();
       }
     });
   };
@@ -105,6 +106,12 @@ export default class StartToEndTimePicker extends Component {
     this.setState({ showSelector: !this.state.showSelector });
   };
 
+  onNowSelect = () => {
+    const startTime = moment();
+    startTime.add(15 - (startTime.minutes() % 15), 'm');
+    this.handleTimeChange({ name: 'startTime', value: startTime.format('HH:mm') }, () => this.props.onNowSelect());
+  };
+
   isDisabled = () => {
     const { startTimeValue, endTimeValue } = this.state;
     return !startTimeValue || !endTimeValue;
@@ -112,7 +119,6 @@ export default class StartToEndTimePicker extends Component {
 
   render() {
     const { duration, showSelector, startTime, startTimeValue, endTime, endTimeValue } = this.state;
-    const { onNowSelect } = this.props;
     return (
       <div className="time-selector-wrapper">
         <div className="time-wrapper">
@@ -155,18 +161,18 @@ export default class StartToEndTimePicker extends Component {
           </div>
           <div className="time-actions-wrapper text-uppercase">
             <div className="left-picker-group">
-                <button className="now-picker-button" onClick={onNowSelect}>NOW</button>
+              <button className="now-picker-button" onClick={this.onNowSelect}>NOW</button>
             </div>
             <div className="center-footer-group">
               <span>Shift Length: {duration.hours} hours {duration.minutes} minutes</span>
             </div>
             <div className="right-picker-group">
-                <div style={{alignSelf:'center'}}>
-                    <button className="cancel-picker-button" onClick={this.toggleSelector}>CANCEL</button>
-                </div>
-                <div style={{alignSelf:'center'}}>
-                    <button className="ok-picker-button" disabled={this.isDisabled()} onClick={this.setCallbackData}>OK</button>
-                </div>
+              <div style={{alignSelf:'center'}}>
+                <button className="cancel-picker-button" onClick={this.toggleSelector}>CANCEL</button>
+              </div>
+              <div style={{alignSelf:'center'}}>
+                <button className="ok-picker-button" disabled={this.isDisabled()} onClick={this.setCallbackData}>OK</button>
+              </div>
             </div>
           </div>
         </div>

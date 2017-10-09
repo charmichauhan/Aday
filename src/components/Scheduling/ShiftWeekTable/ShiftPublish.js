@@ -303,7 +303,9 @@ class ShiftPublishComponent extends Component {
     let id = uuidv4();
 
     const payload = {
-      id: id,
+      id,
+      days,
+      recurringId,
       positionId: shift.positionId,
       workerCount: shift.numberOfTeamMembers,
       creator: localStorage.getItem('userId'),

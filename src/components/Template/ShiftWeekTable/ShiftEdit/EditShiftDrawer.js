@@ -52,7 +52,7 @@ const unassignedTeamMember = {
    content: 'Assign shift to override automation',
    status: 'unassigned'
  };
- 
+
 
 class DrawerHelper extends Component {
 
@@ -61,7 +61,7 @@ class DrawerHelper extends Component {
     const workplaceId = localStorage.getItem("workplaceId");
     const brandId = props.shift && props.shift.positionByPositionId && props.shift.positionByPositionId.brandByBrandId && props.shift.positionByPositionId.brandByBrandId.id;
     const positionId =  props.shift && props.shift.positionByPositionId && props.shift.positionByPositionId.id;
-    
+
     let dayHash = {}
     let weekStart = moment().startOf("week")
     for(let i = 0; i <= 6; i++) {
@@ -97,7 +97,7 @@ class DrawerHelper extends Component {
     if (this.props.shift && this.props.shift.startTime){
       let start = this.props.shift.startTime.split(":")
       let end =  this.props.shift.endTime.split(":")
-      shiftStart = moment().hour(parseInt(start[0])).minute(parseInt(start[1])) 
+      shiftStart = moment().hour(parseInt(start[0])).minute(parseInt(start[1]))
       shiftEnd = moment().hour(parseInt(end[0])).minute(parseInt(end[1]))
     }
     props.shift.unpaidBreakTime
@@ -112,7 +112,7 @@ class DrawerHelper extends Component {
         startDate: props.shift && moment(props.shift.startDate) || "",
         endDate: props.shift && moment(props.shift.endDate) || null,
         advance: { allowShadowing: true },
-        teamMembers: teamMembers, 
+        teamMembers: teamMembers,
         workplaceId,
         brandId,
         positionId,
@@ -207,7 +207,7 @@ class DrawerHelper extends Component {
   };
 
   handleNowSelect = () => {
-    this.setState({ selectedDate: moment().format('MM-DD-YYYY') });
+    this.setState(state => ({ selectedDate: moment().format('MM-DD-YYYY'), shift: { ...state.shift, recurringShift: 'none' } }));
   };
 
   handleShiftSubmit = (shift) => {
@@ -245,13 +245,13 @@ class DrawerHelper extends Component {
      if (status === 'pending') return 'orange';
      return 'orange';
    };
- 
+
    removeTeamMember = (i) => {
      const { teamMembers } = this.state.shift;
      teamMembers.splice(i, 1);
      this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
    };
- 
+
     setTeamMember = (user, index) => {
      const { teamMembers } = this.state.shift;
      if (user.id) {
@@ -289,7 +289,7 @@ class DrawerHelper extends Component {
     const { width, open, handleAdvance } = this.props;
     const { shift, workplaces, users, positions, workplaceId, isEdit, isShiftInvalid } = this.state;
     let positionOptions = [{ key: 'select', value: 0, text: 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS' }];
-   
+
     if (!workplaces) {
       return (<Loading />);
     }
@@ -343,7 +343,7 @@ class DrawerHelper extends Component {
       shadowers: shift.advance && shift.advance.allowShadowing && shift.numberOfTeamMembers || ""
     };
     const isAddTeamMemberDisabled = !localStorage.getItem("isUnion") || shift.teamMembers && shift.teamMembers.length >= shift.numberOfTeamMembers;
-    
+
     let buttonTitle = this.props.edit? "Edit Shifts" : "Create Shifts"
 
 
@@ -455,7 +455,7 @@ class DrawerHelper extends Component {
                     selection
                     disabled
                     options={recurringOptions} />
-                  </Tooltip> 
+                  </Tooltip>
                 </Grid.Column>
               </Grid.Row>
 
@@ -471,7 +471,7 @@ class DrawerHelper extends Component {
                   <ShiftDaySelector selectedDate={this.state.selectedDate} isRecurring={true}
                                     startDate={moment().startOf('week')} formCallBack={this.updateFormState} />
                 </Grid.Column>
-              </Grid.Row> 
+              </Grid.Row>
 
 
 
@@ -538,8 +538,8 @@ class DrawerHelper extends Component {
                     <RaisedButton label="Add Team Member" disabled={isAddTeamMemberDisabled} />
                   </Tooltip> || <RaisedButton label="Add Team Member" onClick={this.handleAddTeamMember} />}
 
-                
-             
+
+
                  <br/>
 
                   <div className="member-list">

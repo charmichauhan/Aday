@@ -18,7 +18,7 @@ class ShiftHistoryDrawerContainerComponent extends Component {
 
   render() {
     if (this.props.data.loading) {
-      return (<div><Halogen.SyncLoader color='#00A863'/></div>);
+      return (<div></div>);
     }
     if (this.props.open) {
       const { isSorted } = this.props;

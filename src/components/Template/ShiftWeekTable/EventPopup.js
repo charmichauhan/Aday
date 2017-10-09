@@ -3,7 +3,7 @@ import moment from 'moment';
 import cloneDeep from 'lodash/cloneDeep';
 import { gql, graphql, compose } from 'react-apollo';
 
-import { updateRecurringShift } from './ShiftEdit/EditRecurringShift.graphql.js'
+import { updateRecurringShift, createRecurringShiftAssignee, deleteRecurringShiftAssigneeById } from './ShiftEdit/EditRecurringShift.graphql.js'
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import EditShiftDetailsDrawer from './ShiftEdit/recurringShiftDrawerContainer';
@@ -144,9 +144,91 @@ class EventPopupComponent extends Component {
               days.push(moment(day).format('dddd').toUpperCase())
           }
       })
-     
+      
+      var currentUsers = []
+      var newUsers = []
+      var addUsers = []
+      var removeUsers = []
+
+      shift.recurringShiftAssigneesByRecurringShiftId.edges.map(function(assignee, i) {
+        currentUsers.push(assignee.node.userId)
+      })
+
+      shift.teamMembers.map(function(assignee, i) {
+        newUsers.push(assignee.id)
+        if (currentUsers.indexOf(assignee.id) < 0){
+          addUsers.push(assignee.id)
+        }
+      })
+
+      currentUsers.map(function(user, i){
+        if (newUsers.indexOf(user) < 0){
+          removeUsers.push(user)
+        }
+      })
+
+      this.setState({ editShiftModalOpen: false, isCreateShiftAdvanceOpen: false });
+
+      if (addUsers.length > 0){
+          this.addUsers(addUsers, shift.id, this.props, (res)=>{
+              if (removeUsers.length > 0){
+                  this.removeUsers(removeUsers, shift.id, this.props, (res)=>{
+                      this.saveRecurringShift(shift, days)
+                  })
+              } else {
+                 this.saveRecurringShift(shift, days)
+              }
+          })
+      } else if (removeUsers.length > 0){
+        this.removeUsers(removeUsers, shift.id, this.props, (res)=>{
+          this.saveRecurringShift(shift, days)
+        })
+      } else {
+          this.saveRecurringShift(shift, days)
+      }
+  }
+
+  addUsers(addUsers, id, props, callback){
+      console.log("INSIDE ADD USERS")
+      addUsers.map(function(add, i){
+        let addPayload = {
+          recurringShiftId: id,
+          userId: add
+        };
+        props.createRecurringShiftAssignee({
+        variables: {
+          data: {
+            recurringShiftAssignee: addPayload
+          }
+        },
+        }).then(({ data }) => {
+          if (i == addUsers.length - 1){
+            return callback(i)
+          }
+        })
+      })
+  }
+
+
+  removeUsers(removeUsers, id, props, callback) {
+      console.log("INSIDE REMOVE USERS")
+      removeUsers.map(function(remove, i){
+        props.deleteRecurringShiftAssigneeById({
+        variables: {
+            recurringShiftId: id,
+            userId: remove
+          }
+        }).then(({ data }) => {
+          if (i == removeUsers.length - 1){
+            return callback(i)
+          }
+        })
+      })
+  }
+
+  saveRecurringShift(shift, days){
       const payload = {
-        id: shiftValue.id,
+        id: shift.id,
         positionId: shift.positionId,
         workerCount: shift.numberOfTeamMembers,
         creator: localStorage.getItem('userId'),
@@ -161,7 +243,7 @@ class EventPopupComponent extends Component {
       this.props.updateRecurringShift({
         variables: {
           data: {
-            id: shiftValue.id,
+            id: shift.id,
             recurringShiftPatch: payload
           }
         },
@@ -176,7 +258,7 @@ class EventPopupComponent extends Component {
                   "sec": "QDVPZJk54364gwnviz921",
                   "actionType": "deleteRecurring",
                   "testing": true,
-                  "recurring_shift_id": shiftValue.id,
+                  "recurring_shift_id": shift.id,
                   "date": shift.startDate || moment().format(),
                   "edit": true
               }
@@ -192,7 +274,6 @@ class EventPopupComponent extends Component {
       }).catch(err => {
         console.log('There was error in saving shift', err);
       });
-      this.setState({ editShiftModalOpen: false, isCreateShiftAdvanceOpen: false });
   };
 
   handleAdvanceToggle = (drawerShift) => {
@@ -346,8 +427,16 @@ const deleteShift = gql`
     }
   }`;
 
-const EventPopup = graphql(updateRecurringShift, {
+const EventPopup = compose(
+graphql(updateRecurringShift, {
   name: 'updateRecurringShift'
-})(EventPopupComponent);
+}),
+graphql(deleteRecurringShiftAssigneeById, {
+  name: 'deleteRecurringShiftAssigneeById'
+}),
+graphql(createRecurringShiftAssignee, {
+  name: 'createRecurringShiftAssignee'
+}),
+)(EventPopupComponent);
 
 export default EventPopup;

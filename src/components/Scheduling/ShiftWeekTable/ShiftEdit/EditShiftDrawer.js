@@ -394,7 +394,7 @@ class DrawerHelper extends Component {
   render() {
     console.log(this.props.teamMembers)
     if (this.props.teamMembers.loading) {
-                return (<div><Halogen.SyncLoader color='#00A863'/></div>)
+                return (<div></div>)
     }
 
     const {

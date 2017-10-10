@@ -87,10 +87,8 @@ class DrawerHelper extends Component {
             content: ''
           };
         });
-        const diff = shift.workersRequestedNum - shift.workersAssigned;
-        if (diff) {
-          times(diff, () => shift.teamMembers.push(unassignedTeamMember));
-        }
+        const diff = shift.workersRequestedNum - shift.workersAssigned.length;
+        if (diff) times(diff, () => shift.teamMembers.push(unassignedTeamMember));
       } else {
         shift.teamMembers = shift.workersRequestedNum && times(shift.workersRequestedNum, () => unassignedTeamMember);
       }

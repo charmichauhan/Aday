@@ -106,7 +106,7 @@ export default class Position extends Component {
                   {position.partTimeWage !== null ?
                    <h6>${position.partTimeWage.toFixed(2)}</h6>
                    : <h6>N/A</h6>}
-                  <span>PART-TIME WAGE</span>
+                  <span>HOURLY WAGE</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
                   <h6>{position.traineeHours}</h6><span>TRAINING HOURS</span>

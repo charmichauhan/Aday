@@ -176,7 +176,7 @@ class MemberPersonnelInformationComponent extends Component {
                   />
                 </div>
                     <p className="info">
-                      Wages are set on the positions worksheet for part-time team members
+                      Use this field to set the override the default wages from the positions page
                     </p>
               </div>
             </div>

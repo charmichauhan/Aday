@@ -62,8 +62,8 @@ class MyWorkplace extends Component {
 
 						<WorkplaceListings className="workplace-listings" brandIcon={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
 						 opportunities={this.props.data.workplaceById.opportunitiesByWorkplaceId.nodes}/>
-						<div className="workplace-subheader" style={{paddingBottom:10}}>WORKPLACE REVIEWS</div>
-						 <WorkplaceReviews className="workplace-reviews"/>
+						{/*<div className="workplace-subheader" style={{paddingBottom:10}}>WORKPLACE REVIEWS</div>*/}
+						 {/*<WorkplaceReviews className="workplace-reviews"/>*/}
 					</div>
 
 					 : <div>

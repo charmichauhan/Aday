@@ -82,6 +82,11 @@ export const createRecurringShift = gql`
       recurringShiftAssignee {
         recurringShiftId
         userId
+        userByUserId{
+          firstName
+          lastName
+          avatarUrl
+        }
       }
     }
   }`;

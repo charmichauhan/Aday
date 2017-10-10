@@ -27,22 +27,27 @@ export default class JobsRow extends Component {
 
   render() {
     let data = this.props.data;
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const hashByDay = {
-      'Sunday': [],
-      'Monday': [],
-      'Tuesday': [],
-      'Wednesday': [],
-      'Thursday': [],
-      'Friday': [],
-      'Saturday': []
-    };
-    data.map((value, index) => {
-      const day = moment(value.startTime, 'YYYY-MM-DD HH:mm:ss').format('dddd');
-      if (hashByDay[day]) {
-        hashByDay[day] = [...hashByDay[day], value];
+   const daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+        const hashByDay = {"SUNDAY": [], "MONDAY": [], "TUESDAY": [], "WEDNESDAY": [], "THURSDAY": [], "FRIDAY": [], "SATURDAY": []};
+    
+    data.map((value, index) => {  
+
+      if (value.days){
+        value.days.map((day, index) => {
+            if (hashByDay[day]) {
+                hashByDay[day] = [...hashByDay[day], value];
+              } else {
+                hashByDay[day] = [value];
+              }
+        })
+
       } else {
-        hashByDay[day] = [value];
+         const day = moment(value.startTime, 'YYYY-MM-DD HH:mm:ss').format('dddd').toUpperCase();
+          if (hashByDay[day]) {
+            hashByDay[day] = [...hashByDay[day], value];
+          } else {
+            hashByDay[day] = [value];
+          }
       }
     });
     let finalHours = 0;

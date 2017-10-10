@@ -4,8 +4,6 @@ import {Grid, Container } from 'semantic-ui-react'
 import Nav from './Nav'
 import { gql, graphql } from 'react-apollo';
 const uuidv4 = require('uuid/v4');
-var Halogen = require('halogen');
-
 
 class AppComponent extends Component {
   constructor(props){
@@ -29,7 +27,7 @@ class AppComponent extends Component {
   };
   render(){
     if (this.props.data.loading) {
-      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
+      return (<div>Loading</div>)
     }
 
     if (this.props.data.error) {

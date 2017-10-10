@@ -288,3 +288,7 @@
 .edit-drawer-content .tag-dropdown .ui.multiple.search.dropdown > input {
   text-transform: uppercase;
 }
+
+.instance-following { display: inline-table; margin-bottom: 5px;}
+.instance-following button { display: table-cell; padding: 5px 8px;}
+.confirm-popup-body .instance-following p { display: table-cell; font-size: 16px; padding-left: 8px;}

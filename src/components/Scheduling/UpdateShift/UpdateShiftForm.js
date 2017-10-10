@@ -329,6 +329,7 @@ const updateShiftMutation = gql`
         traineesRequestedNum
         managersOnShift
         unpaidBreakTime
+        recurringShiftId`
         positionByPositionId{
           id
           positionName

@@ -9,7 +9,7 @@ import Dropzone from 'react-dropzone';
 import CircleButton from '../../helpers/CircleButton';
 import { stateOptions } from '../../helpers/common/states';
 import { closeButton, colors } from '../../styles';
-
+import SuperAgent from 'superagent';
 import './workplace-drawer.css';
 
 const initialState = {
@@ -61,14 +61,27 @@ class DrawerHelper extends Component {
   };
 
   handleImageUpload = (files) => {
-    // handle image upload code here.
-    console.log('Image upload code goes here');
-    const workplace = Object.assign(this.state.workplace, { image: files[0] });
-    this.setState({ workplace, blob: files[0] });
+    console.log(files);
+    // prod endpoint: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
+    // dev/test endpoint: http://localhost:8080/api/uploadImage
+    SuperAgent.post('http://localhost:8080/api/uploadImage')
+    .field('keyword', 'workplace')
+    .field('id', this.state.workplace.id)
+    .attach("theseNamesMustMatch", files[0])
+    .end((err, res) => {
+      if (err) console.log(err);
+      else {
+        const workplace = Object.assign(this.state.workplace, { workplaceImageUrl : res.text });
+        this.setState({workplace: workplace});
+        alert('File uploaded!');
+        this.setState({ blob: files[0] });
+      }
+    })
   };
 
   handleNewImageUpload = (files) => {
     files[0].preview = window.URL.createObjectURL(files[0]);
+    this.setState({ blob: files[0] });
     this.handleImageUpload(files);
   };
 
@@ -104,7 +117,7 @@ class DrawerHelper extends Component {
             </IconButton>
             <h2 className="text-center text-uppercase">{messages.title}</h2>
           </div>
-          {!DrawerWorkplace.workplaceImageUrl && !this.state.blob &&
+          {!DrawerWorkplace.workplaceImageUrl && !this.state.blob && this.state.workplace.id &&
           <div className="upload-wrapper col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 text-center">
             <Dropzone
               multiple={false}
@@ -125,7 +138,8 @@ class DrawerHelper extends Component {
             </Dropzone>
           </div>}
           {DrawerWorkplace.workplaceImageUrl && !this.state.blob &&
-          <Image className="uploaded-image" src={DrawerWorkplace.workplaceImageUrl} size="large" />
+          <Image className="uploaded-image" src={DrawerWorkplace.workplaceImageUrl + "?" + new Date().getTime()} alt={workplace.name}
+           size="large" />
           }
           {this.state.blob &&
           <Image className="uploaded-image" src={this.state.blob.preview} size="large" />

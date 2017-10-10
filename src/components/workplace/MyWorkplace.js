@@ -9,6 +9,8 @@ import WorkplaceListings from './WorkplaceListings'
 import WorkplacePhotos from './WorkplacePhotos'
 import { gql, graphql} from 'react-apollo';
 
+import { workplaceInfo } from './workplaceQueries';
+
 class MyWorkplace extends Component {
 	render() {
 		if (this.props.data.loading) {
@@ -45,7 +47,7 @@ class MyWorkplace extends Component {
 						</div>
 						<div className="workplace-loc-img">
 							<WorkplaceMap address={this.props.data.workplaceById.address}/>
-							<WorkplacePhotos style={{marginRight:20}}/>
+							<WorkplacePhotos/>
 						</div>
 
 						<div className="workplace-subheader" style={{paddingBottom:10}}>WORKPLACE DESCRIPTION</div>
@@ -58,7 +60,8 @@ class MyWorkplace extends Component {
 							</div>
 						</div>
 
-						<WorkplaceListings className="workplace-listings" />
+						<WorkplaceListings className="workplace-listings" brandIcon={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
+						 opportunities={this.props.data.workplaceById.opportunitiesByWorkplaceId.nodes}/>
 						<div className="workplace-subheader" style={{paddingBottom:10}}>WORKPLACE REVIEWS</div>
 						 <WorkplaceReviews className="workplace-reviews"/>
 					</div>
@@ -74,20 +77,6 @@ class MyWorkplace extends Component {
 		);
 	}
 }
-
-const workplaceInfo = gql`
-	query($workplaceId: Uuid!){
-		workplaceById(id:$workplaceId){
-			workplaceName
-			brandByBrandId{
-				brandName
-				brandIconUrl
-			}
-			address
-			workplaceImageUrl
-		}
-	}
-`
 
 export default graphql(workplaceInfo, {
 	options: (ownProps) => ({

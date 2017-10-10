@@ -17,7 +17,7 @@ export class WorkplaceSelector extends Component{
     super(props);
     this.state={
       workplaces:[],
-      workplace:""
+      workplace: this.props.workplace || ""
     }
     this.onWorkplaceChange=this.onWorkplaceChange.bind(this);
   }
@@ -44,9 +44,13 @@ export class WorkplaceSelector extends Component{
 
       let workplacesArray=this.props.data.allWorkplaces.nodes;
       let workplaceId = localStorage.getItem("workplaceId");
-      if (workplaceId != "") {
-        workplacesArray = workplacesArray.filter((w) => w.id == workplaceId);
+
+      if(this.props.overRideCurrent){
+        if (workplaceId != "") {
+          workplacesArray = workplacesArray.filter((w) => w.id == workplaceId);
+        }
       }
+
       workplacesArray.forEach(function(workplace,index) {
         this.state.workplaces.push({
           text:workplace.workplaceName,
@@ -54,17 +58,21 @@ export class WorkplaceSelector extends Component{
           key:workplace.id
         })
       }, this);
+
+
+
+
     }
     }
 
     return(
 
     <div>
-    { !this.props.workplace && <Dropdown placeholder="Select Workplace" fluid selection
-      options={this.state.workplaces} style={{ marginTop:'-2%', fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
+    { !this.props.workplace && <Dropdown placeholder="Select Workplace" selection
+      options={this.state.workplaces} style={{ fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
 
-    { this.props.workplace && <Dropdown defaultValue={this.props.workplace} fluid selection
-      options={this.state.workplaces} style={{ marginTop:'-2%', fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
+    { this.props.workplace && <Dropdown defaultValue={this.props.workplace} selection
+      options={this.state.workplaces} style={{ fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
 
     </div>
 

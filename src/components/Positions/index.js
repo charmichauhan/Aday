@@ -8,7 +8,8 @@ import uuidv4 from 'uuid/v4';
 import moment from 'moment';
 import Positions from './Positions';
 import { tabDesign } from '../styles';
-import { all_positions, add_position, update_position, delete_position } from './positionQueries'
+import { all_positions, add_position, update_position, delete_position } from './positionQueries';
+import { workplaceInfo } from '../workplace/workplaceQueries';
 import './positions.css';
 
 const styles = {
@@ -19,8 +20,7 @@ export class PositionsSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 'positions',
-      refetching: false
+      value: 'positions'
     };
   }
 
@@ -65,6 +65,13 @@ export class PositionsSection extends Component {
             };
           },
         },
+        // refetch workplace listings in my workplace section of website
+        // (this seems awkward, but don't know how else to make it update)
+        refetchQueries: [{query: workplaceInfo,
+                           variables: {
+                             workplaceId: localStorage.getItem('workplaceId') == "" ?
+                                          null : localStorage.getItem('workplaceId')
+                          }}]
       })
       .then(({ data }) => {
         console.log(data);
@@ -88,7 +95,7 @@ export class PositionsSection extends Component {
       "positionDescription": position.positionDescription,
       "minimumLiftWeight": position.minimumLiftWeight,
       "traineeHours": position.traineeHours,
-      "positionIconUrl": null,
+      "positionIconUrl": position.positionIconUrl,
       "minimumAge": position.minimumAge,
       "partTimeWage": position.partTimeWage,
       "exchangeLevel": "CORPORATION_BRAND_WIDE",
@@ -119,48 +126,41 @@ export class PositionsSection extends Component {
       };
       this.props.createPosition({
         variables: variables,
+        // do a quick UI update to make it seem fast
         updateQueries: {
           fetchRelevantPositions: (previousQueryResult, { mutationResult }) => {
             console.log(mutationResult);
             let new_position = mutationResult.data.createPosition.position;
-            new_position.positionDescription = "placeholder";
+            // add a placeholder to signify that it's waiting for refetch to prevent edits
+            new_position.positionDescription = "placeholder - waiting for refetch";
             new_position.opportunitiesByPositionId.nodes.push({
               workplaceId: localStorage.getItem("workplaceId"),
               id: null,
               isPublic: null,
               __typename: 'Opportunity'
             });
-
             previousQueryResult.fetchRelevantPositions.nodes.push(new_position);
             return {
               fetchRelevantPositions: previousQueryResult.fetchRelevantPositions
             };
           }
         },
+        // initialize slow refetch to actually update this and my workplace queries
         refetchQueries: [{query: all_positions,
                           variables: {
                             workplaceId: localStorage.getItem('workplaceId') == "" ?
                                          null : localStorage.getItem('workplaceId'),
                             brandId: localStorage.getItem('brandId'),
                             corporationId: localStorage.getItem('corporationId'),
+                          }},
+                          {query: workplaceInfo,
+                           variables: {
+                             workplaceId: localStorage.getItem('workplaceId') == "" ?
+                                          null : localStorage.getItem('workplaceId')
                           }}]
       })
       .then(({ data }) => {
-        console.log(data);
-        const newPosition=newData;
-        newPosition.opportunitiesByPositionId=position.opportunitiesByPositionId;
-        newPosition.opportunitiesByPositionId.nodes[0].id=opportunityId;
-        // set temp data
-        newData.trainingTracks=0;
-        newData.jobsByPositionId={
-          nodes:[]
-        };
-        /*
-        // add team members - this feature is on hold
-        position.teamMembers.forEach(function(userId) {
-          this.createJob(userId,positionId);
-        }, this);
-        */
+        // console.log(data);
       })
       .catch((error) => {
         console.error('There was an error sending the query', error);
@@ -169,7 +169,9 @@ export class PositionsSection extends Component {
     else {
     // update a current position and opportunity
       delete newData.id;
-
+      //console.log(position.opportunitiesByPositionId.nodes);
+      //console.log(localStorage.getItem("workplaceId"));
+      var relevant_opportunity = position.opportunitiesByPositionId.nodes.find(workplaceMatch);
       this.props.updatePosition({
         variables: {
           "data": {
@@ -177,12 +179,18 @@ export class PositionsSection extends Component {
             "positionPatch": newData
           },
           "input": {
-            "id": position.opportunitiesByPositionId.nodes.find(workplaceMatch).id,
+            "id": relevant_opportunity.id,
             "opportunityPatch": {
-              "isPublic": position.opportunitiesByPositionId.nodes[0].isPublic,
+              "isPublic": relevant_opportunity.isPublic,
             }
           }
-        }
+        },
+        // refetch workplace listings in my workplace section of website
+        refetchQueries: [{query: workplaceInfo,
+                           variables: {
+                             workplaceId: localStorage.getItem('workplaceId') == "" ?
+                                          null : localStorage.getItem('workplaceId')
+                          }}]
       })
       .then(({ data }) => {
         console.log(data);
@@ -193,38 +201,8 @@ export class PositionsSection extends Component {
       });
     }
   };
-  /*
-  createJob=(userId,positionId)=>{
-    this.props.createJob({
-      variables: {
-        "input": {
-          "clientMutationId": "dd",
-          "job": {
-            "userId": userId,
-            "workplaceId": localStorage.getItem('workplaceId'),
-            "positionId": positionId,
-            "isPositionActive": true,
-            "activatedDate":moment().format(),
-            "deactivatedDate": moment().add(10, 'day').format(),
-            "isVerified": false,
-            "isPreTrainingComplete": false,
-            "isTrainable": true,
-            "id": uuidv4(),
-            "primaryJob": false
-          }
-        }
-      }
-    })
-    .then(({ data }) => {
-      console.log(data);
-    })
-    .catch((error) => {
-      console.error('There was an error sending the query', error);
-    });
-  }
-  */
   render() {
-    console.log(this.props.data.networkStatus);
+    //console.log(this.props.data.networkStatus);
     if (!this.props.data.fetchRelevantPositions) {
       return  (
       <div style={{marginTop:"30%",marginLeft:"0"}}>
@@ -232,8 +210,8 @@ export class PositionsSection extends Component {
       </div> )
     }
     const positions = this.props.data.fetchRelevantPositions.nodes;
-    console.log(positions);
-    console.log(this.props);
+    //console.log(positions);
+    //console.log(this.props);
     return (
       <section className="positions">
         <Tabs

@@ -6,12 +6,12 @@ import { gql, graphql, compose } from 'react-apollo';
 import { updateRecurringShift } from './ShiftEdit/EditRecurringShift.graphql.js'
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
-import EditShiftDetailsDrawer from './ShiftEdit/EditShiftDrawer';
+import EditShiftDetailsDrawer from './ShiftEdit/recurringShiftDrawerContainer';
 import EditShiftDrawerContainer from '../../Scheduling/ShiftWeekTable/ShiftEdit/EditShiftDrawerContainer';
 
 import '../../Scheduling/style.css';
 import '../../Scheduling/ShiftWeekTable/shiftWeekTable.css';
-
+var rp = require('request-promise');
 const uuidv4 = require('uuid/v4');
 
 class EventPopupComponent extends Component {
@@ -53,9 +53,57 @@ class EventPopupComponent extends Component {
   deleteShift = () => {
     let id = this.props.data.id;
     let that = this;
-    that.props.deleteShiftById(uuidv4(), id)
-      .then(({ data }) => {
-        console.log('Delete Data', data);
+
+    const payload = {
+        expired: true,
+      };
+
+   this.props.updateRecurringShift({
+        variables: {
+          data: {
+            id: id,
+            recurringShiftPatch: payload
+          }
+        },
+        updateQueries: {
+          recurringById: (previousQueryResult, { mutationResult }) => {
+            let newEdges = []
+            console.log(mutationResult)
+            const recurringShiftId = mutationResult.data.updateRecurringShiftById.recurringShift.id
+            previousQueryResult.recurringById.recurringShiftsByRecurringId.edges.map(function(value){
+                if (value.node.id != recurringShiftId) {
+                    newEdges.push(value)
+                  }
+            }) 
+            previousQueryResult.recurringById.recurringShiftsByRecurringId.edges = newEdges    
+            return {
+              recurringById: previousQueryResult.recurringById
+            };
+          },
+        },
+      }).then(({ data }) => {
+
+        var uri = 'http://localhost:8080/api/kronosApi'
+
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {         
+                  "sec": "QDVPZJk54364gwnviz921",
+                  "actionType": "deleteRecurring",
+                  "testing": true,
+                  "recurring_shift_id": id,
+                  "date": moment().format(),
+                  "edit": false
+              }
+        };
+
+        rp(options)
+          .then(function(response) {
+              //that.setState({redirect:true})
+          }).catch((error) => {
+              console.log('there was an error sending the query', error);
+          });   
       }).catch((error) => {
       console.log('there was an error sending the query', error);
     });
@@ -86,33 +134,65 @@ class EventPopupComponent extends Component {
   };
 
   handleShiftUpdateSubmit = (shiftValue, recurringId) => {
-    const shift = cloneDeep(shiftValue);
-   
-    const payload = {
-      id: shiftValue.id,
-      positionId: shift.positionId,
-      workerCount: shift.numberOfTeamMembers,
-      creator: localStorage.getItem('userId'),
-      startTime: moment(shift.startTime).format('HH:mm'),
-      endTime: moment(shift.endTime).format('HH:mm'),
-      instructions: shift.instructions,
-      unpaidBreakTime: shift.unpaidBreak,
-      expiration: shift.endDate,
-      startDate: shift.startDate
-    };
-    this.props.updateRecurringShift({
-      variables: {
-        data: {
-          id: shiftValue.id,
-          recurringShiftPatch: payload
-        }
-      },
-    }).then(({ data }) => {
-      console.log('got data', data);
-    }).catch(err => {
-      console.log('There was error in saving shift', err);
-    });
-    this.setState({ editShiftModalOpen: false, isCreateShiftAdvanceOpen: false });
+      const shift = cloneDeep(shiftValue);
+
+      console.log(shift)
+
+      let days = []
+        Object.keys(shift.shiftDaysSelected).map(function(day, i){
+          if (shift.shiftDaysSelected[day] == true) {
+              days.push(moment(day).format('dddd').toUpperCase())
+          }
+      })
+     
+      const payload = {
+        id: shiftValue.id,
+        positionId: shift.positionId,
+        workerCount: shift.numberOfTeamMembers,
+        creator: localStorage.getItem('userId'),
+        startTime: moment(shift.startTime).format('HH:mm'),
+        endTime: moment(shift.endTime).format('HH:mm'),
+        instructions: shift.instructions,
+        unpaidBreakTime: shift.unpaidBreak,
+        expiration: shift.endDate,
+        startDate: shift.startDate,
+        days: days,
+      };
+      this.props.updateRecurringShift({
+        variables: {
+          data: {
+            id: shiftValue.id,
+            recurringShiftPatch: payload
+          }
+        },
+      }).then(({ data }) => {
+
+        var uri = 'http://localhost:8080/api/kronosApi'
+
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {         
+                  "sec": "QDVPZJk54364gwnviz921",
+                  "actionType": "deleteRecurring",
+                  "testing": true,
+                  "recurring_shift_id": shiftValue.id,
+                  "date": shift.startDate || moment().format(),
+                  "edit": true
+              }
+        };
+         rp(options)
+          .then(function(response) {
+              //that.setState({redirect:true})
+          }).catch((error) => {
+            console.log('there was an error sending the query', error);
+          });   
+
+        console.log('got data', data);
+      }).catch(err => {
+        console.log('There was error in saving shift', err);
+      });
+      this.setState({ editShiftModalOpen: false, isCreateShiftAdvanceOpen: false });
   };
 
   handleAdvanceToggle = (drawerShift) => {
@@ -212,7 +292,7 @@ class EventPopupComponent extends Component {
         <Modal
           title="Confirm"
           isOpen={this.state.deleteModalPopped}
-          message="Are you sure that you want to delete this recurring shift?"
+          message="Are you sure that you want to delete this repeating shift?"
           action={deleteShiftAction}
           closeAction={this.modalClose} />
         <EditShiftDrawerContainer
@@ -257,38 +337,17 @@ class EventPopupComponent extends Component {
 
 const deleteShift = gql`
   mutation($clientMutationId: String,$id: Uuid!){
-    deleteShiftById(
+    updateRecurringShiftById(
     input: {clientMutationId: $clientMutationId,
     id: $id}){
-            shift{
+            recurringShift{
                 id
             }
     }
   }`;
 
-const EventPopup = compose(graphql(deleteShift, {
-  props: ({ ownProps, mutate }) => ({
-    deleteShiftById: (clientMutationId, id) => mutate({
-      variables: { clientMutationId: clientMutationId, id: id },
-      updateQueries: {
-        allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-          let newEdges = []
-          previousQueryResult.allShifts.edges.map((value) => {
-            if (value.node.id != mutationResult.data.deleteShiftById.shift.id) {
-              newEdges.push(value)
-            }
-          })
-          previousQueryResult.allShifts.edges = newEdges
-          return {
-            allShifts: previousQueryResult.allShifts
-          };
-        },
-      },
-    }),
-
-  }),
-}), graphql(updateRecurringShift, {
+const EventPopup = graphql(updateRecurringShift, {
   name: 'updateRecurringShift'
-}))(EventPopupComponent);
+})(EventPopupComponent);
 
 export default EventPopup;

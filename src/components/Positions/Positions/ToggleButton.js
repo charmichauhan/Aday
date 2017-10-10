@@ -6,6 +6,7 @@ export default class ToggleButton extends Component {
     super(props);
     this.handleToggleButton = this.handleToggleButton.bind(this);
     this.state = {
+      opportunityId: this.props.opportunityId,
       handleToggle: !this.props.initial,
       positive: this.props.initial,
       negative: !this.props.initial,
@@ -14,16 +15,24 @@ export default class ToggleButton extends Component {
       value: this.props.initial || false
     }
   }
-  componentWillMount(){
-    const {formCallBack}=this.props;
-    const newState={
-      value: this.state.value
+  // make buttom refresh when new position is opened in drawer
+  componentWillReceiveProps(newProps){
+    if(newProps.opportunityId != this.props.opportunityId) {
+      this.setState({
+        opportunityId: newProps.opportunityId,
+        handleToggle: !newProps.initial,
+        positive: newProps.initial,
+        negative: !newProps.initial,
+        label: newProps.initial? 'YES': 'NO',
+        labelPosition: newProps.initial? 'right': 'left',
+        value: newProps.initial || false
+      });
     }
-    formCallBack(newState);
   }
   handleToggleButton(){
     const {formCallBack}=this.props;
-    const {handleToggle,positive,negative,label,labelPosition}=this.state;
+    const {handleToggle, value}=this.state;
+    formCallBack(!value);
     if(handleToggle){
       this.setState({
         handleToggle:false,
@@ -31,7 +40,7 @@ export default class ToggleButton extends Component {
         negative:false,
         label:'YES',
         labelPosition:'right',
-        value: false,
+        value: true,
       });
     }else{
       this.setState({
@@ -40,14 +49,11 @@ export default class ToggleButton extends Component {
         negative:true,
         label:'NO',
         labelPosition:'left',
-        value: true
+        value: false
       });
     }
-    const newState={
-      value:this.state.value
-    }
-    formCallBack(newState);
   }
+
   render(){
     const {positive,negative,label,labelPosition}=this.state;
   return(

@@ -221,7 +221,7 @@ class Workplace extends Component {
               allWorkplaces: previousQueryResult.allShifts
             };
           },
-        },
+        }
       }).then((res) => {
         this.showNotification('Workplace details updated successfully.', NOTIFICATION_LEVELS.SUCCESS);
         workplace.brand = find(this.props.brands, { 'id': workplace.brandId });
@@ -263,7 +263,7 @@ class Workplace extends Component {
           {workplaces && workplaces.map((workplace) =>
             <Grid key={workplace.id}>
               <GridColumn className="list-left-image-wrapper" width={2}>
-                <img className="list-left-image" src={workplace.workplaceImageUrl} alt={workplace.name} />
+                <img className="list-left-image" src={workplace.workplaceImageUrl + "?" + new Date().getTime()} alt={workplace.name} />
               </GridColumn>
               <GridColumn width={14}>
                 <ListItem

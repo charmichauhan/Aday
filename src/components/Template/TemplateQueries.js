@@ -9,7 +9,7 @@ const allTemplateShifts = gql`
             id
             workplaceName
           }
-          recurringShiftsByRecurringId{
+          recurringShiftsByRecurringId(condition: { expired: false }){
             edges{
               node{
                 id
@@ -44,12 +44,14 @@ const allTemplateShifts = gql`
 }`
 
 
-const findRecurring = gql`
-  query  findRecurring($brandId: Uuid!, $workplaceId: Uuid!) {
-    allRecurrings(condition: { brandId: $brandId, workplaceId: $workplaceId } ){
+const allRecurrings = gql`
+  query  allRecurrings($brandId: Uuid!) {
+    allRecurrings(condition: { brandId: $brandId } ){
       edges{
         node{
           id
+          workplaceId
+          brandId
         }
       }
     }
@@ -71,4 +73,4 @@ const findRecurring = gql`
       `
 
 
-export { allTemplateShifts, allUsers, findRecurring }
+export { allTemplateShifts, allUsers, allRecurrings }

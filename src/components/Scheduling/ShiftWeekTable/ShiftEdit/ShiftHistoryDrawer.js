@@ -35,7 +35,7 @@ const User = ({user}) => (
     <div className="avatar">
       <Image avatar src={user.avatarUrl}/>
     </div>
-    <div className="label font16 text-uppercase">
+    <div className="label font18 text-uppercase">
       <b>{user.firstName}</b> {user.lastName}
     </div>
   </div>
@@ -49,18 +49,25 @@ const SortableItem = SortableElement(({history, index}) =>
            className="content-row shift-history">
       <Grid>
         <GridColumn width={1}>
-
+          <text className="innerCircle">{index}</text>
         </GridColumn>
         <GridColumn width={4}>
           <div className="wrapper-element text-left">
             <User user={history}/>
           </div>
+         <div className="wrapper-element text-center">
+            <p className="history-text font20">{history.seniority || '0001'}</p>
+            <p className="history-text font14 text-uppercase light-gray-text">Seniority</p>
+          </div>
         </GridColumn>
-        
-        <GridColumn width={1}>
+        <GridColumn width={2}>
+          <div className="wrapper-element text-center">
+            <p className="history-text font20">{history.ytdot || '0424'}</p>
+            <p className="text-uppercase font14 history-text light-gray-text">YTD OT</p>
+          </div>
         </GridColumn>
         <GridColumn width={1}>
-          <div className="wrapper-element">
+          <div className="wrapper-element text-right">
             <Image src="/images/Sidebar/draggable.png" className="history-img"/>
           </div>
         </GridColumn>
@@ -80,12 +87,8 @@ class ShiftHistoryDrawerComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      historyDetails: [],
+      userList: this.props.users,
     }
-  }
-
-  componentWillMount() {
-
   }
 
   handleBack = () => {
@@ -93,56 +96,12 @@ class ShiftHistoryDrawerComponent extends Component {
     this.props.handleBack();
   };
 
-  handleSaveList = () => {
-    const userId = [], {isSorted} = this.state;
-    this.state.historyDetails && this.state.historyDetails.forEach(historyDetails => {
-      userId.push(historyDetails.worker);
-    });
-  }
-
   onSortEnd = ({oldIndex, newIndex}) => {
-      console.log(this.state.historyDetails);
-      this.setState((prevState) => ({
-        historyDetails: arrayMove(prevState.historyDetails, oldIndex, newIndex)
-      }));
-      const varSortUser = [];
-      this.state.historyDetails.forEach((v, i) => {
-        varSortUser.push(v.worker);
+      this.setState({
+        userList: arrayMove(this.state.userList, oldIndex, newIndex)
       });
 
-      console.log(this.state.historyDetails);
-
-      var shift = this.props.shift;
-      var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/callEmployee/'
-
-      var options = {
-        uri: uri,
-        method: 'POST',
-        json: {
-          "data": {
-            "sec": "QDVPZJk54364gwnviz921",
-            "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
-            "shiftStartHour": moment(shift.startTime).format("h:mm a"),
-            "shiftEndHour": moment(shift.endTime).format("h:mm a"),
-            "brand": shift.positionByPositionId.brandByBrandId.brandName,
-            "shiftLocation": shift.workplaceByWorkplaceId.workplaceName,
-            "shiftReward": "",
-            "shiftRole": shift.positionByPositionId.position1000000000000000Name,
-            "shiftAddress": shift.workplaceByWorkplaceId.address,
-            "weekPublishedId": shift.weekPublishedId,
-            "shiftId": shift.id,
-            "userId": {
-              varSortUser
-            }
-          }
-        }
-      };
-      rp(options)
-        .then(function (response) {
-          //that.setState({redirect:true})
-        }).catch((error) => {
-        console.log('there was an error sending the query', error);
-      });
+      this.props.phoneTree(this.state.userList)
     }
 
   render() {
@@ -153,25 +112,15 @@ class ShiftHistoryDrawerComponent extends Component {
         docked = false
       } = this.props;
 
-      const {historyDetails} = this.state;
+      const actionTypes = [];
 
-      const actionTypes = [{
-        type: 'white',
-        title: 'GO BACK',
-        handleClick: this.handleBack
-      }, {
-        type: 'blue',
-        title: 'POST LIST',
-        // handleClick: this.handleSaveShift,
-        image: '/assets/Icons/save-icon.png'
-      }];
       console.log(this.props)
       if (this.props.allUsers.loading){
         return(<div></div>)
       } 
 
       const allUsers = this.props.allUsers;
-      var userData = this.props.users.map(function (userId, i) {
+      var userData = this.state.userList.map(function (userId, i) {
         let foundWorker = find(allUsers.allUsers.edges, (user) => user.node.id === userId);
         if (!foundWorker) foundWorker = {node: unassignedTeamMember.user};
         return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
@@ -196,8 +145,7 @@ class ShiftHistoryDrawerComponent extends Component {
 
             </div>
             <div className="drawer-content history-drawer-content">
-              {historyDetails &&
-              <SortableList historyDetails={userData} onSortEnd={this.onSortEnd} pressDelay={200}/>}
+              <SortableList historyDetails={userData} onSortEnd={this.onSortEnd} pressDelay={200}/>
             </div>
           </div>
           <div className="drawer-footer">

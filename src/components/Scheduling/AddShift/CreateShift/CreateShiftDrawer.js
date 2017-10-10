@@ -36,7 +36,8 @@ const initialState = {
     unpaidBreakInMinutes: 0,
     tags: [],
     tagOptions: [],
-    duration: { hours: 0, minutes: 0 }
+    duration: { hours: 0, minutes: 0 },
+    phoneTree: []
   },
   shiftErrors: {},
   shiftHistoryDrawer: false,
@@ -286,8 +287,12 @@ class DrawerHelper extends Component {
     });
   };
 
+  phoneTreeCallBack = (phoneTree) => {
+        this.setState((state) => ({ shift: { ...state.shift, phoneTree: phoneTree}}));
+  };
+
   openShiftHistory = () => {
-    this.setState({users: ['8e9355c9-d45f-453a-a1cf-1141ca22929e', '773bc778-7022-11e7-8cf7-a6006ad3dba0']})
+     this.setState((state) => ({ shift: { ...state.shift, phoneTree: ['8e9355c9-d45f-453a-a1cf-1141ca22929e', '773bc778-7022-11e7-8cf7-a6006ad3dba0']}}))
     this.setState({shiftHistoryDrawer: true})
   };
 
@@ -361,7 +366,7 @@ class DrawerHelper extends Component {
 
   handleWorkplaceChange = (e) => {
       this.setState((state) => ({ shift: { ...state.shift, workplaceId: e.workplace}}));
-      this.getPositions(e.workplace);
+      this.getWorkplacePositions(e.workplace);
   };
 
   render() {
@@ -678,7 +683,7 @@ class DrawerHelper extends Component {
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
-                <CircleButton disabled={isShiftInvalid} handleClick={() => this.handleShiftSubmit(shift)}
+                <CircleButton disabled={isShiftInvalid} handleClick={() => this.handleShiftSubmit(this.state.shift)}
                               type="blue" title="Add Hours" />
               </div>
             </div>
@@ -687,10 +692,11 @@ class DrawerHelper extends Component {
         <ShiftHistoryDrawerContainer
           isSorted={true}
           shift={this.state.shift}
-          users={this.state.users}
+          users={this.state.shift.phoneTree}
           open={this.state.shiftHistoryDrawer}
           handleBack={this.handleNewShiftDrawerClose}
-          handleHistory={this.handleNewShiftDrawerClose} />
+          handleHistory={this.handleNewShiftDrawerClose} 
+          phoneTree={this.phoneTreeCallBack}/>
       </Drawer>
     );
   }

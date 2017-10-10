@@ -22,7 +22,7 @@ class ShiftHistoryDrawerContainerComponent extends Component {
     }
     if (this.props.open) {
       const { isSorted } = this.props;
-      console.log("HELLO TRUE")
+
       return (
         isSorted ?
           <ShiftHistoryDrawer
@@ -31,7 +31,8 @@ class ShiftHistoryDrawerContainerComponent extends Component {
             open={this.props.open}
             handleBack={this.props.handleBack}
             handlerClose={this.props.handlerClose}
-            handleHistory={this.props.handleHistory}/>
+            handleHistory={this.props.handleHistory}
+            phoneTree={this.props.phoneTree} />
            :
           <ShiftHistoryNonSortDrawer
             shift={this.props.shift}

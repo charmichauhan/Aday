@@ -238,6 +238,8 @@ class ShiftPublishComponent extends Component {
   };
 
   handleCreateSubmit = (shift) => {
+    console.log("HANDLE CReATE SHIFT")
+    console.log(shift)
     let { publishId } = this.props;
 
     let dayNames = []
@@ -283,13 +285,15 @@ class ShiftPublishComponent extends Component {
     }
     // else create all shifts with existing week published
     else {
-      this.submitShifts({ dayNames, days, shift, publishId });
+      console.log(shift)
+      this.submitShifts( dayNames, days, shift, publishId );
     }
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
-  submitShifts = ({ dayNames, days, shift, publishId }) => {
+  submitShifts = ( dayNames, days, shift, publishId ) => {
     let shiftRecure = shift;
+
     if(shift.recurringShift!=="none"){
       this.saveRecurringShift(shiftRecure, shift,(res)=>{
         shiftRecure.recurringShiftId = res;
@@ -301,9 +305,10 @@ class ShiftPublishComponent extends Component {
       }); 
     }
     else {
+      console.log(shiftRecure)
       days.forEach((day) => {
-        if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
-          this.saveShift(shift, day, publishId);
+        if (day !== 'undefined' && shiftRecure.shiftDaysSelected[day] === true) {
+          this.saveShift(shiftRecure, day, publishId);
         } 
 
         let is_publish = this.props.isPublish;
@@ -316,11 +321,13 @@ class ShiftPublishComponent extends Component {
             const shiftDate = shiftDay.date();
             const shiftMonth = shiftDay.month();
             const shiftYear = shiftDay.year();
-            const recurringShiftId = shift.recurringShiftId;
-            shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-            shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+            const recurringShiftId = shiftRecure.recurringShiftId;
+            shift.startTime = moment.utc(shiftRecure.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+            shift.endTime = moment.utc(shiftRecure.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
             
-            let workersAssigned = shift.teamMembers.map(({ id }) => id);
+          if (shiftRecure.phoneTree.length < 1 & shiftRecure.teamMembers) {
+
+            let workersAssigned = shiftRecure.teamMembers.map(({ id }) => id);
             workersAssigned.map(function(user, i){
                 var uri = 'http://localhost:8080/api/kronosApi'
 
@@ -332,9 +339,9 @@ class ShiftPublishComponent extends Component {
                           "actionType": "assignShift",
                           "testing": true,
                           "user_id": user,
-                          "date": moment(shift.startTime).format('YYYY/MM/DD'),
-                          "startTime": moment(shift.startTime).format('HH:mm'),
-                          "endTime": moment(shift.endTime).format('HH:mm'),
+                          "date": moment(shiftRecure.startTime).format('YYYY/MM/DD'),
+                          "startTime": moment(shiftRecure.startTime).format('HH:mm'),
+                          "endTime": moment(shiftRecure.endTime).format('HH:mm'),
                           "singlEdit": false
                       }
                  };
@@ -345,10 +352,43 @@ class ShiftPublishComponent extends Component {
                     console.log('there was an error sending the query', error);
                   });   
            })
-          }
+
+          } else if (shiftRecure.phoneTree.length > 1) { 
+            var callURI = 'localhost:8080/api/callEmployee/'
+
+                  var options = {
+                    uri: callURI,
+                    method: 'POST',
+                    json: {
+                      "data": {
+                        "sec": "QDVPZJk54364gwnviz921",
+                        "shiftDate": moment(shiftRecure.startTime).format("MMMM Do, YYYY"),
+                        "shiftStartHour": moment(shiftRecure.startTime).format("h:mm a"),
+                        "shiftEndHour": moment(shiftRecure.endTime).format("h:mm a"),
+                        "brand": shiftRecure.positionByPositionId.brandByBrandId.brandName,
+                        "shiftLocation": shiftRecure.workplaceByWorkplaceId.workplaceName,
+                        "shiftReward": "",
+                        "shiftRole": shiftRecure.positionByPositionId.positionName,
+                        "shiftAddress": shiftRecure.workplaceByWorkplaceId.address,
+                        "weekPublishedId": shiftRecure.weekPublishedId,
+                        "shiftId": shiftRecure.id,
+                        "userId": shiftRecure.phoneTree
+                      }
+                    }
+                  };
+                  console.log(options)
+                  rp(options)
+                    .then(function (response) {
+                      //that.setState({redirect:true})
+                    }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+              }
+           }
       });
     }
   };
+
   saveRecurringShift(dayNames, days, shift,callback){
     this.props.client.query({
       query: findRecurring,

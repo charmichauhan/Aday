@@ -4,7 +4,7 @@ import Dialog from 'material-ui/Dialog';
 const styles = {
   titleStyle: {
     color: '#4A4A4A',
-    fontFamily: 'Lato',
+    fontFamily: 'Lato-Regular',
     fontSize: 24,
     fontWeight: 600,
     borderBottom: '1px solid #e1e1e2'

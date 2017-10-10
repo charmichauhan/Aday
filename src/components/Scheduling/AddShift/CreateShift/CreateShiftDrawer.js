@@ -87,6 +87,10 @@ class DrawerHelper extends Component {
             content: ''
           };
         });
+        const diff = shift.workersRequestedNum - shift.workersAssigned;
+        if (diff) {
+          times(diff, () => shift.teamMembers.push(unassignedTeamMember));
+        }
       } else {
         shift.teamMembers = shift.workersRequestedNum && times(shift.workersRequestedNum, () => unassignedTeamMember);
       }
@@ -489,7 +493,7 @@ class DrawerHelper extends Component {
                     value={shift.positionId}
                     selectOnBlur={false}
                     forceSelection={false}
-                    disabled={!positions}
+                    disabled={!positions || !shift.workplaceId}
                     options={positionOptions} />
                 </Grid.Column>
               </Grid.Row>
@@ -589,7 +593,7 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
 
-                  <div className="member-list"
+                  <div className="add-hours-member member-list"
                        style={{ display: ((isRecurring && !isEdit) || (shift.teamMembers && !shift.teamMembers.length)) && 'none' || 'block' }}>
 
                     {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) =>

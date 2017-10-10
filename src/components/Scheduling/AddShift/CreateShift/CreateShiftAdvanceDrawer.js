@@ -17,7 +17,7 @@ const styles = {
     marginBottom: 16,
   },
   label: {
-    fontFamily: 'Lato',
+    fontFamily: 'Lato-Regular',
     fontSize: 14
   },
 };

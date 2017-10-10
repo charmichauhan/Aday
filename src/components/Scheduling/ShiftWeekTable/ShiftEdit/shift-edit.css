@@ -9,7 +9,7 @@
 .firstName {
   height: 28px;
   color: #000;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 20px;
   font-weight: bolder;
   line-height: 24px;
@@ -19,7 +19,7 @@
 .lastName {
   height: 28px;
   color: #666666;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 20px;
   font-weight: normal;
   line-height: 24px;
@@ -61,7 +61,7 @@
 
 .teamMemberCard {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .teamMemberCard > .edits {
@@ -106,7 +106,7 @@
 }
 
 /*Rahkeem: will increase specificity of selector later*/
-.member-list {
+.add-hours-member.member-list {
   margin-left: -35px !important;
   margin-bottom: 5px
 }
@@ -114,7 +114,7 @@
 .member-list .teamMemberOption.option .label b,
 .member-list .teamMemberOption.option .label span {
   color: #666666;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 20px;
   font-weight: normal;
   line-height: 20px;
@@ -237,7 +237,7 @@
 
 .drawer-section .drawer-heading .confirm-popup {
   color: #fff;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 28px !important;
   font-weight: lighter;
   line-height: 28px !important;
@@ -290,7 +290,7 @@
 
 .member-list h5, .shift-details h5 {
   color: #666666;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 24px;
   font-weight: bold;
   line-height: 31px;
@@ -319,12 +319,12 @@
 
 .shiftDetails p b {
   text-transform: uppercase;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 22px;
 }
 
 .shiftDetails p span {
-  font-family: "Lato";
+  font-family: 'Lato-Regular';
   font-weight: lighter;
   font-size: 22px;
 }
@@ -332,7 +332,7 @@
 .dimmedText {
   text-transform: uppercase;
   color: #999;
-  font-family: "Lato";
+  font-family: 'Lato-Regular';
   font-weight: lighter;
   font-size: 19px !important;
   padding-left: 0px !important;
@@ -349,7 +349,7 @@
 
 .member-list .teamMemberCard .label {
   color: #666666;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 24px;
   font-weight: normal;
   line-height: 24px;
@@ -360,7 +360,7 @@
 
 .member-list .teamMemberCard .description {
   color: #000;
-  font-family: Lato-Light;
+  font-family: 'Lato-Regular';
   font-size: 15px;
   line-height: 15px;
 }
@@ -424,7 +424,7 @@ i.icon.dropdown-img-black {
   display: inline-block;
   margin-top: 0 !important;
   color: #0022A1;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 30px !important;
   line-height: 35px;
   text-align: center;
@@ -441,7 +441,7 @@ i.icon.dropdown-img-black {
 
 .drawer-section .drawer-head button span {
   color: #E33821;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 18px;
   font-weight: 300;
   line-height: 22px;
@@ -486,7 +486,7 @@ i.icon.dropdown-img-black {
 
 .drawer-section table.structured td .label {
   color: #4A4A4A;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 18px;
   font-weight: normal;
   line-height: 21px;
@@ -494,7 +494,7 @@ i.icon.dropdown-img-black {
 
 /*History table*/
 .drawer-section .history-drawer-content {
-  padding: 0px;
+  padding: 0;
 }
 
 h2.ui.header {

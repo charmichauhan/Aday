@@ -292,6 +292,10 @@ class DrawerHelper extends Component {
   };
 
   openShiftHistory = () => {
+    // will need the position id, workplace id , 
+    //number of workers needed, workers assigned (in order to make the difference, 
+    //the unpaid time and of course the start/end in order to open the shift drawer
+    //will be a request to server 
      this.setState((state) => ({ shift: { ...state.shift, phoneTree: ['8e9355c9-d45f-453a-a1cf-1141ca22929e', '773bc778-7022-11e7-8cf7-a6006ad3dba0']}}))
     this.setState({shiftHistoryDrawer: true})
   };

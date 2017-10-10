@@ -29,8 +29,8 @@ export default class JobsRow extends Component {
     let data = this.props.data;
    const daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
         const hashByDay = {"SUNDAY": [], "MONDAY": [], "TUESDAY": [], "WEDNESDAY": [], "THURSDAY": [], "FRIDAY": [], "SATURDAY": []};
-    
-    data.map((value, index) => {  
+
+    data.map((value, index) => {
 
       if (value.days){
         value.days.map((day, index) => {

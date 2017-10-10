@@ -284,3 +284,89 @@
 .instance-following { display: inline-table; margin-bottom: 5px;}
 .instance-following button { display: table-cell; padding: 5px 8px;}
 .confirm-popup-body .instance-following p { display: table-cell; font-size: 16px; padding-left: 8px;}
+
+/* New Design */
+.calendar-top-heading {
+  float: left;
+  width: 100%;
+  padding: 15px 0;
+}
+.calendar-schedule-title li span {
+  font-size: 17px;
+  color: #0022A1;
+  text-transform: uppercase;
+}
+.calendar-schedule-title li {
+  display: inline-block;
+  position: relative;
+  margin-right: 20px;
+  vertical-align: middle;
+}
+.calendar-schedule-title li:after {
+  content: '';
+  width: 1px;
+  height: 100%;
+  position: absolute;
+  right: -10px;
+  background: #0022A1;
+}
+.calendar-schedule-title li img {
+  width: 22px;
+  margin-right: 8px;
+}
+.calendar-schedule-title li:last-child {
+  margin-right: 0;
+}
+.calendar-schedule-title li:last-child:after {
+  display: none;
+}
+.btn-action-calendar .div-ui-action .raise-btn {
+  display: inline-block;
+  width: 180px;
+  margin-right: 15px;
+ }
+.btn-action-calendar .div-ui-action .raise-btn > div {
+  width: 100%;
+}
+.btn-action-calendar .div-ui-action .ui.basic.button.action-btn {
+  border: 1px solid #0022A1;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+  color: #0022A1 !important;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 10px;
+  margin-right: 0;
+}
+
+.calendar-search-tags .search-tags-input input {
+  border: 1px solid #D9D9D9;
+  width: 100%;
+  background-color: #FFFFFF;
+  padding: 10px;
+  color: #999999;
+  font-size: 14px;
+  text-transform: inherit;
+  border-radius: 4px;
+}
+.calendar-search-tags .search-filters li {
+  display: inline-block;
+  margin-right: 6px;
+}
+.calendar-search-tags .search-filters li span {
+  color: #999999;
+  font-size: 12px;
+  font-family: Lato;
+}
+.calendar-search-tags .search-filters li a {
+  color: #0000EE;
+  font-size: 12px;
+  font-family: Lato;
+  text-transform: uppercase;
+}
+.calendar-search-tags .search-filters li:last-child {
+  margin-right: 0;
+}
+.calendar-search-tags .search-filters {
+  margin-top: 10px;
+}

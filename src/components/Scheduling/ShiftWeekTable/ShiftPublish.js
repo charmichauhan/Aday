@@ -419,7 +419,6 @@ class ShiftPublishComponent extends Component {
         <Redirect to={{ pathname: '/schedule/recurring', viewName: this.props.view }} />
       )
     }
-
     if(this.state.publishModalPopped && localStorage.getItem('workplaceId') != ""){
       message="Are you sure that you want to publish the week's schedule for this workplace?"
     }else {
@@ -435,7 +434,65 @@ class ShiftPublishComponent extends Component {
                                                  action={publishModalOptions} closeAction={this.modalClose} />
         }
 
-        <div className="col-md-12">
+        <div className="calendar-top-heading">
+          <div className="col-md-6 pull-left">
+            <div className="row">
+              <div className="col-md-2">
+
+              </div>
+              <div className="col-md-10">
+                <div className="calendar-schedule-title">
+                  { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
+                  <ul>
+                    <li><span>{moment(start).format('MMM D')} -{moment(start).add(6, 'days').format('MMM D')} {moment(start).format('YYYY')}</span></li>
+                    <li><img src={statusImg} /><span>{status}</span></li>
+                  </ul>}
+                </div>
+                <div className="btn-action-calendar">
+                  {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
+                    <div className="div-ui-action">
+                        <CreateShiftButton
+                          open={this.state.isCreateShiftModalOpen}
+                          onButtonClick={this.openCreateShiftModal}
+                          onCreateShift={this.openShiftDrawer}
+                          onModalClose={this.closeDrawerAndModal}
+                          weekPublishedId={publishId}
+                          weekStart={start} />
+                      <Button className="action-btn" basic style={{width:188, height: 40}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
+
+                      {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+
+                    </div> :
+                    <div>
+                      <Button className="action-btn" basic style={{width:188, height: 40}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
+                    </div>
+                  }
+                </div>
+                <div className="calendar-search-tags">
+                  <div className="search-tags-input">
+                    <input type="text" placeholder="Search By Tags"/>
+                    <i className=""></i>
+                  </div>
+                  <div className="search-filters">
+                    <ul>
+                      <li><span>QUICK FILTERS:</span></li>
+                      <li><a href="#">NON-TRAINEE SHIFTS</a></li>
+                      <li><a href="#">TRAINEE SHIFTS</a></li>
+                      <li><a href="#">ALL SHIFTS</a></li>
+                    </ul>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6 pull-right">
+            <div className="col-md-8"></div>
+            <div className="col-md-4"></div>
+          </div>
+        </div>
+
+        {/*<div className="col-md-12">
           <div className="col-sm-offset-3 col-sm-5 rectangle">
             { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
              <div>
@@ -445,8 +502,8 @@ class ShiftPublishComponent extends Component {
                 </p>
              </div> }
           </div>
-        </div>
-        <div className="btn-action">
+        </div>*/}
+        {/*<div className="btn-action">
           {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
             <div>
               <Button className="btn-image">
@@ -467,15 +524,15 @@ class ShiftPublishComponent extends Component {
               <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}>
                 <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
               </Button>}
-              {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
-            
+              /!*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*!/
+
             </div> :
             <div>
                  <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
             </div>
           }
 
-        </div>
+        </div>*/}
         <CreateShiftDrawer
           width={styles.drawer.width}
           open={this.state.isCreateShiftOpen}

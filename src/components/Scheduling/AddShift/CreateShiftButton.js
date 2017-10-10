@@ -74,16 +74,16 @@ export default class CreateShiftButton extends Component {
 
   render() {
     return (
-      <div>
+      <div className="raise-btn">
         <RaisedButton
           onClick={this.onButtonClick}
           label="ADD HOURS"
           backgroundColor={colors.primaryBlue}
           labelColor="#FFFFFF"
           labelStyle={{ fontWeight: 800 }}
-          buttonStyle = {{height: 42}}
+          buttonStyle = {{height: 40}}
           style = {{ margin: '10px 0'}}
-          icon={<AddIcon />}
+
         />
         <Modal open={this.props.open}
                size={this.state.modalSize}

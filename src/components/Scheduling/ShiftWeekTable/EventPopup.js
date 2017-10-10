@@ -194,6 +194,11 @@ class EventPopupComponent extends Component {
     let pastDate = moment().diff(data.startTime) > 0;
     let startTime = moment(data.startTime).format('h:mm A');
     let endTime = moment(data.endTime).format('h:mm A');
+    let startTimeDiff = moment(moment(data.startTime).format('hh:mm:ss a'),"HH:mm:ss a");
+    let endTimeDiff = moment(moment(data.endTime).format('hh:mm:ss a'),"HH:mm:ss a");
+    const duration = moment.duration(endTimeDiff.diff(startTimeDiff));
+    let hoursDiff = parseInt(duration.asHours());
+    let minDiff = parseInt(duration.asMinutes())-hoursDiff*60;
     let {recurringShiftId} = this.props.data;
 
     if (startTime == "Invalid date"){
@@ -227,8 +232,8 @@ class EventPopupComponent extends Component {
           <span className="fa fa-clock-o" />
           <p className="date-time"> {startTime.replace('M', '')} <br /> {endTime.replace('M', '')}</p>
           <p className="duration">{h} HRS & &thinsp; <br /> {m} MINS</p>
+          <p > {hoursDiff} HR {minDiff} MIN</p>
         </div>
-
         {this.props.view == 'job'
           ? <div className="location">
                 <span className="fa fa-map-marker" aria-hidden="true">
@@ -303,7 +308,7 @@ class EventPopupComponent extends Component {
           managers={this.props.managers}
           handleSubmit={this.handleShiftUpdateSubmit}
           handleAdvance={this.handleAdvanceToggle}
-          closeDrawer={this.closeEditShiftModal} /> 
+          closeDrawer={this.closeEditShiftModal} />
         <CreateShiftAdvanceDrawerContainer
           width={styles.drawer.width}
           shift={this.state.drawerShift}

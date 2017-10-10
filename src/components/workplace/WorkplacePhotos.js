@@ -10,7 +10,7 @@ export default class WorkplacePhotos extends Component {
           className: 'center',
           centerMode: true,
           infinite: true,
-          slidesToShow: 1,
+          slidesToShow: 3,
           speed: 500,
           adaptiveHeight: true,
           adaptiveWidth: true,
@@ -18,7 +18,7 @@ export default class WorkplacePhotos extends Component {
           pauseOnHover: true,
         };
       return (
-        <div style={{ height: "39%", width: "39%", marginLeft:20}}>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
           <Slider {...settings}>
             <div><Image src="https://s3.us-east-2.amazonaws.com/aday-website/workplace-pictures/chao-center900x900.png"    size="massive" /></div>
             <div><Image src="https://s3.us-east-2.amazonaws.com/aday-website/workplace-pictures/spanger-dining1593x1593.jpg"  size="massive" /></div>

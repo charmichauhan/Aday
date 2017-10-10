@@ -565,7 +565,8 @@ class ShiftPublishComponent extends Component {
           weekStart={start}
           handleSubmit={this.handleCreateSubmit}
           handleAdvance={this.handleAdvanceToggle}
-          closeDrawer={this.closeDrawerAndModal} />
+          closeDrawer={this.closeDrawerAndModal}
+          isPublished={is_publish} />
         <CreateShiftAdvanceDrawer
           width={styles.drawer.width}
           shift={this.state.drawerShift}

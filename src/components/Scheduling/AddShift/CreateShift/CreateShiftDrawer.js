@@ -19,6 +19,7 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import StartToEndTimePicker from './StartToEndTimePicker';
 import StartToEndDatePicker from './StartToEndDatePicker';
+import ShiftHistoryDrawerContainer from '../../../Scheduling/ShiftWeekTable/ShiftEdit/ShiftHistoryDrawerContainer'
 
 import './select.css';
 
@@ -38,6 +39,7 @@ const initialState = {
     duration: { hours: 0, minutes: 0 }
   },
   shiftErrors: {},
+  shiftHistoryDrawer: false,
   brandId: localStorage.getItem('brandId') || '',
   corporationId: localStorage.getItem('corporationId') || '',
   workplaceId: localStorage.getItem('workplaceId') || ''
@@ -283,6 +285,15 @@ class DrawerHelper extends Component {
       if (closeDrawer) closeDrawer();
     });
   };
+
+  openShiftHistory = () => {
+    this.setState({users: ['8e9355c9-d45f-453a-a1cf-1141ca22929e', '773bc778-7022-11e7-8cf7-a6006ad3dba0']})
+    this.setState({shiftHistoryDrawer: true})
+  };
+
+  handleNewShiftDrawerClose = () => {
+    this.setState({shiftHistoryDrawer: false})
+  }
 
   borderColor = status => {
     if (status === 'accepted') return 'green';
@@ -588,11 +599,12 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
-
+                  { this.props.isPublished == false &&
                   <div className="member-list"
                        style={{ display: ((isRecurring && !isEdit) || (shift.teamMembers && !shift.teamMembers.length)) && 'none' || 'block' }}>
+              
 
-                    {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) =>
+                    { this.props.isPublished == false && shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) =>
                       <TeamMemberCard
                         avatarUrl={tm.avatarUrl}
                         firstName={tm.firstName}
@@ -609,12 +621,22 @@ class DrawerHelper extends Component {
                     }
 
                   </div>
-
-                  {(isRecurring || isTeamMembersFull)
+                  }
+            
+                  { this.props.isPublished &&
+                    <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={this.openShiftHistory}
+                        color='red'>View Phone Tree
+                    </button>
+                  }
+                  { this.props.isPublished == false &&
+                    <div>
+                  {( isRecurring || isTeamMembersFull)
                   && <Tooltip className="tooltip-message" text={addTeamMemberTooltip}>
                     <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull} />
                   </Tooltip> || <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull}
                                               onClick={this.handleAddTeamMember} />}
+                                              </div>
+                      }
                 </Grid.Column>
               </Grid.Row>
 
@@ -662,6 +684,13 @@ class DrawerHelper extends Component {
             </div>
           </div>
         </div>
+        <ShiftHistoryDrawerContainer
+          isSorted={true}
+          shift={this.state.shift}
+          users={this.state.users}
+          open={this.state.shiftHistoryDrawer}
+          handleBack={this.handleNewShiftDrawerClose}
+          handleHistory={this.handleNewShiftDrawerClose} />
       </Drawer>
     );
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { graphql, compose, withApollo } from 'react-apollo';
 import moment from 'moment'
-import { Button } from 'semantic-ui-react';
+import { Button, Dropdown } from 'semantic-ui-react';
 import { BrowserRouter as Router, Redirect } from 'react-router-dom';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
@@ -35,6 +35,27 @@ const styles = {
     width: 730
   }
 };
+
+const tags = [
+  { key: 'angular', text: 'Angular', value: 'angular' },
+  { key: 'css', text: 'CSS', value: 'css' },
+  { key: 'design', text: 'Graphic Design', value: 'design' },
+  { key: 'ember', text: 'Ember', value: 'ember' },
+  { key: 'html', text: 'HTML', value: 'html' },
+  { key: 'ia', text: 'Information Architecture', value: 'ia' },
+  { key: 'javascript', text: 'Javascript', value: 'javascript' },
+  { key: 'mech', text: 'Mechanical Engineering', value: 'mech' },
+  { key: 'meteor', text: 'Meteor', value: 'meteor' },
+  { key: 'node', text: 'NodeJS', value: 'node' },
+  { key: 'plumbing', text: 'Plumbing', value: 'plumbing' },
+  { key: 'python', text: 'Python', value: 'python' },
+  { key: 'rails', text: 'Rails', value: 'rails' },
+  { key: 'react', text: 'React', value: 'react' },
+  { key: 'repair', text: 'Kitchen Repair', value: 'repair' },
+  { key: 'ruby', text: 'Ruby', value: 'ruby' },
+  { key: 'ui', text: 'UI Design', value: 'ui' },
+  { key: 'ux', text: 'User Experience', value: 'ux' },
+]
 
 class ShiftPublishComponent extends Component {
 
@@ -406,11 +427,11 @@ class ShiftPublishComponent extends Component {
     let statusImg = '';
     if (isPublished) {
       status = 'UNPUBLISHED SCHEDULE';
-      statusImg = '/assets/Icons/unpublished.png';
+      statusImg = '/assets/Icons/no-view-blue.png';
     }
     else if (!isPublished) {
       status = 'PUBLISHED SCHEDULE';
-      statusImg = '/assets/Icons/published.png';
+      statusImg = '/assets/Icons/view-blue.png';
     }
     let publishModalOptions = [{ type: 'white', title: 'Go Back', handleClick: this.goBack, image: false },
       { type: 'blue', title: 'Confirm', handleClick: this.publishWeek, image: false }];
@@ -435,60 +456,89 @@ class ShiftPublishComponent extends Component {
         }
 
         <div className="calendar-top-heading">
-          <div className="col-md-6 pull-left">
-            <div className="row">
-              <div className="col-md-2">
 
+          <div style={{display:'flex', flexDirection:'Row'}}>
+
+            <div className="col-md-1" style={{display:'flex', flexDirection:'Row', justifyContent:'spaceBetween'}}>
+              <div style={{display:'flex', flexDirection:'Column'}}>
+                <img style={{margin:3}} src="/assets/Buttons/calendar-left.png"/>
+                <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300, lineHeight:1.2}}>LAST WEEK</span>
               </div>
-              <div className="col-md-10">
-                <div className="calendar-schedule-title">
-                  { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
-                  <ul>
-                    <li><span>{moment(start).format('MMM D')} -{moment(start).add(6, 'days').format('MMM D')} {moment(start).format('YYYY')}</span></li>
-                    <li><img src={statusImg} /><span>{status}</span></li>
-                  </ul>}
-                </div>
-                <div className="btn-action-calendar">
-                  {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
-                    <div className="div-ui-action">
-                        <CreateShiftButton
-                          open={this.state.isCreateShiftModalOpen}
-                          onButtonClick={this.openCreateShiftModal}
-                          onCreateShift={this.openShiftDrawer}
-                          onModalClose={this.closeDrawerAndModal}
-                          weekPublishedId={publishId}
-                          weekStart={start} />
-                      <Button className="action-btn" basic style={{width:188, height: 40}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
-
-                      {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
-
-                    </div> :
-                    <div>
-                      <Button className="action-btn" basic style={{width:188, height: 40}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
-                    </div>
-                  }
-                </div>
-                <div className="calendar-search-tags">
-                  <div className="search-tags-input">
-                    <input type="text" placeholder="Search By Tags"/>
-                    <i className=""></i>
-                  </div>
-                  <div className="search-filters">
-                    <ul>
-                      <li><span>QUICK FILTERS:</span></li>
-                      <li><a href="#">NON-TRAINEE SHIFTS</a></li>
-                      <li><a href="#">TRAINEE SHIFTS</a></li>
-                      <li><a href="#">ALL SHIFTS</a></li>
-                    </ul>
-                  </div>
-                </div>
-
+              <div style={{display:'flex', flexDirection:'Column'}}>
+                <img style={{margin:3}} src="/assets/Buttons/calendar-right.png"/>
+                <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300, lineHeight:1.2}}>NEXT WEEK</span>
               </div>
             </div>
-          </div>
-          <div className="col-md-6 pull-right">
-            <div className="col-md-8"></div>
+
+            <div className="col-md-6">
+              <div className="calendar-schedule-title">
+                { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
+                <ul>
+                  <li><span style={{ color: '#0022A1',	fontFamily: "Roboto Condensed",	fontSize: 22,	lineHeight: 1.2, fontWeight:'bolder'}}>{moment(start).format('MMM D')} — {moment(start).add(6, 'days').format('MMM D')}, {moment(start).format('YYYY')}</span></li>
+                  <img src={statusImg} style={{ paddingBottom:2, width:20, height:'auto'}}/>&nbsp;&nbsp;
+                  <li><span style={{ color: '#0022A1',	fontFamily: "Roboto Condensed",	fontSize: 22,	lineHeight: 1.2, fontWeight:'bolder'}}>{status}</span></li>
+                </ul>}
+              </div>
+              <div className="btn-action-calendar">
+                {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
+                  <div className="div-ui-action"
+                    >
+                      <CreateShiftButton
+                        open={this.state.isCreateShiftModalOpen}
+                        onButtonClick={this.openCreateShiftModal}
+                        onCreateShift={this.openShiftDrawer}
+                        onModalClose={this.closeDrawerAndModal}
+                        weekPublishedId={publishId}
+                        weekStart={start} />
+                    <button className="action-btn adayblue-button" onClick={() => this.viewRecurring()}>VIEW REPEATING SHIFTS</button>
+
+                    {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+
+                  </div> :
+                  <div>
+                    <button className="action-btn adayblue-button" onClick={() => this.viewRecurring()}>VIEW REPEATING SHIFTS</button>
+                  </div>
+                }
+              </div>
+              <div className="calendar-search-tags">
+                <div className="search-tags-input">
+                  <Dropdown  placeholder='Search By Tags' fluid multiple selection options={tags} style={{marginTop:3.5}}/>
+                  <i className=""></i>
+                </div>
+                <div className="search-filters">
+                  <ul style={{marginLeft: 5}}>
+                    <li><span>QUICK FILTERS:</span></li>&nbsp;
+                    <li><a href="#">NON-TRAINEE SHIFTS</a></li> &nbsp;
+                    <li><a href="#">TRAINEE SHIFTS</a></li> &nbsp;
+                    <li><a href="#">ALL SHIFTS</a></li> &nbsp;
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {/* If this is adhered strictly to the design then the below shouild be col-md-4, and the two adjacent dividers should be col-md-6 */}
             <div className="col-md-4"></div>
+            <div className="col-md-6 calendar-info-right">
+                <div style={{display:'flex', flexDirection:'Column'}}>
+                  <span style={{color: '#000000',	fontFamily: "Roboto Condensed",	fontSize: 20, lineHeight: 1}} >HOURS BOOKED: 0 of 489 (0%)</span>
+                  <span style={{color: '#4A4A4A',	fontFamily: "Lato",	fontSize: 12,	fontWeight: 300, marginTop: 3}}>NON-TRAINEE HOURS BOOKED:  0 of 384 (0%)</span>
+                  <span style={{color: '#4A4A4A',	fontFamily: "Lato",	fontSize: 12,	fontWeight: 300}}>TRAINEE HOURS BOOKED: 0<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-filled.png"/><span>of 105<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-unfilled.png"/></span><span>(0%)</span></span>
+                </div>
+                <div style={{display:'flex', flexDirection:'Column'}}>
+                  <span style={{color: '#000000',	fontFamily: "Roboto Condensed",	fontSize: 20, lineHeight: 1}} >TOTAL SPEND BUDGET BOOKED: $11,049 of $16,038</span>
+                  <span style={{color: '#4A4A4A',	fontFamily: "Lato",	fontSize: 12,	fontWeight: 300, marginTop: 3}}>NON-TRAINEE BUDGET BOOKED:  $11,049 of $13,000 (85%)</span>
+                  <span style={{color: '#4A4A4A',	fontFamily: "Lato",	fontSize: 12,	fontWeight: 300}}>TRAINEE BUDGET BOOKED: $0<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-filled.png"/><span>of $3,038<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-unfilled.png"/></span><span>(0%)</span></span>
+                </div>
+            </div>
+            <div className="col-md-1" style={{display:'flex', flexDirection:'Row', justifyContent:'spaceBetween'}}>
+              <div style={{display:'flex', flexDirection:'Column'}}>
+                <img style={{margin:4}} src="/assets/Buttons/spreadsheet.png"/>
+                <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300}}>EXCEL</span>
+              </div>
+              <div style={{display:'flex', flexDirection:'Column'}}>
+                <img style={{margin:4}} src="/assets/Buttons/printer.png"/>
+                <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300}}>PRINT</span>
+              </div>
+            </div>
           </div>
         </div>
 

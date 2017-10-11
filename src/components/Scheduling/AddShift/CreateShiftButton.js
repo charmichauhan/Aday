@@ -81,7 +81,7 @@ export default class CreateShiftButton extends Component {
           backgroundColor={colors.primaryBlue}
           labelColor="#FFFFFF"
           labelStyle={{ fontWeight: 800 }}
-          buttonStyle = {{height: 40}}
+          buttonStyle = {{height: 35}}
           style = {{ margin: '10px 0'}}
 
         />

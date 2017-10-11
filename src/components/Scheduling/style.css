@@ -2,6 +2,75 @@ body{
     background-color: #FAFAFA;
 }
 
+.calendar-info-right {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.adayblue-button {
+  width: 180px;
+  height: 35px;
+  border-radius: 1px !important;
+  color: rgb(0, 33, 161) !important;
+  background-color: transparent;
+  box-shadow: 0 0 0 2px #0021A1 inset!important;
+  backgrond-image: none;
+  background: transparent none;
+  text-shadow: none!important;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-block;
+  min-height: 1em;
+  border: none;
+  vertical-align: baseline;
+  font-family: "Roboto Condensed";
+  margin: 0 .25em 0 0;
+  padding: .78571429em 1.5em .78571429em;
+  text-transform: none;
+  font-weight: 700;
+  line-height: 1em;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.adayblue-button:hover {
+  width: 180px;
+  height: 35px;
+  border-radius: 1px !important;
+  color: rgb(0, 33, 161) !important;
+  color: #FFF !important;
+  box-shadow: 0 0 0 2px #0021A1 inset!important;
+  backgrond-image: none;
+  background: #0021A1 none;
+  text-shadow: none!important;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-block;
+  min-height: 1em;
+  border: none;
+  vertical-align: baseline;
+  font-family: "Roboto Condensed";
+  margin: 0 .25em 0 0;
+  padding: .78571429em 1.5em .78571429em;
+  font-weight: 700;
+  line-height: 1em;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ui.inverted.blue.button, .ui.inverted.blue.buttons .button {
+    box-shadow: 0 0 0 2px #0021A1 inset!important;
+}
+
 .rbc-calendar *, .rbc-calendar *:before, .rbc-calendar *:after {
     box-sizing: inherit;
     table-layout: fixed;

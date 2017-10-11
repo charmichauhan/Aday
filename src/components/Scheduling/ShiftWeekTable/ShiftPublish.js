@@ -78,6 +78,11 @@ class ShiftPublishComponent extends Component {
     this.getManagers();
   }
 
+  componentWillReceiveProps = (nextProps) => {
+
+    this.setState({calendarView: this.props.eventPropGetter()});
+  };
+
   modalClose = () => {
     this.setState({
       workplaceId: localStorage.getItem('workplaceId'),
@@ -459,7 +464,7 @@ class ShiftPublishComponent extends Component {
 
           <div style={{display:'flex', flexDirection:'Row'}}>
 
-            <div className="col-md-1" style={{display:'flex', flexDirection:'Row', justifyContent:'spaceBetween'}}>
+            <div className="col-md-1 heading-left-right" style={{display:'flex', flexDirection:'Row', justifyContent:'spaceBetween'}}>
               <div style={{display:'flex', flexDirection:'Column'}}>
                 <img style={{margin:3}} src="/assets/Buttons/calendar-left.png"/>
                 <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300, lineHeight:1.2}}>LAST WEEK</span>
@@ -474,9 +479,9 @@ class ShiftPublishComponent extends Component {
               <div className="calendar-schedule-title">
                 { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
                 <ul>
-                  <li><span style={{ color: '#0022A1',	fontFamily: "Roboto Condensed",	fontSize: 22,	lineHeight: 1.2, fontWeight:'bolder'}}>{moment(start).format('MMM D')} — {moment(start).add(6, 'days').format('MMM D')}, {moment(start).format('YYYY')}</span></li>
+                  <li><span>{moment(start).format('MMM D')} — {moment(start).add(6, 'days').format('MMM D')}, {moment(start).format('YYYY')}</span></li>
                   <img src={statusImg} style={{ paddingBottom:2, width:20, height:'auto'}}/>&nbsp;&nbsp;
-                  <li><span style={{ color: '#0022A1',	fontFamily: "Roboto Condensed",	fontSize: 22,	lineHeight: 1.2, fontWeight:'bolder'}}>{status}</span></li>
+                  <li><span>{status}</span></li>
                 </ul>}
               </div>
               <div className="btn-action-calendar">
@@ -516,20 +521,20 @@ class ShiftPublishComponent extends Component {
               </div>
             </div>
             {/* If this is adhered strictly to the design then the below shouild be col-md-4, and the two adjacent dividers should be col-md-6 */}
-            <div className="col-md-4"></div>
+            <div className="col-md-4 heading-center-spesh"></div>
             <div className="col-md-6 calendar-info-right">
                 <div style={{display:'flex', flexDirection:'Column'}}>
-                  <span style={{color: '#000000',	fontFamily: "Roboto Condensed",	fontSize: 20, lineHeight: 1}} >HOURS BOOKED: 0 of 489 (0%)</span>
-                  <span style={{color: '#4A4A4A',	fontFamily: "Lato",	fontSize: 12,	fontWeight: 300, marginTop: 3}}>NON-TRAINEE HOURS BOOKED:  0 of 384 (0%)</span>
-                  <span style={{color: '#4A4A4A',	fontFamily: "Lato",	fontSize: 12,	fontWeight: 300}}>TRAINEE HOURS BOOKED: 0<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-filled.png"/><span>of 105<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-unfilled.png"/></span><span>(0%)</span></span>
+                  <span className="cale-sub-info">HOURS BOOKED: 0 of 489 (0%)</span>
+                  <span className="cale-info">NON-TRAINEE HOURS BOOKED:  0 of 384 (0%)</span>
+                  <span className="cale-info">TRAINEE HOURS BOOKED: 0<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-filled.png"/><span>of 105<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-unfilled.png"/></span><span>(0%)</span></span>
                 </div>
                 <div style={{display:'flex', flexDirection:'Column'}}>
-                  <span style={{color: '#000000',	fontFamily: "Roboto Condensed",	fontSize: 20, lineHeight: 1}} >TOTAL SPEND BUDGET BOOKED: $11,049 of $16,038</span>
-                  <span style={{color: '#4A4A4A',	fontFamily: "Lato",	fontSize: 12,	fontWeight: 300, marginTop: 3}}>NON-TRAINEE BUDGET BOOKED:  $11,049 of $13,000 (85%)</span>
-                  <span style={{color: '#4A4A4A',	fontFamily: "Lato",	fontSize: 12,	fontWeight: 300}}>TRAINEE BUDGET BOOKED: $0<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-filled.png"/><span>of $3,038<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-unfilled.png"/></span><span>(0%)</span></span>
+                  <span className="cale-sub-info">TOTAL SPEND BUDGET BOOKED: $11,049 of $16,038</span>
+                  <span className="cale-info">NON-TRAINEE BUDGET BOOKED:  $11,049 of $13,000 (85%)</span>
+                  <span className="cale-info">TRAINEE BUDGET BOOKED: $0<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-filled.png"/><span>of $3,038<img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-unfilled.png"/></span><span>(0%)</span></span>
                 </div>
             </div>
-            <div className="col-md-1" style={{display:'flex', flexDirection:'Row', justifyContent:'spaceBetween'}}>
+            <div className="col-md-1 heading-left-right" style={{display:'flex', flexDirection:'Row', justifyContent:'spaceBetween'}}>
               <div style={{display:'flex', flexDirection:'Column'}}>
                 <img style={{margin:4}} src="/assets/Buttons/spreadsheet.png"/>
                 <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300}}>EXCEL</span>

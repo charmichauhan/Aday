@@ -194,8 +194,8 @@ class EventPopupComponent extends Component {
     let pastDate = moment().diff(data.startTime) > 0;
     let startTime = moment(data.startTime).format('h:mm A');
     let endTime = moment(data.endTime).format('h:mm A');
-    let startTimeDiff = moment(moment(data.startTime).format('hh:mm:ss a'),"HH:mm:ss a");
-    let endTimeDiff = moment(moment(data.endTime).format('hh:mm:ss a'),"HH:mm:ss a");
+    let startTimeDiff = moment(data.startTime);
+    let endTimeDiff = moment(data.endTime);
     const duration = moment.duration(endTimeDiff.diff(startTimeDiff));
     let hoursDiff = parseInt(duration.asHours());
     let minDiff = parseInt(duration.asMinutes())-hoursDiff*60;

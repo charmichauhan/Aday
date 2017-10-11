@@ -431,8 +431,8 @@ class ShiftWeekTableComponent extends Week {
           className="weekDay"> {moment(start).day(1).format('dddd')} </p>
           <p className="weekDate">{moment(start).day(1).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(2).format('dddd')} </p><p
-          className="weekDate">  {moment(start).day(2).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(2).format('dddd')} </p>
+          <p className="weekDate">  {moment(start).day(2).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
           className="weekDay"> {moment(start).day(3).format('dddd')} </p><p
           className="weekDate">  {moment(start).day(3).format('D')}</p></TableRowColumn>
@@ -547,30 +547,36 @@ class ShiftWeekTableComponent extends Week {
             <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
               <TableRow displayBorder={false}>
                 <TableRowColumn style={styles.tableFooter} className="long dayname">
-                  <div><p className="weekDay">Hours Booked</p>
-                    <p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>
+                  {/*<div><p className="weekDay">Hours Booked</p>
+                    <p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
+                  <div className="calendar-emp-job-btn">
+                    <div className="cal-emp-job-btn">
+                      <button className="cal-emp-btn active">Employee view</button>
+                      <button className="cal-emp-btn">Job view</button>
+                    </div>
+                  </div>
                 </TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                   className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
-                  className="weekDate"> {moment(start).day(0).format('MM')}/{moment(start).day(0).format('D')}</p></TableRowColumn>
+                  className="weekDate"> {moment(start).day(0).format('ddd')} {moment(start).day(0).format('MM')}/{moment(start).day(0).format('D')}</p></TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                   className="weekDay"> {moment(start).day(1).format('dddd')} </p>
-                  <p className="weekDate">{moment(start).day(1).format('MM')}/{moment(start).day(1).format('D')}</p></TableRowColumn>
+                  <p className="weekDate">{moment(start).day(1).format('ddd')} {moment(start).day(1).format('MM')}/{moment(start).day(1).format('D')}</p></TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                   className="weekDay"> {moment(start).day(2).format('dddd')} </p><p
-                  className="weekDate">  {moment(start).day(2).format('MM')}/{moment(start).day(2).format('D')}</p></TableRowColumn>
+                  className="weekDate"> {moment(start).day(2).format('ddd')} {moment(start).day(2).format('MM')}/{moment(start).day(2).format('D')}</p></TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                   className="weekDay"> {moment(start).day(3).format('dddd')} </p><p
-                  className="weekDate">  {moment(start).day(3).format('MM')}/{moment(start).day(3).format('D')}</p></TableRowColumn>
+                  className="weekDate"> {moment(start).day(3).format('ddd')} {moment(start).day(3).format('MM')}/{moment(start).day(3).format('D')}</p></TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                   className="weekDay"> {moment(start).day(4).format('dddd')} </p><p
-                  className="weekDate">  {moment(start).day(4).format('MM')}/{moment(start).day(4).format('D')}</p></TableRowColumn>
+                  className="weekDate">{moment(start).day(4).format('ddd')} {moment(start).day(4).format('MM')}/{moment(start).day(4).format('D')}</p></TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                   className="weekDay"> {moment(start).day(5).format('dddd')} </p><p
-                  className="weekDate">  {moment(start).day(5).format('MM')}/{moment(start).day(5).format('D')}</p></TableRowColumn>
+                  className="weekDate">{moment(start).day(5).format('ddd')} {moment(start).day(5).format('MM')}/{moment(start).day(5).format('D')}</p></TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
                   className="weekDay"> {moment(start).day(6).format('dddd')} </p><p
-                  className="weekDate">{moment(start).day(6).format('MM')}/{moment(start).day(6).format('D')}</p></TableRowColumn>
+                  className="weekDate">{moment(start).day(6).format('ddd')} {moment(start).day(6).format('MM')}/{moment(start).day(6).format('D')}</p></TableRowColumn>
               </TableRow>
             </TableHeader>
             <TableBody>

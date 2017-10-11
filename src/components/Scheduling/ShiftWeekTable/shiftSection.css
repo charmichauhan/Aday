@@ -173,7 +173,7 @@
   margin-bottom: 2px;
 }
 
-.shift-section .date-selector-display.end-date-selector .or-btn:before ,
+.shift-section .date-selector-display.end-date-selector .or-btn:before,
 .shift-section .date-selector-display.end-date-selector .or-btn:after {
   position: absolute;
   content: '';
@@ -281,9 +281,21 @@
   text-transform: uppercase;
 }
 
-.instance-following { display: inline-table; margin-bottom: 5px;}
-.instance-following button { display: table-cell; padding: 5px 8px;}
-.confirm-popup-body .instance-following p { display: table-cell; font-size: 16px; padding-left: 8px;}
+.instance-following {
+  display: inline-table;
+  margin-bottom: 5px;
+}
+
+.instance-following button {
+  display: table-cell;
+  padding: 5px 8px;
+}
+
+.confirm-popup-body .instance-following p {
+  display: table-cell;
+  font-size: 16px;
+  padding-left: 8px;
+}
 
 /* New Design */
 .calendar-top-heading {
@@ -291,17 +303,23 @@
   width: 100%;
   padding: 15px 0;
 }
+
 .calendar-schedule-title li span {
-  font-size: 17px;
-  color: #0022A1;
+  color: rgb(0, 34, 161);
+  font-family: "Roboto Condensed";
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: bolder;
   text-transform: uppercase;
 }
+
 .calendar-schedule-title li {
   display: inline-block;
   position: relative;
   margin-right: 20px;
   vertical-align: middle;
 }
+
 .calendar-schedule-title li:after {
   content: '';
   width: 1px;
@@ -310,33 +328,44 @@
   right: -10px;
   background: #0022A1;
 }
+
 .calendar-schedule-title li img {
   width: 22px;
   margin-right: 8px;
 }
+
 .calendar-schedule-title li:last-child {
   margin-right: 0;
 }
+
 .calendar-schedule-title li:last-child:after {
   display: none;
 }
+
 .btn-action-calendar .div-ui-action .raise-btn {
   display: inline-block;
   width: 180px;
   margin-right: 15px;
- }
+}
+
 .btn-action-calendar .div-ui-action .raise-btn > div {
   width: 100%;
 }
+
 .btn-action-calendar .div-ui-action .ui.basic.button.action-btn {
   border: 1px solid #0022A1;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   color: #0022A1 !important;
   font-weight: bold;
   font-size: 14px;
   text-transform: uppercase;
   padding: 10px;
   margin-right: 0;
+}
+
+.btn-action-calendar .div-ui-action .ui.basic.button.action-btn:hover {
+  background: #0022A1 !important;
+  color: #fff !important;
 }
 
 .calendar-search-tags .search-tags-input input {
@@ -349,24 +378,108 @@
   text-transform: inherit;
   border-radius: 4px;
 }
+
 .calendar-search-tags .search-filters li {
   display: inline-block;
   margin-right: 6px;
 }
+
 .calendar-search-tags .search-filters li span {
   color: #999999;
   font-size: 12px;
   font-family: Lato;
 }
+
 .calendar-search-tags .search-filters li a {
   color: #0000EE;
   font-size: 12px;
   font-family: Lato;
   text-transform: uppercase;
 }
+
+.calendar-search-tags .search-filters li a:hover {
+  text-decoration: underline;
+}
+
 .calendar-search-tags .search-filters li:last-child {
   margin-right: 0;
 }
+
 .calendar-search-tags .search-filters {
   margin-top: 10px;
+}
+
+.spend-book-total h5 {
+  font-size: 16px;
+  color: #000000;
+  text-transform: uppercase;
+  font-family: "Roboto Condensed";
+}
+
+.spend-book-total .calendar-book-hours span {
+  font-size: 14px;
+  font-weight: 300;
+  color: #4A4A4A;
+  font-family: "Roboto Condensed";
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.calendar-excel-print .calendar-excel-btn {
+  display: inline-block;
+}
+
+.calendar-emp-job-btn {
+  display: inline-block;
+  border: 1px solid #0022A1;
+  border-radius: 5px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+.calendar-emp-job-btn .cal-emp-btn {
+  border: 0 none;
+  font-size: 16px;
+  color: #0022A1;
+  font-family: "Roboto Condensed";
+  font-weight: bold;
+  text-align: center;
+}
+
+.calendar-info-right span.cale-sub-info {
+  color: rgb(0, 0, 0);
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  line-height: 1;
+}
+
+.calendar-info-right span.cale-info {
+  color: rgb(74, 74, 74);
+  font-family: Lato;
+  font-size: 12px;
+  font-weight: 300;
+}
+
+@media screen and (max-width: 1800px) and (min-width: 1600px) {
+  .heading-left-right { width: 104px; padding: 0;}
+  .heading-center-spesh { width: 18%;}
+  .calendar-schedule-title li span { font-size: 20px;}
+}
+
+@media screen and (max-width: 1799px) and (min-width: 1300px) {
+  .heading-left-right { width: 104px; padding: 0;}
+  .heading-center-spesh { width: 5%;}
+  .calendar-schedule-title li span { font-size: 16px;}
+  .btn-action-calendar .div-ui-action .raise-btn { width: 160px; margin-right: 12px;}
+  .adayblue-button { width: 160px !important; padding: .78571429em 0.5em .78571429em !important; font-size: 14px !important;}
+  .calendar-info-right span.cale-sub-info { font-size: 18px;}
+}
+
+@media screen and (max-width: 1299px) and (min-width: 1200px) {
+  .heading-left-right { width: 104px; padding: 0;}
+  .heading-center-spesh { width: 3%;}
+  .calendar-schedule-title li span { font-size: 13px;}
+  .btn-action-calendar .div-ui-action .raise-btn { width: 138px; margin-right: 12px;}
+  .adayblue-button { width: 138px !important; padding: .78571429em 0.2em .78571429em !important; font-size: 12px !important;margin-right: 0 !important;}
+  .calendar-info-right span.cale-sub-info { font-size: 14px;}
+  .btn-action-calendar .div-ui-action .raise-btn span { font-size: 12px !important;}
 }

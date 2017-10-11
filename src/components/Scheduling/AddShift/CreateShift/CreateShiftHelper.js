@@ -1,5 +1,6 @@
 import { gql } from 'react-apollo';
 import { client } from '../../../../index';
+import uuidv1 from 'uuid/v1';
 
 const queries = {
   getRelevantPositions: gql`
@@ -30,6 +31,27 @@ const queries = {
               numTraineeHoursCompleted
             }
           }
+        }
+      }
+    }`,
+  getAllTags: gql`
+    query allTags {
+      allTags {
+        nodes {
+          id
+          name
+        }
+      }
+    }`
+};
+
+const mutations = {
+  createTag: gql`
+    mutation createTag ($input: CreateTagInput!) {
+      createTag (input : $input) {
+        tag {
+          id
+          name
         }
       }
     }`
@@ -78,4 +100,33 @@ function getAllPositionsForUser(userId) {
   }).catch(err => Promise.reject(err));
 }
 
-export default { getRelevantPositions, getAllPositionsForUser };
+function getAllTags() {
+  const tagsKey = 'aday-tags';
+  const allTags = sessionStorage.getItem(tagsKey);
+  if (allTags) return Promise.resolve(JSON.parse(allTags));
+
+  return client.query({
+    query: queries.getAllTags
+  }).then((res) => {
+    if (res.data && res.data.allTags) {
+      sessionStorage.setItem(tagsKey, JSON.stringify(res.data.allTags.nodes));
+      return res.data.allTags.nodes;
+    }
+  }).catch(err => Promise.reject(err));
+}
+
+function createTag(tagName) {
+  if (!tagName) return Promise.reject({ error: 'Tag name is required' });
+
+  return client.mutate({
+    mutation: mutations.createTag,
+    variables: { input: { tag: { id: uuidv1() , name: tagName }}}
+  }).then((res) => {
+    if (res.data && res.data.createTag) {
+      // sessionStorage.setItem(tagsKey, JSON.stringify(res.data.allTags.nodes));
+      return res.data.createTag.tag;
+    }
+  }).catch(err => Promise.reject(err));
+}
+
+export default { getRelevantPositions, getAllPositionsForUser, getAllTags, createTag };

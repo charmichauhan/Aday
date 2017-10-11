@@ -15,6 +15,7 @@ import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer
 import DeleteRecuringPopUp from './DeleteRecuringPopUp';
 import '../style.css';
 import './shiftWeekTable.css';
+ var rp = require('request-promise');
 
 const uuidv4 = require('uuid/v4');
 
@@ -64,6 +65,7 @@ class EventPopupComponent extends Component {
 
   deleteShift = () => {
     let id = this.props.data.id;
+    let data = this.props.data
     let that = this;
     that.props.deleteShiftById(uuidv4(), id)
       .then(({ data }) => {
@@ -72,6 +74,31 @@ class EventPopupComponent extends Component {
       console.log('there was an error sending the query', error);
     });
     that.setState({ deleteModalPopped: false });
+
+    this.props.data.workersAssigned.map(function(user, i){
+      var uri = 'http://localhost:8080/api/kronosApi'
+
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {         
+                  "sec": "QDVPZJk54364gwnviz921",
+                  "actionType": "deleteShift",
+                  "testing": true,
+                  "user_id": user,
+                  "date": moment(data.startTime).format('YYYY/MM/DD'),
+                  "startTime": moment(data.startTime).format('HH:mm'),
+                  "endTime": moment(data.endTime).format('HH:mm'),
+                  "singlEdit": false
+              }
+         };
+         rp(options)
+          .then(function(response) {
+              //that.setState({redirect:true})
+          }).catch((error) => {
+            console.log('there was an error sending the query', error);
+          });   
+    })
   };
   // deleteRecurringShiftById
 
@@ -80,6 +107,14 @@ class EventPopupComponent extends Component {
     let {recurringShiftId} = this.props.data;
     let that = this;
 
+    that.props.deleteShiftById(uuidv4(), id)
+      .then(({ data }) => {
+        console.log('Delete Data', data);
+      }).catch((error) => {
+      console.log('there was an error sending the query', error);
+    });
+    that.setState({ deleteModalPopped: false });
+
     that.props.updateRecurringShiftById(recurringShiftId,startTime)
       .then(({ data }) => {
         console.log('Updated', data);
@@ -87,6 +122,27 @@ class EventPopupComponent extends Component {
       }).catch((error) => {
       console.log('there was an error sending the query deleteRecurringShift', error);
     });
+
+    var uri = 'http://localhost:8080/api/kronosApi'
+
+      var options = {
+          uri: uri,
+          method: 'POST',
+          json: {         
+                "sec": "QDVPZJk54364gwnviz921",
+                "actionType": "deleteRecurring",
+                "testing": true,
+                "recurring_shift_id": recurringShiftId,
+                "date": moment(startTime).startOf('day').format(),
+                "edit": false
+            }
+       };
+       rp(options)
+        .then(function(response) {
+            //that.setState({redirect:true})
+        }).catch((error) => {
+          console.log('there was an error sending the query', error);
+        });   
 
 
     that.setState({ deleteModalPopped: false });
@@ -218,7 +274,6 @@ class EventPopupComponent extends Component {
 
     var workersCount = data.workersRequestedNum || data.workerCount
     this.openShift = workersCount - (data.workersAssigned.length + data.workersInvited.length );
-    console.log(data)
 
     return (
       <div className="day-item hov">

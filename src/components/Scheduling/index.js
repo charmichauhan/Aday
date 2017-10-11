@@ -57,6 +57,7 @@ class ScheduleComponent extends Component {
     }
 
   onNavigate = (start) => {
+    this.props.data.refetch();
     this.setState({date: start})
   };
 
@@ -198,7 +199,7 @@ class ScheduleComponent extends Component {
             }
           });
         }
-        is_publish = value.published;
+        is_publish = value.published || isWorkplacePublished;
         publish_id = value.id;
       }
     });

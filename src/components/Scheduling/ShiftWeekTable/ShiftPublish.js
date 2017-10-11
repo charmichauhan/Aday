@@ -133,6 +133,7 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
+    const {publishId} = this.props
     const { date } = this.props;
     if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
@@ -165,12 +166,48 @@ class ShiftPublishComponent extends Component {
       }).then((res) => {
         console.log('Inside the data', res);
         this.modalClose();
+        var uri = 'http://localhost:8080/api/kronosApi'
+
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "assignSchedule",
+                          "week_published_id": publishId
+                      }
+                 };
+                 rp(options)
+                  .then(function(response) {
+                      //that.setState({redirect:true})
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+
       }).catch(err => console.log('An error occurred.', err));
     }else{
       this.props.updateWeekPublishedNameMutation({
         variables: { id: this.props.publishId, date: moment().format() }
       }).then((res)=>{
         this.modalClose();
+        var uri = 'http://localhost:8080/api/kronosApi'
+
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "assignSchedule",
+                          "week_published_id": publishId,
+                          "brand_id": localStorage.getItem('brandId')
+                      }
+                 };
+                 rp(options)
+                  .then(function(response) {
+                      //that.setState({redirect:true})
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
       });
     }
   };
@@ -200,6 +237,8 @@ class ShiftPublishComponent extends Component {
   };
 
   handleCreateSubmit = (shift) => {
+    console.log("HANDLE CReATE SHIFT")
+    console.log(shift)
     let { publishId } = this.props;
 
     let dayNames = []
@@ -245,13 +284,15 @@ class ShiftPublishComponent extends Component {
     }
     // else create all shifts with existing week published
     else {
-      this.submitShifts({ dayNames, days, shift, publishId });
+      console.log(shift)
+      this.submitShifts( dayNames, days, shift, publishId );
     }
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
-  submitShifts = ({ dayNames, days, shift, publishId }) => {
+  submitShifts = ( dayNames, days, shift, publishId ) => {
     let shiftRecure = shift;
+
     if(shift.recurringShift!=="none"){
       this.saveRecurringShift(shiftRecure, shift,(res)=>{
         shiftRecure.recurringShiftId = res;
@@ -263,14 +304,90 @@ class ShiftPublishComponent extends Component {
       });
     }
     else {
+      console.log(shiftRecure)
       days.forEach((day) => {
-        if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
-          this.saveShift(shift, day, publishId);
+        if (day !== 'undefined' && shiftRecure.shiftDaysSelected[day] === true) {
+          this.saveShift(shiftRecure, day, publishId);
         }
-      });
 
+        let is_publish = this.props.isPublish;
+        if (is_publish == 'none'){
+          is_publish = false
+        }
+
+        if (is_publish == true){
+            const shiftDay = moment.utc(day, 'MM-DD-YYYY');
+            const shiftDate = shiftDay.date();
+            const shiftMonth = shiftDay.month();
+            const shiftYear = shiftDay.year();
+            const recurringShiftId = shiftRecure.recurringShiftId;
+            shift.startTime = moment.utc(shiftRecure.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+            shift.endTime = moment.utc(shiftRecure.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+
+          if (shiftRecure.phoneTree.length < 1 & shiftRecure.teamMembers) {
+
+            let workersAssigned = shiftRecure.teamMembers.map(({ id }) => id);
+            workersAssigned.map(function(user, i){
+                var uri = 'http://localhost:8080/api/kronosApi'
+
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "assignShift",
+                          "testing": true,
+                          "user_id": user,
+                          "date": moment(shiftRecure.startTime).format('YYYY/MM/DD'),
+                          "startTime": moment(shiftRecure.startTime).format('HH:mm'),
+                          "endTime": moment(shiftRecure.endTime).format('HH:mm'),
+                          "singlEdit": false
+                      }
+                 };
+                 rp(options)
+                  .then(function(response) {
+                      //that.setState({redirect:true})
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+           })
+
+          } else if (shiftRecure.phoneTree.length > 1) {
+            var callURI = 'localhost:8080/api/callEmployee/'
+
+                  var options = {
+                    uri: callURI,
+                    method: 'POST',
+                    json: {
+                      "data": {
+                        "sec": "QDVPZJk54364gwnviz921",
+                        "shiftDate": moment(shiftRecure.startTime).format("MMMM Do, YYYY"),
+                        "shiftStartHour": moment(shiftRecure.startTime).format("h:mm a"),
+                        "shiftEndHour": moment(shiftRecure.endTime).format("h:mm a"),
+                        "brand": shiftRecure.positionByPositionId.brandByBrandId.brandName,
+                        "shiftLocation": shiftRecure.workplaceByWorkplaceId.workplaceName,
+                        "shiftReward": "",
+                        "shiftRole": shiftRecure.positionByPositionId.positionName,
+                        "shiftAddress": shiftRecure.workplaceByWorkplaceId.address,
+                        "weekPublishedId": shiftRecure.weekPublishedId,
+                        "shiftId": shiftRecure.id,
+                        "userId": shiftRecure.phoneTree
+                      }
+                    }
+                  };
+                  console.log(options)
+                  rp(options)
+                    .then(function (response) {
+                      //that.setState({redirect:true})
+                    }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+              }
+           }
+      });
     }
   };
+
   saveRecurringShift(dayNames, days, shift,callback){
     this.props.client.query({
       query: findRecurring,
@@ -315,7 +432,10 @@ class ShiftPublishComponent extends Component {
       unpaidBreakTime: shift.unpaidBreak,
       expiration: shift.endDate,
       startDate: shift.startDate,
-      isTraineeShift: false
+      days: dayNames,
+      recurringId: recurringId,
+      isTraineeShift: false,
+      expired: false
     };
     this.props.createRecurringShift({
       variables: {
@@ -393,21 +513,21 @@ class ShiftPublishComponent extends Component {
   }
 
   render() {
+
     let is_publish = this.props.isPublish;
     let publishId = this.props.publishId;
     let   message="";
     const startDate = this.props.date;
-    const isPublished =  (is_publish == false && is_publish != 'none') ? (this.props.isWorkplacePublished === false ? true:false) : false;
 
     const { notify, notificationMessage, notificationType } = this.state;
 
     let status = '';
     let statusImg = '';
-    if (isPublished) {
+    if (is_publish == false) {
       status = 'UNPUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/unpublished.png';
     }
-    else if (!isPublished) {
+    else if (is_publish == true) {
       status = 'PUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/published.png';
     }
@@ -458,7 +578,7 @@ class ShiftPublishComponent extends Component {
                   weekStart={start} />
               </Button>
               <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
-              {isPublished &&
+              {(is_publish == false) &&
               <Button className="btn-image flr" onClick={this.onPublish}>
                 <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
               </Button> }
@@ -467,7 +587,7 @@ class ShiftPublishComponent extends Component {
                 <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
               </Button>}
               {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
-            
+
             </div> :
             <div>
                  <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
@@ -484,7 +604,8 @@ class ShiftPublishComponent extends Component {
           weekStart={start}
           handleSubmit={this.handleCreateSubmit}
           handleAdvance={this.handleAdvanceToggle}
-          closeDrawer={this.closeDrawerAndModal} />
+          closeDrawer={this.closeDrawerAndModal}
+          isPublished={is_publish} />
         <CreateShiftAdvanceDrawer
           width={styles.drawer.width}
           shift={this.state.drawerShift}

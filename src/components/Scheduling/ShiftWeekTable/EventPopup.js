@@ -176,6 +176,7 @@ class EventPopupComponent extends Component {
 
   handleShiftUpdateSubmit = (shiftValue) => {
     const shift = cloneDeep(shiftValue);
+    const oldShift = this.props.data
     const shiftDay = shiftValue.startTime;
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
@@ -216,7 +217,64 @@ class EventPopupComponent extends Component {
         },
       },
     }).then(({ data }) => {
-      console.log('got data', data);
+      //if published then update kronos after edit
+
+        if (this.props.isPublished == true) { 
+          // # TO DO:: MAKE SURE MARKETS EXIST, WITH KRONOS CALLS ON THE SERVER 
+          //if users added or deletes
+
+            var uri = 'http://localhost:8080/api/kronosApi'
+            var removedUsers = []
+            var sameUsers = []
+            var newUsers = []
+
+            oldShift.workersAssigned.map((value) => {
+              var isEdit = false 
+              if (payload['workersAssigned'].includes(value)){
+                sameUsers.push(value)
+                isEdit = true          
+              }else{
+                removedUsers.push(value)
+              }      
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {         
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "deleteShift",
+                          "testing": true,
+                          "user_id": value,
+                          "date": moment(oldShift.startTime).format("YYYY/MM/DD"),
+                          "start_time": moment(oldShift.startTime).format("HH:MM"),
+                          "end_time": moment(oldShift.endTime).format("HH:MM"),
+                          "edit": isEdit
+                    }
+                };
+
+            })
+
+            //CREATE NEW SHIFT
+            payload['workersAssigned'].map((value) => {
+              if (sameUsers.includes(value)){
+                // User was already on the shift
+              } else {
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {         
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "assignShift",
+                          "testing": true,
+                          "user_id": value,
+                          "date": moment(payload['startTime']).format("YYYY/MM/DD"),
+                          "start_time": moment(payload['startTime']).format("HH:MM"),
+                          "end_time": moment(payload['endTime']).format("HH:MM"),
+                    }
+                };
+                
+              }
+              })
+     }
     }).catch(err => {
       console.log('There was error in saving shift', err);
     });

@@ -296,7 +296,37 @@ class DrawerHelper extends Component {
     //number of workers needed, workers assigned (in order to make the difference, 
     //the unpaid time and of course the start/end in order to open the shift drawer
     //will be a request to server 
-     this.setState((state) => ({ shift: { ...state.shift, phoneTree: ['8e9355c9-d45f-453a-a1cf-1141ca22929e', '773bc778-7022-11e7-8cf7-a6006ad3dba0']}}))
+    
+    /*
+    let day = Object.keys(shift.shiftDaysSelected)[0]
+    day = moment(day).format('YYYY/MM/DD')
+
+    var uri = 'http://localhost:8080/api/phoneTreeList'
+
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {         
+                  "sec": "QDVPZJk54364gwnviz921",
+                  "weekPublishedId": this.props.weekPublishedId,
+                  "positionId": shift.positionId,
+                  "workplaceId": shift.workplaceId,
+                  "workerNumCount": shift.numberOfTeamMembers, 
+                  "unpaidBreakTime": shift.unpaidBreakInMinutes,
+                  "startTime": shift.startTime, 
+                  "endTime": shift.endTime,
+                  "day": day,
+              }
+         };
+         rp(options)
+          .then(function(response) {
+              //that.setState({redirect:true})
+          }).catch((error) => {
+            console.log('there was an error sending the query', error);
+          });   
+    */
+    
+    this.setState((state) => ({ shift: { ...state.shift, phoneTree: ['8e9355c9-d45f-453a-a1cf-1141ca22929e', '773bc778-7022-11e7-8cf7-a6006ad3dba0']}}))
     this.setState({shiftHistoryDrawer: true})
   };
 

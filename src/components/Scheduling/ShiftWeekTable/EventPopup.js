@@ -226,56 +226,58 @@ class EventPopupComponent extends Component {
     console.log(data)
 
     return (
-
       <div className="day-item hov">
 
-        <div for='top-card-spacing' style={{flex:3}} />
-
-        <div className="start-time" style={{display:'flex', flexDirection:'row', flex:18}}>
-          <div style={{display:'flex', flexDirection:'column', flex:12}}>
-            <span className="fa fa-clock-o" />
-          </div>
-          <div style={{display:'flex', flexDirection:'row', flex:82, justifyContent:'space-between'}}>
-            <div style={{display:'grid'}}>
-              <div style={{whiteSpace:'nowrap', color:'#0022A1', fontWeight:'light', fontFamily:'Varela Round', fontSize:19}}>{startTime.replace('M', '')}</div>
-              <div style={{whiteSpace:'nowrap', color:'#0022A1', fontWeight:'light', fontFamily:'Varela Round', fontSize:19}}>{endTime.replace('M', '')}</div>
-            </div>
-            <div style={{display:'grid'}}>
-              <div style={{whiteSpace:'nowrap', color:'#4B4B4B', fontFamily:'Varela Round', fontSize:11}}>{h} HRS &</div>
-              <div style={{whiteSpace:'nowrap', color:'#4B4B4B', fontFamily:'Varela Round', fontSize:11}}>{m} MINS</div>
-            </div>
-          </div>
+        <div className="start-time">
+          <span className="fa fa-clock-o" />
+          <p className="date-time"> {startTime.replace('M', '')} <br /> {endTime.replace('M', '')}</p>
+          {/*<p className="duration">{h} HRS & &thinsp; <br /> {m} MINS</p>*/}
+          <p > {hoursDiff} HR <br/> {minDiff} MIN</p>
         </div>
+        {this.props.view == 'job'
+          ? <div className="location">
+                <span className="fa fa-map-marker" aria-hidden="true">
+                    <a onClick={() => this.onLocationClick()} />
+                </span>
+            <span>
+                    {data.workplaceByWorkplaceId.workplaceName}
+                </span>
+            <span className="shape-job">
+              <i><img src="/assets/Icons/job-shadower-unfilled.png" alt="jobtype" /></i>
+              <sup>0</sup>
+            </span>
+          </div>
+          : <div className="location">
+            <span className="jobTypeIcon"><img src="/assets/Icons/cashier.png" alt="jobtype" /></span>
+            <span className="jobType">{data.positionByPositionId.positionName}</span>
 
-        <div style={{display:'flex', flexDirection:'row', flex:15}}>
-          <div style={{display:'flex', flexDirection:'row', flex:12}}>
-            <span className="fa fa-map-marker" aria-hidden="true" />
           </div>
-          <div style={{display:'flex', flexDirection:'row', flex:76, justifyContent:'start'}}>
-            <span className="location">{data.workplaceByWorkplaceId.workplaceName}</span>
-          </div>
-          <div  style={{display:'flex', flexDirection:'row', flex:12, justifyContent:'spaceBetween'}}>
-            <img style={{margin:3, paddingBottom: 5}} src="/assets/Icons/job-shadower-filled.png"/>
-            <span style={{display:'flex', flexDirection:'column', justifySelf:'start'}}>0</span>
-          </div>
-        </div>
+        }
 
-        <div style={{display:'flex', flexDirection:'row', flex:11, justifyContent:'space-between'}}>
-          <div style={{display:'flex', flexDirection:'row', flex:12}} />
-          <div for='shift-counts'>
+        {this.props.view == 'job'
+          ? <div className="day-item-title">
+            {this.openShift > 0 && <span className="box-title openshift">{this.openShift}</span>}
+            {data.workersInvited.length > 0 &&
+            <span className="box-title pendingshift">{data.workersInvited.length}</span>
+            }{data.workersAssigned.length > 0 &&
+          <span className="box-title filledshift">{data.workersAssigned.length}</span>}
+            <span className="bitmap"><img src="/assets/Icons/repeating-shifts.png" alt="jobtype" /></span>
+          </div>
+          : <div>
+            {/*
+             <div className="location">
+             <span className="fa fa-map-marker mr5" aria-hidden="true">
+             <a onClick={() => this.onLocationClick()} />
+             </span>
+             <span className="jobType">{data.workplaceByWorkplaceId.workplaceName}</span>
+             </div> */}
             <div className="day-item-title">
-              {this.openShift > 0 && <span className="box-title openshift">{this.openShift}</span>}
-              {data.workersInvited.length > 0 &&
-              <span className="box-title pendingshift">{data.workersInvited.length}</span>
-              }{data.workersAssigned.length > 0 &&
-            <span className="box-title filledshift">{data.workersAssigned.length}</span>}
+              {data.userFirstName == 'Open' && data.userLastName == 'Shifts' && this.openShift > 0
+              && <span className="box-title openshift">{this.openShift}</span>}
             </div>
           </div>
-          <div>
-            <img style={{margin:3, paddingBottom:5, width: 25, height:'auto'}} src="/assets/Icons/repeating-shifts.png"/>
-          </div>
-        </div>
-        <div for='top-calendar-spacing' style={{flex:3}} />
+        }
+
 
         {recurringShiftId ?
           <DeleteRecuringPopUp
@@ -297,7 +299,6 @@ class EventPopupComponent extends Component {
           open={this.state.newShiftModalPopped}
           handlerClose={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
-
         <ShiftHistoryDrawerContainer
           shift={data}
           users={users}
@@ -305,7 +306,6 @@ class EventPopupComponent extends Component {
           isSorted={this.state.isSorted}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
-
         <CreateShiftDrawerContainer
           width={styles.drawer.width}
           open={this.state.editShiftModalOpen}
@@ -315,13 +315,11 @@ class EventPopupComponent extends Component {
           handleSubmit={this.handleShiftUpdateSubmit}
           handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeEditShiftModal} />
-
         <CreateShiftAdvanceDrawerContainer
           width={styles.drawer.width}
           shift={this.state.drawerShift}
           open={this.state.isCreateShiftAdvanceOpen}
           handleBack={this.handleAdvanceToggle} />
-
         <div className="overlay">
           <div className="hoimg">
             {!pastDate &&

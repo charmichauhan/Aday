@@ -438,11 +438,21 @@
 
 .calendar-emp-job-btn .cal-emp-btn {
   border: 0 none;
-  font-size: 16px;
+  font-size: 13px;
   color: #0022A1;
   font-family: "Roboto Condensed";
   font-weight: bold;
   text-align: center;
+  padding: 5px 10px;
+  background: transparent;
+  text-transform: uppercase;
+  width: 108px;
+}
+
+.calendar-emp-job-btn .cal-emp-btn.active {
+  background: #0022A1;
+  border-radius: 3px 5px 5px 3px;
+  color:#fff;
 }
 
 .calendar-info-right span.cale-sub-info {
@@ -458,6 +468,19 @@
   font-size: 12px;
   font-weight: 300;
 }
+
+.rbc-calendar .table-responsive table td.dayname .weekDate {
+  font-size: 22px;
+  font-family: "Roboto Condensed";
+  letter-spacing: 3px;
+  line-height: 28px;
+  height: auto;
+}
+
+/* Table */
+.table-responsive table td .user_profile .user_img { width: 60px;}
+.table-responsive .atable .penalheading { width: 140px;}
+
 
 @media screen and (max-width: 1800px) and (min-width: 1600px) {
   .heading-left-right { width: 104px; padding: 0;}

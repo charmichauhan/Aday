@@ -146,7 +146,7 @@ table.table.emp_view_table {
 }*/
 
 td.headcol, td.long {
-    width: 178px;
+    width: 220px;
 }
 
 .atable .penalheading {
@@ -154,11 +154,11 @@ td.headcol, td.long {
     height: 21px;
     width: 110px;
     padding: 0 8px;
-    color: #000;
+    color: #4A4A4A;
     font-family: "Roboto Condensed";
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
-    line-height: 22px;
+    line-height: 21px;
     vertical-align: top;
     white-space: normal;
     word-wrap: break-word;
@@ -168,9 +168,8 @@ td.headcol, td.long {
     display: flex;
     color: #4A4A4A;
     font-family: "lato";
-    font-size: 14px;
-    font-weight: 200;
-    line-height: 21px;
+    font-size: 13px;
+    line-height: 16px;
 }
 
 .user_img, .user_desc {
@@ -341,7 +340,7 @@ td.shiftbox {
 }
 
 .day-item-title {
-    margin-left: 30px;
+    margin-left: 27px;
 }
 
 .day-item-title a.glyphicon.glyphicon-plus {
@@ -360,6 +359,16 @@ td.shiftbox {
     margin-right: 4px;
 }
 
+.day-item .day-item-title span.bitmap {
+  width: 23%;
+  float: right;
+  text-align: right;
+}
+
+.day-item .day-item-title span.bitmap img {
+  width: 25px;
+}
+
 .day-item .day-item-title p {
     float: right;
     height: 22px;
@@ -376,18 +385,26 @@ td.shiftbox {
     color: #4A4A4A;
     line-height: 0px;
     font-size: 18px;
-    margin-bottom: 10px;
-    height: 35px;
+    margin-bottom: 0px;
+    width: 100%;
+    margin-top: 0;
 }
 
 .start-time .date-time {
     width: 50%;
     color: #0022A1;
-    font-weight: light;
     font-family: Varela Round;
-    font-size: 19px;
+    font-size: 18px;
+    line-height: 18px;
     margin-top: 0px;
-    line-height: 20px;
+    margin-bottom: 0;
+}
+
+.start-time p {
+  font-size: 14px;
+  font-family: "Roboto Condensed";
+  color: #4A4A4A;
+  width: 23%;
 }
 
 .start-time {
@@ -399,7 +416,7 @@ td.shiftbox {
 }
 
 .start-time .duration {
-    width: 37%;
+    width: 33%;
     font-size: 11px;
     float: right;
     color: #4B4B4B;
@@ -411,7 +428,7 @@ td.shiftbox {
     align-items: center;
     justify-content: center;
     display: flex;
-    margin: 4px;
+    margin: 4px 4px 4px 0;
 }
 
 .location .jobTypeIcon {
@@ -426,13 +443,21 @@ td.shiftbox {
  * the next three selectors affect the "location" row
  */
 .location .fa-map-marker {
-    margin-left: 2px;
     width: 13%; /* ensures proper alignment of start/end times for the shift and the location */
     font-size: 20px;
     align-items: center;
     justify-content: center;
     display: flex;
-    margin: 2px;
+    margin: 4px 4px 4px 0;
+}
+
+.location span {
+  width: 60%;
+}
+
+.location span.shape-job {
+  width: 23%;
+  text-align: right;
 }
 
 .day-item .location {
@@ -958,8 +983,8 @@ table.atable td.shiftbox {
         font-size: 1px;
     }
     .start-time .date-time {
-        width: 80%;
-        font-size: 20px;
+        width: 60%;
+        font-size: 18px;
     }
 }
 

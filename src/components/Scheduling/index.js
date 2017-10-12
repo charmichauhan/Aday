@@ -209,7 +209,7 @@ class ScheduleComponent extends Component {
 
     return (
         <div style={{maxWidth: '1750px'}}>
-            <div style={{height: '160px'}}>
+            <div style={{float: 'left',marginBottom: '10px', width: '100%'}}>
               <ShiftPublish date={this.state.date} isWorkplacePublished={ isWorkplacePublished } isPublish={ is_publish } publishId={ publish_id } view={this.state.view}/>
             </div>
             <Modal title="Confirm" isOpen={this.state.publishModalPopped}
@@ -245,16 +245,12 @@ class CustomToolbar extends Toolbar {
     let month = moment(this.props.date).format("MMMM YYYY");
     return (
       <div>
-        <nav className="navbar">
+        {/*<nav className="navbar">
           <div className="container-fluid">
             <div className="wrapper-div" style={{paddingTop:'5px'}}>
               <div className="navbar-header">
-                <button type="button "
-                        className="btn btn-default navbar-btn btnnav glyphicon glyphicon-arrow-left"
-                        onClick={() => this.navigate("PREV")}/>
-                <button type="button"
-                        className="btn btn-default navbar-btn btnnav glyphicon glyphicon-arrow-right"
-                        onClick={() => this.navigate("NEXT")}/>
+                <button type="button " className="btn btn-default navbar-btn btnnav glyphicon glyphicon-arrow-left" onClick={() => this.navigate("PREV")}/>
+                <button type="button" className="btn btn-default navbar-btn btnnav glyphicon glyphicon-arrow-right" onClick={() => this.navigate("NEXT")}/>
               </div>
               <ul className="nav navbar-nav">
                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
@@ -271,7 +267,7 @@ class CustomToolbar extends Toolbar {
               </ul>
             </div>
           </div>
-        </nav>
+        </nav>*/}
       </div>
     );
   }

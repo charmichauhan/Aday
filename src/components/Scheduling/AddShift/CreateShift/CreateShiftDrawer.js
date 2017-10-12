@@ -549,7 +549,7 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Workplace</label>
-                  <WorkplaceSelector workplace={this.props.shift.workplaceId} overRideCurrent={true}
+                  <WorkplaceSelector workplace={shift.workplaceId} overRideCurrent={true}
                                      formCallBack={ this.handleWorkplaceChange } />
                 </Grid.Column>
               </Grid.Row>

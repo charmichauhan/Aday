@@ -1,28 +1,60 @@
 import React, { Component } from 'react';
-import { gql, graphql, compose } from 'react-apollo';
+import { gql, graphql, withApollo } from 'react-apollo';
 import ShiftHistoryDrawer from './ShiftHistoryDrawer';
 import ShiftHistoryNonSortDrawer from './ShiftHistoryNonSortDrawer';
-var Halogen = require('halogen');
 
-class ShiftHistoryDrawerContainerComponent extends Component {
+const allMarkets = gql`
+  query allMarkets($shiftId: Uuid!) {
+    allMarkets (condition: { shiftId: $shiftId }) {
+      nodes {
+        id
+        workerId
+        shiftId
+        shiftExpirationDate
+        isTexted
+        isCalled
+        isBooked
+        isEmailed
+        isPhoneAnswered
+        workerResponse
+        marketRulesByMarketId {
+          nodes {
+            ruleByRuleId {
+              ruleName
+            }
+          }
+        }
+      }
+    }
+  }`;
+
+class ShiftHistoryDrawerContainer extends Component {
   constructor(props) {
     super(props);
+    this.state = {};
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.data.loading && nextProps.data.allMarkets) {
-      const MarketsData = nextProps.data;
-      this.setState({MarketsData});
-    }
+  componentDidMount() {
+    if (!this.props.isSorted) this.getMarkets();
   }
+
+  getMarkets = () => {
+    this.props.client.query({
+      query: allMarkets,
+      variables: { shiftId: this.props.shift && this.props.shift.id }
+    }).then((res) => {
+      if (res.data) {
+        this.setState({ MarketsData: res.data });
+      }
+    }).catch(err => console.log('An error occurred, err: ', err));
+  };
 
   render() {
-    if (this.props.data.loading) {
+    if (!this.state.MarketsData && !this.props.isSorted) {
       return (<div></div>);
     }
     if (this.props.open) {
       const { isSorted } = this.props;
-
       return (
         isSorted ?
           <ShiftHistoryDrawer
@@ -51,37 +83,4 @@ class ShiftHistoryDrawerContainerComponent extends Component {
   }
 }
 
-const allMarkets = gql`
-query allMarkets($shiftId: Uuid!) {
-    allMarkets(condition: {shiftId: $shiftId }) {
-            nodes {
-              id
-              workerId
-              shiftId
-              shiftExpirationDate
-              isTexted
-              isCalled
-              isBooked
-              isEmailed
-              isPhoneAnswered
-              workerResponse
-              marketRulesByMarketId {
-                nodes {
-                  ruleByRuleId {
-                    ruleName
-                  }
-                }
-              }
-            }
-          }
-  }`;
-
-const ShiftHistoryDrawerContainer = graphql(allMarkets, {
-  options: (ownProps) => ({
-    variables: {
-      shiftId: ownProps.shift && ownProps.shift.id
-    }
-  }),
-})(ShiftHistoryDrawerContainerComponent);
-
-export default ShiftHistoryDrawerContainer;
+export default withApollo(ShiftHistoryDrawerContainer);

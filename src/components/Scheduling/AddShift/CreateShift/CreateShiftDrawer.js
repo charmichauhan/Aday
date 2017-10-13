@@ -4,12 +4,12 @@ import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import moment from 'moment';
 import { Tooltip } from 'rebass';
-import { find, pick, times, difference } from 'lodash';
+import { find, pick, times } from 'lodash';
 import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
 import uuidv4 from 'uuid/v4';
 
-import WorkplaceSelector from '../../../Scheduling/AddShift/CreateShift/workplaceSelector'
+import WorkplaceSelector from '../../AddShift/CreateShift/workplaceSelector'
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
@@ -20,7 +20,7 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import StartToEndTimePicker from './StartToEndTimePicker';
 import StartToEndDatePicker from './StartToEndDatePicker';
-import ShiftHistoryDrawerContainer from '../../../Scheduling/ShiftWeekTable/ShiftEdit/ShiftHistoryDrawerContainer'
+import ShiftHistoryDrawerContainer from '../../ShiftWeekTable/ShiftEdit/ShiftHistoryDrawerContainer'
 
 import './select.css';
 
@@ -81,6 +81,9 @@ class DrawerHelper extends Component {
     shift.startTime = moment(shift.startTime);
     shift.endTime = moment(shift.endTime);
     if (shift.id) {
+      if (shift.shiftTagsByShiftId && shift.shiftTagsByShiftId.nodes) {
+        shift.tags = shift.shiftTagsByShiftId.nodes.map(({ tagByTagId: { id, name } }) => ({ id, name }));
+      }
       if (shift.workersAssigned) {
         shift.teamMembers = shift.workersAssigned.map((id) => {
           let foundWorker = find(props.users, { id });
@@ -208,28 +211,13 @@ class DrawerHelper extends Component {
       .catch(err => console.error(err));
   };
 
-  handleTagAddition = ({ value }) => {
-    const { shift } = this.state;
-    shift.tagOptions.unshift({ text: value, value: 0 });
-    this.setState({ shift });
-
-    // For creating the new tag while new tag is added to the list
-    /*const { allTags } = this.state;
-
-    CreateShiftHelper.createTag(data.value).then((newTag) => {
-      allTags.concat(newTag);
-      const tagOptions = allTags.map(({ id, name }) => ({ text: name, value: { id, name }, key: id }));
-      this.setState((state) => ({ shift: { ...state.shift, tagOptions }, allTags }));
-    });*/
-  };
-
   handleChange = (event) => {
     const { shift } = this.state;
     const { name, value } = event.target;
     if (name === 'tags') {
       let lastIndex = value.length - 1;
       if (typeof value[lastIndex] === 'string') {
-        value[lastIndex] = { id: uuidv4(), name: value[lastIndex] };
+        value[lastIndex] = { id: uuidv4(), name: value[lastIndex].trim(), isNew: true };
         shift.tagOptions.unshift({
           text: value[lastIndex].name,
           value: value[lastIndex],
@@ -259,18 +247,20 @@ class DrawerHelper extends Component {
     this.validateShift(shift);
   };
 
-  handleTags = (shiftTags) => {
+  handleTags = (shift) => {
     const { allTags } = this.state;
-    const uniqueTags = difference(shiftTags.map(({ name }) => name), allTags.map(({ name }) => name));
-    if (uniqueTags.length) {
-      const promises = uniqueTags.map(tag => CreateShiftHelper.createTag(tag));
-      Promise.all(promises).then((tags) => {
-        // Add tags to options
+
+    const newTags = shift.tags.filter(({ isNew }) => !!isNew);
+    if (newTags.length) {
+      const promises = newTags.map(({ id, name }) => CreateShiftHelper.createTag(id, name));
+      return Promise.all(promises).then((tags) => {
         allTags.concat(tags);
         const tagOptions = allTags.map(({ id, name }) => ({ text: name, value: { id, name }, key: id }));
         this.setState((state) => ({ shift: { ...state.shift, tagOptions }, allTags }));
+        return shift;
       });
     }
+    return Promise.resolve(shift);
   };
 
   handleAddTeamMember = () => {
@@ -291,9 +281,11 @@ class DrawerHelper extends Component {
     }));
   };
 
-  handleShiftSubmit = (shift) => {
-    const { handleSubmit } = this.props;
-    if (handleSubmit) handleSubmit(shift);
+  handleShiftSubmit = (drawerShift) => {
+    this.handleTags(drawerShift).then((shift) => {
+      const { handleSubmit } = this.props;
+      if (handleSubmit) handleSubmit(shift);
+    });
     this.setState(initialState);
   };
 
@@ -341,7 +333,7 @@ class DrawerHelper extends Component {
   };
 
   phoneTreeCallBack = (phoneTree) => {
-        this.setState((state) => ({ shift: { ...state.shift, phoneTree: phoneTree}}));
+    this.setState((state) => ({ shift: { ...state.shift, phoneTree: phoneTree } }));
   };
 
   openShiftHistory = () => {
@@ -349,13 +341,18 @@ class DrawerHelper extends Component {
     //number of workers needed, workers assigned (in order to make the difference,
     //the unpaid time and of course the start/end in order to open the shift drawer
     //will be a request to server
-     this.setState((state) => ({ shift: { ...state.shift, phoneTree: ['8e9355c9-d45f-453a-a1cf-1141ca22929e', '773bc778-7022-11e7-8cf7-a6006ad3dba0']}}))
-    this.setState({shiftHistoryDrawer: true})
+    this.setState((state) => ({
+      shift: {
+        ...state.shift,
+        phoneTree: ['8e9355c9-d45f-453a-a1cf-1141ca22929e', '773bc778-7022-11e7-8cf7-a6006ad3dba0']
+      }
+    }));
+    this.setState({ shiftHistoryDrawer: true })
   };
 
   handleNewShiftDrawerClose = () => {
-    this.setState({shiftHistoryDrawer: false})
-  }
+    this.setState({ shiftHistoryDrawer: false })
+  };
 
   borderColor = status => {
     if (status === 'accepted') return 'green';
@@ -696,19 +693,19 @@ class DrawerHelper extends Component {
                   }
 
                   { this.props.isPublished &&
-                    <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={this.openShiftHistory}
-                        color='red'>View Phone Tree
-                    </button>
+                  <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={this.openShiftHistory}
+                          color='red'>View Phone Tree
+                  </button>
                   }
                   { this.props.isPublished == false &&
-                    <div>
-                  {( isRecurring || isTeamMembersFull)
-                  && <Tooltip className="tooltip-message" text={addTeamMemberTooltip}>
-                    <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull} />
-                  </Tooltip> || <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull}
-                                              onClick={this.handleAddTeamMember} />}
-                                              </div>
-                      }
+                  <div>
+                    {( isRecurring || isTeamMembersFull)
+                    && <Tooltip className="tooltip-message" text={addTeamMemberTooltip}>
+                      <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull} />
+                    </Tooltip> || <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull}
+                                                onClick={this.handleAddTeamMember} />}
+                  </div>
+                  }
                 </Grid.Column>
               </Grid.Row>
 
@@ -763,7 +760,7 @@ class DrawerHelper extends Component {
           open={this.state.shiftHistoryDrawer}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleNewShiftDrawerClose}
-          phoneTree={this.phoneTreeCallBack}/>
+          phoneTree={this.phoneTreeCallBack} />
       </Drawer>
     );
   }

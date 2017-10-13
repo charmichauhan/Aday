@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { cloneDeep, findLastIndex } from 'lodash';
+import { cloneDeep, findLastIndex, differenceBy } from 'lodash';
 import { gql, graphql, compose } from 'react-apollo';
 import {
   updateShiftMutation,
@@ -10,6 +10,7 @@ import {
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawerContainer from '../AddShift/CreateShift/CreateShiftAdvanceDrawerContainer';
 import CreateShiftDrawerContainer from '../AddShift/CreateShift/CreateShiftDrawerContainer';
+import CreateShiftHelper from '../AddShift/CreateShift/CreateShiftHelper';
 import EditShiftDrawerContainer from './ShiftEdit/EditShiftDrawerContainer';
 import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer';
 import DeleteRecuringPopUp from './DeleteRecuringPopUp';
@@ -193,7 +194,7 @@ class EventPopupComponent extends Component {
       unpaidBreakTime: shift.unpaidBreak
     };
     if (shift.teamMembers && shift.teamMembers.length) {
-      payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
+      payload.workersAssigned = shift.teamMembers.filter(({ id }) => !!id).map(({ id }) => id);
     }
     this.props.updateShiftMutation({
       variables: {
@@ -216,6 +217,13 @@ class EventPopupComponent extends Component {
       },
     }).then(({ data }) => {
       console.log('got data', data);
+      let updatedTags = shift.tags;
+      if (shift.shiftTagsByShiftId && shift.shiftTagsByShiftId.nodes.length) {
+        let OldTags = shift.shiftTagsByShiftId.nodes.map(({ tagId }) => ({ id: tagId }));
+        updatedTags = differenceBy(shift.tags, OldTags, 'id');
+      }
+      CreateShiftHelper.createShiftTags(updatedTags, data.updateShiftById.shift.id)
+        .then(() => console.log('Shift tags have been updated.'));
     }).catch(err => {
       console.log('There was error in saving shift', err);
     });

@@ -609,7 +609,6 @@ class ShiftPublishComponent extends Component {
                   weekPublishedId={publishId}
                   weekStart={start} />
               </Button>
-              <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
               {(is_publish == false) &&
               <Button className="btn-image flr" onClick={this.onPublish}>
                 <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
@@ -619,10 +618,8 @@ class ShiftPublishComponent extends Component {
                 <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
               </Button>}
               {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
-            
             </div> :
             <div>
-                 <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
             </div>
           }
 

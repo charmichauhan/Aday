@@ -69,7 +69,7 @@ class NavComponent extends Component {
 				<Menu vertical fluid>
 					<Menu.Item className="menu-item left-menu-logo">
 						<Menu.Header><Image src="/images/logos_aday.png" width="102" height="31" centered={true}/></Menu.Header>
-						<Menu.Header><Image src={brandLogo} width="100" height="100" centered={true}/></Menu.Header>
+						<Menu.Header><Image src={brandLogo} width="100" centered={true}/></Menu.Header>
 						<Menu.Header className="dropdown-menu-item">
 							<select onChange={this.handleChangeBrand} id="brand" value={brandId}>
                 { brands.map((v,i)=>(

@@ -221,9 +221,9 @@ class EventPopupComponent extends Component {
       data.workersInvited = [];
     }
 
-    var workersCount = data.workersRequestedNum || data.workerCount
+    var workersCount = data.workersRequestedNum || data.workerCount;
     this.openShift = workersCount - (data.workersAssigned.length + data.workersInvited.length );
-    console.log(data)
+    console.log(data);
 
     return (
       <div className="day-item hov">
@@ -242,15 +242,20 @@ class EventPopupComponent extends Component {
             <span>
                     {data.workplaceByWorkplaceId.workplaceName}
                 </span>
+
             <span className="shape-job">
-              <i><img src="/assets/Icons/job-shadower-unfilled.png" alt="jobtype" /></i>
-              <sup>0</sup>
+              <i><img src={data.traineesRequestedNum === 0 ? "/assets/Icons/job-shadower-unfilled.png" : "/assets/Icons/job-shadower-filled.png"} alt="jobtype"/></i>
+              <sup>{data.traineesRequestedNum}</sup>
             </span>
+
           </div>
           : <div className="location">
             <span className="jobTypeIcon"><img src="/assets/Icons/cashier.png" alt="jobtype" /></span>
             <span className="jobType">{data.positionByPositionId.positionName}</span>
-
+            <span className="shape-job">
+              <i><img src={data.traineesRequestedNum === 0 ? "/assets/Icons/job-shadower-unfilled.png" : "/assets/Icons/job-shadower-filled.png"} alt="jobtype"/></i>
+              <sup>{data.traineesRequestedNum}</sup>
+            </span>
           </div>
         }
 
@@ -261,7 +266,9 @@ class EventPopupComponent extends Component {
             <span className="box-title pendingshift">{data.workersInvited.length}</span>
             }{data.workersAssigned.length > 0 &&
           <span className="box-title filledshift">{data.workersAssigned.length}</span>}
-            <span className="bitmap"><img src="/assets/Icons/repeating-shifts.png" alt="jobtype" /></span>
+            {data.recurringShiftId &&
+              <span className="bitmap"><img src="/assets/Icons/repeating-shifts.png" alt="jobtype" /></span>
+            }
           </div>
           : <div>
             {/*
@@ -274,6 +281,9 @@ class EventPopupComponent extends Component {
             <div className="day-item-title">
               {data.userFirstName == 'Open' && data.userLastName == 'Shifts' && this.openShift > 0
               && <span className="box-title openshift">{this.openShift}</span>}
+              {data.recurringShiftId &&
+              <span className="bitmap"><img src="/assets/Icons/repeating-shifts.png" alt="jobtype" /></span>
+              }
             </div>
           </div>
         }

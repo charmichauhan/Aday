@@ -78,11 +78,6 @@ class ShiftPublishComponent extends Component {
     this.getManagers();
   }
 
-  componentWillReceiveProps = (nextProps) => {
-
-    this.setState({calendarView: this.props.eventPropGetter()});
-  };
-
   modalClose = () => {
     this.setState({
       workplaceId: localStorage.getItem('workplaceId'),
@@ -465,12 +460,12 @@ class ShiftPublishComponent extends Component {
           <div style={{display:'flex', flexDirection:'Row'}}>
 
             <div className="col-md-1 heading-left-right" style={{display:'flex', flexDirection:'Row', justifyContent:'spaceBetween'}}>
-              <div style={{display:'flex', flexDirection:'Column'}}>
-                <img style={{margin:3}} src="/assets/Buttons/calendar-left.png"/>
+              <div className="calendar-next-btn">
+                <img src="/assets/Buttons/calendar-left.png"/>
                 <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300, lineHeight:1.2}}>LAST WEEK</span>
               </div>
-              <div style={{display:'flex', flexDirection:'Column'}}>
-                <img style={{margin:3}} src="/assets/Buttons/calendar-right.png"/>
+              <div className="calendar-next-btn">
+                <img src="/assets/Buttons/calendar-right.png"/>
                 <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300, lineHeight:1.2}}>NEXT WEEK</span>
               </div>
             </div>
@@ -535,12 +530,12 @@ class ShiftPublishComponent extends Component {
                 </div>
             </div>
             <div className="col-md-1 heading-left-right" style={{display:'flex', flexDirection:'Row', justifyContent:'spaceBetween'}}>
-              <div style={{display:'flex', flexDirection:'Column'}}>
-                <img style={{margin:4}} src="/assets/Buttons/spreadsheet.png"/>
+              <div className="calendar-print-btn">
+                <img src="/assets/Buttons/spreadsheet.png"/>
                 <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300}}>EXCEL</span>
               </div>
-              <div style={{display:'flex', flexDirection:'Column'}}>
-                <img style={{margin:4}} src="/assets/Buttons/printer.png"/>
+              <div className="calendar-print-btn">
+                <img src="/assets/Buttons/printer.png"/>
                 <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300}}>PRINT</span>
               </div>
             </div>

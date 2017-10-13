@@ -46,7 +46,8 @@ function shiftReducer(state = {}, action) {
 
 const styles = {
         bodyStyle: {
-        maxHeight: 990
+        maxHeight: 990,
+        minWidth: 1750,
     },
     wrapperStyle: {
         width: 1610
@@ -90,13 +91,16 @@ class ShiftWeekTableComponent extends Week {
   constructor(props) {
     super(props);
     this.state = ({
-      calendarView: 'job'
+      calendarView: 'job',
+      jobView: 'cal-emp-btn active',
+      empView: 'cal-emp-btn'
     });
   }
 
   componentWillReceiveProps = (nextProps) => {
       if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
         this.props.setCSVData(this.csvData(nextProps));
+
       }
     this.setState({calendarView: this.props.eventPropGetter()});
   };
@@ -557,8 +561,8 @@ class ShiftWeekTableComponent extends Week {
                     <p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
                   <div className="calendar-emp-job-btn">
                     <div className="cal-emp-job-btn">
-                      <button className="cal-emp-btn active">Employee view</button>
-                      <button className="cal-emp-btn">Job view</button>
+                      <button className={this.state.empView} onClick={this.empView}>Employee view</button>
+                      <button className={this.state.jobView} onClick={this.jobView}>Job view</button>
                     </div>
                   </div>
                 </TableRowColumn>

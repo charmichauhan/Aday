@@ -67,7 +67,6 @@ class ScheduleComponent extends Component {
    */
   customEvent  = (currentlyView) => {
     console.log("On scheduling page");
-
     if(currentlyView == "job"){
       viewName="Job View";
       currentView="employee";
@@ -141,7 +140,6 @@ class ScheduleComponent extends Component {
           });
           Object.assign(displayData[positionId][userId], value);
         } else {
-
           displayData[positionId][userId] = value;
         }
       }else{
@@ -210,7 +208,12 @@ class ScheduleComponent extends Component {
     return (
         <div style={{maxWidth: '1750px'}}>
             <div style={{float: 'left',marginBottom: '10px', width: '100%'}}>
-              <ShiftPublish date={this.state.date} isWorkplacePublished={ isWorkplacePublished } isPublish={ is_publish } publishId={ publish_id } view={this.state.view}/>
+              <ShiftPublish
+                date={this.state.date}
+                isWorkplacePublished={ isWorkplacePublished }
+                isPublish={ is_publish }
+                publishId={ publish_id }
+                view={this.state.view}/>
             </div>
             <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                    message="Are you sure that you want to delete this shift?"
@@ -244,8 +247,8 @@ class CustomToolbar extends Toolbar {
     // const { csvData } = this.state;
     let month = moment(this.props.date).format("MMMM YYYY");
     return (
-      <div>
-        {/*<nav className="navbar">
+      <div>{/*
+        <nav className="navbar">
           <div className="container-fluid">
             <div className="wrapper-div" style={{paddingTop:'5px'}}>
               <div className="navbar-header">
@@ -253,7 +256,6 @@ class CustomToolbar extends Toolbar {
                 <button type="button" className="btn btn-default navbar-btn btnnav glyphicon glyphicon-arrow-right" onClick={() => this.navigate("NEXT")}/>
               </div>
               <ul className="nav navbar-nav">
-                <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.customEvent(currentView)}>{viewName}</button>
                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.csvDataDownload()}>Download CSV</button>
               </ul>
               <div className="maintitle">

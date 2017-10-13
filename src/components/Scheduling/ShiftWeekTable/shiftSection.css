@@ -316,7 +316,7 @@
 .calendar-schedule-title li {
   display: inline-block;
   position: relative;
-  margin-right: 20px;
+  margin-right: 17px;
   vertical-align: middle;
 }
 
@@ -477,6 +477,24 @@
   height: auto;
 }
 
+.calendar-print-btn, .calendar-next-btn {
+  display: inline-table;
+  flex-direction: column;
+  cursor: pointer;
+  margin: 4px 4px 0;
+}
+
+.calendar-print-btn img, .calendar-next-btn img {
+  display: block;
+  margin: 0 auto 4px;
+}
+
+.calendar-print-btn span, .calendar-next-btn span {
+  display: block;
+  width: 42px;
+  margin: 0 auto;
+}
+
 /* Table */
 .table-responsive table td .user_profile .user_img { width: 60px;}
 .table-responsive .atable .penalheading { width: 140px;}
@@ -491,7 +509,7 @@
 @media screen and (max-width: 1799px) and (min-width: 1300px) {
   .heading-left-right { width: 104px; padding: 0;}
   .heading-center-spesh { width: 5%;}
-  .calendar-schedule-title li span { font-size: 16px;}
+  .calendar-schedule-title li span { font-size: 15px;}
   .btn-action-calendar .div-ui-action .raise-btn { width: 160px; margin-right: 12px;}
   .adayblue-button { width: 160px !important; padding: .78571429em 0.5em .78571429em !important; font-size: 14px !important;}
   .calendar-info-right span.cale-sub-info { font-size: 18px;}

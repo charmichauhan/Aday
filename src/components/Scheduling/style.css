@@ -170,6 +170,7 @@ td.headcol, td.long {
     font-family: "lato";
     font-size: 13px;
     line-height: 16px;
+    font-weight: normal;
 }
 
 .user_img, .user_desc {
@@ -353,6 +354,8 @@ td.shiftbox {
 .day-item .day-item-title {
     margin-bottom: 0px;
     margin-top: 5px;
+    clear: both;
+    overflow: hidden;
 }
 
 .day-item .day-item-title span {
@@ -363,6 +366,7 @@ td.shiftbox {
   width: 23%;
   float: right;
   text-align: right;
+  height: 22px;
 }
 
 .day-item .day-item-title span.bitmap img {
@@ -436,7 +440,7 @@ td.shiftbox {
     align-items: center;
     justify-content: center;
     display: flex;
-    margin: 2px;
+    margin: 5px 2px 6px;
 }
 
 /**
@@ -689,6 +693,7 @@ img.btn-image {
 .atable p.scheduled_tag {
     color: #999;
     font-size: 13px;
+    font-weight: normal;
 }
 
 .atable tbody.tbody_scroll {

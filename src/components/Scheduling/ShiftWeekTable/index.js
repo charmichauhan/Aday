@@ -644,6 +644,7 @@ const unappliedRecurring = gql`
                 isTraineeShift
                 unpaidBreakTime
                 instructions
+                assignees
                 days
                 expiration
                 positionByPositionId{
@@ -653,13 +654,6 @@ const unappliedRecurring = gql`
                   brandByBrandId {
                     id
                     brandName
-                  }
-                }
-                recurringShiftAssigneesByRecurringShiftId {
-                  edges{
-                    node{
-                      userId
-                    }
                   }
                 }
               }

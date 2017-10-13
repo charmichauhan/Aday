@@ -175,16 +175,20 @@ class EventPopupComponent extends Component {
   };
 
   handleShiftUpdateSubmit = (shiftValue) => {
-    const shift = cloneDeep(shiftValue);
+    
     const oldShift = this.props.data
+    
+    const shift = cloneDeep(shiftValue);
     const shiftDay = shiftValue.startTime;
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+  
+    console.log(shiftValue)
     const payload = {
-      id: shiftValue.id,
+      id: shift.id,
       workplaceId: shift.workplaceId,
       positionId: shift.positionId,
       workersRequestedNum: shift.numberOfTeamMembers,
@@ -219,7 +223,7 @@ class EventPopupComponent extends Component {
     }).then(({ data }) => {
       //if published then update kronos after edit
 
-        if (this.props.isPublished == true) { 
+      if (this.props.isPublished == true) { 
           // # TO DO:: MAKE SURE MARKETS EXIST, WITH KRONOS CALLS ON THE SERVER 
           //if users added or deletes
 
@@ -274,7 +278,7 @@ class EventPopupComponent extends Component {
                 
               }
               })
-     }
+      }
     }).catch(err => {
       console.log('There was error in saving shift', err);
     });

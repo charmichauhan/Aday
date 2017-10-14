@@ -353,6 +353,15 @@ class ShiftWeekTableComponent extends Week {
     return calendarHash;
   };
 
+  empView = () => {
+    this.props.components.event("job");
+    this.setState({empView : "cal-emp-btn active",jobView: "cal-emp-btn"});
+  };
+  jobView = () => {
+    this.props.components.event("employee");
+    this.setState({jobView : "cal-emp-btn active",empView: "cal-emp-btn"});
+  };
+
   getDataJobView = (workplaceId, data, recurring, start) => {
     let calendarHash = {};
     data.allShifts.edges.map((value, index) => {

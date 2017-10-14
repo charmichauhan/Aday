@@ -243,19 +243,20 @@ class EventPopupComponent extends Component {
                     {data.workplaceByWorkplaceId.workplaceName}
                 </span>
 
-            <span className="shape-job">
-              <i><img src={data.traineesRequestedNum === 0 ? "/assets/Icons/job-shadower-unfilled.png" : "/assets/Icons/job-shadower-filled.png"} alt="jobtype"/></i>
+            {data.traineesRequestedNum > 0 && <span className="shape-job">
+              <i><img src="/assets/Icons/job-shadower-filled.png" alt="jobtype"/></i>
               <sup>{data.traineesRequestedNum}</sup>
             </span>
-
+            }
           </div>
           : <div className="location">
             <span className="jobTypeIcon"><img src="/assets/Icons/cashier.png" alt="jobtype" /></span>
             <span className="jobType">{data.positionByPositionId.positionName}</span>
-            <span className="shape-job">
-              <i><img src={data.traineesRequestedNum === 0 ? "/assets/Icons/job-shadower-unfilled.png" : "/assets/Icons/job-shadower-filled.png"} alt="jobtype"/></i>
+            {data.traineesRequestedNum > 0 && <span className="shape-job">
+              <i><img src="/assets/Icons/job-shadower-filled.png" alt="jobtype"/></i>
               <sup>{data.traineesRequestedNum}</sup>
             </span>
+            }
           </div>
         }
 

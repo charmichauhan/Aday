@@ -67,6 +67,7 @@ class ScheduleComponent extends Component {
    */
   customEvent  = (currentlyView) => {
     console.log("On scheduling page");
+
     if(currentlyView == "job"){
       viewName="Job View";
       currentView="employee";
@@ -140,6 +141,7 @@ class ScheduleComponent extends Component {
           });
           Object.assign(displayData[positionId][userId], value);
         } else {
+
           displayData[positionId][userId] = value;
         }
       }else{
@@ -213,7 +215,8 @@ class ScheduleComponent extends Component {
                 isWorkplacePublished={ isWorkplacePublished }
                 isPublish={ is_publish }
                 publishId={ publish_id }
-                view={this.state.view}/>
+                view={this.state.view}
+                excel = {this.csvDataDownload}/>
             </div>
             <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                    message="Are you sure that you want to delete this shift?"
@@ -259,10 +262,10 @@ class CustomToolbar extends Toolbar {
                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.csvDataDownload()}>Download CSV</button>
               </ul>
               <div className="maintitle">
-                {month}
-              </div>
-              <ul className="nav navbar-nav navbar-right">
                 <li>
+       {month}
+       </div>
+       <ul className="nav navbar-nav navbar-right">
                   <button type="button" className="btn btn-default btnnav navbar-btn m8 "
                           onClick={() => this.view("week")}><strong>WEEK</strong></button>
                 </li>

@@ -102,14 +102,15 @@ class ShiftPublishComponent extends Component {
       publishModalPopped: false
     });
   };
-
   viewRecurring = () => {
      this.setState({ redirect: true })
   };
-
+  downloadExcel = () => {
+    this.props.excel();
+  };
 
   automateSchedule = (publishId) => {
-    console.log(publishId)
+    console.log(publishId);
     var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/algorithm/'
     var options = {
       uri: uri,
@@ -530,8 +531,8 @@ class ShiftPublishComponent extends Component {
                 </div>
             </div>
             <div className="col-md-1 heading-left-right" style={{display:'flex', flexDirection:'Row', justifyContent:'spaceBetween'}}>
-              <div className="calendar-print-btn">
-                <img src="/assets/Buttons/spreadsheet.png"/>
+              <div onClick={this.downloadExcel} style={{display:'flex', flexDirection:'Column', cursor:"pointer"}}>
+                <img style={{margin:4}} src="/assets/Buttons/spreadsheet.png"/>
                 <span style={{wordWrap:'normal', textAlign:'center', color: '#999999', fontFamily: "Lato",	fontSize: 11,	fontWeight: 300}}>EXCEL</span>
               </div>
               <div className="calendar-print-btn">

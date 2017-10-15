@@ -139,22 +139,11 @@ export const createRecurringShift = gql`
         unpaidBreakTime
         days
         instructions
+        assignees
         positionByPositionId{
           id
           positionName
           positionIconUrl
-        }
-        recurringShiftAssigneesByRecurringShiftId {
-          edges{
-            node{
-              userId
-              userByUserId{
-                firstName
-                lastName
-                avatarUrl
-              }
-            }
-          }
         }
       }
     }

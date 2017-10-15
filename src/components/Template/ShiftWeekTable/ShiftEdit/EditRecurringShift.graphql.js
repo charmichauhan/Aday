@@ -75,7 +75,7 @@ export const createRecurringShift = gql`
     }
   }`;
 
-  export const createRecurringShiftAssignee = gql`
+export const createRecurringShiftAssignee = gql`
   mutation createRecurringShiftAssignee($data: CreateRecurringShiftAssigneeInput!){
     createRecurringShiftAssignee(input:$data)
     {
@@ -87,6 +87,17 @@ export const createRecurringShift = gql`
           lastName
           avatarUrl
         }
+      }
+    }
+  }`;
+
+export const deleteRecurringShiftAssigneeById = gql`
+  mutation deleteRecurringShiftAssigneeById($recurringShiftId: Uuid!, $userId: Uuid!){
+    deleteRecurringShiftAssigneeByRecurringShiftIdAndUserId(
+      input: {recurringShiftId: $recurringShiftId, userId: $userId}){
+      recurringShiftAssignee{
+        recurringShiftId
+        userId
       }
     }
   }`;

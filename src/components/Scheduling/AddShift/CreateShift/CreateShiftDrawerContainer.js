@@ -7,7 +7,11 @@ export default class EditShiftDrawerContainer extends Component {
 	    super(props);
 	 }
 
-	render() {
+	render() {  
+  var published = true;
+  if (this.props.isPublished != true){
+    published = false;
+  }
 	if (this.props.open){
 		return (
 			<DrawerHelper
@@ -19,7 +23,8 @@ export default class EditShiftDrawerContainer extends Component {
 	          weekStart={this.props.weekStart}
 	          handleSubmit={this.props.handleSubmit}
 	          handleAdvance={this.props.handleAdvance}
-	          closeDrawer={this.props.closeDrawer} />
+	          closeDrawer={this.props.closeDrawer} 
+            isPublished={published}/>
 			)
 		} else {
 			return (

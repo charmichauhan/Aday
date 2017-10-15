@@ -57,6 +57,7 @@ class ScheduleComponent extends Component {
     }
 
   onNavigate = (start) => {
+    this.props.data.refetch();
     this.setState({date: start})
   };
 
@@ -198,12 +199,13 @@ class ScheduleComponent extends Component {
             }
           });
         }
-        is_publish = value.published;
+        is_publish = value.published || isWorkplacePublished;
         publish_id = value.id;
       }
     });
 
     events.publish_id = publish_id;
+    events.is_publish = is_publish
     let publishModalOptions = [{type: "white", title: "Go Back", handleClick: this.goBack, image: false},
       {type: "blue", title: "Confirm", handleClick: this.onConfirm, image: false}];
 

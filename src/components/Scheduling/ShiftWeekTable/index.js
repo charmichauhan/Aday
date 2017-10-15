@@ -532,7 +532,7 @@ class ShiftWeekTableComponent extends Week {
         weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
       }
 
-      let is_publish = true;
+      let isPublished = this.props.events.is_publish;
       const reducer = combineReducers({ form: formReducer, shifts: shiftReducer });
       const store = createStore(reducer, { shifts: [] });
       let unsubscribe = store.subscribe(() =>
@@ -581,7 +581,8 @@ class ShiftWeekTableComponent extends Week {
                     data={jobData[value]}
                     key={value}
                     users={this.props.allUsers}
-                    view={this.state.calendarView}/>
+                    view={this.state.calendarView}
+                    isPublished={isPublished} />
                 )
               )
               }
@@ -591,7 +592,9 @@ class ShiftWeekTableComponent extends Week {
                 data={jobData['Open Shifts']}
                 key={'Open Shifts'}
                 users={this.props.allUsers}
-                view={this.state.calendarView}/>
+                view={this.state.calendarView}
+                isPublished={isPublished}
+              />
               }
             </TableBody>
             <TableFooter adjustForCheckbox={false}>
@@ -641,6 +644,7 @@ const unappliedRecurring = gql`
                 isTraineeShift
                 unpaidBreakTime
                 instructions
+                assignees
                 days
                 expiration
                 positionByPositionId{
@@ -650,13 +654,6 @@ const unappliedRecurring = gql`
                   brandByBrandId {
                     id
                     brandName
-                  }
-                }
-                recurringShiftAssigneesByRecurringShiftId {
-                  edges{
-                    node{
-                      userId
-                    }
                   }
                 }
               }

@@ -17,19 +17,16 @@ export default class EditHelper extends Component {
 	 }
 
 	handleCloseDrawer = () => {
-		this.props.closeDrawer()
     	this.setState({editOpen: false, open: false, recurring: false});
+    	this.props.closeDrawer()
    	};
 
    	openCreateDrawer = (recurring) => {
-   		if (recurring){
-   			this.setState({ recurring: true})
-   		} else {
-       		this.setState({editOpen: true});
-    	};
+   		this.setState({ recurring: recurring, editOpen: true})
    	};
 
     render() {
+
 	   return (
 	   	<div>
       	<Drawer
@@ -79,11 +76,9 @@ export default class EditHelper extends Component {
 	            </Grid.Column>
               </Grid.Row>		
           </div>
-
-          		
-
           </div>
-          	</Drawer>
+         </Drawer>
+           { this.state.editOpen &&
 	          	<DrawerHelper
 			      width={this.props.width}
 			      open={this.state.editOpen}
@@ -95,21 +90,9 @@ export default class EditHelper extends Component {
 			      handleAdvance={this.props.handleAdvance}
 			      closeDrawer={this.handleCloseDrawer} 
 			      isPublished={this.props.isPublished}
-			      recurringEdit={false}
+			      recurringEdit={this.state.recurring}
 				  /> 
-	           	<DrawerHelper
-			      width={this.props.width}
-			      open={this.state.recurring}
-			      shift={this.props.shift}
-			      users={this.props.users}
-			      managers={this.props.managers}
-			      weekStart={this.props.weekStart}
-			      handleSubmit={this.props.handleSubmit}
-			      handleAdvance={this.props.handleAdvance}
-			      closeDrawer={this.handleCloseDrawer} 
-			      isPublished={this.props.isPublished}
-			      recurringEdit={true}
-				  /> 
+			}
 		 </div>
 	   ) 
    } 

@@ -37,14 +37,14 @@ const initialState = {
     tags: [],
     tagOptions: [],
     duration: { hours: 0, minutes: 0 },
-    phoneTree: []
+    phoneTree: [],
+    recurringEdit: false
   },
   shiftErrors: {},
   shiftHistoryDrawer: false,
   brandId: localStorage.getItem('brandId') || '',
   corporationId: localStorage.getItem('corporationId') || '',
-  workplaceId: localStorage.getItem('workplaceId') || '',
-  recurringEdit: false
+  workplaceId: localStorage.getItem('workplaceId') || ''
 };
 
 /**
@@ -95,6 +95,7 @@ class DrawerHelper extends Component {
         shift.teamMembers = shift.workersRequestedNum && times(shift.workersRequestedNum, () => unassignedTeamMember);
       }
       shift.recurringShift = shift.recurringShiftId && 'weekly' || 'none';
+      shift.recurringEdit = !!props.recurringEdit
       if ([null, undefined, ''].indexOf(shift.unpaidBreakTime) !== -1) {
         shift.unpaidBreakInMinutes = 0;
       } else {
@@ -106,8 +107,7 @@ class DrawerHelper extends Component {
       shift,
       isEdit: !!shift.id,
       weekStart: props.weekStart,
-      users: props.users,
-      recurringEdit: props.recurringEdit
+      users: props.users
     };
   }
 
@@ -256,6 +256,7 @@ class DrawerHelper extends Component {
   };
 
   updateFormState = (dataValue) => {
+
     let selectedDate = this.state.selectedDate;
     if (dataValue.unpaidBreakInMinutes) {
       const hours = Math.floor(dataValue.unpaidBreakInMinutes / 60);
@@ -276,6 +277,7 @@ class DrawerHelper extends Component {
         };
       }
     }
+
     if (dataValue.shiftDaysSelected) selectedDate = '';
     const shift = Object.assign(this.state.shift, dataValue);
     this.setState({ shift, selectedDate });
@@ -283,7 +285,7 @@ class DrawerHelper extends Component {
   };
 
   closeShiftDrawer = () => {
-    const { closeDrawer } = this.props;
+    const { closeDrawer } = this.props; 
     
     this.setState({ ...initialState, isShiftInvalid: true }, () => { 
        if (closeDrawer) closeDrawer();
@@ -418,8 +420,7 @@ class DrawerHelper extends Component {
       filteredManagers,
       users,
       isEdit,
-      isShiftInvalid,
-      recurringEdit
+      isShiftInvalid
     } = this.state;
     let positionOptions;
 
@@ -597,7 +598,7 @@ class DrawerHelper extends Component {
                 </Grid.Column>
               </Grid.Row>}
 
-              { recurringEdit && <Grid.Row>
+              { shift.recurringEdit && <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
                   <Image src="/assets/Icons/shift-date.png" style={{ width: 28, height: 'auto' }}
                          className="display-inline" />

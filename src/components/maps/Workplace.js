@@ -23,7 +23,7 @@ const WorkplaceGoogleMap = withGoogleMap(props => (
 
 export default class WorkplaceMap extends Component {
 	render() {
-		console.log(this.props.address);
+		// console.log(this.props.address);
 		return (
 			<div className="workplace-map">
 				<WorkplaceGoogleMap

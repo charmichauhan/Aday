@@ -87,7 +87,7 @@ class ShiftHistoryDrawerComponent extends Component {
             </div>
 
             <div style={{flex:10, alignSelf:'center'}}>
-              <span className="drawer-title" style={{color:'#0021A1'}}>Advanced Options</span>
+              <span className="drawer-title" style={{color:'blue'}}>Advanced Options</span>
             </div>
 
             <div style={{flex:3, alignSelf:'center'}}>

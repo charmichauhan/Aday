@@ -64,18 +64,15 @@ class WorkplaceReviews extends Component {
 		}
 	}
 	render() {
-		console.log(this.props.data);
+		// console.log(this.props.data);
 		let reviews = this.state.nodes;
 		return (
 			<div className="workplace">
-
 				{
 					reviews.map((review, i) => (
-
-						<div style={{marginBottom:20, borderColor:"#4A4A4A"}}>
+						<div key={i} style={{marginBottom:20, borderColor:"#4A4A4A"}}>
 							<Grid
-								className="workplace-review"
-								key={i}>
+								className="workplace-review">
 								<Grid.Column width={3}>
 									<Avatar
 										src={review.userByRateeId.avatarUrl}
@@ -93,8 +90,6 @@ class WorkplaceReviews extends Component {
 								</Grid.Column>
 							</Grid>
 						</div>
-
-
 						)
 					)
 				}

@@ -100,7 +100,11 @@ class SpecialDayComponent extends Component{
     let specialDay = [];
     for(let i=0;i<=6;i++){
       let specialDayStyle = specialDayData[moment(start).day(i).format('YYYYMMDD')] ? "spclDay":"special-day-blank";
-      specialDay.push(<TableRowColumn style={styles}><p className={specialDayStyle} onClick={() => this.handleOpen(moment(start).day(i),specialDayData[moment(start).day(i).format('YYYYMMDD')])}>{specialDayData[moment(start).day(i).format('YYYYMMDD')] && specialDayData[moment(start).day(i).format('YYYYMMDD')][0]['holidayName']}</p></TableRowColumn>);
+      specialDay.push(<TableRowColumn key={i} style={styles}>
+                        <p className={specialDayStyle} onClick={() => this.handleOpen(moment(start).day(i),specialDayData[moment(start).day(i).format('YYYYMMDD')])}>
+                             {specialDayData[moment(start).day(i).format('YYYYMMDD')] && specialDayData[moment(start).day(i).format('YYYYMMDD')][0]['holidayName']}
+                        </p>
+                      </TableRowColumn>);
     }
     return specialDay;
   };

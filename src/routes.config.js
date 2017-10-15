@@ -75,7 +75,7 @@ const routes = [
 						component: MyWorkplace
 					},
 					{
-						path: '/workplaces/listing',
+						path: '/workplaces/listing/:workplaceId/:opportunityId',
 						exact: true,
 						component: Listing
 					},

@@ -13,6 +13,7 @@ import "antd/lib/date-picker/style/css";
 import moment from 'moment';
 import 'material-ui/styles/colors.js';
 var Halogen = require('halogen');
+import WorkplaceSelector from '../../Scheduling/AddShift/CreateShift/workplaceSelector'
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 
 const InputGroup = Input.Group;
@@ -26,7 +27,8 @@ const styles = {
     fontSize: 18,
     padding: '6px 5px',
     fontWeight: 'bold'
-}};
+  }
+};
 
 class MemberPersonnelInformationComponent extends Component {
 
@@ -58,15 +60,6 @@ class MemberPersonnelInformationComponent extends Component {
     };
   }
 
-  handlePrimaryLocationChange = (e) =>{
-    console.log(e.target.value)
-    if (e.target.value == ""){
-       this.setState({primaryLocation: null})
-    } else {
-      this.setState({primaryLocation: e.target.value})
-    }
-  };
-
   handleChangeWage = (e) => {
     this.setState({wage: e.target.value});
   }
@@ -91,6 +84,14 @@ class MemberPersonnelInformationComponent extends Component {
       notificationType: type,
       notificationMessage: message
     });
+  };
+
+  handleWorkplaceChange = (e) => {
+    if (e.workplace == ""){
+       this.setState({primaryLocation: null})
+    } else {
+      this.setState({primaryLocation: e.workplace})
+    }
   };
 
   hideNotification = () => {
@@ -137,10 +138,6 @@ class MemberPersonnelInformationComponent extends Component {
     })
   }
   render(){
-    if (this.props.primaryLocation.loading) {
-      return (<div><Halogen.SyncLoader color='#00A863'/></div>);
-    }
-
     let allWorkplaces = this.props.primaryLocation && this.props.primaryLocation.allWorkplaces && this.props.primaryLocation.allWorkplaces.edges;
     const fetchEmployeeByUserId = this.state.employee
     const userDetails = this.props.userDetails;
@@ -157,34 +154,10 @@ class MemberPersonnelInformationComponent extends Component {
         <div className="personal-info">
             <div>
             <div className="col-md-12 p0">
-              <div className="col-md-5">
+              <div className="col-md-6">
                 <div className="form-group">
                   <span className="custom-ant-style-header">PRIMARY LOCATION</span>
-
-                  <select className="form-control form-control-sm"  style={{marginTop:5}} value={this.state.primaryLocation} onChange={this.handlePrimaryLocationChange}>
-                                      <option
-                          key={""}
-                          value={""}
-                          >
-                            Select A Location
-                          </option>
-                    {
-                      allWorkplaces.map((v,index)=>{
-                        const key = v.node.id;
-                        const value1 = v.node.id;
-                        const text = v.node.workplaceName;
-                        return(
-                          <option
-                          key={key}
-                          value={value1}
-                          >
-                            {text}
-                          </option>
-                        );
-                      })
-                    }
-                  </select>
-
+                   <WorkplaceSelector workplace={this.state.primaryLocation} formCallBack={ this.handleWorkplaceChange } />
                 </div>
                 <p className="info">
                   Scheduling automation will prioritize assigning this team member to this location
@@ -272,15 +245,6 @@ class MemberPersonnelInformationComponent extends Component {
 }
 
 const MemberPersonnelInformation = compose(
-  graphql(fetchPrimaryLocation ,
-    {
-      name:"primaryLocation",
-      options:(ownProps) =>({
-        variables: {
-          corporationId: localStorage.getItem("corporationId")
-        }
-      })
-  }),
   graphql(updateEmployeeById, {name: "updateEmployee"})
   )(MemberPersonnelInformationComponent);
 

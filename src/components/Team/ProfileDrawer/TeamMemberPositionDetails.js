@@ -280,7 +280,7 @@ class TeamMemberPositionDetailsComponent extends Component {
               </Grid.Column>
             </Grid.Row>
             {this.state.releventPositionsQuery.map((v, index) => (
-              <Grid.Row>
+              <Grid.Row key={index}>
                 <Grid.Column width={2} style={{display:'flex', flexDirection:'row'}}>
                   <div className="circle"><img src="/images/Sidebar/positions.png" style={{width:22, height:30}}/></div>
                 </Grid.Column>
@@ -293,8 +293,7 @@ class TeamMemberPositionDetailsComponent extends Component {
                 <Grid.Column width={2}>
                   <div className="wrapper-element">
                   <Switch defaultChecked={false} onChange={this.onChange}
-                          className="switchStyle" circleStyles={{border: '1px solid #000', background: '#f00'}}
-                          checkedChildren="YES" unCheckedChildren="NO"/>
+                          className="switchStyle" checkedChildren="YES" unCheckedChildren="NO"/>
                   </div>
                 </Grid.Column>
                 <Grid.Column width={2}>
@@ -341,7 +340,7 @@ class TeamMemberPositionDetailsComponent extends Component {
               </Grid.Row>
 
             {this.state.releventfilteredPositions.map((v, index) => (
-                <Grid.Row>
+                <Grid.Row key={index}>
                   <Grid.Column width={2}>
                     <Progress type="circle" percent={0} /*status="exception" */  width={45}/>
                   </Grid.Column>
@@ -356,8 +355,7 @@ class TeamMemberPositionDetailsComponent extends Component {
                   <Grid.Column width={2}>
                       <div className="wrapper-element">
                       <Switch defaultChecked={false} onChange={this.onChange}
-                              className="switchStyle" circleStyles={{border: '1px solid #000', background: '#f00'}}
-                              checkedChildren="YES" unCheckedChildren="NO"/>
+                              className="switchStyle" checkedChildren="YES" unCheckedChildren="NO"/>
                       </div>
                   </Grid.Column>
                   <Grid.Column width={2}>

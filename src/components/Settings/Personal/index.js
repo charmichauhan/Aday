@@ -147,7 +147,7 @@ class Personal extends Component {
   };
 
   handleImageSave = (img) => {
-    this.handleImageUpload(img);
+    this.handleImageUpload([img]);
   };
 
   render() {
@@ -157,6 +157,7 @@ class Personal extends Component {
     }
     return (
       <div className="content personal-content">
+        <img src={userInfo.avatarUrl}/>
         <h2 className="heading">Personal Information</h2>
         <div className="personal-info-img">
           <div className="personal-info">

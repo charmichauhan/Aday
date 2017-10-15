@@ -40,7 +40,7 @@ class ShiftPublishComponent extends Component {
 
   constructor(props) {
     super(props);
-    
+
     this.state = {
       publishModalPopped: false,
       addTemplateModalOpen: false,
@@ -50,6 +50,7 @@ class ShiftPublishComponent extends Component {
       isCreateShiftModalOpen: false,
       isCreateShiftOpen: false,
       drawerShift: { advance: { allowShadowing: true }},
+      notify: false
     }
   }
 
@@ -172,7 +173,7 @@ class ShiftPublishComponent extends Component {
                 var options = {
                     uri: uri,
                     method: 'POST',
-                    json: {         
+                    json: {
                           "sec": "QDVPZJk54364gwnviz921",
                           "actionType": "assignSchedule",
                           "week_published_id": publishId
@@ -183,7 +184,7 @@ class ShiftPublishComponent extends Component {
                       //that.setState({redirect:true})
                   }).catch((error) => {
                     console.log('there was an error sending the query', error);
-                  });   
+                  });
 
       }).catch(err => console.log('An error occurred.', err));
     }else{
@@ -196,7 +197,7 @@ class ShiftPublishComponent extends Component {
                 var options = {
                     uri: uri,
                     method: 'POST',
-                    json: {         
+                    json: {
                           "sec": "QDVPZJk54364gwnviz921",
                           "actionType": "assignSchedule",
                           "week_published_id": publishId,
@@ -208,7 +209,7 @@ class ShiftPublishComponent extends Component {
                       //that.setState({redirect:true})
                   }).catch((error) => {
                     console.log('there was an error sending the query', error);
-                  });   
+                  });
       });
     }
   };
@@ -301,14 +302,14 @@ class ShiftPublishComponent extends Component {
             this.saveShift(shiftRecure, day, publishId);
           }
         });
-      }); 
+      });
     }
     else {
       console.log(shiftRecure)
       days.forEach((day) => {
         if (day !== 'undefined' && shiftRecure.shiftDaysSelected[day] === true) {
           this.saveShift(shiftRecure, day, publishId);
-        } 
+        }
 
         let is_publish = this.props.isPublish;
         if (is_publish == 'none'){
@@ -323,7 +324,7 @@ class ShiftPublishComponent extends Component {
             const recurringShiftId = shiftRecure.recurringShiftId;
             shift.startTime = moment.utc(shiftRecure.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
             shift.endTime = moment.utc(shiftRecure.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-          
+
           /* THIS IS PROBABLY OBSOLETE AS WE WON'T HAVE USERS ON NEW SINGLE PUBLISHED SHIFTS
             if (shiftRecure.phoneTree.length < 1 & shiftRecure.teamMembers) {
 
@@ -334,7 +335,7 @@ class ShiftPublishComponent extends Component {
                   var options = {
                       uri: uri,
                       method: 'POST',
-                      json: {         
+                      json: {
                             "sec": "QDVPZJk54364gwnviz921",
                             "actionType": "assignShift",
                             "testing": true,
@@ -350,13 +351,13 @@ class ShiftPublishComponent extends Component {
                         //that.setState({redirect:true})
                     }).catch((error) => {
                       console.log('there was an error sending the query', error);
-                    });   
+                    });
              })
 
-            } 
+            }
           */
 
-          if (shiftRecure.phoneTree.length > 1) { 
+          if (shiftRecure.phoneTree.length > 1) {
             var callURI = 'localhost:8080/api/callEmployee/'
 
                   var options = {
@@ -471,7 +472,7 @@ class ShiftPublishComponent extends Component {
                //that.setState({redirect:true})
           }).catch((error) => {
               console.log('there was an error sending the query', error);
-          });   
+          });
 
 
       return callback(id);

@@ -19,8 +19,8 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import StartToEndTimePicker from './StartToEndTimePicker';
 import StartToEndDatePicker from './StartToEndDatePicker';
-import ShiftHistoryDrawerContainer from '../../../Scheduling/ShiftWeekTable/ShiftEdit/ShiftHistoryDrawerContainer'
-
+import ShiftHistoryDrawerContainer from '../../../Scheduling/ShiftWeekTable/ShiftEdit/ShiftHistoryDrawerContainer';
+import RecurringShiftSelect from './recurringShiftSelect';
 import './select.css';
 
 const initialState = {
@@ -43,7 +43,8 @@ const initialState = {
   shiftHistoryDrawer: false,
   brandId: localStorage.getItem('brandId') || '',
   corporationId: localStorage.getItem('corporationId') || '',
-  workplaceId: localStorage.getItem('workplaceId') || ''
+  workplaceId: localStorage.getItem('workplaceId') || '',
+  recurringEdit: false
 };
 
 /**
@@ -106,6 +107,7 @@ class DrawerHelper extends Component {
       isEdit: !!shift.id,
       weekStart: props.weekStart,
       users: props.users,
+      recurringEdit: props.recurringEdit
     };
   }
 
@@ -282,8 +284,9 @@ class DrawerHelper extends Component {
 
   closeShiftDrawer = () => {
     const { closeDrawer } = this.props;
-    this.setState({ ...initialState, isShiftInvalid: true }, () => {
-      if (closeDrawer) closeDrawer();
+    
+    this.setState({ ...initialState, isShiftInvalid: true }, () => { 
+       if (closeDrawer) closeDrawer();
     });
   };
 
@@ -415,7 +418,8 @@ class DrawerHelper extends Component {
       filteredManagers,
       users,
       isEdit,
-      isShiftInvalid
+      isShiftInvalid,
+      recurringEdit
     } = this.state;
     let positionOptions;
 
@@ -589,6 +593,20 @@ class DrawerHelper extends Component {
                     {(shift.recurringShift !== 'none' && 'REPEAT THIS SHIFT EVERY:') || 'SHIFT START DATE'}
                   </label>
                   <ShiftDaySelector selectedDate={selectedDate} isRecurring={shift.recurringShift !== 'none'}
+                                    startDate={weekStart} formCallBack={this.updateFormState} />
+                </Grid.Column>
+              </Grid.Row>}
+
+              { recurringEdit && <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/shift-date.png" style={{ width: 28, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">
+                    {'THIS SHIFT REPEATS THIS EVERY:'}
+                  </label>
+                     <RecurringShiftSelect recurringShift={shift.recurringShiftId} selectedDate={selectedDate}
                                     startDate={weekStart} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>}

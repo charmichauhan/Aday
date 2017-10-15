@@ -420,7 +420,9 @@ class EventPopupComponent extends Component {
           managers={this.props.managers}
           handleSubmit={this.handleShiftUpdateSubmit}
           handleAdvance={this.handleAdvanceToggle}
-          closeDrawer={this.closeEditShiftModal} /> 
+          closeDrawer={this.closeEditShiftModal} 
+          recurringEdit={this.props.recurringEdit}
+          weekStart={moment(data.startTime).startOf('week')} /> 
         <CreateShiftAdvanceDrawerContainer
           width={styles.drawer.width}
           shift={this.state.drawerShift}

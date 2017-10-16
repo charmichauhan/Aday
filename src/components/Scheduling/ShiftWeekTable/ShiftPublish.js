@@ -246,10 +246,8 @@ class ShiftPublishComponent extends Component {
     let days = Object.keys(shift.shiftDaysSelected)
 
     Object.keys(shift.shiftDaysSelected).map(function(day, i){
-        if (shift.shiftDaysSelected[day] == true) {
-          if(moment(day).format('dddd').toUpperCase() !== undefined){
+        if (shift.shiftDaysSelected[day] == true && day !== 'undefined') {
             dayNames.push(moment(day).format('dddd').toUpperCase())
-          }
         }
     })
 
@@ -300,7 +298,11 @@ class ShiftPublishComponent extends Component {
         shiftRecure.recurringShiftId = res;
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
-            this.saveShift(shiftRecure, day, publishId);
+            let isAfter = (moment(day).isAfter(moment(shift.startDate)))
+            let isBefore = (moment(day).isBefore(moment(shift.endDate)))
+            if(isAfter && isBefore) {
+              this.saveShift(shiftRecure, day, publishId);
+            }
           }
         });
       });
@@ -436,16 +438,18 @@ class ShiftPublishComponent extends Component {
       endTime: moment(shift.endTime).format('HH:mm'),
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak,
-      expiration: shift.endDate,
-      startDate: shift.startDate,
+      expiration: moment(shift.endDate).format(),
+      startDate: moment(shift.startDate).format(),
       days: dayNames,
       recurringId: recurringId,
       isTraineeShift: false,
       expired: false
     };
+
     if (shift.teamMembers && shift.teamMembers.length) {
       payload.assignees  = shift.teamMembers.map(({ id }) => id);
     }
+
     this.props.createRecurringShift({
       variables: {
         data: {
@@ -509,8 +513,8 @@ class ShiftPublishComponent extends Component {
       workersRequestedNum: shift.numberOfTeamMembers,
       creatorId: localStorage.getItem('userId'),
       managersOnShift: [null],
-      startTime: moment.utc(shift.startTime),
-      endTime: moment.utc(shift.endTime),
+      startTime: moment(shift.startTime).format(),
+      endTime: moment(shift.endTime).format(),
       shiftDateCreated: moment().format(),
       weekPublishedId: weekPublishedId,
       recurringShiftId: recurringShiftId ? recurringShiftId : null,

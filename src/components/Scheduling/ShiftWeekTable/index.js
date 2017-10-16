@@ -89,6 +89,7 @@ class ShiftWeekTableComponent extends Week {
   }
 
   componentWillReceiveProps = (nextProps) => {
+      this.props.data.refetch(allShiftsByWeeksPublished)
       if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
         this.props.setCSVData(this.csvData(nextProps));
       }

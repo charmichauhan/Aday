@@ -126,8 +126,7 @@ class EventPopupComponent extends Component {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
           let newEdges = []
           previousQueryResult.allShifts.edges.map((value) => {
-            if (value.node.recurringShiftId === mutationResult.data.updateRecurringShiftById.recurringShift.id) {
-              value.node.recurringShiftId = null;
+            if (value.node.recurringShiftId != recurringShiftId) {
               newEdges.push(value);
             }
           })

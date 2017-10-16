@@ -244,11 +244,12 @@ class ShiftPublishComponent extends Component {
 
     let dayNames = []
     let days = Object.keys(shift.shiftDaysSelected)
-    console.log(shift.shiftDaysSelected)
 
     Object.keys(shift.shiftDaysSelected).map(function(day, i){
         if (shift.shiftDaysSelected[day] == true) {
+          if(moment(day).format('dddd').toUpperCase() !== undefined){
             dayNames.push(moment(day).format('dddd').toUpperCase())
+          }
         }
     })
 

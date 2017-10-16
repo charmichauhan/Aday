@@ -685,12 +685,12 @@ class DrawerHelper extends Component {
                   </div>
                  
             
-                  { this.props.isPublished && shift.recurringShift != 'weekly' && 
+                  { (this.props.isPublished == true) && shift.recurringShift != 'weekly' && 
                     <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={this.openShiftHistory}
                         color='red'>View Phone Tree
                     </button>
                   }
-                  { this.props.isPublished && shift.recurringShift == 'weekly' &&
+                  { (!this.props.isPublished || shift.recurringShift == 'weekly') &&
                     <div>
                   {( isTeamMembersFull)
                   && <Tooltip className="tooltip-message" text={addTeamMemberTooltip}>

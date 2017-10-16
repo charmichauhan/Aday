@@ -533,6 +533,7 @@ class ShiftWeekTableComponent extends Week {
       }
 
       let isPublished = this.props.events.is_publish;
+      let publishedId = this.props.events.publish_id;
       const reducer = combineReducers({ form: formReducer, shifts: shiftReducer });
       const store = createStore(reducer, { shifts: [] });
       let unsubscribe = store.subscribe(() =>
@@ -582,7 +583,8 @@ class ShiftWeekTableComponent extends Week {
                     key={value}
                     users={this.props.allUsers}
                     view={this.state.calendarView}
-                    isPublished={isPublished} />
+                    isPublished={isPublished}
+                    publishedId={publishedId} />
                 )
               )
               }
@@ -594,6 +596,7 @@ class ShiftWeekTableComponent extends Week {
                 users={this.props.allUsers}
                 view={this.state.calendarView}
                 isPublished={isPublished}
+                publishedId={publishedId}
               />
               }
             </TableBody>

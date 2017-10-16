@@ -21,7 +21,8 @@ class ProfileDrawerComponent extends Component {
       dayHour: null,
       weekHour: null,
       monthHour: null,
-      updated: false
+      updated: false,
+      notify: false
       }
     }
 
@@ -65,7 +66,7 @@ class ProfileDrawerComponent extends Component {
       if (this.state.monthHour){
         employeeInfo['monthHourLimit'] = this.state.monthHour
       }
-    
+
       this.props.updateEmployee({
       variables: {
         id: v,
@@ -144,8 +145,8 @@ class ProfileDrawerComponent extends Component {
 
 
                      {userDetails.avatarUrl
-                            ? <Image centered='true' size='small' shape='circular' className="profile-img" src={ userDetails.avatarUrl}/>
-                            :  <Image centered='true' size='small' shape='circular' className="profile-img"
+                            ? <Image centered={true} size='small' shape='circular' className="profile-img" src={ userDetails.avatarUrl}/>
+                            :  <Image centered={true} size='small' shape='circular' className="profile-img"
                                  src="https://s3.us-east-2.amazonaws.com/aday-website/anonymous-profile.png"/>
                      }
 

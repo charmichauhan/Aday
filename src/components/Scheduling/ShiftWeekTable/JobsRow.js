@@ -29,8 +29,8 @@ export default class JobsRow extends Component {
     let data = this.props.data;
    const daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
         const hashByDay = {"SUNDAY": [], "MONDAY": [], "TUESDAY": [], "WEDNESDAY": [], "THURSDAY": [], "FRIDAY": [], "SATURDAY": []};
-    
-    data.map((value, index) => {  
+
+    data.map((value, index) => {
 
       if (value.days){
         value.days.map((day, index) => {
@@ -106,7 +106,7 @@ export default class JobsRow extends Component {
               </p>
 
               <Truncate>
-                <p className="finalHours">{finalHours} HRS & <br />{finalMinutes} MINS </p>
+                <p className="finalHours"> {finalHours} HRS & <br />{finalMinutes} MINS </p>
               </Truncate>
 
               <p className="scheduled_tag">BOOKED</p>
@@ -120,7 +120,7 @@ export default class JobsRow extends Component {
                               style={{ paddingLeft: '0px', paddingRight: '0px', backgroundColor: '#F5F5F5' }}>
                 {
                   Object.values(hashByDay[value]).map((y, index) => (
-                    <EventPopup managers={this.state.managers} users={this.props.users} data={y} key={index} view={this.props.view} />
+                    <EventPopup managers={this.state.managers} users={this.props.users} data={y} key={index} view={this.props.view} isPublished={this.props.isPublished} />
                   ))
                 }
               </TableRowColumn>

@@ -205,6 +205,7 @@ class ScheduleComponent extends Component {
     });
 
     events.publish_id = publish_id;
+    events.is_publish = is_publish
     let publishModalOptions = [{type: "white", title: "Go Back", handleClick: this.goBack, image: false},
       {type: "blue", title: "Confirm", handleClick: this.onConfirm, image: false}];
 

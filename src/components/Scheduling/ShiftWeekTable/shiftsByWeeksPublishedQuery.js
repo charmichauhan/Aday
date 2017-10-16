@@ -16,6 +16,7 @@ const allShiftsByWeeksPublished = gql`
           unpaidBreakTime
           instructions
           traineesRequestedNum
+          traineesAssigned
           recurringShiftId
           weekPublishedId
           recurringShiftId

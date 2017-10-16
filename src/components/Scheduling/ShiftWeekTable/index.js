@@ -1,35 +1,35 @@
-import React, { Component } from 'react';
-import { Provider } from 'react-redux';
-import { createStore, combineReducers } from 'redux';
-import { reducer as formReducer } from 'redux-form';
-import { Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn } from 'material-ui/Table';
+import React, {Component} from 'react';
+import {Provider} from 'react-redux';
+import {createStore, combineReducers} from 'redux';
+import {reducer as formReducer} from 'redux-form';
+import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from 'material-ui/Table';
 import moment from 'moment';
 import Week from 'react-big-calendar/lib/Week';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 import JobsRow from './JobsRow';
-import { concat, groupBy, pick, find } from 'lodash';
+import {concat, groupBy, pick, find} from 'lodash';
 import SpecialDay from './SpecialDay';
-import { gql, graphql, compose } from 'react-apollo';
+import {gql, graphql, compose} from 'react-apollo';
 import jobsData from './jobs.json';
 import '../style.css';
 import allShiftsByWeeksPublished from './shiftsByWeeksPublishedQuery'
 var Halogen = require('halogen');
 /*
-import EditShift from './ShiftEdit/Edit';
-import DeleteShift from './ShiftEdit/DeleteShift';
+ import EditShift from './ShiftEdit/Edit';
+ import DeleteShift from './ShiftEdit/DeleteShift';
  */
 
 
 function shiftReducer(state = {}, action) {
   switch (action.type) {
     case 'SUBMIT_NEW_SHIFT':
-    return Object.assign({}, state, {
-      shifts: [
-        ...(state.shifts || []),
-        {
-          //date: action.date,
-          workplace: action.workplace,
+      return Object.assign({}, state, {
+        shifts: [
+          ...(state.shifts || []),
+          {
+            //date: action.date,
+            workplace: action.workplace,
 
             /*template: action.template,
              certification: action.certification,
@@ -45,43 +45,43 @@ function shiftReducer(state = {}, action) {
 
 
 const styles = {
-        bodyStyle: {
-        maxHeight: 990,
-        minWidth: 1750,
-    },
-    wrapperStyle: {
-        width: 1610
-    },
-    root: {
-        borderCollapse: 'separate',
-        borderSpacing: '8px 8px',
-        paddingLeft:'0px',
-        marginBottom: 0,
-        minWidth: 1750,
-    },
-    tableFooter: {
-        padding:0,
-        height: 'auto',
-        border: '0 none'
-    },
-    headerStyle: {
-        padding:0
-    },
+  bodyStyle: {
+    maxHeight: 990,
+    minWidth: 1750,
+  },
+  wrapperStyle: {
+    minWidth: 1610
+  },
+  root: {
+    borderCollapse: 'separate',
+    borderSpacing: '8px 8px',
+    paddingLeft: '0px',
+    marginBottom: 0,
+    minWidth: 1750,
+  },
+  tableFooter: {
+    padding: 0,
+    height: 'auto',
+    border: '0 none'
+  },
+  headerStyle: {
+    padding: 0
+  },
   tableFooterHeading: {
-        paddingLeft:'0px',
-        paddingRight:'0px',
-        width: 178
-    },
-    footerStyle: {
-        position: 'fixed',
-        bottom: 10,
-        /*
-        width:'calc(100% - 320px)',
-        */
-        boxShadow:'0 1px 2px 0 rgba(74, 74, 74, 0.5)'
-    },
+    paddingLeft: '0px',
+    paddingRight: '0px',
+    width: 178
+  },
+  footerStyle: {
+    position: 'fixed',
+    bottom: 10,
+    /*
+     width:'calc(100% - 320px)',
+     */
+    boxShadow: '0 1px 2px 0 rgba(74, 74, 74, 0.5)'
+  },
   heightremove: {
-          height: 'auto'
+    height: 'auto'
 
   }
 };
@@ -98,10 +98,9 @@ class ShiftWeekTableComponent extends Week {
   }
 
   componentWillReceiveProps = (nextProps) => {
-      if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
-        this.props.setCSVData(this.csvData(nextProps));
-
-      }
+    if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
+      this.props.setCSVData(this.csvData(nextProps));
+    }
     this.setState({calendarView: this.props.eventPropGetter()});
   };
 
@@ -133,20 +132,22 @@ class ShiftWeekTableComponent extends Week {
   getShiftData = (shiftValue, props) => {
     const shift = {...shiftValue};
     if (!shift.workersAssigned) shift.workersAssigned = [];
-      shift.workersAssigned = shift.workersAssigned.map(worker => {
-        if (typeof worker === 'string') {
-          return this.getUserById(worker, props);
-        }
-        return null;
-      });
+    shift.workersAssigned = shift.workersAssigned.map(worker => {
+      if (typeof worker === 'string') {
+        return this.getUserById(worker, props);
+      }
+      return null;
+    });
     return shift;
   };
 
   csvData = (props) => {
 
-    const userAssignedShifts =  props.data.allShifts.edges.map(({node}) => {
-        return this.getShiftData(node, props);
-    }).filter((shift) => { return shift.workersAssigned.length });
+    const userAssignedShifts = props.data.allShifts.edges.map(({node}) => {
+      return this.getShiftData(node, props);
+    }).filter((shift) => {
+      return shift.workersAssigned.length
+    });
 
     const csvShifts = [];
 
@@ -162,12 +163,12 @@ class ShiftWeekTableComponent extends Week {
               PositionName: shift.positionByPositionId.positionName,
               FirstName: user.firstName,
               LastName: user.lastName,
-              [weekday]: moment(shift.startTime).format('h:mm A') + ' to ' +moment(shift.endTime).format('h:mm A'),
+              [weekday]: moment(shift.startTime).format('h:mm A') + ' to ' + moment(shift.endTime).format('h:mm A'),
 
             })
           });
         }
-      }else {
+      } else {
         shift.workersAssigned.forEach((user) => {
           csvShifts.push({
             userId: user.id,
@@ -175,13 +176,13 @@ class ShiftWeekTableComponent extends Week {
             PositionName: shift.positionByPositionId.positionName,
             FirstName: user.firstName,
             LastName: user.lastName,
-            [weekday]: moment(shift.startTime).format('h:mm A') + ' to ' +moment(shift.endTime).format('h:mm A'),
+            [weekday]: moment(shift.startTime).format('h:mm A') + ' to ' + moment(shift.endTime).format('h:mm A'),
 
           })
         });
       }
     });
-  return csvShifts;
+    return csvShifts;
   };
 
   getDataEmployeeView = (workplaceId, data, allUsers, recurring, start) => {
@@ -193,23 +194,23 @@ class ShiftWeekTableComponent extends Week {
       });
 
 
-
       data.allShifts.edges.map((value, index) => {
         if (workplaceId != '') {
           if (workplaceId == value.node.workplaceByWorkplaceId.id) {
 
-            const dayOfWeek = moment(value.node.startTime).format('dddd').toUpperCase();;
+            const dayOfWeek = moment(value.node.startTime).format('dddd').toUpperCase();
+            ;
 
-            let assigned = value.node.workersAssigned
+            let assigned = value.node.workersAssigned;
             if (value.node.workersAssigned == null) {
               assigned = [];
             }
             if (assigned.length < value.node.workersRequestedNum) {
-              const rowHash = {}
+              const rowHash = {};
               rowHash['weekday'] = dayOfWeek;
-              rowHash['userFirstName'] = 'Open'
-              rowHash['userLastName'] = 'Shifts'
-              rowHash['userAvatar'] = '/assets/Icons/search.png'
+              rowHash['userFirstName'] = 'Open';
+              rowHash['userLastName'] = 'Shifts';
+              rowHash['userAvatar'] = '/assets/Icons/search.png';
               if (calendarHash['Open Shifts']) {
                 calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, value.node)]
               } else {
@@ -217,12 +218,12 @@ class ShiftWeekTableComponent extends Week {
               }
             }
             assigned.map((v) => {
-              const rowHash = {}
+              const rowHash = {};
               rowHash['weekday'] = dayOfWeek;
               const userName = userHash[v];
-              rowHash['userFirstName'] = userHash[v][0]
-              rowHash['userLastName'] = userHash[v][1]
-              rowHash['userAvatar'] = userHash[v][2]
+              rowHash['userFirstName'] = userHash[v][0];
+              rowHash['userLastName'] = userHash[v][1];
+              rowHash['userAvatar'] = userHash[v][2];
               if (calendarHash[userName]) {
                 calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, value.node)]
               } else {
@@ -232,34 +233,33 @@ class ShiftWeekTableComponent extends Week {
           }
         }
         else {
+          const dayOfWeek = moment(value.node.startTime).format('dddd').toUpperCase();
 
-          const dayOfWeek = moment(value.node.startTime).format('dddd').toUpperCase();;
-
-          let assigned = value.node.workersAssigned
+          let assigned = value.node.workersAssigned;
           if (value.node.workersAssigned == null) {
             assigned = [];
           }
           if (assigned.length < value.node.workersRequestedNum) {
             const rowHash = {}
             rowHash['weekday'] = dayOfWeek;
-            rowHash['userFirstName'] = 'Open'
-            rowHash['userLastName'] = 'Shifts'
-            rowHash['userAvatar'] = '/assets/Icons/search.png'
+            rowHash['userFirstName'] = 'Open';
+            rowHash['userLastName'] = 'Shifts';
+            rowHash['userAvatar'] = '/assets/Icons/search.png';
             if (calendarHash['Open Shifts']) {
-              calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, value.node)]
+              calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, value.node)];
             } else {
-              calendarHash['Open Shifts'] = [Object.assign(rowHash, value.node)]
+              calendarHash['Open Shifts'] = [Object.assign(rowHash, value.node)];
             }
           }
           assigned.map((v) => {
-            const rowHash = {}
+            const rowHash = {};
             rowHash['weekday'] = dayOfWeek;
             const userName = userHash[v];
-            rowHash['userFirstName'] = userHash[v][0]
-            rowHash['userLastName'] = userHash[v][1]
-            rowHash['userAvatar'] = userHash[v][2]
+            rowHash['userFirstName'] = userHash[v][0];
+            rowHash['userLastName'] = userHash[v][1];
+            rowHash['userAvatar'] = userHash[v][2];
             if (calendarHash[userName]) {
-              calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, value.node)]
+              calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, value.node)];
             } else {
               calendarHash[userName] = [Object.assign(rowHash, value.node)];
             }
@@ -269,97 +269,95 @@ class ShiftWeekTableComponent extends Week {
     }
 
 
-
-
     recurring.unappliedRecurring.edges.map((value, index) => {
-        let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
-        if (workplaceId != '') {
+      let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+      if (workplaceId != '') {
         if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-            value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration))) {
-                    const positionName = shift.node.positionByPositionId.positionName;
-                        let assigned = []
-                        shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
-                            assigned.push(assignees.node.userId)
-                        })
+          value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+            if (moment(start).isBefore(moment(shift.node.expiration))) {
+              const positionName = shift.node.positionByPositionId.positionName;
+              let assigned = [];
+              shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
+                assigned.push(assignees.node.userId);
+              })
 
-                        if (assigned.length < shift.node.workerCount) {
-                          const rowHash = {};
-                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                          rowHash['userFirstName'] = 'Open'
-                          rowHash['userLastName'] = 'Shifts'
-                          rowHash['userAvatar'] = '/assets/Icons/search.png'
-                          if (calendarHash['Open Shifts']) {
-                            calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)]
-                          } else {
-                            calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)]
-                          }
-                        }
-                        assigned.map((v) => {
-                          const rowHash = {}
-                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                          const userName = userHash[v];
-                          rowHash['userFirstName'] = userHash[v][0]
-                          rowHash['userLastName'] = userHash[v][1]
-                          rowHash['userAvatar'] = userHash[v][2]
-                          if (calendarHash[userName]) {
-                            calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)]
-                          } else {
-                            calendarHash[userName] = [Object.assign(rowHash, shift.node)];
-                          }
-                        })
-            }
-          })
-          }
-        } else {
-            value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration))) {
-                    const positionName = shift.node.positionByPositionId.positionName;
-                        let assigned = []
-                        shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
-                            assigned.push(assignees.node.userId)
-                        })
-
-                        if (assigned.length < shift.node.workerCount) {
-                          const rowHash = {};
-                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                          rowHash['userFirstName'] = 'Open'
-                          rowHash['userLastName'] = 'Shifts'
-                          rowHash['userAvatar'] = '/assets/Icons/search.png'
-                          if (calendarHash['Open Shifts']) {
-                            calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)]
-                          } else {
-                            calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)]
-                          }
-                        }
-                        assigned.map((v) => {
-                          const rowHash = {}
-                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                          const userName = userHash[v];
-                          rowHash['userFirstName'] = userHash[v][0]
-                          rowHash['userLastName'] = userHash[v][1]
-                          rowHash['userAvatar'] = userHash[v][2]
-                          if (calendarHash[userName]) {
-                            calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)]
-                          } else {
-                            calendarHash[userName] = [Object.assign(rowHash, shift.node)];
-                          }
-                        })
+              if (assigned.length < shift.node.workerCount) {
+                const rowHash = {};
+                rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
+                rowHash['userFirstName'] = 'Open';
+                rowHash['userLastName'] = 'Shifts';
+                rowHash['userAvatar'] = '/assets/Icons/search.png';
+                if (calendarHash['Open Shifts']) {
+                  calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)];
+                } else {
+                  calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)];
+                }
+              }
+              assigned.map((v) => {
+                const rowHash = {};
+                rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
+                const userName = userHash[v];
+                rowHash['userFirstName'] = userHash[v][0];
+                rowHash['userLastName'] = userHash[v][1];
+                rowHash['userAvatar'] = userHash[v][2];
+                if (calendarHash[userName]) {
+                  calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)];
+                } else {
+                  calendarHash[userName] = [Object.assign(rowHash, shift.node)];
+                }
+              })
             }
           })
         }
-     })
+      } else {
+        value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+          if (moment(start).isBefore(moment(shift.node.expiration))) {
+            const positionName = shift.node.positionByPositionId.positionName;
+            let assigned = [];
+            shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
+              assigned.push(assignees.node.userId);
+            })
+
+            if (assigned.length < shift.node.workerCount) {
+              const rowHash = {};
+              rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
+              rowHash['userFirstName'] = 'Open';
+              rowHash['userLastName'] = 'Shifts';
+              rowHash['userAvatar'] = '/assets/Icons/search.png';
+              if (calendarHash['Open Shifts']) {
+                calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)];
+              } else {
+                calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)];
+              }
+            }
+            assigned.map((v) => {
+              const rowHash = {};
+              rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
+              const userName = userHash[v];
+              rowHash['userFirstName'] = userHash[v][0];
+              rowHash['userLastName'] = userHash[v][1];
+              rowHash['userAvatar'] = userHash[v][2];
+              if (calendarHash[userName]) {
+                calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)];
+              } else {
+                calendarHash[userName] = [Object.assign(rowHash, shift.node)];
+              }
+            })
+          }
+        })
+      }
+    })
 
     return calendarHash;
   };
 
   empView = () => {
     this.props.components.event("job");
-    this.setState({empView : "cal-emp-btn active",jobView: "cal-emp-btn"});
+    this.setState({empView: "cal-emp-btn active", jobView: "cal-emp-btn"});
   };
   jobView = () => {
     this.props.components.event("employee");
-    this.setState({jobView : "cal-emp-btn active",empView: "cal-emp-btn"});
+    this.setState({jobView: "cal-emp-btn active", empView: "cal-emp-btn"});
   };
 
   getDataJobView = (workplaceId, data, recurring, start) => {
@@ -392,44 +390,44 @@ class ShiftWeekTableComponent extends Week {
     });
 
     recurring.unappliedRecurring.edges.map((value, index) => {
-          let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
-           if (workplaceId != '') {
-             if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration))) {
-                  const positionName = shift.node.positionByPositionId.positionName;
-                       const rowHash = {};
-                       rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                       rowHash['workersAssigned'] = []
-                       shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
-                            rowHash['workersAssigned'].push(assignees.node.userId)
-                       })
-                       if (calendarHash[positionName]) {
-                          calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
-                       } else {
-                        calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
-                       }
-                }
+      let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+      if (workplaceId != '') {
+        if (workplaceId == value.node.workplaceByWorkplaceId.id) {
+          value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+            if (moment(start).isBefore(moment(shift.node.expiration))) {
+              const positionName = shift.node.positionByPositionId.positionName;
+              const rowHash = {};
+              rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+              rowHash['workersAssigned'] = []
+              shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
+                rowHash['workersAssigned'].push(assignees.node.userId)
               })
+              if (calendarHash[positionName]) {
+                calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
+              } else {
+                calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
+              }
             }
+          })
+        }
+      } else {
+        value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+          if (moment(start).isBefore(moment(shift.node.expiration))) {
+            const positionName = shift.node.positionByPositionId.positionName;
+            const rowHash = {};
+            rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+            rowHash['workersAssigned'] = []
+            shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
+              rowHash['workersAssigned'].push(assignees.node.userId)
+            })
+            if (calendarHash[positionName]) {
+              calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
             } else {
-              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration))) {
-                  const positionName = shift.node.positionByPositionId.positionName;
-                       const rowHash = {};
-                       rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                       rowHash['workersAssigned'] = []
-                       shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
-                            rowHash['workersAssigned'].push(assignees.node.userId)
-                       })
-                       if (calendarHash[positionName]) {
-                          calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
-                       } else {
-                        calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
-                       }
-                }
-              })
+              calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
             }
+          }
+        })
+      }
     })
     return calendarHash;
   };
@@ -439,8 +437,8 @@ class ShiftWeekTableComponent extends Week {
       return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
 
-    let { date } = this.props;
-    let { start } = ShiftWeekTable.range(date, this.props);
+    let {date} = this.props;
+    let {start} = ShiftWeekTable.range(date, this.props);
     const TableRowHeader = ( <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
       <TableRow displayBorder={false}>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
@@ -481,8 +479,8 @@ class ShiftWeekTableComponent extends Week {
     }
 
     let workplaceId = localStorage.getItem('workplaceId');
-    let { data } = this.props;
-    let recurring = this.props.unappliedRecurring
+    let {data} = this.props;
+    let recurring = this.props.unappliedRecurring;
     //let recurring = "hello"
     let jobData = this.state.calendarView == 'job' ? this.getDataJobView(workplaceId, data, recurring, start) : this.getDataEmployeeView(workplaceId, data, this.props.allUsers, recurring, start);
     let jobDataKeys = Object.keys(jobData)
@@ -494,69 +492,112 @@ class ShiftWeekTableComponent extends Week {
     (Object.keys(jobData)).forEach((jobType, index) => {
       jobs = concat(jobs, jobData[jobType])
     });
-    let sortedData = jobs.map((job) => ({ ...job, startDate: new Date(job.startTime).getUTCDate() }));
+    let sortedData = jobs.map((job) => ({...job, startDate: new Date(job.startTime).getUTCDate()}));
     let groupedData = groupBy(sortedData, 'startDate');
     let summary = {};
+    let weeklyTraineesTotal = 0;
     let weeklyHoursTotal = 0;
     let weeklyHoursBooked = 0;
+    let weeklyTraineesHoursBooked = 0;
     let weeklyTotalHoursBooked = 0;
-      // calculating total hours
-      if (this.state.calendarView == 'job') {
-        Object.keys(groupedData).forEach((shift, index) => {
-          let totalHours = 0;
-          let totalBookedHours = 0;
-          let shiftData = groupedData[shift];
-          Object.keys(shiftData).forEach((data, index) => {
-            let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
-            let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
-            let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
-            let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length
-            let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
-            let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
-            let openShiftTotal = shiftHours * openShift;
-            let workersAssignedTotal = shiftHours * (workerAssigned);
-            let workersInvitedTotal = shiftHours * (workerInvited);
-            let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
-            totalHours += parseInt(workerShiftHours);
-            totalBookedHours += workersAssignedTotal;
-          });
-          summary[shift] = { 'totalHours': totalHours, 'totalBookedHours': totalBookedHours };
-          weeklyHoursTotal += totalHours;
-          weeklyHoursBooked += totalBookedHours;
-        });
-        weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
-      } else {
-        Object.keys(groupedData).forEach((shift, index) => {
-          let totalHours = 0;
-          let totalBookedHours = 0;
-          let shiftData = groupedData[shift];
-          Object.keys(shiftData).forEach((data, index) => {
-            let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
-            let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
-            let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
-            if (shiftData[data]['userFirstName'] == 'Open' && shiftData[data]['userLastName'] == 'Shifts') {
-              let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
-              let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length
-              let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited )
-              totalHours += shiftHours * openShift;
-            } else {
-              totalHours += shiftHours;
-              totalBookedHours += shiftHours;
-            }
-          });
-          summary[shift] = { 'totalHours': totalHours, 'totalBookedHours': totalBookedHours };
-          weeklyHoursTotal += totalHours;
-          weeklyHoursBooked += totalBookedHours;
-        });
-        weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
-      }
+    let weeklyTraineesTotalHoursBooked = 0;
+    // calculating total hours
+    if (this.state.calendarView == 'job') {
+      Object.keys(groupedData).forEach((shift, index) => {
+        let totalHours = 0;
+        let totalTraineesHours = 0;
+        let totalBookedHours = 0;
+        let totalTraineesBookedHours = 0;
+        let shiftData = groupedData[shift];
+        Object.keys(shiftData).forEach((data, index) => {
+          let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
+          let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
 
-      let is_publish = true;
-      const reducer = combineReducers({ form: formReducer, shifts: shiftReducer });
-      const store = createStore(reducer, { shifts: [] });
-      let unsubscribe = store.subscribe(() =>
-        console.log(store.getState())
-      );
+          let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
+          let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
+          let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
+
+          let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
+          let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
+          let openTraineesShift = shiftData[data]['traineesRequestedNum'] - traineesAssigned;
+
+          let openShiftTotal = shiftHours * openShift;
+          let openTraineesShiftTotal = shiftHours * openTraineesShift;
+
+          let workersAssignedTotal = shiftHours * (workerAssigned);
+          let workersInvitedTotal = shiftHours * (workerInvited);
+          let traineesAssignedTotal = openTraineesShiftTotal * (traineesAssigned);
+
+          let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
+          let traineeShiftHours = openTraineesShift + traineesAssignedTotal;
+
+          totalHours += parseInt(workerShiftHours);
+          totalTraineesHours += parseInt(traineeShiftHours);
+
+          totalBookedHours += workersAssignedTotal;
+          totalTraineesBookedHours += traineesAssignedTotal;
+        });
+        summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
+        weeklyHoursTotal += totalHours;
+        weeklyTraineesTotal += totalTraineesHours;
+
+        weeklyHoursBooked += totalBookedHours;
+        weeklyTraineesHoursBooked += totalTraineesBookedHours;
+      });
+      weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
+      weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
+    } else {
+      Object.keys(groupedData).forEach((shift, index) => {
+        let totalHours = 0;
+        let totalTraineesHours = 0;
+        let totalBookedHours = 0;
+        let totalTraineesBookedHours = 0;
+        let shiftData = groupedData[shift];
+        Object.keys(shiftData).forEach((data, index) => {
+          let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
+          let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
+          let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
+          if (shiftData[data]['userFirstName'] == 'Open' && shiftData[data]['userLastName'] == 'Shifts') {
+            let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
+            let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
+
+            let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
+            let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
+            let openTraineesShift = shiftData[data]['traineesRequestedNum'] - ( workerAssigned + workerInvited );
+            totalHours += shiftHours * openShift;
+            totalTraineesHours += shiftHours * openTraineesShift;
+          } else {
+            totalHours += shiftHours;
+            totalTraineesHours += shiftHours;
+            totalBookedHours += shiftHours;
+            totalTraineesBookedHours += shiftHours;
+          }
+        });
+        summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
+        weeklyHoursTotal += totalHours;
+        weeklyTraineesTotal += totalTraineesHours;
+        weeklyHoursBooked += totalBookedHours;
+        weeklyTraineesHoursBooked += totalTraineesBookedHours;
+      });
+      weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
+      weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
+    }
+
+    if (this.props.isHoursReceived) this.props.hoursBooked({
+      weeklyTraineesTotalHoursBooked,
+      weeklyTotalHoursBooked,
+      weeklyTraineesHoursBooked,
+      weeklyHoursBooked,
+      weeklyTraineesTotal,
+      weeklyHoursTotal
+    });
+
+    let is_publish = true;
+    const reducer = combineReducers({form: formReducer, shifts: shiftReducer});
+    const store = createStore(reducer, {shifts: []});
+    let unsubscribe = store.subscribe(() =>
+      console.log(store.getState())
+    );
     return (
       <Provider store={store}>
         <div className="table-responsive">
@@ -566,8 +607,8 @@ class ShiftWeekTableComponent extends Week {
             <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
               <TableRow displayBorder={false} style={styles.heightremove}>
                 <TableRowColumn style={styles.tableFooter} className="long dayname">
-                  {/*<div><p className="weekDay">Hours Booked</p>
-                    <p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
+                  {/*<div><p className="weekDay">Hours Booked</p>*/}
+                  {/*<p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
                   <div className="calendar-emp-job-btn">
                     <div className="cal-emp-job-btn">
                       <button className={this.state.empView} onClick={this.empView}>Employee view</button>
@@ -576,23 +617,31 @@ class ShiftWeekTableComponent extends Week {
                   </div>
                 </TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate"> {moment(start).day(0).format('ddd')} {moment(start).day(0).format('MM')}/{moment(start).day(0).format('D')}</p></TableRowColumn>
+                  className="weekDate"> {moment(start).day(0).format('ddd')} {moment(start).day(0).format('MM')}/{moment(start).day(0).format('D')}</p>
+                </TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname">
-                  <p className="weekDate">{moment(start).day(1).format('ddd')} {moment(start).day(1).format('MM')}/{moment(start).day(1).format('D')}</p></TableRowColumn>
+                  <p
+                    className="weekDate">{moment(start).day(1).format('ddd')} {moment(start).day(1).format('MM')}/{moment(start).day(1).format('D')}</p>
+                </TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate"> {moment(start).day(2).format('ddd')} {moment(start).day(2).format('MM')}/{moment(start).day(2).format('D')}</p></TableRowColumn>
+                  className="weekDate"> {moment(start).day(2).format('ddd')} {moment(start).day(2).format('MM')}/{moment(start).day(2).format('D')}</p>
+                </TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate"> {moment(start).day(3).format('ddd')} {moment(start).day(3).format('MM')}/{moment(start).day(3).format('D')}</p></TableRowColumn>
+                  className="weekDate"> {moment(start).day(3).format('ddd')} {moment(start).day(3).format('MM')}/{moment(start).day(3).format('D')}</p>
+                </TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate">{moment(start).day(4).format('ddd')} {moment(start).day(4).format('MM')}/{moment(start).day(4).format('D')}</p></TableRowColumn>
+                  className="weekDate">{moment(start).day(4).format('ddd')} {moment(start).day(4).format('MM')}/{moment(start).day(4).format('D')}</p>
+                </TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate">{moment(start).day(5).format('ddd')} {moment(start).day(5).format('MM')}/{moment(start).day(5).format('D')}</p></TableRowColumn>
+                  className="weekDate">{moment(start).day(5).format('ddd')} {moment(start).day(5).format('MM')}/{moment(start).day(5).format('D')}</p>
+                </TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate">{moment(start).day(6).format('ddd')} {moment(start).day(6).format('MM')}/{moment(start).day(6).format('D')}</p></TableRowColumn>
+                  className="weekDate">{moment(start).day(6).format('ddd')} {moment(start).day(6).format('MM')}/{moment(start).day(6).format('D')}</p>
+                </TableRowColumn>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay} />
+              <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay}/>
 
               {jobDataKeys.map((value, index) => (
                   <JobsRow
@@ -625,18 +674,18 @@ class ShiftWeekTableComponent extends Week {
               </TableRow>
             </TableFooter>
           </Table>
-  </div>
+        </div>
       </Provider>
     );
   }
 }
 
 
-ShiftWeekTableComponent.range = (date, { culture }) => {
+ShiftWeekTableComponent.range = (date, {culture}) => {
   let firstOfWeek = localizer.startOfWeek(culture);
   let start = moment(dates.startOf(date, 'week', firstOfWeek));
   let end = moment(dates.endOf(date, 'week', firstOfWeek));
-  return { start, end };
+  return {start, end};
 };
 
 
@@ -707,7 +756,7 @@ const ShiftWeekTable = compose(
       }
     })
   }),
-  graphql( unappliedRecurring, {
+  graphql(unappliedRecurring, {
     options: (ownProps) => ({
       variables: {
         brandId: localStorage.getItem('brandId'),
@@ -717,7 +766,7 @@ const ShiftWeekTable = compose(
     name: 'unappliedRecurring'
 
   }),
-  graphql(allUsers, { name: 'allUsers' })
+  graphql(allUsers, {name: 'allUsers'})
 )(ShiftWeekTableComponent);
 
 export default ShiftWeekTable

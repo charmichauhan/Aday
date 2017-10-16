@@ -52,14 +52,10 @@ class ScheduleComponent extends Component {
             redirect:false,
             view:"job",
             date: moment(this.props.match.params.date) ||  moment(),
-          dataReceived: true
+          dataReceived: true,
+          isHoursReceived: true,
         }
     }
-
-  onNavigate = (start) => {
-    this.setState({date: start})
-  };
-
   /**
    *  the function that handles switching from employee to job view on the calendar
    * @param  {string} currentlyView - either "job" or "employee"
@@ -81,7 +77,17 @@ class ScheduleComponent extends Component {
   csvDataDownload = () => {
     this.setState({ dataReceived:false });
   };
-  onViewChange = () =>{
+  navigateCalender = (nav) => {
+    if(nav === "NEXT" ){
+      this.setState({date: moment(this.state.date).add(7, "days"),isHoursReceived : true});
+    }else{
+      this.setState({date: moment(this.state.date).subtract(7, "days"),isHoursReceived : true});
+    }
+  };
+  getHoursBooked = (getHoursObj) => {
+    this.setState({ getHoursObj, isHoursReceived : false});
+  };
+  onViewChange = () => {
     return this.state.view;
   };
 
@@ -103,7 +109,7 @@ class ScheduleComponent extends Component {
         this.setState({view:"employee"});
       }
     }
-    that = this
+    that = this;
   };
 
   getCSVData = (csvData) => {
@@ -127,7 +133,6 @@ class ScheduleComponent extends Component {
       const positionId = value.positionId;
       delete value.userId;
       delete value.positionId;
-
       if(displayData[positionId]) {
         if (displayData[positionId][userId]) {
           ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach((day) => {
@@ -141,7 +146,6 @@ class ScheduleComponent extends Component {
           });
           Object.assign(displayData[positionId][userId], value);
         } else {
-
           displayData[positionId][userId] = value;
         }
       }else{
@@ -149,17 +153,14 @@ class ScheduleComponent extends Component {
         objuser[userId]=value;
         displayData[positionId] = objuser;
       }
-
     });
     Object.values(displayData).map((value)=>{
       displayCsvData = displayCsvData.concat(Object.values(value));
-    })
+    });
     this.setState({ csvData: displayCsvData, dataReceived: true });
 
     if(!this.state.dataReceived){
-
       var result = json2csv({ data: displayCsvData });
-
       var hiddenElement = document.createElement('a');
       hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(result);
       hiddenElement.target = '_blank';
@@ -172,7 +173,7 @@ class ScheduleComponent extends Component {
     BigCalendar.momentLocalizer(moment);
 
     if (this.props.data.loading) {
-      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>);
     }
 
     if (this.props.data.error) {
@@ -216,7 +217,10 @@ class ScheduleComponent extends Component {
                 isPublish={ is_publish }
                 publishId={ publish_id }
                 view={this.state.view}
-                excel = {this.csvDataDownload}/>
+                excel = {this.csvDataDownload}
+                navigateCalender = {this.navigateCalender}
+                getHoursBooked = {this.state.getHoursObj}
+                isHoursReceived = {this.state.isHoursReceived}/>
             </div>
             <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                    message="Are you sure that you want to delete this shift?"
@@ -230,9 +234,11 @@ class ScheduleComponent extends Component {
                    date={this.state.date}
                    setCSVData={this.getCSVData}
                    dataReceived={this.state.dataReceived}
+                   hoursBooked = {this.getHoursBooked}
+                   isHoursReceived = {this.state.isHoursReceived}
                    views={{today: true, week: ShiftWeekTable, day: true}}
                    eventPropGetter={this.onViewChange}
-                   onNavigate={(start) => this.onNavigate(start)}
+                   onNavigate={(date) => { this.setState({ selectedDate: date })}}
                    components={{
                      event: this.customEvent,
                      toolbar:CustomToolbar
@@ -250,8 +256,8 @@ class CustomToolbar extends Toolbar {
     // const { csvData } = this.state;
     let month = moment(this.props.date).format("MMMM YYYY");
     return (
-      <div>{/*
-        <nav className="navbar">
+      <div>
+        {/*<nav className="navbar">
           <div className="container-fluid">
             <div className="wrapper-div" style={{paddingTop:'5px'}}>
               <div className="navbar-header">
@@ -262,10 +268,10 @@ class CustomToolbar extends Toolbar {
                 <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.csvDataDownload()}>Download CSV</button>
               </ul>
               <div className="maintitle">
-                <li>
        {month}
        </div>
        <ul className="nav navbar-nav navbar-right">
+            <li>
                   <button type="button" className="btn btn-default btnnav navbar-btn m8 "
                           onClick={() => this.view("week")}><strong>WEEK</strong></button>
                 </li>

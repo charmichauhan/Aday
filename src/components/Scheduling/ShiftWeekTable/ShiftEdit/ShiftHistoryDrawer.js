@@ -3,14 +3,15 @@ import Drawer from "material-ui/Drawer";
 import Paper from "material-ui/Paper";
 import moment from "moment";
 import rp from "request-promise";
-import {find, pick} from "lodash";
-import {Header, Grid, GridColumn, Icon, Dropdown, Image} from "semantic-ui-react";
+import {find, pick, orderBy, findIndex} from "lodash";
+import {Header, Grid, GridColumn, Icon, Dropdown, Image, Checkbox} from "semantic-ui-react";
 import FlatButton from "material-ui/FlatButton";
 import {gql, graphql} from "react-apollo";
 import {Icon as Icon2} from "antd";
 import {SortableContainer, SortableElement, arrayMove} from "react-sortable-hoc";
 import CircleButton from "../../../helpers/CircleButton";
 import Loading from "../../../helpers/Loading";
+var Halogen = require('halogen');
 
 const styles = {
   paperStyle: {
@@ -41,29 +42,53 @@ const User = ({user}) => (
   </div>
 );
 
-const SortableItem = SortableElement(({history, index}) =>
+const SortableItem = SortableElement(({history,awardorder, index, that}) =>
   (
     <Paper style={styles.paperStyle}
            zDepth={1}
            key={index}
            className="content-row shift-history">
       <Grid>
-        <GridColumn width={1}>
+        <GridColumn width={2} className="white-space">
           <text className="innerCircle">{index}</text>
         </GridColumn>
         <GridColumn width={4}>
-          <div className="wrapper-element text-left">
+          <div className="wrapper-element text-left username">
             <User user={history}/>
           </div>
-         <div className="wrapper-element text-center">
-            <p className="history-text font20">{history.seniority || '0001'}</p>
+        </GridColumn>
+        <GridColumn width={2}>
+          <div className="wrapper-element text-center">
+            <p className="history-text font20">{that.numberFormatter(history.seniority)}</p>
             <p className="history-text font14 text-uppercase light-gray-text">Seniority</p>
           </div>
         </GridColumn>
         <GridColumn width={2}>
           <div className="wrapper-element text-center">
-            <p className="history-text font20">{history.ytdot || '0424'}</p>
+            <p className="history-text font20">{that.numberFormatter(history.employeesByUserId.edges.length > 0 ? history.employeesByUserId.edges[0].node.ytdOvertimeHours : 0)}</p>
             <p className="text-uppercase font14 history-text light-gray-text">YTD OT</p>
+          </div>
+        </GridColumn>
+        <GridColumn width={2}>
+          <div className="wrapper-element text-center">
+            <Checkbox checked={history.isChecked} name={history.id} value={history} onChange={(e, history) => that.toggle(e, history)}/>
+            <p className="text-uppercase font14 history-text light-gray-text">INCLUDE</p>
+          </div>
+        </GridColumn>
+        <GridColumn width={1}>
+          <div className="wrapper-element text-center">
+            <Image src="/images/Sidebar/up-arrow.png" className="history-img" size="mini" />
+          </div>
+        </GridColumn>
+        <GridColumn width={2}>
+          <div className="wrapper-element text-center">
+            <p className="history-text font20">{that.numberFormatter(awardorder + 1)}</p>
+            <p className="text-uppercase font14 history-text light-gray-text">AWARD ORDER</p>
+          </div>
+        </GridColumn>
+        <GridColumn width={2} className="down-arrow">
+          <div className="wrapper-element text-center">
+            <Image src="/images/Sidebar/down-arrow.png" className="history-img" size="mini" />
           </div>
         </GridColumn>
         <GridColumn width={1}>
@@ -75,19 +100,44 @@ const SortableItem = SortableElement(({history, index}) =>
     </Paper>)
 );
 
-const SortableList = SortableContainer(({historyDetails}) => {
+const SortableList = SortableContainer(({historyDetails, that} ) => {
   return (
     <div>
-      {historyDetails.map((history, index) => <SortableItem index={index} history={history}/>)}
+      {historyDetails.map((history, index) => <SortableItem index={index} awardorder={index} history={history} that={that} />)}
     </div>
   );
 });
 
 class ShiftHistoryDrawerComponent extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      userList: this.props.users,
+      checked: false,
+      counter: 0,
+      filteredData: [],
+      includedData: []
+    }
+  }
+
+  componentWillMount() {
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.filteredData.length < 1 || this.props.allUsers.loading !== nextProps.allUsers.loading){
+      const allUsers = nextProps.allUsers;
+      var userData = this.props.users.map(function (userId, i) {
+        let foundWorker = find(allUsers.allUsers.edges, (user) => user.node.id === userId);
+        if (!foundWorker) foundWorker = {node: unassignedTeamMember.user};
+        var newFoundWorker = { ...foundWorker.node, yearsOfExp: foundWorker.node.employeesByUserId.edges.length > 0 ? foundWorker.node.employeesByUserId.edges[0].node.hireDate : 0 , ytdOverTimeHours: foundWorker.node.employeesByUserId.edges.length > 0 ? foundWorker.node.employeesByUserId.edges[0].node.ytdOvertimeHours : 0, isChecked: true };
+        return pick(newFoundWorker, ['id', 'avatarUrl', 'firstName', 'lastName','employeesByUserId','yearsOfExp','ytdOverTimeHours','isChecked']);
+      })
+
+      let sortedData = orderBy(userData,["yearsOfExp"],['asc']);
+      let filteredData = sortedData.map((values, index) => {
+        return  {...values, seniority: index + 1};
+      });
+      this.setState({filteredData: filteredData});
     }
   }
 
@@ -98,13 +148,39 @@ class ShiftHistoryDrawerComponent extends Component {
 
   onSortEnd = ({oldIndex, newIndex}) => {
       this.setState({
-        userList: arrayMove(this.state.userList, oldIndex, newIndex)
+        filteredData: arrayMove(this.state.filteredData, oldIndex, newIndex)
       });
-
-      this.props.phoneTree(this.state.userList)
+      this.props.phoneTree(this.state.filteredData)
     }
 
+  toggle = (e, history) => {
+    const { filteredData } = this.state;
+    let foundIndex = findIndex(filteredData, { id: history.value.id });
+    filteredData[foundIndex].isChecked = !filteredData[foundIndex].isChecked;
+    this.setState({ filteredData }, this.filterDataCallBack);
+   };
+
+  filterDataCallBack = () => {
+    let array = [];
+    this.state.filteredData.map(obj => {
+      if(obj.isChecked){
+        array.push(obj.id)
+      }
+    });
+    this.props.phoneTree(array);
+  }
+
+  numberFormatter = (num) => {
+    var str = "" + num;
+    var pad = "0000";
+    return pad.substring(0, pad.length - str.length) + str;
+  }
+
   render() {
+    if(this.props.allUsers.loading) {
+      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
+    }
+
       const {
         width = 750,
         open,
@@ -114,17 +190,6 @@ class ShiftHistoryDrawerComponent extends Component {
 
       const actionTypes = [];
 
-      console.log(this.props)
-      if (this.props.allUsers.loading){
-        return(<div></div>)
-      } 
-
-      const allUsers = this.props.allUsers;
-      var userData = this.state.userList.map(function (userId, i) {
-        let foundWorker = find(allUsers.allUsers.edges, (user) => user.node.id === userId);
-        if (!foundWorker) foundWorker = {node: unassignedTeamMember.user};
-        return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
-      })
 
       const actions = actionTypes.map((action, index) =>
         (<CircleButton key={index} type={action.type} title={action.title} handleClick={action.handleClick}
@@ -145,7 +210,7 @@ class ShiftHistoryDrawerComponent extends Component {
 
             </div>
             <div className="drawer-content history-drawer-content">
-              <SortableList historyDetails={userData} onSortEnd={this.onSortEnd} pressDelay={200}/>
+              <SortableList historyDetails={this.state.filteredData} that={this} onSortEnd={this.onSortEnd} pressDelay={200}/>
             </div>
           </div>
           <div className="drawer-footer">
@@ -168,6 +233,14 @@ const allUsers = gql`
                     firstName
                     lastName
                     avatarUrl
+                    employeesByUserId{
+                    edges{
+                      node{
+                        hireDate
+                        ytdOvertimeHours
+                      }
+                    }
+                  }
                 }
             }
         }
@@ -236,7 +309,6 @@ const allUsers = gql`
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-
           <div className="wrapper-element text-center">
             <p className="history-text font20">{history.seniority || '0001'}</p>
             <p className="history-text font14 text-uppercase light-gray-text">Seniority</p>
@@ -265,7 +337,6 @@ const allUsers = gql`
             <p className="text-uppercase font14">Award Order</p>
           </div>
         </GridColumn>
-
                   <div className="wrapper-element">
             <Icon2 type="down-circle-o"/>
           </div>

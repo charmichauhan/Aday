@@ -31,6 +31,7 @@ class RecurringShiftSelectComponent extends Component {
 		    }
 		    
 		    let shiftDaysSelected = []
+
 		    if ( nextProps.data.recurringShiftById.days ){
 		      nextProps.data.recurringShiftById.days.map(function(d,i){
 		        shiftDaysSelected.push(dayHash[d])
@@ -51,7 +52,9 @@ class RecurringShiftSelectComponent extends Component {
 			value["shiftIdsUpdate"] = shiftIdsUpdate
 			this.props.formCallBack(value);
 
-			this.setState({ shiftDaysSelected: shiftDaysSelected, shiftIdsUpdate: shiftIdsUpdate})
+			this.setState({ startDate: moment(shiftDaysSelected[0]).startOf('week'),
+							shiftDaysSelected: shiftDaysSelected,
+							shiftIdsUpdate: shiftIdsUpdate})
 		}
 	}
 
@@ -66,7 +69,7 @@ class RecurringShiftSelectComponent extends Component {
 	   return (
 	     	<div>
 				<ShiftDaySelector selectedDate={this.state.shiftDaysSelected} isRecurring={true}
-	                startDate={this.props.startDate} formCallBack={this.handleData} />
+	                startDate={this.state.startDate} formCallBack={this.handleData} />
 			</div>
 	   ) 
    } 

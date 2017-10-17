@@ -542,15 +542,7 @@ class ShiftPublishComponent extends Component {
                     contentType: 'application/json',
                     json: {
                       "data": {
-                        "sec": "QDVPZJk54364gwnviz921",
-                        "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
-                        "shiftStartHour": moment(shift.startTime).format("h:mm a"),
-                        "shiftEndHour": moment(shift.endTime).format("h:mm a"),
-                        "brand": localStorage.getItem('brandId'),
-                        "workplace": shift.workplaceId,
-                        "shiftReward": "",
-                        "shiftRole": shift.positionId,
-                        "weekPublishedId": shift.weekPublishedId,
+                        "weekPublishedId": this.props.publishId,
                         "shiftId": newId,
                       }
                     }

@@ -281,7 +281,8 @@ class EventPopupComponent extends Component {
                             "date": moment(oldShift.startTime).format("YYYY/MM/DD"),
                             "start_time": moment(oldShift.startTime).format("HH:MM"),
                             "end_time": moment(oldShift.endTime).format("HH:MM"),
-                            "edit": isEdit
+                            "edit": isEdit,
+                            "shift_id": oldShift.id
                       }
                   };
 
@@ -357,8 +358,11 @@ class EventPopupComponent extends Component {
       }
     })
 
+     console.log("UPDATE SHIFT IDS")
      console.log(updateShiftIds)
+     console.log("REMOVE SHIFT IDS")
      console.log(removedShiftIds)
+     console.log("CREATE SHIFT IDS")
      console.log(createdShiftDays)
     /*
     // If Removed
@@ -404,18 +408,6 @@ class EventPopupComponent extends Component {
                 shiftPatch: payload
               }
             },
-          updateQueries: {
-            allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-              const shiftHash = mutationResult.data.updateShiftById.shift;
-              const shiftHashIndex = findLastIndex(previousQueryResult.allShifts.edges, ({ node }) => node.id = shiftHash.id);
-              if (shiftHashIndex !== -1) {
-                previousQueryResult.allShifts.edges[shiftHashIndex].node = shiftHash;
-              }
-              return {
-                allShifts: previousQueryResult.allShifts
-                };
-            },
-          },
         }).then(({ data }) => {
         })
     })
@@ -527,16 +519,6 @@ class EventPopupComponent extends Component {
         data: {
           shift: payload
         }
-      },
-      updateQueries: {
-        allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-          let shiftHash = mutationResult.data.createShift.shift;
-          previousQueryResult.allShifts.edges =
-            [...previousQueryResult.allShifts.edges, { 'node': shiftHash, '__typename': 'ShiftsEdge' }];
-          return {
-            allShifts: previousQueryResult.allShifts
-          };
-        },
       },
     }).then(({ data }) => {
       // SHOULD CREATE MARKETS HERE FOR ANY ASSIGNED WORKERS

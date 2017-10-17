@@ -62,7 +62,7 @@ class NavComponent extends Component {
     }
 		const brands = this.props.allBrands.allBrands.nodes;
     const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
-    console.log(filteredWorkplaces);
+    //console.log(filteredWorkplaces);
     return (
 			<div className="left-menu_item">
 				{/*<EmergencyShiftButton/>*/}

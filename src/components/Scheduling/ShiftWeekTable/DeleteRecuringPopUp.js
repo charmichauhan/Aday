@@ -37,7 +37,7 @@ export default class DeleteRecuringPopUp extends Component {
   render() {
     let { title, message, action, closeAction, handleClickOutside } = this.props;
     const actions = action.map((action, index) =>
-      (<div className="instance-following">
+      (<div className="instance-following" key={index}>
           <button title={action.title} onClick={action.handleClick}> {action.title} </button>
           <p>{message}</p>
         </div>)

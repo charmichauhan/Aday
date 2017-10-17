@@ -199,12 +199,13 @@ class ScheduleComponent extends Component {
             }
           });
         }
-        is_publish = value.published;
+        is_publish = value.published || isWorkplacePublished;
         publish_id = value.id;
       }
     });
 
     events.publish_id = publish_id;
+    events.is_publish = is_publish
     let publishModalOptions = [{type: "white", title: "Go Back", handleClick: this.goBack, image: false},
       {type: "blue", title: "Confirm", handleClick: this.onConfirm, image: false}];
 
@@ -226,7 +227,7 @@ class ScheduleComponent extends Component {
                    message="Are you sure that you want to delete this shift?"
                    action={publishModalOptions} closeAction={this.modalClose}/>
             <div>
-                <BigCalendar events={events}
+               <BigCalendar events={events}
                    culture='en-us'
                    startAccessor='startDate'
                    endAccessor='endDate'
@@ -243,7 +244,7 @@ class ScheduleComponent extends Component {
                      event: this.customEvent,
                      toolbar:CustomToolbar
                    }}
-                />
+                /> 
             </div>
         </div>
     );

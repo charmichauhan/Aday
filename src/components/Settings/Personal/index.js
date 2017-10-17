@@ -106,13 +106,11 @@ class Personal extends Component {
 
   handleImageUpload = (files) => {
     console.log(files);
-    //when api feature added to prod: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
-    SuperAgent.post('https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg//uploadImage')
-    .field('bucket', 'aday-user')
-    .field('filename', localStorage.getItem('userId'))
+    // prod endpoint: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
+    // dev/test endpoint: http://localhost:8080/api/uploadImage
+    SuperAgent.post('http://localhost:8080/api/uploadImage')
+    .field('keyword', 'user')
     .field('id', localStorage.getItem('userId'))
-    .field('table', 'user')
-    .field('column', 'avatar_url')
     .attach("theseNamesMustMatch", files[0])
     .end((err, res) => {
       if (err) console.log(err);
@@ -149,7 +147,7 @@ class Personal extends Component {
   };
 
   handleImageSave = (img) => {
-    this.handleImageUpload(img);
+    this.handleImageUpload([img]);
   };
 
   render() {
@@ -159,6 +157,7 @@ class Personal extends Component {
     }
     return (
       <div className="content personal-content">
+        <img src={userInfo.avatarUrl}/>
         <h2 className="heading">Personal Information</h2>
         <div className="personal-info-img">
           <div className="personal-info">

@@ -72,6 +72,7 @@ export default class TeamMemberCard extends Component {
           placeholder="Team Member"
           name="team-member"
           ref="userDropDown"
+          scrolling={true}
           forceSelection={false}
           onOpen={this.onDropDownOpen}
           trigger={<div className={'content ' + color}>

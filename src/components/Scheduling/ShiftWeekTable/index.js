@@ -1,23 +1,23 @@
-import React, {Component} from 'react';
-import {Provider} from 'react-redux';
-import {createStore, combineReducers} from 'redux';
-import {reducer as formReducer} from 'redux-form';
-import {Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn} from 'material-ui/Table';
+import React, { Component } from 'react';
+import { Provider } from 'react-redux';
+import { createStore, combineReducers } from 'redux';
+import { reducer as formReducer } from 'redux-form';
+import { Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn } from 'material-ui/Table';
 import moment from 'moment';
 import Week from 'react-big-calendar/lib/Week';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
 import JobsRow from './JobsRow';
-import {concat, groupBy, pick, find} from 'lodash';
+import { concat, groupBy, pick, find } from 'lodash';
 import SpecialDay from './SpecialDay';
-import {gql, graphql, compose} from 'react-apollo';
+import { gql, graphql, compose } from 'react-apollo';
 import jobsData from './jobs.json';
 import '../style.css';
 import allShiftsByWeeksPublished from './shiftsByWeeksPublishedQuery'
 var Halogen = require('halogen');
 /*
- import EditShift from './ShiftEdit/Edit';
- import DeleteShift from './ShiftEdit/DeleteShift';
+import EditShift from './ShiftEdit/Edit';
+import DeleteShift from './ShiftEdit/DeleteShift';
  */
 
 
@@ -98,9 +98,10 @@ class ShiftWeekTableComponent extends Week {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
-      this.props.setCSVData(this.csvData(nextProps));
-    }
+      this.props.data.refetch(allShiftsByWeeksPublished)
+      if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
+        this.props.setCSVData(this.csvData(nextProps));
+      }
     this.setState({calendarView: this.props.eventPropGetter()});
   };
 
@@ -132,22 +133,20 @@ class ShiftWeekTableComponent extends Week {
   getShiftData = (shiftValue, props) => {
     const shift = {...shiftValue};
     if (!shift.workersAssigned) shift.workersAssigned = [];
-    shift.workersAssigned = shift.workersAssigned.map(worker => {
-      if (typeof worker === 'string') {
-        return this.getUserById(worker, props);
-      }
-      return null;
-    });
+      shift.workersAssigned = shift.workersAssigned.map(worker => {
+        if (typeof worker === 'string') {
+          return this.getUserById(worker, props);
+        }
+        return null;
+      });
     return shift;
   };
 
   csvData = (props) => {
 
-    const userAssignedShifts = props.data.allShifts.edges.map(({node}) => {
-      return this.getShiftData(node, props);
-    }).filter((shift) => {
-      return shift.workersAssigned.length
-    });
+    const userAssignedShifts =  props.data.allShifts.edges.map(({node}) => {
+        return this.getShiftData(node, props);
+    }).filter((shift) => { return shift.workersAssigned.length });
 
     const csvShifts = [];
 
@@ -194,12 +193,12 @@ class ShiftWeekTableComponent extends Week {
       });
 
 
+
       data.allShifts.edges.map((value, index) => {
         if (workplaceId != '') {
           if (workplaceId == value.node.workplaceByWorkplaceId.id) {
 
             const dayOfWeek = moment(value.node.startTime).format('dddd').toUpperCase();
-            ;
 
             let assigned = value.node.workersAssigned;
             if (value.node.workersAssigned == null) {
@@ -273,50 +272,43 @@ class ShiftWeekTableComponent extends Week {
       let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
       if (workplaceId != '') {
         if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-          value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-            if (moment(start).isBefore(moment(shift.node.expiration))) {
-              const positionName = shift.node.positionByPositionId.positionName;
-              let assigned = [];
-              shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
-                assigned.push(assignees.node.userId);
-              })
-
-              if (assigned.length < shift.node.workerCount) {
-                const rowHash = {};
-                rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
-                rowHash['userFirstName'] = 'Open';
-                rowHash['userLastName'] = 'Shifts';
-                rowHash['userAvatar'] = '/assets/Icons/search.png';
-                if (calendarHash['Open Shifts']) {
-                  calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)];
-                } else {
-                  calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)];
-                }
-              }
-              assigned.map((v) => {
-                const rowHash = {};
-                rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
-                const userName = userHash[v];
-                rowHash['userFirstName'] = userHash[v][0];
-                rowHash['userLastName'] = userHash[v][1];
-                rowHash['userAvatar'] = userHash[v][2];
-                if (calendarHash[userName]) {
-                  calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)];
-                } else {
-                  calendarHash[userName] = [Object.assign(rowHash, shift.node)];
-                }
-              })
+            value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+                if(moment(start).isBefore(moment(shift.node.expiration))) {
+                    const positionName = shift.node.positionByPositionId.positionName;
+                        let assigned = shift.node.assignees
+                        if (assigned.length < shift.node.workerCount) {
+                          const rowHash = {};
+                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                          rowHash['userFirstName'] = 'Open'
+                          rowHash['userLastName'] = 'Shifts'
+                          rowHash['userAvatar'] = '/assets/Icons/search.png'
+                          if (calendarHash['Open Shifts']) {
+                            calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)]
+                          } else {
+                            calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)]
+                          }
+                        }
+                        assigned.map((v) => {
+                          const rowHash = {}
+                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                          const userName = userHash[v];
+                          rowHash['userFirstName'] = userHash[v][0]
+                          rowHash['userLastName'] = userHash[v][1]
+                          rowHash['userAvatar'] = userHash[v][2]
+                          if (calendarHash[userName]) {
+                            calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)]
+                          } else {
+                            calendarHash[userName] = [Object.assign(rowHash, shift.node)];
+                          }
+                        })
             }
           })
-        }
-      } else {
-        value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-          if (moment(start).isBefore(moment(shift.node.expiration))) {
-            const positionName = shift.node.positionByPositionId.positionName;
-            let assigned = [];
-            shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
-              assigned.push(assignees.node.userId);
-            })
+          }
+        } else {
+            value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+                if(moment(start).isBefore(moment(shift.node.expiration))) {
+                    const positionName = shift.node.positionByPositionId.positionName;
+                        let assigned = shift.node.assignees
 
             if (assigned.length < shift.node.workerCount) {
               const rowHash = {};
@@ -390,7 +382,39 @@ class ShiftWeekTableComponent extends Week {
     });
 
     recurring.unappliedRecurring.edges.map((value, index) => {
-      let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+          let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+           if (workplaceId != '') {
+             if (workplaceId == value.node.workplaceByWorkplaceId.id) {
+              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+                if(moment(start).isBefore(moment(shift.node.expiration))) {
+                  const positionName = shift.node.positionByPositionId.positionName;
+                       const rowHash = {};
+                       rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                       rowHash['workersAssigned'] = shift.node.assignees
+
+                       if (calendarHash[positionName]) {
+                          calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
+                       } else {
+                        calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
+                       }
+                }
+              })
+            }
+            } else {
+              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+                if(moment(start).isBefore(moment(shift.node.expiration))) {
+                  const positionName = shift.node.positionByPositionId.positionName;
+                       const rowHash = {};
+                       rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
+                       rowHash['workersAssigned'] = shift.node.assignees
+                       if (calendarHash[positionName]) {
+                          calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
+                       } else {
+                        calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
+                       }
+                }
+              })
+            }
       if (workplaceId != '') {
         if (workplaceId == value.node.workplaceByWorkplaceId.id) {
           value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
@@ -592,12 +616,13 @@ class ShiftWeekTableComponent extends Week {
       weeklyHoursTotal
     });
 
-    let is_publish = true;
-    const reducer = combineReducers({form: formReducer, shifts: shiftReducer});
-    const store = createStore(reducer, {shifts: []});
-    let unsubscribe = store.subscribe(() =>
-      console.log(store.getState())
-    );
+      let isPublished = this.props.events.is_publish;
+      let publishedId = this.props.events.publish_id;
+      const reducer = combineReducers({ form: formReducer, shifts: shiftReducer });
+      const store = createStore(reducer, { shifts: [] });
+      let unsubscribe = store.subscribe(() =>
+        console.log(store.getState())
+      );
     return (
       <Provider store={store}>
         <div className="table-responsive">
@@ -648,7 +673,9 @@ class ShiftWeekTableComponent extends Week {
                     data={jobData[value]}
                     key={value}
                     users={this.props.allUsers}
-                    view={this.state.calendarView}/>
+                    view={this.state.calendarView}
+                    isPublished={isPublished}
+                    publishedId={publishedId} />
                 )
               )
               }
@@ -658,7 +685,10 @@ class ShiftWeekTableComponent extends Week {
                 data={jobData['Open Shifts']}
                 key={'Open Shifts'}
                 users={this.props.allUsers}
-                view={this.state.calendarView}/>
+                view={this.state.calendarView}
+                isPublished={isPublished}
+                publishedId={publishedId}
+              />
               }
             </TableBody>
             <TableFooter adjustForCheckbox={false}>
@@ -695,7 +725,7 @@ const unappliedRecurring = gql`
       edges{
         node{
           id
-          workplaceByWorkplaceId{
+          workplaceByWorkplaceId {
             id
             workplaceName
           }
@@ -708,6 +738,7 @@ const unappliedRecurring = gql`
                 isTraineeShift
                 unpaidBreakTime
                 instructions
+                assignees
                 days
                 expiration
                 positionByPositionId{
@@ -717,13 +748,6 @@ const unappliedRecurring = gql`
                   brandByBrandId {
                     id
                     brandName
-                  }
-                }
-                recurringShiftAssigneesByRecurringShiftId {
-                  edges{
-                    node{
-                      userId
-                    }
                   }
                 }
               }

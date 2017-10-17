@@ -99,14 +99,14 @@ export default class JobsRow extends Component {
 
               {this.props.view == 'job' ? data[0].positionByPositionId.positionName : data[0].userFirstName}
 
-              {/*<p>
+              <p>
                 <Truncate className="lastName">
                   {this.props.view == 'job' ? '' : data[0].userLastName}
                 </Truncate>
-              </p>*/}
+              </p>
 
               <Truncate>
-                <p className="finalHours">{finalHours} HRS & {finalMinutes} MINS </p>
+                <p className="finalHours"> {finalHours} HRS & <br />{finalMinutes} MINS </p>
               </Truncate>
 
               <p className="scheduled_tag">BOOKED</p>
@@ -120,7 +120,7 @@ export default class JobsRow extends Component {
                               style={{ paddingLeft: '0px', paddingRight: '0px', backgroundColor: '#F5F5F5' }}>
                 {
                   Object.values(hashByDay[value]).map((y, index) => (
-                    <EventPopup managers={this.state.managers} users={this.props.users} data={y} key={index} view={this.props.view} />
+                    <EventPopup managers={this.state.managers} users={this.props.users} data={y} key={index} view={this.props.view} isPublished={this.props.isPublished} publishedId={this.props.PublishedId}/>
                   ))
                 }
               </TableRowColumn>

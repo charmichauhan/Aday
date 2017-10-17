@@ -70,7 +70,8 @@ class ShiftPublishComponent extends Component {
       redirect: false,
       isCreateShiftModalOpen: false,
       isCreateShiftOpen: false,
-      drawerShift: {advance: {allowShadowing: true}}
+      drawerShift: { advance: { allowShadowing: true }},
+      notify: false
     }
   }
 
@@ -103,6 +104,7 @@ class ShiftPublishComponent extends Component {
       publishModalPopped: false
     });
   };
+
   viewRecurring = () => {
     this.setState({redirect: true})
   };
@@ -155,7 +157,8 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
-    const {date} = this.props;
+    const {publishId} = this.props
+    const { date } = this.props;
     if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
         variables: {
@@ -190,12 +193,48 @@ class ShiftPublishComponent extends Component {
       }).then((res) => {
         console.log('Inside the data', res);
         this.modalClose();
+        var uri = 'http://localhost:8080/api/kronosApi'
+
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "assignSchedule",
+                          "week_published_id": publishId
+                      }
+                 };
+                 rp(options)
+                  .then(function(response) {
+                      //that.setState({redirect:true})
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+
       }).catch(err => console.log('An error occurred.', err));
     } else {
       this.props.updateWeekPublishedNameMutation({
         variables: {id: this.props.publishId, date: moment().format()}
       }).then((res) => {
         this.modalClose();
+        var uri = 'http://localhost:8080/api/kronosApi'
+
+                var options = {
+                    uri: uri,
+                    method: 'POST',
+                    json: {
+                          "sec": "QDVPZJk54364gwnviz921",
+                          "actionType": "assignSchedule",
+                          "week_published_id": publishId,
+                          "brand_id": localStorage.getItem('brandId')
+                      }
+                 };
+                 rp(options)
+                  .then(function(response) {
+                      //that.setState({redirect:true})
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
       });
     }
   };
@@ -205,7 +244,7 @@ class ShiftPublishComponent extends Component {
   };
 
   openShiftDrawer = () => {
-    this.setState({isCreateShiftOpen: true, isCreateShiftModalOpen: false});
+    this.setState({ isCreateShiftOpen: true, isCreateShiftModalOpen: false });
   };
 
   showNotification = (message, type) => {
@@ -225,16 +264,16 @@ class ShiftPublishComponent extends Component {
   };
 
   handleCreateSubmit = (shift) => {
-    let {publishId} = this.props;
 
-    let dayNames = [];
-    let days = Object.keys(shift.shiftDaysSelected);
-    console.log(shift.shiftDaysSelected);
+    let { publishId } = this.props;
 
-    Object.keys(shift.shiftDaysSelected).map(function (day, i) {
-      if (shift.shiftDaysSelected[day] == true) {
-        dayNames.push(moment(day).format('dddd').toUpperCase())
-      }
+    let dayNames = []
+    let days = Object.keys(shift.shiftDaysSelected)
+
+    Object.keys(shift.shiftDaysSelected).map(function(day, i){
+        if (shift.shiftDaysSelected[day] == true && day !== 'undefined') {
+            dayNames.push(moment(day).format('dddd').toUpperCase())
+        }
     })
 
     if (!publishId) {
@@ -252,7 +291,7 @@ class ShiftPublishComponent extends Component {
           }
         },
         updateQueries: {
-          allWeekPublisheds: (previousQueryResult, {mutationResult}) => {
+          allWeekPublisheds: (previousQueryResult, { mutationResult }) => {
             let weekPublishedHash = mutationResult.data.createWeekPublished.weekPublished;
             previousQueryResult.allWeekPublisheds.nodes = [...previousQueryResult.allWeekPublisheds.nodes, weekPublishedHash]
             return {
@@ -260,8 +299,8 @@ class ShiftPublishComponent extends Component {
             };
           },
         },
-      }).then(({data}) => {
-        this.submitShifts({dayNames, days, shift, publishId});
+      }).then(({ data }) => {
+        this.submitShifts({ dayNames, days, shift, publishId });
       }).catch((error) => {
         console.log('there was an error sending the query', error);
         this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
@@ -270,68 +309,111 @@ class ShiftPublishComponent extends Component {
     }
     // else create all shifts with existing week published
     else {
-      this.submitShifts({dayNames, days, shift, publishId});
+      console.log(shift)
+      this.submitShifts( dayNames, days, shift, publishId );
     }
-    this.setState({isCreateShiftOpen: false, isCreateShiftModalOpen: false});
+    this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
-  submitShifts = ({dayNames, days, shift, publishId}) => {
+  submitShifts = ({ dayNames, days, shift, publishId }) => {
     let shiftRecure = shift;
-    if (shift.recurringShift !== "none") {
-      this.saveRecurringShift(shiftRecure, shift, (res) => {
+
+    if(shift.recurringShift!=="none"){
+      this.saveRecurringShift(dayNames, days, shiftRecure, publishId, (res)=>{
         shiftRecure.recurringShiftId = res;
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
-            this.saveShift(shiftRecure, day, publishId);
+            let isAfter = (moment(day).isAfter(moment(shift.startDate)))
+            let isBefore = (moment(day).isBefore(moment(shift.endDate)))
+            if(isAfter && isBefore) {
+              this.saveShift(shiftRecure, day, publishId);
+            }
           }
         });
       });
     }
     else {
       days.forEach((day) => {
-        if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
-          this.saveShift(shift, day, publishId);
+        if (day !== 'undefined' && shiftRecure.shiftDaysSelected[day] === true) {
+          this.saveShift(shiftRecure, day, publishId);
         }
-      });
+      })
 
-    }
+          /* THIS IS PROBABLY OBSOLETE AS WE WON'T HAVE USERS ON NEW SINGLE PUBLISHED SHIFTS
+            if (shiftRecure.phoneTree.length < 1 & shiftRecure.teamMembers) {
+
+              let workersAssigned = shiftRecure.teamMembers.map(({ id }) => id);
+              workersAssigned.map(function(user, i){
+                  var uri = 'http://localhost:8080/api/kronosApi'
+
+                  var options = {
+                      uri: uri,
+                      method: 'POST',
+                      json: {
+                            "sec": "QDVPZJk54364gwnviz921",
+                            "actionType": "assignShift",
+                            "testing": true,
+                            "user_id": user,
+                            "date": moment(shiftRecure.startTime).format('YYYY/MM/DD'),
+                            "startTime": moment(shiftRecure.startTime).format('HH:mm'),
+                            "endTime": moment(shiftRecure.endTime).format('HH:mm'),
+                            "singlEdit": false
+                        }
+                   };
+                   rp(options)
+                    .then(function(response) {
+                        //that.setState({redirect:true})
+                    }).catch((error) => {
+                      console.log('there was an error sending the query', error);
+                    });
+             })
+
+            }
+          */
+
+
+      }
   };
 
-  saveRecurringShift(dayNames, days, shift, callback) {
+  saveRecurringShift(dayNames, days, shift, weekPublishedId, callback){
+    console.log("saveRecurringShift")
     this.props.client.query({
       query: findRecurring,
-      variables: {brandId: localStorage.getItem('brandId'), workplaceId: localStorage.getItem('workplaceId')}
-    }).then((res) => {
+      variables: { brandId: localStorage.getItem('brandId'), workplaceId: shift.workplaceId }
+    }).then((res)=>{
       let recurring = uuidv4();
-      if (res.data.allRecurrings.edges.length !== 0) {
-        return this.createRecurringShift(shift, res.data.allRecurrings.edges[0].node.id, days, callback);
+      if(res.data.allRecurrings.edges.length !== 0){
+        return this.createRecurringShift(shift, res.data.allRecurrings.edges[0].node.id, dayNames, days, weekPublishedId, callback);
       } else {
         const payload = {
           id: recurring,
-          workplaceId: localStorage.getItem("workplaceId"),
+          workplaceId: shift.workplaceId,
           brandId: localStorage.getItem("brandId"),
-          lastWeekApplied: moment().startOf('week').format()
+          lastWeekApplied: moment().startOf('week').add(8, 'weeks').format()
         };
+        console.log("PAYLOAD")
+        console.log(payload)
         this.props.createRecurring({
           variables: {
             data: {
               recurring: payload
             }
-          }
-        }).then((res) => {
-          console.log("createRecurring res", res);
-          return this.createRecurringShift(shift, recurring, dayNames, days, callback);
+          }}).then((res)=>{
+          console.log("createRecurring res",res);
+          return this.createRecurringShift(shift, recurring, dayNames, days, weekPublishedId, callback);
         });
       }
     });
   }
 
-  createRecurringShift(shiftValue, recurringId, dayNames, days, callback) {
+  createRecurringShift(shiftValue, recurringId, dayNames, days, weekPublishedId, callback){
     const shift = cloneDeep(shiftValue);
     let id = uuidv4();
-
+    console.log("createRecurringShift")
     const payload = {
-      id: id,
+      id,
+      days,
+      recurringId,
       positionId: shift.positionId,
       workerCount: shift.numberOfTeamMembers,
       creator: localStorage.getItem('userId'),
@@ -339,20 +421,48 @@ class ShiftPublishComponent extends Component {
       endTime: moment(shift.endTime).format('HH:mm'),
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak,
-      expiration: shift.endDate,
-      startDate: shift.startDate,
+      expiration: moment(shift.endDate).format(),
+      startDate: moment(shift.startDate).format(),
       days: dayNames,
       recurringId: recurringId,
       isTraineeShift: false,
       expired: false
     };
+
+    if (shift.teamMembers && shift.teamMembers.length) {
+      payload.assignees  = shift.teamMembers.map(({ id }) => id);
+    }
+
     this.props.createRecurringShift({
       variables: {
         data: {
           recurringShift: payload
         }
       }
-    }).then(({data}) => {
+    }).then(({data})=>{
+
+        var uri = 'http://localhost:8080/api/newRecurring'
+
+        var options = {
+              uri: uri,
+              method: 'POST',
+              json: {
+                  "data": {
+                    "sec": "QDVPZJk54364gwnviz921",
+                    "recurringShiftId": id,
+                    "startsOn": shift.startDate || moment().format(),
+                    "weekPublishedId": weekPublishedId
+                  }
+              }
+          };
+        rp(options)
+        .then(function(response) {
+               //that.setState({redirect:true})
+          }).catch((error) => {
+              console.log('there was an error sending the query', error);
+          });
+
+
       return callback(id);
     });
   }
@@ -366,7 +476,7 @@ class ShiftPublishComponent extends Component {
   };
 
   closeDrawerAndModal = () => {
-    this.setState({isCreateShiftOpen: false, isCreateShiftModalOpen: false});
+    this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
   saveShift(shiftValue, day, weekPublishedId) {
@@ -378,15 +488,16 @@ class ShiftPublishComponent extends Component {
     const recurringShiftId = shift.recurringShiftId;
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    var newId = uuidv4()
     const payload = {
-      id: uuidv4(),
+      id: newId,
       workplaceId: shift.workplaceId,
       positionId: shift.positionId,
       workersRequestedNum: shift.numberOfTeamMembers,
       creatorId: localStorage.getItem('userId'),
       managersOnShift: [null],
-      startTime: moment.utc(shift.startTime),
-      endTime: moment.utc(shift.endTime),
+      startTime: moment(shift.startTime).format(),
+      endTime: moment(shift.endTime).format(),
       shiftDateCreated: moment().format(),
       weekPublishedId: weekPublishedId,
       recurringShiftId: recurringShiftId ? recurringShiftId : null,
@@ -394,7 +505,7 @@ class ShiftPublishComponent extends Component {
       unpaidBreakTime: shift.unpaidBreak
     };
     if (shift.teamMembers && shift.teamMembers.length) {
-      payload.workersAssigned = shift.teamMembers.map(({id}) => id);
+      payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
     }
     this.props.createShift({
       variables: {
@@ -403,17 +514,63 @@ class ShiftPublishComponent extends Component {
         }
       },
       updateQueries: {
-        allShiftsByWeeksPublished: (previousQueryResult, {mutationResult}) => {
+        allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
           let shiftHash = mutationResult.data.createShift.shift;
           previousQueryResult.allShifts.edges =
-            [...previousQueryResult.allShifts.edges, {'node': shiftHash, '__typename': 'ShiftsEdge'}];
+            [...previousQueryResult.allShifts.edges, { 'node': shiftHash, '__typename': 'ShiftsEdge' }];
           return {
             allShifts: previousQueryResult.allShifts
           };
         },
       },
-    }).then(({data}) => {
+    }).then(({ data }) => {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
+      let is_publish = this.props.isPublish;
+        if (is_publish == 'none'){
+          is_publish = false
+        }
+
+        if (is_publish == true){
+           if (shift.phoneTree.length > 1) {
+            var callURI = 'http://localhost:8080/api/callEmployee/'
+
+              const callUsers = {}
+              console.log(shift.phoneTree)
+              shift.phoneTree.map(function(userId, i){
+                console.log(userId)
+                  callUsers[i] = userId
+              })
+              console.log(JSON.stringify(callUsers))
+                  var options = {
+                    uri: callURI,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    json: {
+                      "data": {
+                        "sec": "QDVPZJk54364gwnviz921",
+                        "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
+                        "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                        "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                        "brand": localStorage.getItem('brandId'),
+                        "workplace": shift.workplaceId,
+                        "shiftReward": "",
+                        "shiftRole": shift.positionId,
+                        "weekPublishedId": shift.weekPublishedId,
+                        "shiftId": newId,
+                        "userids": shift.phoneTree
+                      }
+                    }
+                  };
+                  console.log(options)
+                  rp(options)
+                    .then(function (response) {
+                      //that.setState({redirect:true})
+                    }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+          }
+        }
+      // SHOULD CREATE MARKETS HERE FOR ANY ASSIGNED WORKERS
       console.log('got data', data);
     }).catch(err => {
       console.log('There was error in saving shift', err);
@@ -424,19 +581,18 @@ class ShiftPublishComponent extends Component {
   render() {
     let is_publish = this.props.isPublish;
     let publishId = this.props.publishId;
-    let message = "";
+    let   message="";
     const startDate = this.props.date;
-    const isPublished = (is_publish == false && is_publish != 'none') ? (this.props.isWorkplacePublished === false ? true : false) : false;
 
-    const {notify, notificationMessage, notificationType} = this.state;
+    const { notify, notificationMessage, notificationType } = this.state;
 
     let status = '';
     let statusImg = '';
-    if (isPublished) {
+    if (is_publish == false) {
       status = 'UNPUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/no-view-blue.png';
     }
-    else if (!isPublished) {
+    else if (is_publish == true) {
       status = 'PUBLISHED SCHEDULE';
       statusImg = '/assets/Icons/view-blue.png';
     }
@@ -444,22 +600,23 @@ class ShiftPublishComponent extends Component {
       {type: 'blue', title: 'Confirm', handleClick: this.publishWeek, image: false}];
     if (this.state.redirect) {
       return (
-        <Redirect to={{pathname: '/schedule/recurring', viewName: this.props.view}}/>
+        <Redirect to={{ pathname: '/schedule/recurring', viewName: this.props.view }} />
       )
     }
-    if (this.state.publishModalPopped && localStorage.getItem('workplaceId') != "") {
-      message = "Are you sure that you want to publish the week's schedule for this workplace?"
-    } else {
-      message = "Are you sure that you want to publish the week's schedule?"
+
+    if(this.state.publishModalPopped && localStorage.getItem('workplaceId') != ""){
+      message="Are you sure that you want to publish the week's schedule for this workplace?"
+    }else {
+      message="Are you sure that you want to publish the week's schedule?"
     }
-    let {date} = this.props;
-    let {start} = ShiftPublish.range(date, this.props);
+    let { date } = this.props;
+    let { start } = ShiftPublish.range(date, this.props);
 
     return (
       <div className="shift-section">
         {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                                                  message={message}
-                                                 action={publishModalOptions} closeAction={this.modalClose}/>
+                                                 action={publishModalOptions} closeAction={this.modalClose} />
         }
 
         <div className="calendar-top-heading">
@@ -664,28 +821,30 @@ class ShiftPublishComponent extends Component {
           weekStart={start}
           handleSubmit={this.handleCreateSubmit}
           handleAdvance={this.handleAdvanceToggle}
-          closeDrawer={this.closeDrawerAndModal}/>
+          closeDrawer={this.closeDrawerAndModal}
+          isPublished={is_publish}
+          weekPublishedId={this.props.publishId}
+          isEdit={false} />
         <CreateShiftAdvanceDrawer
           width={styles.drawer.width}
           shift={this.state.drawerShift}
           open={this.state.isCreateShiftAdvanceOpen}
-          handleBack={this.handleAdvanceToggle}/>
-        <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage}
-                  notificationType={notificationType}/>
+          handleBack={this.handleAdvanceToggle} />
+        <Notifier hideNotification={this.hideNotification} notify={notify} notificationMessage={notificationMessage} notificationType={notificationType} />
       </div>
     )
   }
 }
 
-ShiftPublishComponent.range = (date, {culture}) => {
+ShiftPublishComponent.range = (date, { culture }) => {
   let firstOfWeek = localizer.startOfWeek(culture);
   let start = dates.startOf(date, 'week', firstOfWeek);
   let end = dates.endOf(date, 'week', firstOfWeek);
-  return {start, end};
+  return { start, end };
 };
 
 const ShiftPublish = compose(
-  graphql(updateWeekPublishedNameMutation, {
+  graphql(updateWeekPublishedNameMutation,{
     name: 'updateWeekPublishedNameMutation'
   }),
   graphql(createShiftMutation, {

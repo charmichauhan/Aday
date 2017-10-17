@@ -31,15 +31,11 @@ export default class StartToEndTimePicker extends Component {
   };
 
   handleShiftDatesChange = (name, value) => {
-    if (name === 'never') {
-      this.setState((state) => ({ [name]: value, endDateValue: '' }));
-    } else {
-      this.setState((state) => ({
-        [name]: value,
-        [name + 'Selector']: !state[name + 'Selector'],
-        [name + 'Value']: value.format('MMM DD, YYYY')
-      }));
-    }
+    this.setState((state) => ({
+      [name]: value,
+      [name + 'Selector']: !state[name + 'Selector'],
+      [name + 'Value']: value ? value.format('MMM DD, YYYY') : 'Never'
+    }));
     this.props.formCallBack({ [name]: value });
   };
 
@@ -65,6 +61,7 @@ export default class StartToEndTimePicker extends Component {
         <div className="date-selector-display end-date-selector" style={{ display: endDateSelector ? 'block' : 'none', right: 0 }}>
           <RaisedButton label="Never"
                         style={{ boxShadow: 'none', marginTop:10 }}
+                        onClick={() => this.handleShiftDatesChange('endDate', null)}
                         icon={<Icon name="genderless" className="floatLeft never-icon" /> }
           />
           <p className="text-center or-btn">OR</p>

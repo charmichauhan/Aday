@@ -296,6 +296,7 @@ class DrawerHelper extends Component {
     });
     that.setState({ deleteModalPopped: false });
     this.handleCloseDrawer();
+
     /*
     if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
         var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'

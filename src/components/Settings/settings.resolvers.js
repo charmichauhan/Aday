@@ -58,7 +58,7 @@ export const workplaceResolvers = {
           }
         }
       }
-    } 
+    }
   `,
   createWorkplaceMutation: gql`
     mutation createWorkplace ($workplace: WorkplaceInput!) {
@@ -88,6 +88,7 @@ export const workplaceResolvers = {
           id
           workplaceName
           brandId
+          workplaceImageUrl
         }
       }
     }

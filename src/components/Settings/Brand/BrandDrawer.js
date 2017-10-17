@@ -5,6 +5,7 @@ import { Image } from 'semantic-ui-react';
 import RaisedButton from 'material-ui/RaisedButton';
 import cloneDeep from 'lodash/cloneDeep';
 import Dropzone from 'react-dropzone';
+import SuperAgent from 'superagent';
 
 import { closeButton, colors } from '../../styles';
 import CircleButton from '../../helpers/CircleButton';
@@ -38,11 +39,24 @@ class DrawerHelper extends Component {
   };
 
   handleImageUpload = (files) => {
-    // handle image upload code here.
-    console.log('Image upload code goes here');
-    const brand = Object.assign(this.state.brand, { brandIconUrl: files[0] });
-    this.setState({ brand, blob: files[0] });
+    console.log(files);
+    // prod endpoint: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
+    // dev/test endpoint: http://localhost:8080/api/uploadImage
+    SuperAgent.post('http://localhost:8080/api/uploadImage')
+    .field('keyword', 'brand')
+    .field('id', this.state.brand.id)
+    .attach("theseNamesMustMatch", files[0])
+    .end((err, res) => {
+      if (err) console.log(err);
+      else {
+        const brand = Object.assign(this.state.brand, { brandIconUrl : res.text });
+        this.setState({brand: brand});
+        alert('File uploaded!');
+      }
+    })
+    this.setState({ blob: files[0] });
   };
+
 
   handleNewImageUpload = (files) => {
     files[0].preview = window.URL.createObjectURL(files[0]);
@@ -107,7 +121,8 @@ class DrawerHelper extends Component {
           (<div>
             <Image
               className="uploaded-image"
-              src={(this.state.blob && this.state.blob.preview) || DrawerBrand.brandIconUrl}
+              src={(this.state.blob && this.state.blob.preview) ||
+                   (DrawerBrand.brandIconUrl + "?" + new Date().getTime())}
               size="large" />
             <RaisedButton
               backgroundColor={colors.primaryBlue}

@@ -27,10 +27,12 @@ export default class DaySelector extends React.Component {
       selectedState[cell.cellId] = false;
     });
 
-    if (_.has(selectedState, selectedDate)) {
-      selectedDate.map(function(day, i){
-        selectedState[selectedDate] = true;
-      })
+    if (Array.isArray(selectedDate)) {
+      selectedDate.forEach(function (day) {
+        selectedState[day] = true;
+      });
+    } else if (_.has(selectedState, selectedDate)) {
+      selectedState[selectedDate] = true;
     }
 
     this.setState({ selected: selectedState });
@@ -48,9 +50,11 @@ export default class DaySelector extends React.Component {
     }
     if (selected && nextProps.selectedDate && !selected[nextProps.selectedDate]) {
       this.setState(() => {
-        nextProps.selectedDate.map(function(s, i){
-          selected[s] = true;
-        })
+        if (Array.isArray(nextProps.selectedDate)) {
+          nextProps.selectedDate.map((s) => selected[s] = true);
+        } else if (nextProps.selectedDate) {
+          selected[nextProps.selectedDate] = true;
+        }
         this.setState({ selected });
         if (props.callBack) {
           props.callBack({ shiftDaysSelected: selected });
@@ -64,8 +68,14 @@ export default class DaySelector extends React.Component {
     const cellId = $(event.target).data('cellid');
     const { selected } = this.state;
     const currentValue = selected[cellId];
-    const selectedDays = _.extend({}, selected, { [cellId]: !currentValue });
-    this.setState({ selected: selectedDays });
+    var selectedDays = {};
+    if (this.props.isPublished && !this.props.isRecurring ) {
+       selectedDays = { [cellId]: !currentValue };
+       this.setState({ selected: selectedDays });
+     } else {
+       selectedDays = _.extend({}, selected, { [cellId]: !currentValue });
+       this.setState({ selected: selectedDays });
+    }
     const shiftDaysSelected = {
       shiftDaysSelected: selectedDays
     };

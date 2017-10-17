@@ -19,8 +19,10 @@ import NumberOfTeamMembers from './NumberOfTeamMembers';
 import UnpaidBreakInMinutes from './UnpaidBreakInMinutes';
 import StartToEndTimePicker from './StartToEndTimePicker';
 import StartToEndDatePicker from './StartToEndDatePicker';
-
+import ShiftHistoryDrawerContainer from '../../../Scheduling/ShiftWeekTable/ShiftEdit/ShiftHistoryDrawerContainer';
+import RecurringShiftSelect from './recurringShiftSelect';
 import './select.css';
+var rp = require('request-promise');
 
 const initialState = {
   shift: {
@@ -35,9 +37,12 @@ const initialState = {
     unpaidBreakInMinutes: 0,
     tags: [],
     tagOptions: [],
-    duration: { hours: 0, minutes: 0 }
+    duration: { hours: 0, minutes: 0 },
+    phoneTree: [],
+    recurringEdit: false
   },
   shiftErrors: {},
+  shiftHistoryDrawer: false,
   brandId: localStorage.getItem('brandId') || '',
   corporationId: localStorage.getItem('corporationId') || '',
   workplaceId: localStorage.getItem('workplaceId') || ''
@@ -91,18 +96,20 @@ class DrawerHelper extends Component {
         shift.teamMembers = shift.workersRequestedNum && times(shift.workersRequestedNum, () => unassignedTeamMember);
       }
       shift.recurringShift = shift.recurringShiftId && 'weekly' || 'none';
+      shift.recurringEdit = !!props.recurringEdit
       if ([null, undefined, ''].indexOf(shift.unpaidBreakTime) !== -1) {
         shift.unpaidBreakInMinutes = 0;
       } else {
         shift.unpaidBreakInMinutes = shift.unpaidBreakTime || 0;
       }
+      shift.weekPublishedId = this.props.weekPublishedId || '';
     }
     this.state = {
       ...initialState,
       shift,
       isEdit: !!shift.id,
       weekStart: props.weekStart,
-      users: props.users,
+      users: props.users
     };
   }
 
@@ -111,7 +118,8 @@ class DrawerHelper extends Component {
   }
 
   componentDidMount() {
-    this.getPositions();
+    this.getWorkplaces();
+    this.getWorkplacePositions();
     this.filterManagers(this.state.shift.workplaceId);
   }
 
@@ -171,7 +179,13 @@ class DrawerHelper extends Component {
     }
   }
 
-  getPositions = (workplaceId = this.state.shift.workplaceId) => {
+  getWorkplaces = () => {
+    dataHelper.getCurrentWorkplaces()
+      .then(workplaces => this.setState({ workplaces }))
+      .catch(err => console.error(err));
+  };
+
+  getWorkplacePositions = (workplaceId = this.state.shift.workplaceId) => {
     if (workplaceId) {
       CreateShiftHelper.getRelevantPositions(workplaceId)
         .then((positions) => this.setState({ positions }))
@@ -179,13 +193,21 @@ class DrawerHelper extends Component {
     }
   };
 
+  getAllPositionsForUser = (userId) => {
+    return CreateShiftHelper.getAllPositionsForUser(userId)
+      .then(userPositions => userPositions)
+      .catch(err => console.error(err));
+  };
+
   handleChange = (event) => {
     const { shift } = this.state;
     const { name, value } = event.target;
     shift[name] = value;
-    if (name === 'tags') shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
+    if (name === 'tags') {
+      shift.tagOptions = shift.tags.map((text) => ({ text, value: text, key: text }));
+    }
     if (name === 'workplaceId') {
-      this.getPositions(value);
+      this.getWorkplacePositions(value);
       this.filterManagers(value);
     }
     if (name === 'positionId') {
@@ -217,7 +239,7 @@ class DrawerHelper extends Component {
   };
 
   handleNowSelect = () => {
-    this.setState({ selectedDate: moment().format('MM-DD-YYYY') });
+    this.setState(state => ({ selectedDate: moment().format('MM-DD-YYYY'), shift: { ...state.shift, recurringShift: 'none' } }));
   };
 
   handleShiftSubmit = (shift) => {
@@ -236,6 +258,7 @@ class DrawerHelper extends Component {
   };
 
   updateFormState = (dataValue) => {
+
     let selectedDate = this.state.selectedDate;
     if (dataValue.unpaidBreakInMinutes) {
       const hours = Math.floor(dataValue.unpaidBreakInMinutes / 60);
@@ -256,6 +279,7 @@ class DrawerHelper extends Component {
         };
       }
     }
+
     if (dataValue.shiftDaysSelected) selectedDate = '';
     const shift = Object.assign(this.state.shift, dataValue);
     this.setState({ shift, selectedDate });
@@ -263,11 +287,67 @@ class DrawerHelper extends Component {
   };
 
   closeShiftDrawer = () => {
-    const { closeDrawer } = this.props;
-    this.setState({ ...initialState, isShiftInvalid: true }, () => {
-      if (closeDrawer) closeDrawer();
+    const { closeDrawer } = this.props; 
+    
+    this.setState({ ...initialState, isShiftInvalid: true }, () => { 
+       if (closeDrawer) closeDrawer();
     });
   };
+
+  phoneTreeCallBack = (phoneTree) => {
+        this.setState((state) => ({ shift: { ...state.shift, phoneTree: phoneTree}}));
+  };
+
+  openShiftHistory = () => {
+    // will need the position id, workplace id , 
+    //number of workers needed, workers assigned (in order to make the difference, 
+    //the unpaid time and of course the start/end in order to open the shift drawer
+    //will be a request to server 
+    const { shift } = this.state
+
+    let day = Object.keys(shift.shiftDaysSelected)[0]
+    console.log(day)
+    const shiftDay = moment.utc(day, 'MM-DD-YYYY');
+    console.log(shiftDay)
+
+    const shiftDate = shiftDay.date();
+    const shiftMonth = shiftDay.month();
+    const shiftYear = shiftDay.year();
+
+    var startTime = moment(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    var endTime = moment(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+
+    console.log(startTime)
+    console.log(endTime)
+
+    const _this = this
+    var uri = 'http://localhost:8080/api/phoneTreeList'
+        console.log(this.props.weekPublishedId)
+        var options = {
+            uri: uri,
+            method: 'POST',
+            json: {         
+                  "positionId": shift.positionId,
+                  "workplaceId": shift.workplaceId,
+                  "workerNumCount": String(shift.numberOfTeamMembers), 
+                  "unpaidBreakTime": String(shift.unpaidBreakInMinutes),
+                  "startTime": startTime.format('YYYY-MM-DD HH:mm:ss') + "+00",
+                  "endTime": endTime.format('YYYY-MM-DD HH:mm:ss') + "+00"
+              }
+         };
+         rp(options)
+          .then(function(response) {
+              console.log(response)
+             _this.setState((state) => ({ shift: { ...state.shift, phoneTree: response}}))
+             _this.setState({shiftHistoryDrawer: true}) 
+          }).catch((error) => {
+            console.log('there was an error sending the query', error);
+          }); 
+  };
+
+  handleNewShiftDrawerClose = () => {
+    this.setState({shiftHistoryDrawer: false})
+  }
 
   borderColor = status => {
     if (status === 'accepted') return 'green';
@@ -283,18 +363,27 @@ class DrawerHelper extends Component {
   };
 
   setTeamMember = (user, index) => {
-    const { teamMembers } = this.state.shift;
+    const { teamMembers, positionId } = this.state.shift;
     if (user.id) {
-      teamMembers[index] = {
-        ...teamMembers[index],
-        ...user,
-        content: '',
-        status: 'accepted'
-      }
+      this.getAllPositionsForUser(user.id).then((userPositions) => {
+        const isPositionAssigned = find(userPositions, { id: positionId });
+        if (isPositionAssigned) {
+          teamMembers[index] = {
+            ...teamMembers[index],
+            ...user,
+            content: '',
+            status: 'accepted'
+          };
+          this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
+        } else {
+          // TODO : Show popup to user for notifying that the user does not have relevent positions in the profile.
+          console.log('// TODO : Show popup to user for notifying that the user does not have relevent positions in the profile.');
+        }
+      });
     } else {
       teamMembers[index] = { ...unassignedTeamMember };
+      this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
     }
-    this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
   };
 
   validateShift = (shift) => {
@@ -303,7 +392,13 @@ class DrawerHelper extends Component {
     if (!shift.brandId) shiftErrors['brandId'] = true;
     if (!shift.corporationId) shiftErrors['corporationId'] = true;
     if (!shift.positionId) shiftErrors['positionId'] = true;
-    if (!shift.recurringShift) shiftErrors['recurringShift'] = true;
+    if (!shift.recurringShift && !this.state.isEdit) shiftErrors['recurringShift'] = true;
+    if (shift.recurringShift && shift.recurringShift.toLowerCase() === 'weekly') {
+      if ((this.state.isEdit && shift.recurringEdit) || !this.state.isEdit){
+        if (!shift.startDate) shiftErrors['recurringShiftStartDate'] = true;
+        if (shift.endDate === undefined) shiftErrors['recurringShiftEndDate'] = true;
+      }
+    }
     if (!shift.startTime) shiftErrors['startTime'] = true;
     if (!shift.endTime) shiftErrors['endTime'] = true;
     if (!shift.numberOfTeamMembers) shiftErrors['NumberOfTeamMembers'] = true;
@@ -317,12 +412,13 @@ class DrawerHelper extends Component {
         }
       }
     }
+    console.log(shiftErrors)
     this.setState({ isShiftInvalid: Object.keys(shiftErrors).length });
   };
 
   handleWorkplaceChange = (e) => {
-      this.setState((state) => ({ shift: { ...state.shift, workplaceId: e.workplace}}));
-      this.getPositions(e.workplace);
+      this.setState((state) => ({ shift: { ...state.shift, workplaceId: e.workplace }}));
+      this.getWorkplacePositions(e.workplace);
   };
 
   render() {
@@ -372,8 +468,7 @@ class DrawerHelper extends Component {
 
     const isRecurring = shift.recurringShift !== 'none';
     const isTeamMembersFull = shift.teamMembers && shift.teamMembers.length >= shift.numberOfTeamMembers;
-    const addTeamMemberTooltip = (!isEdit && isRecurring && 'Creating recurring shifts and adding team members cannot be done at the same time')
-      || (isTeamMembersFull && `${shift.numberOfTeamMembers} Team member(s) are already assigned to shift, increase number of team members to add more.`);
+    const addTeamMemberTooltip = (isTeamMembersFull && `${shift.numberOfTeamMembers} Team member(s) are already assigned to shift, increase number of team members to add more.`);
 
     return (
       <Drawer
@@ -397,7 +492,7 @@ class DrawerHelper extends Component {
             </div>
 
             <div style={{ flex: 10, alignSelf: 'center' }}>
-              <span className="drawer-title">Add Hours</span>
+              <span className="drawer-title">{isEdit? "Edit Hours" : "Add Hours" }</span>
             </div>
 
             <div style={{ flex: 3, alignSelf: 'center' }}>
@@ -481,6 +576,7 @@ class DrawerHelper extends Component {
                     onChange={(_, data) => this.handleChange({ target: data })}
                     value={shift.recurringShift}
                     selectOnBlur={false}
+                    disabled={isEdit}
                     forceSelection={false}
                     options={recurringOptions} />
                 </Grid.Column>
@@ -510,11 +606,25 @@ class DrawerHelper extends Component {
                     {(shift.recurringShift !== 'none' && 'REPEAT THIS SHIFT EVERY:') || 'SHIFT START DATE'}
                   </label>
                   <ShiftDaySelector selectedDate={selectedDate} isRecurring={shift.recurringShift !== 'none'}
+                                    startDate={weekStart} formCallBack={this.updateFormState} isPublished={this.props.isPublished} />
+                </Grid.Column>
+              </Grid.Row>}
+
+              { shift.recurringEdit && <Grid.Row>
+                <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
+                  <Image src="/assets/Icons/shift-date.png" style={{ width: 28, height: 'auto' }}
+                         className="display-inline" />
+                </Grid.Column>
+                <Grid.Column width={14} style={{ marginLeft: -20 }}>
+                  <label className="text-uppercase blue-heading">
+                    {'THIS SHIFT REPEATS THIS EVERY:'}
+                  </label>
+                     <RecurringShiftSelect recurringShift={shift.recurringShiftId} selectedDate={selectedDate}
                                     startDate={weekStart} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>}
 
-              {shift.recurringShift === 'weekly' && <Grid.Row>
+              {((shift.recurringShift === 'weekly' && shift.recurringEdit) || (!isEdit && shift.recurringShift === 'weekly')) && <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
                   <Image src="/assets/Icons/startend-dates.png" style={{ width: 28, height: 'auto' }}
                          className="display-inline" />
@@ -560,11 +670,15 @@ class DrawerHelper extends Component {
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Assign Team Member</label>
-
+                  {this.props.isPublished && shift.recurringShift == 'weekly' && !isEdit && 
+                    <div> When adding recurring shifts to a published week, we will not start a phone tree on all created shifts. 
+                      You may individually edit these shifts after creation to start phone trees. </div>
+                     }
                   <div className="member-list"
-                       style={{ display: ((isRecurring && !isEdit) || (shift.teamMembers && !shift.teamMembers.length)) && 'none' || 'block' }}>
+                       style={{ display: (this.props.isPublished && shift.recurringShift != 'weekly') || (shift.teamMembers && !shift.teamMembers.length) && 'none' || 'block' }}>
+              
 
-                    {shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) =>
+                    { (this.props.isPublished && shift.recurringShift != 'weekly') ||  shift.teamMembers && shift.teamMembers.length && shift.teamMembers.map((tm, i) =>
                       <TeamMemberCard
                         avatarUrl={tm.avatarUrl}
                         firstName={tm.firstName}
@@ -577,19 +691,28 @@ class DrawerHelper extends Component {
                         id={i}
                         handleRemove={() => this.removeTeamMember(i)}
                         onSelectChange={this.setTeamMember}
-                      />)
+                      /> )
                     }
 
                   </div>
-
-                  {(isRecurring || isTeamMembersFull)
+                 
+            
+                  { (this.props.isPublished == true) && shift.recurringShift != 'weekly' && 
+                    <div>
+                    <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={this.openShiftHistory}
+                        color='red'>View Phone Tree
+                    </button>
+                      </div>
+                  }
+                  { (!this.props.isPublished || shift.recurringShift == 'weekly') &&
+                    <div>
+                  {( isTeamMembersFull)
                   && <Tooltip className="tooltip-message" text={addTeamMemberTooltip}>
-                    <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull} />
-                  </Tooltip> || <RaisedButton label="Add Team Member" disabled={isRecurring || isTeamMembersFull}
+                    <RaisedButton label="Add Team Member" disabled={ isTeamMembersFull} />
+                  </Tooltip> || <RaisedButton label="Add Team Member" disabled={isTeamMembersFull}
                                               onClick={this.handleAddTeamMember} />}
-
-
-
+                                              </div>
+                      }
                 </Grid.Column>
               </Grid.Row>
 
@@ -609,8 +732,7 @@ class DrawerHelper extends Component {
                       multiple
                       allowAdditions
                       additionLabel='Add New Tag: '
-                      value={shift.currentValue}
-                      onAddItem={this.handleAddition}
+                      value={shift.tags}
                       name="tags"
                       onChange={(_, data) => this.handleChange({ target: data })}/>
                 </Grid.Column>
@@ -632,13 +754,20 @@ class DrawerHelper extends Component {
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
-                <CircleButton disabled={isShiftInvalid} handleClick={() => this.handleShiftSubmit(shift)}
-                              type="blue" title="Add Hours" />
+                <CircleButton disabled={isShiftInvalid} handleClick={() => this.handleShiftSubmit(this.state.shift)}
+                              type="blue" title={isEdit? "Edit Hours" :"Add Hours"} />
               </div>
             </div>
           </div>
         </div>
-
+        <ShiftHistoryDrawerContainer
+          isSorted={true}
+          shift={this.state.shift}
+          users={this.state.shift.phoneTree}
+          open={this.state.shiftHistoryDrawer}
+          handleBack={this.handleNewShiftDrawerClose}
+          handleHistory={this.handleNewShiftDrawerClose} 
+          phoneTree={this.phoneTreeCallBack}/>
       </Drawer>
     );
   }

@@ -109,7 +109,8 @@ class DrawerHelper extends Component {
       if ([null, undefined, ''].indexOf(shift.unpaidBreakTime) !== -1) {
         shift.unpaidBreakInMinutes = 0;
       } else {
-        shift.unpaidBreakInMinutes = shift.unpaidBreakTime || 0;
+        const [hours, mins] = shift.unpaidBreakTime.split(':').map(val => parseInt(val));
+        shift.unpaidBreakInMinutes = (hours * 60 + mins) || 0;
       }
       shift.weekPublishedId = this.props.weekPublishedId || '';
     }
@@ -123,7 +124,9 @@ class DrawerHelper extends Component {
   }
 
   componentWillMount() {
-    this.validateShift(this.state.shift);
+    const { shift } = this.state;
+    this.validateShift(shift);
+    if (shift.recurringShiftId) this.getRecurringShiftDetails(shift.recurringShiftId);
   }
 
   componentDidMount() {
@@ -208,6 +211,19 @@ class DrawerHelper extends Component {
     if (workplaceId) {
       CreateShiftHelper.getRelevantPositions(workplaceId)
         .then((positions) => this.setState({ positions }))
+        .catch(err => console.error(err));
+    }
+  };
+
+  getRecurringShiftDetails = (recurringShiftId) => {
+    if (recurringShiftId) {
+      CreateShiftHelper.getRecurringShiftById(recurringShiftId)
+        .then((recurringShift) => {
+          const { shift } = this.state;
+          shift.startDate = moment(recurringShift.startDate);
+          shift.endDate = recurringShift.expiration && moment(recurringShift.expiration) || null;
+          this.setState({ shift });
+        })
         .catch(err => console.error(err));
     }
   };
@@ -688,7 +704,7 @@ class DrawerHelper extends Component {
                          className="display-inline" />
                 </Grid.Column>
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
-                  <StartToEndDatePicker startDate={weekStart} formCallBack={this.updateFormState} />
+                  <StartToEndDatePicker isEdit={isEdit} startDate={shift.startDate || weekStart} endDate={shift.endDate} formCallBack={this.updateFormState} />
                 </Grid.Column>
               </Grid.Row>}
 

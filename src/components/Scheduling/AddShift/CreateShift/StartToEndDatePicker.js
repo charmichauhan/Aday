@@ -10,7 +10,7 @@ export default class StartToEndTimePicker extends Component {
     super(props);
     this.state = {
       startDate: moment(props.startDate),
-      endDate: moment(props.endDate),
+      endDate: props.endDate && moment(props.endDate) || null,
       startDateSelector: false,
       endDateSelector: false
     };
@@ -20,6 +20,20 @@ export default class StartToEndTimePicker extends Component {
     const { formCallBack } = this.props;
     const { startDate, endDate } = this.state;
     formCallBack({ startDate, endDate });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let updates = {};
+    updates.startDate = nextProps.startDate && moment(nextProps.startDate);
+    updates.endDate = nextProps.endDate && moment(nextProps.endDate) || null;
+    if (nextProps.isEdit) {
+      updates = {
+        ...updates,
+        startDateValue: updates.startDate ? moment(nextProps.startDate).format('MMM DD, YYYY') : '',
+        endDateValue: updates.endDate ? moment(updates.endDate).format('MMM DD, YYYY') : 'Never'
+      };
+    }
+    this.setState(updates);
   }
 
   toggleStartSelector = () => {

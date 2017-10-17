@@ -587,14 +587,14 @@ class EventPopupComponent extends Component {
     let h = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('HH');
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
-      { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
+      { type: 'red', title: 'Delete Shift', handleClick: this.deleteSingle, image: '/images/modal/close.png' }];
     let deleteShiftRenderAction = [{
       type: 'red',
       title: 'All Following',
       handleClick: this.deleteRecurringShift,
       image: '/images/modal/close.png'
     },
-      { type: 'red', title: 'Only this', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
+      { type: 'red', title: 'Only this', handleClick: this.deleteSingle, image: '/images/modal/close.png' }];
     if (data.workersAssigned == null) {
       data.workersAssigned = [];
     }

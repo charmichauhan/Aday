@@ -29,6 +29,7 @@ export default class EditShiftDrawerContainer extends Component {
 				      handleAdvance={this.props.handleAdvance}
 				      closeDrawer={this.props.closeDrawer} 
 				      isPublished={published}
+				      weekPublishedId={this.props.weekPublishedId}
 					/>
 		        )
 			} else {
@@ -43,7 +44,8 @@ export default class EditShiftDrawerContainer extends Component {
 				      handleSubmit={this.props.handleSubmit}
 				      handleAdvance={this.props.handleAdvance}
 				      closeDrawer={this.props.closeDrawer} 
-				      isPublished={published} /> 
+				      isPublished={published}
+				      weekPublishedId={this.props.weekPublishedId} /> 
 				)
 			} 
 		} else {

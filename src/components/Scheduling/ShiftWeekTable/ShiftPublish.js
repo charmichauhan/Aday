@@ -396,6 +396,7 @@ class ShiftPublishComponent extends Component {
   };
 
   saveRecurringShift(dayNames, days, shift, weekPublishedId, callback){
+    console.log("saveRecurringShift")
     this.props.client.query({
       query: findRecurring,
       variables: { brandId: localStorage.getItem('brandId'), workplaceId: shift.workplaceId }
@@ -410,6 +411,8 @@ class ShiftPublishComponent extends Component {
           brandId: localStorage.getItem("brandId"),
           lastWeekApplied: moment().startOf('week').add(8, 'weeks').format()
         };
+        console.log("PAYLIAD")
+        console.log(payload)
         this.props.createRecurring({
           variables: {
             data: {
@@ -426,7 +429,7 @@ class ShiftPublishComponent extends Component {
   createRecurringShift(shiftValue, recurringId, dayNames, days, weekPublishedId, callback){
     const shift = cloneDeep(shiftValue);
     let id = uuidv4();
-
+    console.log("createRecurringShift")
     const payload = {
       id,
       days,
@@ -641,6 +644,7 @@ class ShiftPublishComponent extends Component {
           handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeDrawerAndModal}
           isPublished={is_publish} 
+          weekPublishedId={this.props.publishId}
           isEdit={false} />
         <CreateShiftAdvanceDrawer
           width={styles.drawer.width}

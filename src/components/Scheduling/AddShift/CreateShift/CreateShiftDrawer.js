@@ -22,6 +22,7 @@ import StartToEndDatePicker from './StartToEndDatePicker';
 import ShiftHistoryDrawerContainer from '../../../Scheduling/ShiftWeekTable/ShiftEdit/ShiftHistoryDrawerContainer';
 import RecurringShiftSelect from './recurringShiftSelect';
 import './select.css';
+var rp = require('request-promise');
 
 const initialState = {
   shift: {
@@ -301,13 +302,13 @@ class DrawerHelper extends Component {
     //number of workers needed, workers assigned (in order to make the difference, 
     //the unpaid time and of course the start/end in order to open the shift drawer
     //will be a request to server 
-    
-    /*
-    let day = Object.keys(shift.shiftDaysSelected)[0]
+    const { shift } = this.state
+
+    let day = Object.keys(shift.shiftDaysSelected)
     day = moment(day).format('YYYY/MM/DD')
 
     var uri = 'http://localhost:8080/api/phoneTreeList'
-
+        console.log(this.props.weekPublishedId)
         var options = {
             uri: uri,
             method: 'POST',
@@ -318,21 +319,21 @@ class DrawerHelper extends Component {
                   "workplaceId": shift.workplaceId,
                   "workerNumCount": shift.numberOfTeamMembers, 
                   "unpaidBreakTime": shift.unpaidBreakInMinutes,
-                  "startTime": shift.startTime, 
-                  "endTime": shift.endTime,
+                  "startTime": moment(shift.startTime).format('HH:MM'), 
+                  "endTime": moment(shift.endTime).format('HH:MM'),
                   "day": day,
               }
          };
          rp(options)
           .then(function(response) {
-              //that.setState({redirect:true})
+              console.log(response)
+             this.setState((state) => ({ shift: { ...state.shift, phoneTree: response}}))
+             this.setState({shiftHistoryDrawer: true})
           }).catch((error) => {
             console.log('there was an error sending the query', error);
           });   
-    */
     
-    this.setState((state) => ({ shift: { ...state.shift, phoneTree: ['8e9355c9-d45f-453a-a1cf-1141ca22929e', '773bc778-7022-11e7-8cf7-a6006ad3dba0']}}))
-    this.setState({shiftHistoryDrawer: true})
+   
   };
 
   handleNewShiftDrawerClose = () => {
@@ -594,7 +595,7 @@ class DrawerHelper extends Component {
                     {(shift.recurringShift !== 'none' && 'REPEAT THIS SHIFT EVERY:') || 'SHIFT START DATE'}
                   </label>
                   <ShiftDaySelector selectedDate={selectedDate} isRecurring={shift.recurringShift !== 'none'}
-                                    startDate={weekStart} formCallBack={this.updateFormState} />
+                                    startDate={weekStart} formCallBack={this.updateFormState} isPublished={this.props.isPublished} />
                 </Grid.Column>
               </Grid.Row>}
 

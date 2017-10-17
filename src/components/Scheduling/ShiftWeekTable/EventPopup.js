@@ -16,7 +16,7 @@ import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer
 import DeleteRecuringPopUp from './DeleteRecuringPopUp';
 import '../style.css';
 import './shiftWeekTable.css';
- var rp = require('request-promise');
+var rp = require('request-promise');
 const uuidv4 = require('uuid/v4');
 
 const styles = {
@@ -63,8 +63,7 @@ class EventPopupComponent extends Component {
     });
   };
 
-  deleteShift = () => {
-    let id = this.props.data.id;
+  deleteShift = (id) => {
     let data = this.props.data
     let that = this;
     that.props.deleteShiftById(uuidv4(), id)
@@ -74,9 +73,14 @@ class EventPopupComponent extends Component {
       console.log('there was an error sending the query', error);
     });
     that.setState({ deleteModalPopped: false });
+  };
+  // deleteRecurringShiftById
+  deleteSingle = () => {
+    this.deleteShift(this.props.data.id)
 
     this.props.data.workersAssigned.map(function(user, i){
       var uri = 'http://localhost:8080/api/kronosApi'
+      let data = this.props.data
 
         var options = {
             uri: uri,
@@ -99,20 +103,14 @@ class EventPopupComponent extends Component {
             console.log('there was an error sending the query', error);
           });   
     })
-  };
-  // deleteRecurringShiftById
+  }
 
   deleteRecurringShift = () => {
     let {id} = this.props.data, {startTime} = this.props.data;
     let {recurringShiftId} = this.props.data;
     let that = this;
-
-    that.props.deleteShiftById(uuidv4(), id)
-      .then(({ data }) => {
-        console.log('Delete Data', data);
-      }).catch((error) => {
-      console.log('there was an error sending the query', error);
-    });
+    const newEdges = []
+    const oldEdges = []
     that.setState({ deleteModalPopped: false });
 
     this.props.updateRecurringShiftById({
@@ -124,13 +122,15 @@ class EventPopupComponent extends Component {
         },
        updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-          let newEdges = []
+
           previousQueryResult.allShifts.edges.map((value) => {
             if (value.node.recurringShiftId != recurringShiftId) {
               newEdges.push(value);
+            } else {
+              oldEdges.push(value.node.id)
             }
           })
-          previousQueryResult.allShifts.edges = newEdges
+
           return {
             allShifts: previousQueryResult.allShifts
           };
@@ -138,7 +138,9 @@ class EventPopupComponent extends Component {
       },
     }).then(({ data }) => {
         console.log('Updated', data);
-        that.deleteShift();
+        oldEdges.map(function(id, index){
+          that.deleteShift(id);
+        })
       }).catch((error) => {
       console.log('there was an error sending the query deleteRecurringShift', error);
     });
@@ -151,7 +153,6 @@ class EventPopupComponent extends Component {
           json: {         
                 "sec": "QDVPZJk54364gwnviz921",
                 "actionType": "deleteRecurring",
-                "testing": true,
                 "recurring_shift_id": recurringShiftId,
                 "date": moment(startTime).startOf('day').format(),
                 "edit": false
@@ -557,9 +558,9 @@ class EventPopupComponent extends Component {
     let h = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('HH');
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
-      { type: 'red', title: 'Delete Shift', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
-    let deleteShiftRenderAction = [{ type: 'red', title: 'All Following',   handleClick: this.deleteRecurringShift, image: '/images/modal/close.png' },
-      { type: 'red', title: 'Only this', handleClick: this.deleteShift, image: '/images/modal/close.png' }];
+      { type: 'red', title: 'Delete Shift', handleClick: this.deleteSingle, image: '/images/modal/close.png' }];
+    let deleteShiftRenderAction = [{ type: 'red', title: 'All Following', handleClick: this.deleteRecurringShift, image: '/images/modal/close.png' },
+      { type: 'red', title: 'Only this', handleClick: this.deleteSingle, image: '/images/modal/close.png' }];
     if (data.workersAssigned == null) {
       data.workersAssigned = [];
     }

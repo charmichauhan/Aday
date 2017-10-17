@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Menu, Image } from 'semantic-ui-react';
 import { NavLink, withRouter } from 'react-router-dom';
 import { gql, graphql, compose } from 'react-apollo';
+var Halogen = require('halogen');
 
 import './nav.css';
 

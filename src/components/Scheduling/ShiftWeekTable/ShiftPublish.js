@@ -22,7 +22,8 @@ import {
   updateWorkplacePublishedIdMutation,
   findRecurring,
   createRecurring,
-  createRecurringShift
+  createRecurringShift,
+  createCallUserPositionMutation
 } from './ShiftPublish.graphql';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
 var rp = require('request-promise');
@@ -501,6 +502,7 @@ class ShiftPublishComponent extends Component {
       },
     }).then(({ data }) => {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
+      let _this = this;
       let is_publish = this.props.isPublish;
         if (is_publish == 'none'){
           is_publish = false
@@ -508,15 +510,29 @@ class ShiftPublishComponent extends Component {
 
         if (is_publish == true){
            if (shift.phoneTree.length > 1) {
-            var callURI = 'http://localhost:8080/api/callEmployee/'
 
-              const callUsers = {}
-              console.log(shift.phoneTree)
-              shift.phoneTree.map(function(userId, i){
-                console.log(userId)
-                  callUsers[i] = userId
-              })
-              console.log(JSON.stringify(callUsers))
+            const count = 1
+            const length = shift.phoneTree.length
+            shift.phoneTree.map(function(userId, index){
+
+              const positionPayload = {
+                id: uuidv4(),
+                shiftId: newId,
+                position: index,
+                userId: userId,
+                called: false
+              };
+
+            _this.props.createCallUserPosition({
+              variables: {
+                data: {
+                  callUserPosition: positionPayload
+                }
+              }
+          }).then(({ data }) => {
+          count += 1;
+          if (count == length){
+            var callURI = 'http://localhost:8080/api/callEmployee/'
                   var options = {
                     uri: callURI,
                     method: 'POST',
@@ -533,7 +549,6 @@ class ShiftPublishComponent extends Component {
                         "shiftRole": shift.positionId,
                         "weekPublishedId": shift.weekPublishedId,
                         "shiftId": newId,
-                        "userids": shift.phoneTree
                       }
                     }
                   };
@@ -544,6 +559,10 @@ class ShiftPublishComponent extends Component {
                     }).catch((error) => {
                     console.log('there was an error sending the query', error);
                   });
+              }
+            })
+
+            })
           }
         }
       // SHOULD CREATE MARKETS HERE FOR ANY ASSIGNED WORKERS
@@ -678,6 +697,9 @@ const ShiftPublish = compose(
   graphql(createWorkplacePublishedMutation, {
     name: 'createWorkplacePublishedMutation'
   }),
+  graphql( createCallUserPositionMutation, {
+    name: 'createCallUserPosition'
+  }), 
   graphql(updateWorkplacePublishedIdMutation, {
     name: 'updateWorkplacePublishedIdMutation'
   }),

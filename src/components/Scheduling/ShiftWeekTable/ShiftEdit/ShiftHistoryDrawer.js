@@ -127,7 +127,8 @@ class ShiftHistoryDrawerComponent extends Component {
     if (this.state.filteredData.length < 1 || this.props.allEmployees.loading !== nextProps.allEmployees.loading){
       console.log(nextProps.allEmployees)
       const allUsers = nextProps.allEmployees;
-      var userData = this.props.users.map(function (userId, i) {
+      const usersCropped = this.props.users.slice(1, 20);
+      var userData = usersCropped.map(function (userId, i) {
         console.log(userId)
         let foundWorker = find(allUsers.allEmployees.edges, (user) => user.node.userId === userId);
         console.log(foundWorker)

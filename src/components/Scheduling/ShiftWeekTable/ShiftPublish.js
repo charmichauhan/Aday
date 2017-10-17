@@ -8,9 +8,10 @@ import localizer from 'react-big-calendar/lib/localizer';
 import uuidv4 from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
 
-import CreateShiftButton from '../../Scheduling/AddShift/CreateShiftButton';
-import CreateShiftDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftDrawerContainer';
-import CreateShiftAdvanceDrawer from '../../Scheduling/AddShift/CreateShift/CreateShiftAdvanceDrawer';
+import CreateShiftButton from '../AddShift/CreateShiftButton';
+import CreateShiftDrawer from '../AddShift/CreateShift/CreateShiftDrawerContainer';
+import CreateShiftHelper from '../AddShift/CreateShift/CreateShiftHelper';
+import CreateShiftAdvanceDrawer from '../AddShift/CreateShift/CreateShiftAdvanceDrawer';
 import Modal from '../../helpers/Modal';
 import AddAsTemplateModal from '../../helpers/AddAsTemplateModal';
 import dataHelper from '../../helpers/common/dataHelper';
@@ -40,7 +41,6 @@ class ShiftPublishComponent extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       publishModalPopped: false,
       addTemplateModalOpen: false,
@@ -85,7 +85,7 @@ class ShiftPublishComponent extends Component {
   };
 
   viewRecurring = () => {
-     this.setState({ redirect: true })
+    this.setState({ redirect: true })
   };
 
 
@@ -135,9 +135,9 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
-    const {publishId} = this.props
+    const { publishId } = this.props
     const { date } = this.props;
-    if (localStorage.getItem('workplaceId') != "") {
+    if (localStorage.getItem('workplaceId') != '') {
       this.props.createWorkplacePublishedMutation({
         variables: {
           workplacePublished: {
@@ -156,8 +156,11 @@ class ShiftPublishComponent extends Component {
               if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
                 || (moment(date).isSame(moment(value.start), 'day'))
                 || (moment(date).isSame(moment(value.end), 'day'))
-              ){
-                value.workplacePublishedsByWeekPublishedId.edges = [...value.workplacePublishedsByWeekPublishedId.edges, {node:workplacePublished, __typename: "WorkplacePublishedsEdge"}];
+              ) {
+                value.workplacePublishedsByWeekPublishedId.edges = [...value.workplacePublishedsByWeekPublishedId.edges, {
+                  node: workplacePublished,
+                  __typename: 'WorkplacePublishedsEdge'
+                }];
               }
             });
             return {
@@ -187,10 +190,10 @@ class ShiftPublishComponent extends Component {
                   });
 
       }).catch(err => console.log('An error occurred.', err));
-    }else{
+    } else {
       this.props.updateWeekPublishedNameMutation({
         variables: { id: this.props.publishId, date: moment().format() }
-      }).then((res)=>{
+      }).then((res) => {
         this.modalClose();
         var uri = 'http://localhost:8080/api/kronosApi'
 
@@ -285,12 +288,12 @@ class ShiftPublishComponent extends Component {
     // else create all shifts with existing week published
     else {
       console.log(shift)
-      this.submitShifts( dayNames, days, shift, publishId );
+      this.submitShifts(dayNames, days, shift, publishId);
     }
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
   };
 
-  submitShifts = ( dayNames, days, shift, publishId ) => {
+  submitShifts = (dayNames, days, shift, publishId) => {
     let shiftRecure = shift;
 
     if(shift.recurringShift!=="none"){
@@ -347,7 +350,7 @@ class ShiftPublishComponent extends Component {
             }
           */
 
-         
+
       }
   };
 
@@ -388,7 +391,6 @@ class ShiftPublishComponent extends Component {
     console.log("createRecurringShift")
     const payload = {
       id,
-      days,
       recurringId,
       positionId: shift.positionId,
       workerCount: shift.numberOfTeamMembers,
@@ -400,7 +402,6 @@ class ShiftPublishComponent extends Component {
       expiration: moment(shift.endDate).format(),
       startDate: moment(shift.startDate).format(),
       days: dayNames,
-      recurringId: recurringId,
       isTraineeShift: false,
       expired: false
     };
@@ -501,6 +502,8 @@ class ShiftPublishComponent extends Component {
       },
     }).then(({ data }) => {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
+      CreateShiftHelper.createShiftTags(shift.tags, data.createShift.shift.id)
+        .then(() => console.log('Shift tags have been created.'));
       let is_publish = this.props.isPublish;
         if (is_publish == 'none'){
           is_publish = false
@@ -558,7 +561,7 @@ class ShiftPublishComponent extends Component {
 
     let is_publish = this.props.isPublish;
     let publishId = this.props.publishId;
-    let   message="";
+    let message = '';
     const startDate = this.props.date;
 
     const { notify, notificationMessage, notificationType } = this.state;
@@ -581,10 +584,10 @@ class ShiftPublishComponent extends Component {
       )
     }
 
-    if(this.state.publishModalPopped && localStorage.getItem('workplaceId') != ""){
-      message="Are you sure that you want to publish the week's schedule for this workplace?"
-    }else {
-      message="Are you sure that you want to publish the week's schedule?"
+    if (this.state.publishModalPopped && localStorage.getItem('workplaceId') != '') {
+      message = 'Are you sure that you want to publish the week\'s schedule for this workplace?'
+    } else {
+      message = 'Are you sure that you want to publish the week\'s schedule?'
     }
     let { date } = this.props;
     let { start } = ShiftPublish.range(date, this.props);
@@ -599,12 +602,12 @@ class ShiftPublishComponent extends Component {
         <div className="col-md-12">
           <div className="col-sm-offset-3 col-sm-5 rectangle">
             { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
-             <div>
+              <div>
                 <img src={statusImg} />
                 <p className="col-sm-offset-2">
-                    {status}
+                  {status}
                 </p>
-             </div> }
+              </div> }
           </div>
         </div>
         <div className="btn-action">
@@ -644,7 +647,7 @@ class ShiftPublishComponent extends Component {
           handleSubmit={this.handleCreateSubmit}
           handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeDrawerAndModal}
-          isPublished={is_publish} 
+          isPublished={is_publish}
           weekPublishedId={this.props.publishId}
           isEdit={false} />
         <CreateShiftAdvanceDrawer
@@ -666,7 +669,7 @@ ShiftPublishComponent.range = (date, { culture }) => {
 };
 
 const ShiftPublish = compose(
-  graphql(updateWeekPublishedNameMutation,{
+  graphql(updateWeekPublishedNameMutation, {
     name: 'updateWeekPublishedNameMutation'
   }),
   graphql(createShiftMutation, {

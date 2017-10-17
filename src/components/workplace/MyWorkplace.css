@@ -20,7 +20,7 @@
 	border-radius: 5px;
 	min-height: 100px;
 	padding: 20px;
-	font-family: Lato;
+	font-family: 'Lato-Regular';
 	font-size: 16px;
 	box-shadow: 0.5px 0.5px 0.5px 0.5px #999;
 	display: flex;
@@ -96,7 +96,7 @@
 
 .workplace-listing-header {
 	color: #0022A1;
-	font-family: "Roboto Condensed";
+	font-family: 'RobotoCondensed-Regular';
 	font-size: 22px;
 	line-height: 24px;
 	font-weight: bold;
@@ -106,7 +106,7 @@
 .workplace-listing-subheader {;
 	opacity: 0.6;
 	color: #4A4A4A;
-	font-family: Lato;
+	font-family: 'Lato-Regular';
 	font-size: 16px;
 	line-height: 18px;
 	margin: 2px;
@@ -147,7 +147,7 @@
 	height: 30px;
     width: 361px;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 30px;
     font-weight: 900;
     line-height: 30px;
@@ -157,7 +157,7 @@
 	height: 28px;
     width: 361px;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 28px;
     line-height: 30px;
 	font-weight: 100;
@@ -167,7 +167,7 @@
     height: 30px;
     width: 700px;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 20px;
     line-height: 60px;
 	font-weight: 400;
@@ -179,7 +179,7 @@
     height: 30px;
     width: 700px;
     color: #0022A1;
-    font-family: "Lato";
+    font-family: 'Lato-Regular';
     font-size: 14px;
     line-height: 30px;
 	margin-top: 10px;
@@ -189,7 +189,7 @@
     height: 42px;
     width: 400px;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 24px;
     line-height: 42px;
     text-align: center;
@@ -199,7 +199,6 @@
 .workplace-image {
 	height: auto;
 	width: 300px;
-
 }
 
 .workplace-listing-card {
@@ -218,7 +217,7 @@
 	height: 30px;
     width: 700px;
     color: #999999;
-    font-family: "Lato";
+    font-family: 'Lato-Regular';
     font-size: 14px;
     line-height: 16px;
 	margin-left: 10px;
@@ -236,7 +235,7 @@
 	border-radius: 5px;
 	min-height: 100px;
 	padding: 20px;
-	font-family: Lato;
+	font-family: 'Lato-Regular';
 	font-size: 16px;
 	box-shadow: 0.5px 0.5px 0.5px 0.5px #999;
 	display: flex;

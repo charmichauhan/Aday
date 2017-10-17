@@ -52,7 +52,7 @@
 
 .positions table td h6 {
   color: #4A4A4A;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 24px;
   line-height: 30px;
   margin: 0 auto;
@@ -60,13 +60,13 @@
 
 .positions table td p {
   color: #4A4A4A;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 14px;
 }
 
 .positions table td span {
   color: rgba(74, 74, 74, 0.75);
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 12px;
 }
 

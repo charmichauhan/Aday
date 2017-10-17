@@ -12,7 +12,7 @@ export default class ShiftDaySelector extends Component {
   };
 
   render() {
-    const { startDate, isRecurring, selectedDate } = this.props;
+    const { startDate, isRecurring, selectedDate, isPublished } = this.props;
     const tableSize = 7;
     return (
       <div className="day-selector">
@@ -22,6 +22,7 @@ export default class ShiftDaySelector extends Component {
           startDate={startDate}
           selectedDate={selectedDate}
           callBack={this.handleData}
+          isPublished={isPublished}
         />
       </div>
     );

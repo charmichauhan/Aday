@@ -562,6 +562,15 @@ i.chevron.up.icon, i.chevron.down.icon {
   margin-right: 0;
   display: table;
   padding: 0 10px;
+  width: 100%;
+}
+
+.ui.fitted.checkbox {
+  margin-bottom: 0;
+}
+
+.shift-history.content-row {
+  margin: 0 10px;
 }
 
 .shift-history.content-row .content .avatar {
@@ -596,7 +605,7 @@ i.chevron.up.icon, i.chevron.down.icon {
 }
 
 .shift-history.content-row .ui.grid .one.wide.column {
-  width: 4% !important;
+  width: 3.5% !important;
   padding: 0 !important;
 }
 
@@ -633,6 +642,21 @@ i.chevron.up.icon, i.chevron.down.icon {
   height: 25px;
 }
 
+.shift-history.content-row .wrapper-element.username .content {
+  text-overflow: ellipsis;
+  width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.shift-history.content-row .ui.grid .white-space { width: 2% !important; }
+
+.shift-history.content-row .ui.grid .wide.column.down-arrow { width: 4% !important; padding-right: 5px !important; }
+
+.content-row.shift-history .ui .checkbox input[type=checkbox]:checked+label::after {
+  content: '\E800';
+  font-family: Checkbox;
+}
 @keyframes anim {
   0% {
     transform: scaleY(0);

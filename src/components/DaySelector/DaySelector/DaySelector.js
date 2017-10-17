@@ -68,8 +68,14 @@ export default class DaySelector extends React.Component {
     const cellId = $(event.target).data('cellid');
     const { selected } = this.state;
     const currentValue = selected[cellId];
-    const selectedDays = _.extend({}, selected, { [cellId]: !currentValue });
-    this.setState({ selected: selectedDays });
+    var selectedDays = {};
+    if (this.props.isPublished && !this.props.isRecurring ) {
+       selectedDays = { [cellId]: !currentValue };
+       this.setState({ selected: selectedDays });
+     } else {
+       selectedDays = _.extend({}, selected, { [cellId]: !currentValue });
+       this.setState({ selected: selectedDays });
+    }
     const shiftDaysSelected = {
       shiftDaysSelected: selectedDays
     };

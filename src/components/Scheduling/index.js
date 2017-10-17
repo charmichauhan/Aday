@@ -57,7 +57,6 @@ class ScheduleComponent extends Component {
     }
 
   onNavigate = (start) => {
-    this.props.data.refetch();
     this.setState({date: start})
   };
 
@@ -218,7 +217,7 @@ class ScheduleComponent extends Component {
                    message="Are you sure that you want to delete this shift?"
                    action={publishModalOptions} closeAction={this.modalClose}/>
             <div>
-                <BigCalendar events={events}
+               <BigCalendar events={events}
                    culture='en-us'
                    startAccessor='startDate'
                    endAccessor='endDate'
@@ -233,7 +232,7 @@ class ScheduleComponent extends Component {
                      event: this.customEvent,
                      toolbar:CustomToolbar
                    }}
-                />
+                /> 
             </div>
         </div>
     );

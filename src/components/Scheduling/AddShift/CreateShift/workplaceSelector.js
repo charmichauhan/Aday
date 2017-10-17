@@ -1,80 +1,77 @@
-import React,{Component} from 'react';
+import React, { Component } from 'react';
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import '../styles.css';
 
-import {Dropdown,Loader} from 'semantic-ui-react';
+import { Dropdown, Loader } from 'semantic-ui-react';
 
-export class WorkplaceSelector extends Component{
-   static propTypes = {
+export class WorkplaceSelector extends Component {
+  static propTypes = {
     data: React.PropTypes.shape({
       loading: React.PropTypes.bool,
       error: React.PropTypes.object,
     }).isRequired,
-  }
+  };
 
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state={
-      workplaces:[],
-      workplace: this.props.workplace || ""
-    }
-    this.onWorkplaceChange=this.onWorkplaceChange.bind(this);
+    this.state = {
+      workplaces: [],
+      workplace: this.props.workplace || ''
+    };
   }
 
-  onWorkplaceChange(event, data){
-    this.setState({workplace:data.value});
-    this.props.formCallBack({workplace: data.value});
-  }
+  onWorkplaceChange = (event, data) => {
+    this.setState({ workplace: data.value });
+    this.props.formCallBack({ workplace: data.value });
+  };
 
-  render(){
+  render() {
 
     if (this.props.data.loading) {
       return (
-      <Loader active inline='centered' />
+        <Loader active inline='centered' />
       )
     }
 
     if (this.props.data.error) {
-      console.log(this.props.data.error)
+      console.log(this.props.data.error);
       return (<div>An unexpected error occurred</div>)
-    }else{
-      if(!this.state.workplaces.length){
+    } else {
+      if (!this.state.workplaces.length) {
         /// add positions into state parameter
 
-      let workplacesArray=this.props.data.allWorkplaces.nodes;
-      let workplaceId = localStorage.getItem("workplaceId");
+        let workplacesArray = this.props.data.allWorkplaces.nodes;
+        let workplaceId = localStorage.getItem('workplaceId');
 
-      if(this.props.overRideCurrent){
-        if (workplaceId != "") {
-          workplacesArray = workplacesArray.filter((w) => w.id == workplaceId);
+        if (this.props.overRideCurrent) {
+          if (workplaceId !== '') {
+            workplacesArray = workplacesArray.filter((w) => w.id === workplaceId);
+          }
         }
+
+        workplacesArray.forEach((workplace) => {
+          this.state.workplaces.push({
+            text: workplace.workplaceName,
+            value: workplace.id,
+            key: workplace.id
+          })
+        });
       }
-
-      workplacesArray.forEach(function(workplace,index) {
-        this.state.workplaces.push({
-          text:workplace.workplaceName,
-          value:workplace.id,
-          key:workplace.id
-        })
-      }, this);
-
-
-
-
-    }
     }
 
-    return(
+    return (
 
-    <div>
-    { !this.props.workplace && <Dropdown placeholder="Select Workplace" selection
-      options={this.state.workplaces} style={{ fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
+      <div>
+        { !this.props.workplace && <Dropdown placeholder="Select Workplace" selection
+                                             options={this.state.workplaces} style={{ fontColor: '#838890' }}
+                                             onChange={this.onWorkplaceChange} /> }
 
-    { this.props.workplace && <Dropdown defaultValue={this.props.workplace} selection
-      options={this.state.workplaces} style={{ fontColor: "#838890"}} onChange={this.onWorkplaceChange}  /> }
+        { this.props.workplace && <Dropdown defaultValue={this.props.workplace} selection
+                                            options={this.state.workplaces} style={{ fontColor: '#838890' }}
+                                            onChange={this.onWorkplaceChange} /> }
 
-    </div>
+      </div>
 
     );
   }
@@ -88,13 +85,15 @@ const getAllWorkplaces = gql`
         id
       }
     }
-}`
+}`;
 
-const GetWorkplaces = graphql(getAllWorkplaces , {
+const GetWorkplaces = graphql(getAllWorkplaces, {
   options: (ownProps) => ({
     variables: {
       brandId: localStorage.getItem('brandId'),
       corporationId: localStorage.getItem('corporationId')
     }
-  })})(WorkplaceSelector)
+  })
+})(WorkplaceSelector);
+
 export default GetWorkplaces

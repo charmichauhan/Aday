@@ -23,13 +23,13 @@ div.ui.fluid.selection.dropdown:hover, .shift-section .time-selector-wrapper .la
   margin-top: 10px;
   margin-bottom: 15px;
   font-size: 18px;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-weight: 500;
 }
 
 .performance-tagline p {
   color: #4A4A4A;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 18px;
   font-style: italic;
   font-weight: 300;
@@ -54,7 +54,7 @@ div.ui.fluid.selection.dropdown:hover, .shift-section .time-selector-wrapper .la
 
 .advanced-option-content {
   color: #4A4A4A;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 18px;
   font-weight: 300;
 }
@@ -71,7 +71,7 @@ div.ui.fluid.selection.dropdown:hover, .shift-section .time-selector-wrapper .la
 .shift-modal-day-cell .day-label {
   margin-bottom: 2px;
   color: #423A3F;
-  font-family: "Varela Round";
+  font-family: 'VarelaRound-Regular';
   font-size: 18px;
   font-weight: normal;
 }
@@ -80,7 +80,7 @@ div.ui.fluid.selection.dropdown:hover, .shift-section .time-selector-wrapper .la
   color: #e33821;
   font-weight: normal !important;
   font-size: 20px !important;
-  font-family: "Varela Round";
+  font-family: 'VarelaRound-Regular';
   margin: 0 auto;
 }
 

@@ -1,5 +1,6 @@
 import { gql } from 'react-apollo';
 import { client } from '../../../../index';
+import uuidv1 from 'uuid/v1';
 
 const queries = {
   getRelevantPositions: gql`
@@ -32,7 +33,46 @@ const queries = {
           }
         }
       }
-    }`
+    }`,
+  getAllTags: gql`
+    query allTags {
+      allTags {
+        nodes {
+          id
+          name
+        }
+      }
+    }`,
+  getRecurringShiftDetails: gql`
+    query recurringShiftById ($id: Uuid!) {
+      recurringShiftById (id: $id) {
+        startDate
+        expiration
+      }
+    }
+  `
+};
+
+const mutations = {
+  createTag: gql`
+    mutation createTag ($input: CreateTagInput!) {
+      createTag (input : $input) {
+        tag {
+          id
+          name
+        }
+      }
+    }`,
+  createShiftTag: gql`
+    mutation createShiftTag ($shiftTag: ShiftTagInput!) {
+      createShiftTag (input: { shiftTag: $shiftTag }) {
+        shiftTag {
+          tagId
+          shiftId
+        }
+      }
+    }
+  `
 };
 
 function getRelevantPositions(workplaceId) {
@@ -78,4 +118,63 @@ function getAllPositionsForUser(userId) {
   }).catch(err => Promise.reject(err));
 }
 
-export default { getRelevantPositions, getAllPositionsForUser };
+function getAllTags() {
+  const tagsKey = 'aday-tags';
+  const allTags = sessionStorage.getItem(tagsKey);
+  if (allTags) return Promise.resolve(JSON.parse(allTags));
+
+  return client.query({
+    query: queries.getAllTags
+  }).then((res) => {
+    if (res.data && res.data.allTags) {
+      sessionStorage.setItem(tagsKey, JSON.stringify(res.data.allTags.nodes));
+      return res.data.allTags.nodes;
+    }
+  }).catch(err => Promise.reject(err));
+}
+
+function getRecurringShiftById(recurringShiftId) {
+  const recurringKey = `recurring-shift-${recurringShiftId}`;
+  const recurringShift = sessionStorage.getItem(recurringKey);
+  if (recurringShift) return Promise.resolve(JSON.parse(recurringShift));
+
+  return client.query({
+    query: queries.getRecurringShiftDetails,
+    variables: { id: recurringShiftId }
+  }).then((res) => {
+    if (res.data && res.data.recurringShiftById) {
+      sessionStorage.setItem(recurringKey, JSON.stringify(res.data.recurringShiftById));
+      return res.data.recurringShiftById;
+    }
+  }).catch(err => Promise.reject(err));
+}
+
+function createTag(id, name) {
+  if (!id || !name) return Promise.reject({ error: 'Name and id property are required' });
+  if (typeof name !== 'string') return Promise.reject({ error: 'Name property must be string' });
+  name = name.trim().toLowerCase();
+  return client.mutate({
+    mutation: mutations.createTag,
+    variables: { input: { tag: { id, name }}}
+  }).then((res) => {
+    if (res.data && res.data.createTag) {
+      return res.data.createTag.tag;
+    }
+  }).catch(err => Promise.reject(err));
+}
+
+function createShiftTags(tags, shiftId) {
+  if (!tags || !shiftId) return Promise.reject({ error: 'Tags and shiftId property are required' });
+  if (!Array.isArray(tags)) tags = [tags];
+  const promises = tags.map(tag => {
+    return client.mutate({
+      mutation: mutations.createShiftTag,
+      variables: { shiftTag: { tagId: tag.id, shiftId }}
+    })
+  });
+  return Promise.all(promises).then((res) => {
+      return res.data;
+  }).catch(err => Promise.reject(err));
+}
+
+export default { getRelevantPositions, getAllPositionsForUser, getAllTags, getRecurringShiftById, createTag, createShiftTags };

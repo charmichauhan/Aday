@@ -22,7 +22,7 @@
 
 body {
 	background: #2f323e;
-	font-family: Lato, sans-serif;
+	font-family: 'Lato-Regular';
 	margin: 0;
 	overflow-x: hidden;
 	color: #313131;
@@ -42,7 +42,7 @@ h4,
 h5,
 h6 {
 	color: #313131;
-	font-family: Roboto, sans-serif;
+	font-family: 'Roboto-Regular';
 	margin: 10px 0;
 	font-weight: 300;
 }
@@ -4642,15 +4642,13 @@ table.focus-on tbody tr.focused th {
 }
 
 .first-name {
-	font-family: RobotoCondensed-Bold, sans-serif;
+	font-family: 'RobotoCondensed-Bold';
 	color: #313131;
-	src: url(./font/RobotoCondensed-Bold.ttf)
 }
 
 .last-name {
-	font-family: RobotoCondensed-Light, sans-serif;
+	font-family: 'RobotoCondensed-Light';
 	color: #313131;
-	src: url(./font/RobotoCondensed-Light.ttf)
 }
 
 .login-register {

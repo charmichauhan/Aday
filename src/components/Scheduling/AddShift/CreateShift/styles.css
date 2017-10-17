@@ -4,7 +4,6 @@
 }
 
 .rdr-MonthAndYear-month {
-  font-family: Roboto Condensed;
   font-size: 16px;
   font-weight: bold;
   text-transform: uppercase;
@@ -16,7 +15,7 @@
 }
 
 .rdr-MonthAndYear-year {
-  font-family: Roboto Condensed;
+  font-family: 'RobotoCondensed-Regular';
   font-size: 16px;
   font-weight: bold;
   text-transform: uppercase;
@@ -24,7 +23,7 @@
 }
 
 .rdr-WeekDay {
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 14px;
   font-weight: bold;
   text-transform: uppercase;
@@ -43,7 +42,7 @@
   font-size: 14px;
   font-weight: 500;
   text-transform: uppercase;
-  font-family: Roboto, sans-serif;
+  font-family: 'Roboto-Regular';
 }
 
 .tooltip-message::before {
@@ -51,7 +50,7 @@
   background-color: rgba(0, 0, 0, 0.75) !important;
   padding: 5px 10px !important;
   border-radius: 2px !important;
-  font-family: 'Varela Round';
+  font-family: 'VarelaRound-Regular';
 }
 
 .semantic-ui-button {
@@ -65,7 +64,7 @@
   min-height: 1em;
   border: none;
   vertical-align: baseline;
-  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  font-family: 'Lato-Regular','Helvetica Neue',Arial,Helvetica,sans-serif;
   margin: 0 .25em 0 0;
   padding: .78571429em 1.5em .78571429em;
   text-transform: none;
@@ -96,7 +95,7 @@
   min-height: 1em;
   border: none;
   vertical-align: baseline;
-  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  font-family: 'Lato-Regular','Helvetica Neue',Arial,Helvetica,sans-serif;
   margin: 0 .25em 0 0;
   padding: .78571429em 1.5em .78571429em;
   text-transform: none;
@@ -120,7 +119,7 @@
 .drawer-title {
     height: 35px;
     color: #0021A1;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 24px;
     line-height: 26px;
     text-align: center;
@@ -271,7 +270,7 @@
   background-color: #999;
 }
 body {
-  font-family:"Lato",sans-serif;
+  font-family:'Lato-Regular';
 }
 /*issue*/
 div.tab{
@@ -325,7 +324,7 @@ div.tab button.active{
 }
 
 .placeholder-text {
-  font-family: Lato-Light;
+  font-family: 'Lato-Regular';
   color: #999999;
 }
 
@@ -346,7 +345,7 @@ div.tab button.active{
   text-align: center;
   color: #999;
   font-size: 8;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
 }
 
 .right-picker-group {
@@ -368,7 +367,7 @@ div.tab button.active{
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5) !important;
     font-size: 14px !important;
     font-weight: bold;
-    font-family: Lato !important;
+    font-family: 'Lato-Regular' !important;
     color: #FFFFFF !important;
 }
 
@@ -376,7 +375,7 @@ div.tab button.active{
     height: 18px;
     width: 55px;
     color: #0000EE;
-    font-family: Lato;
+    font-family: 'Lato-Regular';
     font-size: 14px;
     font-weight: bold;
     line-height: 18px;
@@ -395,7 +394,7 @@ div.tab button.active{
     background-color: #2200A1 !important;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.5) !important;
     font-size: 14px !important;
-    font-family: Lato !important;
+    font-family: 'Lato-Regular' !important;
     color: #FFFFFF !important;
 }
 

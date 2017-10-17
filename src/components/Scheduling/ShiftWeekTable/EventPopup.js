@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { cloneDeep, findLastIndex } from 'lodash';
+import { cloneDeep, findLastIndex, differenceBy } from 'lodash';
 import { gql, graphql, compose } from 'react-apollo';
 import {
   updateShiftMutation,
   deleteShiftMutation,
-  updateRecurringShiftById,
+  updateRecurringShiftById
 } from './ShiftEdit/EditShiftDrawer.graphql';
 import { createShiftMutation } from './ShiftPublish.graphql';
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawerContainer from '../AddShift/CreateShift/CreateShiftAdvanceDrawerContainer';
 import CreateShiftDrawerContainer from '../AddShift/CreateShift/CreateShiftDrawerContainer';
+import CreateShiftHelper from '../AddShift/CreateShift/CreateShiftHelper';
 import EditShiftDrawerContainer from './ShiftEdit/EditShiftDrawerContainer';
 import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer';
 import DeleteRecuringPopUp from './DeleteRecuringPopUp';
+
 import '../style.css';
 import './shiftWeekTable.css';
 var rp = require('request-promise');
@@ -36,7 +38,6 @@ class EventPopupComponent extends Component {
       editModalPopped: false,
       newShiftModalPopped: false,
       shiftHistoryDrawer: false,
-      isSorted: true,
       isCreateShiftAdvanceOpen: false,
       drawerShift: {
         ...props.data,
@@ -184,7 +185,7 @@ class EventPopupComponent extends Component {
       this.setState({ editShiftModalOpen: true });
     }
     else if (modal == 'newShiftModalPopped') {
-      this.setState({ newShiftModalPopped: true , isSorted: false});
+      this.setState({ newShiftModalPopped: true });
     }
   };
   handleHistoryDrawer = () => {
@@ -282,7 +283,7 @@ class EventPopupComponent extends Component {
                       }
                   };
 
-              })
+            })
 
               //CREATE NEW SHIFT
               payload['workersAssigned'].map((value) => {
@@ -306,6 +307,14 @@ class EventPopupComponent extends Component {
                 }
                 })
         }
+        console.log('got data', data);
+        let updatedTags = shift.tags;
+        if (shift.shiftTagsByShiftId && shift.shiftTagsByShiftId.nodes.length) {
+          let OldTags = shift.shiftTagsByShiftId.nodes.map(({ tagId }) => ({ id: tagId }));
+          updatedTags = differenceBy(shift.tags, OldTags, 'id');
+        }
+        CreateShiftHelper.createShiftTags(updatedTags, data.updateShiftById.shift.id)
+          .then(() => console.log('Shift tags have been updated.'));
       }).catch(err => {
         console.log('There was error in saving shift', err);
       });
@@ -547,7 +556,7 @@ class EventPopupComponent extends Component {
 
   onPopupClose = (modal) => {
     console.log('Close');
-    console.log([modal])
+    console.log([modal]);
     this.setState({
       deleteModalPopped: false
     })
@@ -571,18 +580,23 @@ class EventPopupComponent extends Component {
     let minDiff = parseInt(duration.asMinutes())-hoursDiff*60;
     let {recurringShiftId} = this.props.data;
 
-    if (startTime == "Invalid date"){
-        let start = data.startTime.split(":")
-        let end = data.endTime.split(":")
-        startTime = moment().hour(parseInt(start[0])).minute(parseInt(start[1])).format("hh:mm A");
-        endTime = moment().hour(parseInt(end[0])).minute(parseInt(end[1])).format("hh:mm A");
+    if (startTime == 'Invalid date') {
+      let start = data.startTime.split(':');
+      let end = data.endTime.split(':');
+      startTime = moment().hour(parseInt(start[0])).minute(parseInt(start[1])).format('hh:mm A');
+      endTime = moment().hour(parseInt(end[0])).minute(parseInt(end[1])).format('hh:mm A');
     }
 
     let h = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('HH');
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
       { type: 'red', title: 'Delete Shift', handleClick: this.deleteSingle, image: '/images/modal/close.png' }];
-    let deleteShiftRenderAction = [{ type: 'red', title: 'All Following', handleClick: this.deleteRecurringShift, image: '/images/modal/close.png' },
+    let deleteShiftRenderAction = [{
+      type: 'red',
+      title: 'All Following',
+      handleClick: this.deleteRecurringShift,
+      image: '/images/modal/close.png'
+    },
       { type: 'red', title: 'Only this', handleClick: this.deleteSingle, image: '/images/modal/close.png' }];
     if (data.workersAssigned == null) {
       data.workersAssigned = [];
@@ -662,19 +676,19 @@ class EventPopupComponent extends Component {
 
         {recurringShiftId ?
           <DeleteRecuringPopUp
-          title="Confirm"
-          isOpen={this.state.deleteModalPopped}
-          message="Are you sure that you want to delete this shift?"
-          action={deleteShiftRenderAction}
-          closeAction={this.modalClose} />:
+            title="Confirm"
+            isOpen={this.state.deleteModalPopped}
+            message="Are you sure that you want to delete this shift?"
+            action={deleteShiftRenderAction}
+            closeAction={this.modalClose} /> :
           <Modal
             title="delete"
             isOpen={this.state.deleteModalPopped}
             message="Delete only this shift?"
             action={deleteShiftAction}
             closeAction={this.modalClose} />
-          }
-         <EditShiftDrawerContainer
+        }
+        <EditShiftDrawerContainer
           shift={data}
           users={users}
           open={this.state.newShiftModalPopped}
@@ -684,7 +698,6 @@ class EventPopupComponent extends Component {
           shift={data}
           users={users}
           open={this.state.shiftHistoryDrawer}
-          isSorted={this.state.isSorted}
           handleBack={this.handleNewShiftDrawerClose}
           handleHistory={this.handleHistoryDrawer} />
         <CreateShiftDrawerContainer
@@ -734,13 +747,13 @@ const EventPopup = compose(graphql(deleteShiftMutation, {
       variables: { clientMutationId: clientMutationId, id: id },
       updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-          let newEdges = []
+          let newEdges = [];
           previousQueryResult.allShifts.edges.map((value) => {
             if (value.node.id != mutationResult.data.deleteShiftById.shift.id) {
               newEdges.push(value)
             }
-          })
-          previousQueryResult.allShifts.edges = newEdges
+          });
+          previousQueryResult.allShifts.edges = newEdges;
           return {
             allShifts: previousQueryResult.allShifts
           };

@@ -5,17 +5,17 @@
 .last_name {
 	color: #000000;
 	font-weight: 400;
-	font-family: 'roboto condensed';
+	font-family: 'RobotoCondensed-Regular';
 }
 
 .first_name{
 	color: #000000;
 	font-weight: 400;
-	font-family: 'roboto condensed';
+	font-family: 'RobotoCondensed-Regular';
 }
 
 .card_body{
 	color: #000000;
 	font-weight: 400;
-	font-family: 'lato';
+	font-family: 'Lato-Regular';
 }

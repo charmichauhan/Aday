@@ -80,6 +80,15 @@ export const createShiftMutation = gql`
     }
   }`;
 
+export const createCallUserPositionMutation = gql`
+  mutation createCallUserPosition ($data: CreateCallUserPositionInput!) {
+    createCallUserPosition(input: $data) {
+      callUserPosition {
+        id
+      }
+    }
+  }`
+
 export const createWorkplacePublishedMutation = gql`
 mutation createWorkplacePublished($workplacePublished: WorkplacePublishedInput!) {
  createWorkplacePublished(input: {workplacePublished: $workplacePublished}){

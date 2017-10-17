@@ -31,7 +31,7 @@
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
     border-radius: 2px;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 16px;
     font-weight: bold;
     line-height: 16px;
@@ -41,7 +41,7 @@
 
 .ui.vertical.menu .item .menu .item .menu_item_left span {
     color: #000000;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 18px;
     line-height: 30px;
 }
@@ -68,7 +68,7 @@
     border-radius: 4px;
     background-color: #E33821;
     color:#fff;
-    font-family: Roboto;
+    font-family: 'RobotoCondensed-Regular';
     font-size: 14px;
     font-weight: bold;
     line-height: 16px;
@@ -116,7 +116,7 @@
 }
 .menu-item-logout .menu-item-list span {
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 14px;
     line-height: 15px;
 }
@@ -163,3 +163,4 @@
 .left-menu_item .ui.vertical.menu .item>.header:not(.ui) {
   margin: 0 0 1.5em;
 }
+

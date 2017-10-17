@@ -102,6 +102,7 @@ class DrawerHelper extends Component {
       } else {
         shift.unpaidBreakInMinutes = shift.unpaidBreakTime || 0;
       }
+      shift.weekPublishedId = this.props.weekPublishedId || '';
     }
     this.state = {
       ...initialState,
@@ -304,36 +305,44 @@ class DrawerHelper extends Component {
     //will be a request to server 
     const { shift } = this.state
 
-    let day = Object.keys(shift.shiftDaysSelected)
-    day = moment(day).format('YYYY/MM/DD')
+    let day = Object.keys(shift.shiftDaysSelected)[0]
+    console.log(day)
+    const shiftDay = moment.utc(day, 'MM-DD-YYYY');
+    console.log(shiftDay)
 
+    const shiftDate = shiftDay.date();
+    const shiftMonth = shiftDay.month();
+    const shiftYear = shiftDay.year();
+
+    var startTime = moment(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    var endTime = moment(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+
+    console.log(startTime)
+    console.log(endTime)
+
+    const _this = this
     var uri = 'http://localhost:8080/api/phoneTreeList'
         console.log(this.props.weekPublishedId)
         var options = {
             uri: uri,
             method: 'POST',
             json: {         
-                  "sec": "QDVPZJk54364gwnviz921",
-                  "weekPublishedId": this.props.weekPublishedId,
                   "positionId": shift.positionId,
                   "workplaceId": shift.workplaceId,
-                  "workerNumCount": shift.numberOfTeamMembers, 
-                  "unpaidBreakTime": shift.unpaidBreakInMinutes,
-                  "startTime": moment(shift.startTime).format('HH:MM'), 
-                  "endTime": moment(shift.endTime).format('HH:MM'),
-                  "day": day,
+                  "workerNumCount": String(shift.numberOfTeamMembers), 
+                  "unpaidBreakTime": String(shift.unpaidBreakInMinutes),
+                  "startTime": startTime.format('YYYY-MM-DD HH:mm:ss') + "+00",
+                  "endTime": endTime.format('YYYY-MM-DD HH:mm:ss') + "+00"
               }
          };
          rp(options)
           .then(function(response) {
               console.log(response)
-             this.setState((state) => ({ shift: { ...state.shift, phoneTree: response}}))
-             this.setState({shiftHistoryDrawer: true})
+             _this.setState((state) => ({ shift: { ...state.shift, phoneTree: response}}))
+             _this.setState({shiftHistoryDrawer: true}) 
           }).catch((error) => {
             console.log('there was an error sending the query', error);
-          });   
-    
-   
+          }); 
   };
 
   handleNewShiftDrawerClose = () => {
@@ -385,8 +394,10 @@ class DrawerHelper extends Component {
     if (!shift.positionId) shiftErrors['positionId'] = true;
     if (!shift.recurringShift && !this.state.isEdit) shiftErrors['recurringShift'] = true;
     if (shift.recurringShift && shift.recurringShift.toLowerCase() === 'weekly') {
-      if (!shift.startDate) shiftErrors['recurringShiftStartDate'] = true;
-      if (shift.endDate === undefined) shiftErrors['recurringShiftEndDate'] = true;
+      if ((this.state.isEdit && shift.recurringEdit) || !this.state.isEdit){
+        if (!shift.startDate) shiftErrors['recurringShiftStartDate'] = true;
+        if (shift.endDate === undefined) shiftErrors['recurringShiftEndDate'] = true;
+      }
     }
     if (!shift.startTime) shiftErrors['startTime'] = true;
     if (!shift.endTime) shiftErrors['endTime'] = true;
@@ -613,7 +624,7 @@ class DrawerHelper extends Component {
                 </Grid.Column>
               </Grid.Row>}
 
-              {shift.recurringShift === 'weekly' && <Grid.Row>
+              {((shift.recurringShift === 'weekly' && shift.recurringEdit) || (!isEdit && shift.recurringShift === 'weekly')) && <Grid.Row>
                 <Grid.Column width={2} style={{ marginLeft: -5, paddingTop: isEdit && 5 || 10 }}>
                   <Image src="/assets/Icons/startend-dates.png" style={{ width: 28, height: 'auto' }}
                          className="display-inline" />
@@ -687,9 +698,11 @@ class DrawerHelper extends Component {
                  
             
                   { (this.props.isPublished == true) && shift.recurringShift != 'weekly' && 
+                    <div>
                     <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={this.openShiftHistory}
                         color='red'>View Phone Tree
                     </button>
+                      </div>
                   }
                   { (!this.props.isPublished || shift.recurringShift == 'weekly') &&
                     <div>

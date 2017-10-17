@@ -313,20 +313,7 @@ class ShiftPublishComponent extends Component {
         if (day !== 'undefined' && shiftRecure.shiftDaysSelected[day] === true) {
           this.saveShift(shiftRecure, day, publishId);
         }
-
-        let is_publish = this.props.isPublish;
-        if (is_publish == 'none'){
-          is_publish = false
-        }
-
-        if (is_publish == true){
-            const shiftDay = moment.utc(day, 'MM-DD-YYYY');
-            const shiftDate = shiftDay.date();
-            const shiftMonth = shiftDay.month();
-            const shiftYear = shiftDay.year();
-            const recurringShiftId = shiftRecure.recurringShiftId;
-            shift.startTime = moment.utc(shiftRecure.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-            shift.endTime = moment.utc(shiftRecure.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+      })
 
           /* THIS IS PROBABLY OBSOLETE AS WE WON'T HAVE USERS ON NEW SINGLE PUBLISHED SHIFTS
             if (shiftRecure.phoneTree.length < 1 & shiftRecure.teamMembers) {
@@ -360,39 +347,8 @@ class ShiftPublishComponent extends Component {
             }
           */
 
-          if (shiftRecure.phoneTree.length > 1) {
-            var callURI = 'localhost:8080/api/callEmployee/'
-
-                  var options = {
-                    uri: callURI,
-                    method: 'POST',
-                    json: {
-                      "data": {
-                        "sec": "QDVPZJk54364gwnviz921",
-                        "shiftDate": moment(shiftRecure.startTime).format("MMMM Do, YYYY"),
-                        "shiftStartHour": moment(shiftRecure.startTime).format("h:mm a"),
-                        "shiftEndHour": moment(shiftRecure.endTime).format("h:mm a"),
-                        "brand": shiftRecure.brand_id,
-                        "workplace": shiftRecure.workplace_id,
-                        "shiftReward": "",
-                        "shiftRole": shiftRecure.position_id,
-                        "weekPublishedId": shiftRecure.weekPublishedId,
-                        "shiftId": shiftRecure.id,
-                        "userId": shiftRecure.phoneTree
-                      }
-                    }
-                  };
-                  console.log(options)
-                  rp(options)
-                    .then(function (response) {
-                      //that.setState({redirect:true})
-                    }).catch((error) => {
-                    console.log('there was an error sending the query', error);
-                  });
-          }
-        }
-      });
-    }
+         
+      }
   };
 
   saveRecurringShift(dayNames, days, shift, weekPublishedId, callback){
@@ -411,7 +367,7 @@ class ShiftPublishComponent extends Component {
           brandId: localStorage.getItem("brandId"),
           lastWeekApplied: moment().startOf('week').add(8, 'weeks').format()
         };
-        console.log("PAYLIAD")
+        console.log("PAYLOAD")
         console.log(payload)
         this.props.createRecurring({
           variables: {
@@ -508,9 +464,9 @@ class ShiftPublishComponent extends Component {
     const recurringShiftId = shift.recurringShiftId;
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-
+    var newId = uuidv4()
     const payload = {
-      id: uuidv4(),
+      id: newId,
       workplaceId: shift.workplaceId,
       positionId: shift.positionId,
       workersRequestedNum: shift.numberOfTeamMembers,
@@ -545,6 +501,51 @@ class ShiftPublishComponent extends Component {
       },
     }).then(({ data }) => {
       this.showNotification('Shift created successfully.', NOTIFICATION_LEVELS.SUCCESS);
+      let is_publish = this.props.isPublish;
+        if (is_publish == 'none'){
+          is_publish = false
+        }
+
+        if (is_publish == true){
+           if (shift.phoneTree.length > 1) {
+            var callURI = 'http://localhost:8080/api/callEmployee/'
+
+              const callUsers = {}
+              console.log(shift.phoneTree)
+              shift.phoneTree.map(function(userId, i){
+                console.log(userId)
+                  callUsers[i] = userId
+              })
+              console.log(JSON.stringify(callUsers))
+                  var options = {
+                    uri: callURI,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    json: {
+                      "data": {
+                        "sec": "QDVPZJk54364gwnviz921",
+                        "shiftDate": moment(shift.startTime).format("MMMM Do, YYYY"),
+                        "shiftStartHour": moment(shift.startTime).format("h:mm a"),
+                        "shiftEndHour": moment(shift.endTime).format("h:mm a"),
+                        "brand": localStorage.getItem('brandId'),
+                        "workplace": shift.workplaceId,
+                        "shiftReward": "",
+                        "shiftRole": shift.positionId,
+                        "weekPublishedId": shift.weekPublishedId,
+                        "shiftId": newId,
+                        "userids": shift.phoneTree
+                      }
+                    }
+                  };
+                  console.log(options)
+                  rp(options)
+                    .then(function (response) {
+                      //that.setState({redirect:true})
+                    }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+          }
+        }
       // SHOULD CREATE MARKETS HERE FOR ANY ASSIGNED WORKERS
       console.log('got data', data);
     }).catch(err => {

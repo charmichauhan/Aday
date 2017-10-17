@@ -222,7 +222,11 @@ class EventPopupComponent extends Component {
         unpaidBreakTime: shift.unpaidBreak
       };
       if (shift.teamMembers && shift.teamMembers.length) {
-        payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
+        payload.workersAssigned  = shift.teamMembers.map(function (member){
+            if (member['id'] != 0) {
+              return member['id']
+            }
+        });
       }
       this.props.updateShiftMutation({
           variables: {
@@ -319,7 +323,7 @@ class EventPopupComponent extends Component {
 
     const days = []
     Object.keys(shift.shiftDaysSelected).map(function(day){
-        if (shift.shiftDaysSelected[day]){
+        if (shift.shiftDaysSelected[day] == true && day !== 'undefined'){
           days.push(day)
         }
     })
@@ -342,6 +346,10 @@ class EventPopupComponent extends Component {
       }
     })
 
+     console.log(updateShiftIds)
+     console.log(removedShiftIds)
+     console.log(createdShiftDays)
+    /*
     // If Removed 
     const _this = this
     removedShiftIds.map(function(removed){
@@ -400,6 +408,7 @@ class EventPopupComponent extends Component {
         }).then(({ data }) => {
         })
     })
+    */
   }
 
 
@@ -424,6 +433,16 @@ class EventPopupComponent extends Component {
         days: daysWeek,
       };
 
+      if (shift.teamMembers && shift.teamMembers.length) {
+        payload.assignees = shift.teamMembers.map(function (member){
+            if (member['id'] != 0) {
+              return member['id']
+            }
+        });
+      }
+
+
+      console.log(payload)
       this.props.updateRecurringShiftById({
         variables: {
           data: {
@@ -441,7 +460,6 @@ class EventPopupComponent extends Component {
             json: {         
                   "sec": "QDVPZJk54364gwnviz921",
                   "actionType": "deleteRecurring",
-                  "testing": true,
                   "recurring_shift_id": shift.recurringShiftId,
                   "date": moment().format(),
                   "edit": true

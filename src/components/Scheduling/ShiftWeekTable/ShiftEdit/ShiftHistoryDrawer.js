@@ -65,7 +65,7 @@ const SortableItem = SortableElement(({history,awardorder, index, that}) =>
         </GridColumn>
         <GridColumn width={2}>
           <div className="wrapper-element text-center">
-            <p className="history-text font20">{that.numberFormatter(history.employeesByUserId.edges.length > 0 ? history.employeesByUserId.edges[0].node.ytdOvertimeHours : 0)}</p>
+            <p className="history-text font20">{that.numberFormatter( history.ytdOvertimeHours > 0? history.ytdOvertimeHours : 0)}</p>
             <p className="text-uppercase font14 history-text light-gray-text">YTD OT</p>
           </div>
         </GridColumn>
@@ -124,13 +124,16 @@ class ShiftHistoryDrawerComponent extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.state.filteredData.length < 1 || this.props.allUsers.loading !== nextProps.allUsers.loading){
-      const allUsers = nextProps.allUsers;
+    if (this.state.filteredData.length < 1 || this.props.allEmployees.loading !== nextProps.allEmployees.loading){
+      console.log(nextProps.allEmployees)
+      const allUsers = nextProps.allEmployees;
       var userData = this.props.users.map(function (userId, i) {
-        let foundWorker = find(allUsers.allUsers.edges, (user) => user.node.id === userId);
+        console.log(userId)
+        let foundWorker = find(allUsers.allEmployees.edges, (user) => user.node.userId === userId);
+        console.log(foundWorker)
         if (!foundWorker) foundWorker = {node: unassignedTeamMember.user};
-        var newFoundWorker = { ...foundWorker.node, yearsOfExp: foundWorker.node.employeesByUserId.edges.length > 0 ? foundWorker.node.employeesByUserId.edges[0].node.hireDate : 0 , ytdOverTimeHours: foundWorker.node.employeesByUserId.edges.length > 0 ? foundWorker.node.employeesByUserId.edges[0].node.ytdOvertimeHours : 0, isChecked: true };
-        return pick(newFoundWorker, ['id', 'avatarUrl', 'firstName', 'lastName','employeesByUserId','yearsOfExp','ytdOverTimeHours','isChecked']);
+        var newFoundWorker = { ...foundWorker.node.userByUserId, hireDate: foundWorker.node.hireDate > 0 ? foundWorker.node.hireDate : 0 , yearsOfExp: foundWorker.node.ytdOvertimeHours? foundWorker.node.ytdOvertimeHours : 0, isChecked: true };
+        return pick(newFoundWorker, ['id', 'avatarUrl', 'firstName', 'lastName','yearsOfExp','ytdOverTimeHours','isChecked']);
       })
 
       let sortedData = orderBy(userData,["yearsOfExp"],['asc']);
@@ -177,9 +180,12 @@ class ShiftHistoryDrawerComponent extends Component {
   }
 
   render() {
-    if(this.props.allUsers.loading) {
+    if(this.props.allEmployees.loading) {
+      console.log(this.props.allEmployees)
       return (<div><Halogen.SyncLoader color='#00A863'/></div>)
     }
+
+    console.log(this.props.allEmployees)
 
       const {
         width = 750,
@@ -224,27 +230,24 @@ class ShiftHistoryDrawerComponent extends Component {
 
 }
 
-const allUsers = gql`
-    query allUsers {
-        allUsers{
-            edges{
-                node{
-                    id
-                    firstName
-                    lastName
-                    avatarUrl
-                    employeesByUserId{
-                    edges{
-                      node{
-                        hireDate
-                        ytdOvertimeHours
-                      }
-                    }
-                  }
-                }
+const allEmployees = gql`
+    query allEmployees($corp: Uuid!) {
+    allEmployees(condition:{corporationId: $corp}){
+        edges {
+          node {
+            hireDate
+            ytdOvertimeHours
+            userId
+            userByUserId { 
+              id
+              firstName
+              lastName
+              avatarUrl
             }
+          }
         }
-    }`
+    }
+}`
 
 /*
 <GridColumn width={2}>
@@ -342,6 +345,12 @@ const allUsers = gql`
           </div>
     */
 
-const ShiftHistoryDrawer = graphql(allUsers, {name: "allUsers"})
+const ShiftHistoryDrawer = graphql(allEmployees, {
+           options: (ownProps) => ({
+               variables: {
+                  corp: localStorage.getItem('corporationId') ,
+              },
+            }),
+            name: "allEmployees"})
 (ShiftHistoryDrawerComponent);
 export default ShiftHistoryDrawer;

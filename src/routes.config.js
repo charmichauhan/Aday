@@ -8,7 +8,6 @@ import Positions from './components/Positions';
 import MyWorkplace from './components/workplace/MyWorkplace';
 import Listing from './components/workplace/Listing';
 import Hiring from './components/Hiring';
-import Template from './components/Template';
 import Team from './components/Team';
 import Certificates from './components/certifications/Certificates';
 import Attendance from './components/Attendance';
@@ -59,11 +58,6 @@ const routes = [
             // exact: true,
             // component: EmployeeView
 				// 	},
-					{
-            path: '/schedule/recurring',
-            exact: true,
-            component: Template
-					},
 					{
 						path: '/schedule/manager',
 						exact: true,

@@ -1,0 +1,416 @@
+.floatRight {
+  float: right
+}
+
+.floatLeft {
+  float: left;
+}
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.popup {
+  max-width: 700px;
+  border-radius: 5px;
+  background-color: #fcfcfc;
+  padding: 20px;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.popupHeader {
+  background-color: #06299E;
+  padding: 2px 10px 15px 10px;
+}
+
+.popupHeader h2 {
+  color: white !important;
+  text-transform: uppercase !important;
+  margin-top: 15px !important;
+  font-weight: lighter !important;
+}
+
+.popupHeader i {
+  color: white !important;
+}
+
+.shiftDetailRow {
+  border-bottom: 1px solid rgba(34, 36, 38, .1);
+}
+
+.teamMemberCard {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.teamMemberCard > .content {
+  border-radius: 3px;
+  display: flex;
+  padding: 5px;
+  width: 100%;
+  text-transform: uppercase;
+}
+
+.teamMemberCard > .edits {
+  display: block;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+  width: 2.5em;
+  height: auto;
+  -ms-flex-item-align: stretch;
+  -ms-grid-row-align: stretch;
+  align-self: stretch;
+  text-align: left;
+}
+
+.teamMemberCard > .avatar {
+  display: block;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+  width: 2.5em;
+  height: auto;
+  -ms-flex-item-align: stretch;
+  -ms-grid-row-align: stretch;
+  align-self: stretch;
+  text-align: left;
+}
+
+.teamMemberCard > .label {
+  text-transform: uppercase;
+  display: block;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  -ms-flex-item-align: stretch;
+  -ms-grid-row-align: stretch;
+  align-self: stretch;
+  text-align: left;
+  word-wrap: break-word;
+  font-size: .8em !important;
+  color: #ccc !important;
+}
+
+.teamMemberCard .description {
+  font-size: .7em;
+  color: #ccc;
+}
+
+.greenBorder {
+  border: 1px solid green;
+}
+
+.redBorder {
+  border: 1px solid red;
+}
+
+.orangeBorder {
+  border: 1px solid orange;
+}
+
+.shiftDetails {
+  padding: 20px 20px 20px 32px;
+  font-size: 13px !important;
+}
+
+.dimmedText {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.teamMemberCard {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.teamMemberCard > .content {
+  border-radius: 3px;
+  display: flex;
+  padding: 5px;
+  width: 100%;
+  text-transform: uppercase;
+}
+
+.teamMemberCard > .edits {
+  display: block;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+  width: 2.5em;
+  height: auto;
+  -ms-flex-item-align: stretch;
+  -ms-grid-row-align: stretch;
+  align-self: stretch;
+  text-align: left;
+}
+
+.teamMemberCard > .avatar {
+  display: block;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
+  width: 2.5em;
+  height: auto;
+  -ms-flex-item-align: stretch;
+  -ms-grid-row-align: stretch;
+  align-self: stretch;
+  text-align: left;
+}
+
+.teamMemberCard > .label {
+  text-transform: uppercase;
+  display: block;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  -ms-flex-item-align: stretch;
+  -ms-grid-row-align: stretch;
+  align-self: stretch;
+  text-align: left;
+  word-wrap: break-word;
+  font-size: .8em !important;
+  color: #ccc !important;
+}
+
+.teamMemberCard .description {
+  font-size: .7em;
+  color: #ccc;
+}
+
+.drawer-section .drawer-heading {
+  background-color: #0022A1;
+  text-align: center;
+  padding: 10px;
+}
+
+.drawer-section .drawer-heading .confirm-popup {
+  color: #fff;
+  font-family: 'RobotoCondensed-Regular';
+  font-size: 30px;
+  line-height: 35px;
+  text-align: center;
+  width: auto;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.drawer-right {
+  float: right;
+  padding-top: 6px;
+}
+
+.drawer-section .scroll-div {
+  display: block;
+  overflow-y: scroll;
+  height: 530px;
+  width: 100%;
+}
+
+.shift-heading {
+  display: table;
+  margin-left: 32px;
+  padding-bottom: 10px;
+}
+
+.shift-heading img, .shift-details .shift-heading h5 {
+  display: table-cell;
+}
+.shift-details .shift-heading h5 {
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.member_list, .shift-details {
+  float: left;
+  width: 100%;
+  margin-top: 31px;
+}
+
+.member_list h5, .shift-details h5 {
+  color: #666666;
+  font-family: 'RobotoCondensed-Regular';
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 31px;
+  margin-left: 32px;
+}
+
+.shift-details .ui.fluid.input {
+  padding: 0 32px 20px 32px;
+}
+
+.shift-details .ui.fluid.input input {
+  border: 2px solid rgba(74, 74, 74, 0.5);
+  padding: 15px 10px;
+}
+
+.shift-details .ui.fluid.input input::placeholder {
+  color: #999999;
+}
+
+.shiftDetails p {
+  font-size: 24px;
+  color: #666666;
+  margin-bottom: 5px;
+}
+
+.shiftDetails p b {
+  text-transform: uppercase;
+}
+
+.dimmedText {
+  text-transform: uppercase;
+  padding-left: 32px;
+  color: #999;
+  font-size: 20px;
+}
+
+.btn-member {
+  margin-left: 32px;
+}
+
+.member_list .teamMemberCard .label {
+  color: #666666;
+  font-family: 'RobotoCondensed-Regular';
+  font-size: 24px;
+  font-weight: normal;
+  line-height: 28px;
+  text-align: left;
+}
+
+.member_list .teamMemberCard .description {
+  color: #999999;
+  font-family: 'Lato-Regular';
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.member_list .teamMemberCard .avatar {
+  width: 55px;
+  border-radius: 100%;
+  height: 55px;
+  overflow: hidden;
+}
+
+.member_list .teamMemberCard .avatar img {
+  width: auto;
+  height: 100%;
+}
+
+.member_list .teamMemberCard .edits {
+  align-self: center;
+}
+
+.drawer-section .drawer-head h2 {
+  width: auto !important;
+  display: inline-block;
+  margin-top: 0 !important;
+  color: #0022A1;
+  font-family: 'RobotoCondensed-Regular';
+  font-size: 30px !important;
+  line-height: 35px;
+  text-align: center;
+  font-weight: normal;
+}
+
+.drawer-section .drawer-head button {
+  float: left;
+}
+
+.drawer-section .drawer-head {
+  background-color: #F7F7F7;
+}
+
+.drawer-section .drawer-head button span {
+  color: #E33821;
+  font-family: 'Lato-Regular';
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 22px;
+}
+
+.drawer-section .drawer-head button i {
+  font-size: 22px;
+  color: #E33821;
+}
+
+.drawer-section table.structured th:first-child {
+  width: 30px;
+}
+
+.drawer-section table.structured th:nth-child(2) {
+  width: 155px;
+
+}
+
+.drawer-section table.structured th {
+  width: 100%;
+  text-align: center !important;
+}
+
+.drawer-section table.structured td {
+  vertical-align: middle;
+  text-align: center;
+  padding: 5px;
+}
+
+.drawer-section table.structured td .avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  display: inline-block;
+}
+
+.drawer-section table.structured td .avatar img {
+  width: auto;
+  height: 100%;
+}
+
+.drawer-section table.structured td .label {
+  color: #4A4A4A;
+  font-family: 'RobotoCondensed-Regular';
+  font-size: 18px;
+  font-weight: normal;
+  line-height: 21px;
+}
+
+/*History table*/
+.drawer-section .history-drawer-content {
+  padding: 0px;
+}
+h2.ui.header {
+  text-transform: uppercase;
+}
+.drawer-content .history-table thead th {
+  text-transform: uppercase !important;
+  color: #4A4A4A !important;
+}
+.drawer-section table.structured td.shiftDetailRow {
+  text-align: left;
+  padding: 15px 45px;
+}
+.drawer-section table.structured td.shiftDetailRow p {
+  text-transform: uppercase;
+  color: #4A4A4A;
+  font-size: 18px;
+}
+.drawer-section table.structured td.shiftDetailRow .item {
+  color: #4a4a4a;
+  font-size: 16px;
+}
+i.chevron.up.icon, i.chevron.down.icon {
+  color: #0022A1;
+}

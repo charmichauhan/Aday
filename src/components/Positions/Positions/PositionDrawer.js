@@ -316,7 +316,7 @@ class DrawerHelper extends Component {
                   </Grid>
                 </div>
                 <div className="position-row">
-                  <p className="position-label">PART-TIME WAGE</p>
+                  <p className="position-label">HOURLY WAGE</p>
                   <Input
                     type="number"
                     fluid style={style.input}

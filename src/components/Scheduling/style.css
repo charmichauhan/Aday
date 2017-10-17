@@ -1,5 +1,6 @@
 body{
     background-color: #FAFAFA;
+    font-family: 'Roboto-Regular';
 }
 
 .rbc-calendar *, .rbc-calendar *:before, .rbc-calendar *:after {
@@ -55,7 +56,7 @@ table.table.emp_view_table {
     height: 18px;
     width: 135px;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 15px;
     letter-spacing: 1px;
     line-height: 18px;
@@ -86,7 +87,7 @@ td.headcol, td.long {
     width: 110px;
     padding: 0 8px;
     color: #000;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 20px;
     font-weight: bold;
     line-height: 22px;
@@ -98,7 +99,7 @@ td.headcol, td.long {
 .atable .penalheading p {
     display: flex;
     color: #4A4A4A;
-    font-family: "lato";
+    font-family: 'Lato-Regular';
     font-size: 14px;
     font-weight: 200;
     line-height: 21px;
@@ -147,7 +148,7 @@ td.shiftbox {
     color: rgba(153, 153, 153, 0.5);
     padding: 6px 0px 0px 0px;
     height: 16px;
-    font-family: Roboto;
+    font-family: 'Roboto-Regular';
     font-size: 14px;
     line-height: 16px;
 }
@@ -177,14 +178,14 @@ td.shiftbox {
     letter-spacing: 2px;
     line-height: 18px;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     text-transform: uppercase;
 }
 .weekDate {
     height: 35px;
     width: auto;
     color: #0022A1;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 30px;
     letter-spacing: 3px;
     line-height: 3px;
@@ -195,7 +196,7 @@ td.shiftbox {
     height: 35px;
     width: auto;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 30px;
     font-weight: 300;
     letter-spacing: 3px;
@@ -221,7 +222,7 @@ td.shiftbox {
     font-weight: bold;
     */
     color: #0021A1;
-    font-family: Lato;
+    font-family: 'Lato-Regular';
     font-size: 12px;
     line-height: 20px;
     text-align: center;
@@ -237,7 +238,7 @@ td.shiftbox {
   width: 125px;
   */
   border: 1px solid rgba(153,153,153,0.2);
-  font-family: Roboto;
+  font-family: 'Roboto-Regular';
   font-size: 12px;
   font-weight: bold;
   line-height: 20px;
@@ -253,7 +254,7 @@ td.shiftbox {
     height: 30px;
     width: 50%;
     color: #0022a1;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 30px;
     line-height: 30px;
     text-align:  inherit;
@@ -315,7 +316,7 @@ td.shiftbox {
     width: 50%;
     color: #0022A1;
     font-weight: light;
-    font-family: Varela Round;
+    font-family: 'VarelaRound-Regular' Round;
     font-size: 22px;
     line-height: 22px;
     margin-top: 0px;
@@ -334,7 +335,7 @@ td.shiftbox {
     font-size: 11px;
     float: right;
     color: #4B4B4B;
-    font-family: Varela Round;
+    font-family: 'VarelaRound-Regular';
 }
 
 .start-time span.fa.fa-clock-o {
@@ -370,7 +371,7 @@ td.shiftbox {
     text-transform: uppercase;
     display: flex;
     color: #4B4B4B;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 14px;
     font-weight: 100;
     line-height: 16px;
@@ -387,7 +388,7 @@ td.shiftbox {
     padding-left: 4px;
     text-transform: uppercase;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
 }
 
 .day-item-title .box-title {
@@ -396,7 +397,7 @@ td.shiftbox {
     width: 22px;
     border-radius: 50%;
     color: #FFFFFF;
-    font-family: Lato;
+    font-family: 'Lato-Regular';
     font-weight: 500;
     text-align: center;
 }
@@ -466,7 +467,7 @@ img.btn-image {
 
 .bfont {
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 13px;
     line-height: 15px;
     text-align: center;
@@ -475,7 +476,7 @@ img.btn-image {
 
 .sfont {
     color: #999999;
-    font-family: Lato;
+    font-family: 'Lato-Regular';
     font-size: 11.5px;
     line-height: 13px;
     text-align: center;
@@ -502,7 +503,7 @@ img.btn-image {
     font-weight: bold;
     line-height: 28px;
     text-align: center;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
 }
 
 .rectangle img {
@@ -587,7 +588,7 @@ img.btn-image {
 }
 .atable .penalheading p.employeeFinalHours {
     color: #999999;
-    font-family: Lato;
+    font-family: 'Lato-Regular';
     font-size: 13px;
     line-height: 16px;
 }
@@ -647,7 +648,7 @@ table.atable td.shiftbox {
     justify-content: center;
     margin: 10px;
     color: #4A4A4A;
-    font-family: Lato;
+    font-family: 'Lato-Regular';
     font-size: 22px;
     text-transform: uppercase;
     text-align: center;
@@ -669,7 +670,7 @@ table.atable td.shiftbox {
     background-color: #0022A1;
     box-shadow: 0 -4px 10px 0 rgba(0, 0, 0, 0.5), 0 4px 10px 0 rgba(1, 1, 1, 0.5);
     color: #FFFFFF;
-    font-family: Lato;
+    font-family: 'Lato-Regular';
     font-size: 22px;
     line-height: 25px;
     text-align: center
@@ -691,7 +692,7 @@ table.atable td.shiftbox {
     text-transform: uppercase;
     box-shadow: 0 -4px 10px 0 rgba(0, 0, 0, 0.5), 0 4px 10px 0 rgba(1, 1, 1, 0.5);
     color: #FFFFFF;
-    font-family: Lato;
+    font-family: 'Lato-Regular';
     font-size: 22px;
     line-height: 25px;
     text-align: center
@@ -724,7 +725,7 @@ table.atable td.shiftbox {
     padding: 4px 10px;
     line-height: 32px;
     text-align-last: center;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
 }
 
 .dropdownweeky .dropdown option {
@@ -768,7 +769,7 @@ table.atable td.shiftbox {
     border-radius: 4px;
     box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.5);
     color: #4A4A4A;
-    font-family: Roboto;
+    font-family: 'Roboto-Regular';
     font-size: 14px;
     font-weight: 900;
     letter-spacing: 1px;

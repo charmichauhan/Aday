@@ -1,86 +1,157 @@
+@font-face {
+  font-family: 'Roboto-Regular';
+  src: url('/assets/fonts/Roboto/Roboto-Regular.eot');
+  src: url('/assets/fonts/Roboto/Roboto-Regular.woff') format('woff'),
+       url('/assets/fonts/Roboto/Roboto-Regular.ttf') format('truetype'),
+       url('/assets/fonts/Roboto/Roboto-Regular.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'RobotoCondensed-Regular';
+  src: url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Regular.eot');
+  src: url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Regular.woff') format('woff'),
+       url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Regular.ttf') format('truetype'),
+       url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Regular.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'RobotoCondensed-Bold';
+  src: url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Bold.eot');
+  src: url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Bold.woff') format('woff'),
+       url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Bold.ttf') format('truetype'),
+       url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Bold.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'RobotoCondensed-Light';
+  src: url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Light.eot');
+  src: url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Light.woff') format('woff'),
+       url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Light.ttf') format('truetype'),
+       url('/assets/fonts/Roboto_Condensed/RobotoCondensed-Light.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'VarelaRound-Regular';
+  src: url('/assets/fonts/fonts/Varela_Round/VarelaRound-Regular.eot');
+  src: url('/assets/fonts/fonts/Varela_Round/VarelaRound-Regular.woff') format('woff'),
+       url('/assets/fonts/fonts/Varela_Round/VarelaRound-Regular.ttf') format('truetype'),
+       url('/assets/fonts/fonts/Varela_Round/VarelaRound-Regular.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lato-Regular';
+  src: url('/assets/fonts/Lato/Lato-Regular.eot');
+  src: url('/assets/fonts/Lato/Lato-Regular.woff') format('woff'),
+       url('/assets/fonts/Lato/Lato-Regular.ttf') format('truetype'),
+       url('/assets/fonts/Lato/Lato-Regular.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color: #fafafa;
   color: #838890;
-  font-family: Roboto,'Helvetica Neue',Helvetica,Arial,sans-serif !important;
+  font-family: 'Roboto-Regular', 'RobotoCondensed-Regular', 'VarelaRound-Regular', 'Lato-Regular';
 }
 
-@import url('https://fonts.googleapis.com/css?family=Varela+Round:regular,bold,italic&subset=latin,latin-ext');
-@import url('http://fonts.googleapis.com/css?family=Roboto+Condensed:100,300,400,600,700&amp;lang=en');
+.logo {
+  min-width: 80px;
+}
 
-.logo{
-	min-width: 80px;
+.aday-container {
+  padding: 30px;
+  align-items: center !important;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
 }
-.aday-container{
-	padding: 30px;
-	align-items: center !important;
-	max-width: 960px;
-	margin-left: auto;
-	margin-right: auto;
+
+.aday-banner {
+  margin-top: 40px;
+  z-index: 0;
 }
-.aday-banner{
-	margin-top: 40px;
-	z-index: 0;
+
+.aday-banner .header {
+  font-weight: lighter;
+  color: #7D7D7D;
 }
-.aday-banner .header{
-	font-weight: lighter;
-	color: #7D7D7D;
+
+.app-download {
+  margin: 20px 0;
 }
-.app-download{
-	margin: 20px 0;
+
+.aday-footer-menu .menu .item {
+  font-size: .7em;
 }
-.aday-footer-menu .menu .item{
-	font-size: .7em;
+
+.aday-terms .menu .item {
+  font-size: .6em !important;
+  color: #bbb !important;
 }
-.aday-terms .menu .item{
-	font-size: .6em !important;
-	color: #bbb !important;
+
+.aday-brands {
+  background-color: #FAFAFA;
+  padding: 2em;
+  align-items: center;
 }
-.aday-brands{
-	background-color: #FAFAFA;
-	padding: 2em;
-	align-items: center;
-}
+
 .aday-brands .header {
-	color: #7D7D7D;
-	font-weight: lighter;
+  color: #7D7D7D;
+  font-weight: lighter;
 }
-.aday-features{
-	border-top: 1px solid #F2F2F2;
-	padding: 30px 0;
-	margin-bottom: 5px;
-	z-index: 10;
-	box-shadow: 0 3px 5px rgba(0,0,0,.15), 0 3px 5px rgba(0,0,0,.15)
+
+.aday-features {
+  border-top: 1px solid #F2F2F2;
+  padding: 30px 0;
+  margin-bottom: 5px;
+  z-index: 10;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, .15), 0 3px 5px rgba(0, 0, 0, .15)
 }
-.aday-features .header{
-	color: #0A2DA0;
-	font-weight: normal;
-	text-align: left;
+
+.aday-features .header {
+  color: #0A2DA0;
+  font-weight: normal;
+  text-align: left;
 }
-.aday-features p{
-	font-size: .8em;
-	color: #838890;
-	text-align: left;
+
+.aday-features p {
+  font-size: .8em;
+  color: #838890;
+  text-align: left;
 }
-.todo{
-	text-align: center;
-	background-color: #F2F2F2;
-	min-height: calc(100vh - 60px);
-	padding-top: calc(50vh - 120px);
+
+.todo {
+  text-align: center;
+  background-color: #F2F2F2;
+  min-height: calc(100vh - 60px);
+  padding-top: calc(50vh - 120px);
 }
-.todo h1{
-	opacity: .1;
-	font-size: 5rem;
+
+.todo h1 {
+  opacity: .1;
+  font-size: 5rem;
 }
+
 .todo small {
-	text-transform: uppercase;
-	letter-spacing: normal;
-	font-weight: bolder;
+  text-transform: uppercase;
+  letter-spacing: normal;
+  font-weight: bolder;
 }
 
 .mr10 {
-	margin-right: 10px;
+  margin-right: 10px;
 }
 
 .drawer-content {

@@ -4,7 +4,7 @@
   font-size: 14px;
   font-weight: 500;
   text-transform: uppercase;
-  font-family: Roboto, sans-serif;
+  font-family: 'Roboto-Regular';
 }
 
 .shift-section .drawer-heading {
@@ -240,7 +240,7 @@
 .edit-drawer-section .edit-drawer-content .ui.input.extra-min input {
   text-align: center;
   font-size: 15px !important;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   margin-left: 5px;
   margin-top: -3px;
   width: 60px !important;

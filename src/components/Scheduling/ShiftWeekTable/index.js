@@ -267,7 +267,7 @@ class ShiftWeekTableComponent extends Week {
         if (workplaceId != '') {
         if (workplaceId == value.node.workplaceByWorkplaceId.id) {
             value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration))) {
+                if(moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null) {
                     const positionName = shift.node.positionByPositionId.positionName;
                         let assigned = shift.node.assignees
                         if (assigned.length < shift.node.workerCount) {
@@ -295,12 +295,12 @@ class ShiftWeekTableComponent extends Week {
                             calendarHash[userName] = [Object.assign(rowHash, shift.node)];
                           }
                         })
-            }
+              }
           })
           }
         } else {
             value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration))) {
+                if(moment(start).isBefore(moment(shift.node.expiration)) ||  shift.node.expiration == null) {
                     const positionName = shift.node.positionByPositionId.positionName;
                         let assigned = shift.node.assignees
 
@@ -371,7 +371,7 @@ class ShiftWeekTableComponent extends Week {
            if (workplaceId != '') {
              if (workplaceId == value.node.workplaceByWorkplaceId.id) {
               value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration))) {
+                if(moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null ) {
                   const positionName = shift.node.positionByPositionId.positionName;
                        const rowHash = {};
                        rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
@@ -387,7 +387,7 @@ class ShiftWeekTableComponent extends Week {
             }
             } else {
               value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration))) {
+                if(moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null) {
                   const positionName = shift.node.positionByPositionId.positionName;
                        const rowHash = {};
                        rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}

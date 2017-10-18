@@ -303,7 +303,8 @@ class ShiftPublishComponent extends Component {
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             let isAfter = (moment(day).isAfter(moment(shift.startDate)))
-            let isBefore = (moment(day).isBefore(moment(shift.endDate)))
+            let isBefore = (moment(day).isBefore(moment(shift.endDate)) || 
+              moment(shift.endDate).format() == "Invalid date")
             if(isAfter && isBefore) {
               this.saveShift(shiftRecure, day, publishId);
             }
@@ -390,6 +391,14 @@ class ShiftPublishComponent extends Component {
     const shift = cloneDeep(shiftValue);
     let id = uuidv4();
     console.log("createRecurringShift")
+    let endDate = moment(shift.endDate).format()
+    if (endDate == "Invalid date"){
+      endDate = null
+    }
+    let startDate = moment(shift.startDate).format()
+    if (startDate == "Invalid date"){
+      startDate = moment().format()
+    }
     const payload = {
       id,
       recurringId,
@@ -400,8 +409,8 @@ class ShiftPublishComponent extends Component {
       endTime: moment(shift.endTime).format('HH:mm'),
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak,
-      expiration: moment(shift.endDate).format(),
-      startDate: moment(shift.startDate).format(),
+      expiration: endDate,
+      startDate: startDate,
       days: dayNames,
       isTraineeShift: false,
       expired: false

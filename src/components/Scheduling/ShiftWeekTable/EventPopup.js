@@ -20,7 +20,6 @@ import '../style.css';
 import './shiftWeekTable.css';
 
 var rp = require('request-promise');
-var rp = require('request-promise');
 const uuidv4 = require('uuid/v4');
 
 const styles = {
@@ -125,7 +124,6 @@ class EventPopupComponent extends Component {
         },
        updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-
           previousQueryResult.allShifts.edges.map((value) => {
             if (value.node.recurringShiftId != recurringShiftId) {
               newEdges.push(value);
@@ -161,6 +159,7 @@ class EventPopupComponent extends Component {
                 "edit": false
             }
        };
+       console.log(options)
        rp(options)
         .then(function(response) {
             //that.setState({redirect:true})
@@ -225,12 +224,14 @@ class EventPopupComponent extends Component {
         unpaidBreakTime: shift.unpaidBreak
       };
       if (shift.teamMembers && shift.teamMembers.length) {
-        payload.workersAssigned  = shift.teamMembers.map(function (member){
-            if (member['id'] != 0) {
-              return member['id']
+        payload.workersAssigned  = []
+        shift.teamMembers.map(function (member){
+            if (member['id'] != 0 && member['id'] != null) {
+              payload.workersAssigned.push(member['id'])
             }
         });
       }
+
       this.props.updateShiftMutation({
           variables: {
             data: {
@@ -238,33 +239,25 @@ class EventPopupComponent extends Component {
               shiftPatch: payload
             }
           },
-        updateQueries: {
-          allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-            const shiftHash = mutationResult.data.updateShiftById.shift;
-            const shiftHashIndex = findLastIndex(previousQueryResult.allShifts.edges, ({ node }) => node.id = shiftHash.id);
-            if (shiftHashIndex !== -1) {
-              previousQueryResult.allShifts.edges[shiftHashIndex].node = shiftHash;
-            }
-            return {
-              allShifts: previousQueryResult.allShifts
-              };
-          },
-        },
       }).then(({ data }) => {
         //if published then update kronos after edit
-
+        console.log(this.props.isPublished)
         if (this.props.isPublished == true) {
             // # TO DO:: MAKE SURE MARKETS EXIST, WITH KRONOS CALLS ON THE SERVER
             //if users added or deletes
+              console.log("WERE PUBLISHED")
 
               var uri = 'http://localhost:8080/api/kronosApi'
               var removedUsers = []
               var sameUsers = []
               var newUsers = []
-
+              console.log(oldShift.workersAssigned)
+              console.log(oldShift)
               oldShift.workersAssigned.map((value) => {
                 var isEdit = false
-                if (payload['workersAssigned'].includes(value)){
+                console.log(payload.workersAssigned)
+                console.log(value)
+                if (payload.workersAssigned.includes(value)){
                   sameUsers.push(value)
                   isEdit = true
                 }else{
@@ -286,6 +279,16 @@ class EventPopupComponent extends Component {
                       }
                   };
 
+                  console.log(options)
+                  rp(options)
+                  .then(function(response) {
+                      console.log("TEST")
+                      console.log("HELLO")
+                      console.log(response)
+                  }).catch((error) => {
+                    console.log('there was an error sending the query', error);
+                  });
+
             })
 
               //CREATE NEW SHIFT
@@ -306,6 +309,12 @@ class EventPopupComponent extends Component {
                             "end_time": moment(payload['endTime']).format("HH:MM"),
                       }
                   };
+                   rp(options)
+                    .then(function(response) {
+                        //that.setState({redirect:true})
+                    }).catch((error) => {
+                      console.log('there was an error sending the query', error);
+                    });
 
                 }
                 })
@@ -416,13 +425,19 @@ class EventPopupComponent extends Component {
 
 
   saveRecurringShift(shift, days){
+
       const daysWeek = []
       days.map(function(day,i){
-        if (day !== undefined){
+        if (day !== undefined) {
           daysWeek.push(moment(day).format("dddd").toUpperCase())
         }
       })
 
+      let endDate = shift.endDate 
+      if (endDate != null){
+        endDate = moment(shift.endDate).format()
+      }
+      
       const payload = {
         positionId: shift.positionId,
         workerCount: shift.numberOfTeamMembers,
@@ -431,21 +446,23 @@ class EventPopupComponent extends Component {
         endTime: moment(shift.endTime).format('HH:mm'),
         instructions: shift.instructions,
         unpaidBreakTime: shift.unpaidBreak,
-        expiration: shift.endDate,
-        startDate: shift.startDate,
+        startDate: moment(shift.startDate).format(),
+        expiration: endDate,
         days: daysWeek,
       };
 
       if (shift.teamMembers && shift.teamMembers.length) {
-        payload.assignees = shift.teamMembers.map(function (member){
-            if (member['id'] != 0) {
-              return member['id']
+        payload.assignees = []
+        shift.teamMembers.map(function (member){
+            if (member['id'] != 0 && member['id'] != null) {
+               payload.assignees.push(member['id'])
             }
         });
       }
-
+      
 
       console.log(payload)
+
       this.props.updateRecurringShiftById({
         variables: {
           data: {

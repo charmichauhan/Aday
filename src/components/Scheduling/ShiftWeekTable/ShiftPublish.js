@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { graphql, compose, withApollo } from 'react-apollo';
 import moment from 'moment'
-import { Button } from 'semantic-ui-react';
+import { Button, Dropdown } from 'semantic-ui-react';
 import { BrowserRouter as Router, Redirect } from 'react-router-dom';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
@@ -27,6 +27,7 @@ import {
   createCallUserPositionMutation
 } from './ShiftPublish.graphql';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
+var Halogen = require('halogen');
 var rp = require('request-promise');
 
 import '../../Scheduling/style.css';
@@ -117,10 +118,6 @@ class ShiftPublishComponent extends Component {
 
   addTemplateModalOpen = () => {
     this.setState({ addTemplateModalOpen: true })
-  };
-
-  onConfirm = () => {
-
   };
 
   onPublish = () => {
@@ -303,7 +300,7 @@ class ShiftPublishComponent extends Component {
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             let isAfter = (moment(day).isAfter(moment(shift.startDate)))
-            let isBefore = (moment(day).isBefore(moment(shift.endDate)) || 
+            let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
               moment(shift.endDate).format() == "Invalid date")
             if(isAfter && isBefore) {
               this.saveShift(shiftRecure, day, publishId);
@@ -703,7 +700,7 @@ const ShiftPublish = compose(
   }),
   graphql( createCallUserPositionMutation, {
     name: 'createCallUserPosition'
-  }), 
+  }),
   graphql(updateWorkplacePublishedIdMutation, {
     name: 'updateWorkplacePublishedIdMutation'
   }),

@@ -42,7 +42,15 @@ const queries = {
           name
         }
       }
-    }`
+    }`,
+  getRecurringShiftDetails: gql`
+    query recurringShiftById ($id: Uuid!) {
+      recurringShiftById (id: $id) {
+        startDate
+        expiration
+      }
+    }
+  `
 };
 
 const mutations = {
@@ -125,6 +133,22 @@ function getAllTags() {
   }).catch(err => Promise.reject(err));
 }
 
+function getRecurringShiftById(recurringShiftId) {
+  const recurringKey = `recurring-shift-${recurringShiftId}`;
+  const recurringShift = sessionStorage.getItem(recurringKey);
+  if (recurringShift) return Promise.resolve(JSON.parse(recurringShift));
+
+  return client.query({
+    query: queries.getRecurringShiftDetails,
+    variables: { id: recurringShiftId }
+  }).then((res) => {
+    if (res.data && res.data.recurringShiftById) {
+      sessionStorage.setItem(recurringKey, JSON.stringify(res.data.recurringShiftById));
+      return res.data.recurringShiftById;
+    }
+  }).catch(err => Promise.reject(err));
+}
+
 function createTag(id, name) {
   if (!id || !name) return Promise.reject({ error: 'Name and id property are required' });
   if (typeof name !== 'string') return Promise.reject({ error: 'Name property must be string' });
@@ -153,4 +177,4 @@ function createShiftTags(tags, shiftId) {
   }).catch(err => Promise.reject(err));
 }
 
-export default { getRelevantPositions, getAllPositionsForUser, getAllTags, createTag, createShiftTags };
+export default { getRelevantPositions, getAllPositionsForUser, getAllTags, getRecurringShiftById, createTag, createShiftTags };

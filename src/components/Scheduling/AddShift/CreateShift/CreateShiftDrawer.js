@@ -393,7 +393,8 @@ class DrawerHelper extends Component {
         'workerNumCount': String(shift.numberOfTeamMembers),
         'unpaidBreakTime': String(shift.unpaidBreakInMinutes),
         'startTime': startTime.format('YYYY-MM-DD HH:mm:ss') + '+00',
-        'endTime': endTime.format('YYYY-MM-DD HH:mm:ss') + '+00'
+        'endTime': endTime.format('YYYY-MM-DD HH:mm:ss') + '+00',
+        'weekPublishedId': this.props.weekPublishedId
       }
     };
     rp(options)
@@ -780,7 +781,7 @@ class DrawerHelper extends Component {
                       </Tooltip> || <RaisedButton label="View Phone Tree" onClick={this.openShiftHistory} />   }
                   </div>
                   }
-                  
+
                   { (!this.props.isPublished || shift.recurringShift == 'weekly') &&
                   <div>
                     {( isTeamMembersFull)

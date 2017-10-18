@@ -576,7 +576,12 @@ class EventPopupComponent extends Component {
     let pastDate = moment().diff(data.startTime) > 0;
     let startTime = moment(data.startTime).format('h:mm A');
     let endTime = moment(data.endTime).format('h:mm A');
-    let { recurringShiftId } = this.props.data;
+    let startTimeDiff = moment(data.startTime);
+    let endTimeDiff = moment(data.endTime);
+    const duration = moment.duration(endTimeDiff.diff(startTimeDiff));
+    let hoursDiff = parseInt(duration.asHours());
+    let minDiff = parseInt(duration.asMinutes())-hoursDiff*60;
+    let {recurringShiftId} = this.props.data;
 
     if (startTime == 'Invalid date') {
       let start = data.startTime.split(':');
@@ -603,7 +608,7 @@ class EventPopupComponent extends Component {
       data.workersInvited = [];
     }
 
-    var workersCount = data.workersRequestedNum || data.workerCount
+    var workersCount = data.workersRequestedNum || data.workerCount;
     this.openShift = workersCount - (data.workersAssigned.length + data.workersInvited.length );
 
     return (
@@ -612,7 +617,8 @@ class EventPopupComponent extends Component {
         <div className="start-time">
           <span className="fa fa-clock-o" />
           <p className="date-time"> {startTime.replace('M', '')} <br /> {endTime.replace('M', '')}</p>
-          <p className="duration">{h} HRS & &thinsp; <br /> {m} MINS</p>
+          {/*<p className="duration">{h} HRS & &thinsp; <br /> {m} MINS</p>*/}
+          <p > {hoursDiff} HR <br/> {minDiff} MIN</p>
         </div>
 
         {this.props.view == 'job'
@@ -623,10 +629,21 @@ class EventPopupComponent extends Component {
             <span>
                     {data.workplaceByWorkplaceId.workplaceName}
                 </span>
+
+            {data.traineesRequestedNum > 0 && <span className="shape-job">
+              <i><img src="/assets/Icons/job-shadower-filled.png" alt="jobtype"/></i>
+              <sup>{data.traineesRequestedNum}</sup>
+            </span>
+            }
           </div>
           : <div className="location">
             <span className="jobTypeIcon"><img src="/assets/Icons/cashier.png" alt="jobtype" /></span>
             <span className="jobType">{data.positionByPositionId.positionName}</span>
+            {data.traineesRequestedNum > 0 && <span className="shape-job">
+              <i><img src="/assets/Icons/job-shadower-filled.png" alt="jobtype"/></i>
+              <sup>{data.traineesRequestedNum}</sup>
+            </span>
+            }
           </div>
         }
 
@@ -637,6 +654,9 @@ class EventPopupComponent extends Component {
             <span className="box-title pendingshift">{data.workersInvited.length}</span>
             }{data.workersAssigned.length > 0 &&
           <span className="box-title filledshift">{data.workersAssigned.length}</span>}
+            {data.recurringShiftId &&
+              <span className="bitmap"><img src="/assets/Icons/repeating-shifts.png" alt="jobtype" /></span>
+            }
           </div>
           : <div>
             {/*
@@ -649,6 +669,9 @@ class EventPopupComponent extends Component {
             <div className="day-item-title">
               {data.userFirstName == 'Open' && data.userLastName == 'Shifts' && this.openShift > 0
               && <span className="box-title openshift">{this.openShift}</span>}
+              {data.recurringShiftId &&
+              <span className="bitmap"><img src="/assets/Icons/repeating-shifts.png" alt="jobtype" /></span>
+              }
             </div>
           </div>
         }

@@ -36,6 +36,7 @@
     font-weight: bold;
     line-height: 16px;
     text-align-last: center;
+    background-size: 12px;
 }
 
 .ui.vertical.menu .item .menu .item .menu_item_left span {
@@ -154,3 +155,12 @@
 .ui.vertical.menu .menu-item-logout .menu-item-list:hover span {
     color: #00a863;
 }
+
+.ui.vertical.menu>.item:first-child {
+  border-bottom: 1px solid #979797;
+}
+
+.left-menu_item .ui.vertical.menu .item>.header:not(.ui) {
+  margin: 0 0 1.5em;
+}
+

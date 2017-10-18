@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { graphql, compose, withApollo } from 'react-apollo';
 import moment from 'moment'
-import { Button } from 'semantic-ui-react';
+import { Button, Dropdown } from 'semantic-ui-react';
 import { BrowserRouter as Router, Redirect } from 'react-router-dom';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
@@ -27,6 +27,7 @@ import {
   createCallUserPositionMutation
 } from './ShiftPublish.graphql';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
+var Halogen = require('halogen');
 var rp = require('request-promise');
 
 import '../../Scheduling/style.css';
@@ -37,6 +38,27 @@ const styles = {
     width: 730
   }
 };
+
+const tags = [
+  {key: 'angular', text: 'Angular', value: 'angular'},
+  {key: 'css', text: 'CSS', value: 'css'},
+  {key: 'design', text: 'Graphic Design', value: 'design'},
+  {key: 'ember', text: 'Ember', value: 'ember'},
+  {key: 'html', text: 'HTML', value: 'html'},
+  {key: 'ia', text: 'Information Architecture', value: 'ia'},
+  {key: 'javascript', text: 'Javascript', value: 'javascript'},
+  {key: 'mech', text: 'Mechanical Engineering', value: 'mech'},
+  {key: 'meteor', text: 'Meteor', value: 'meteor'},
+  {key: 'node', text: 'NodeJS', value: 'node'},
+  {key: 'plumbing', text: 'Plumbing', value: 'plumbing'},
+  {key: 'python', text: 'Python', value: 'python'},
+  {key: 'rails', text: 'Rails', value: 'rails'},
+  {key: 'react', text: 'React', value: 'react'},
+  {key: 'repair', text: 'Kitchen Repair', value: 'repair'},
+  {key: 'ruby', text: 'Ruby', value: 'ruby'},
+  {key: 'ui', text: 'UI Design', value: 'ui'},
+  {key: 'ux', text: 'User Experience', value: 'ux'},
+]
 
 class ShiftPublishComponent extends Component {
 
@@ -88,10 +110,15 @@ class ShiftPublishComponent extends Component {
   viewRecurring = () => {
     this.setState({ redirect: true })
   };
-
+  downloadExcel = () => {
+    this.props.excel();
+  };
+  navigateCalender = (nav) => {
+    this.props.navigateCalender(nav);
+  }
 
   automateSchedule = (publishId) => {
-    console.log(publishId)
+    console.log(publishId);
     var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/algorithm/'
     var options = {
       uri: uri,
@@ -116,15 +143,11 @@ class ShiftPublishComponent extends Component {
   };
 
   addTemplateModalOpen = () => {
-    this.setState({ addTemplateModalOpen: true })
-  };
-
-  onConfirm = () => {
-
+    this.setState({addTemplateModalOpen: true})
   };
 
   onPublish = () => {
-    this.setState({ publishModalPopped: true })
+    this.setState({publishModalPopped: true})
   };
 
   handleNameChange = (e) => {
@@ -136,9 +159,9 @@ class ShiftPublishComponent extends Component {
   };
 
   publishWeek = () => {
-    const { publishId } = this.props
+    const {publishId} = this.props
     const { date } = this.props;
-    if (localStorage.getItem('workplaceId') != '') {
+    if (localStorage.getItem('workplaceId') != "") {
       this.props.createWorkplacePublishedMutation({
         variables: {
           workplacePublished: {
@@ -219,7 +242,7 @@ class ShiftPublishComponent extends Component {
   };
 
   openCreateShiftModal = () => {
-    this.setState({ isCreateShiftModalOpen: true });
+    this.setState({isCreateShiftModalOpen: true});
   };
 
   openShiftDrawer = () => {
@@ -313,7 +336,6 @@ class ShiftPublishComponent extends Component {
       });
     }
     else {
-      console.log(shiftRecure)
       days.forEach((day) => {
         if (day !== 'undefined' && shiftRecure.shiftDaysSelected[day] === true) {
           this.saveShift(shiftRecure, day, publishId);
@@ -579,7 +601,6 @@ class ShiftPublishComponent extends Component {
   }
 
   render() {
-
     let is_publish = this.props.isPublish;
     let publishId = this.props.publishId;
     let message = '';
@@ -591,14 +612,14 @@ class ShiftPublishComponent extends Component {
     let statusImg = '';
     if (is_publish == false) {
       status = 'UNPUBLISHED SCHEDULE';
-      statusImg = '/assets/Icons/unpublished.png';
+      statusImg = '/assets/Icons/no-view-blue.png';
     }
     else if (is_publish == true) {
       status = 'PUBLISHED SCHEDULE';
-      statusImg = '/assets/Icons/published.png';
+      statusImg = '/assets/Icons/view-blue.png';
     }
-    let publishModalOptions = [{ type: 'white', title: 'Go Back', handleClick: this.goBack, image: false },
-      { type: 'blue', title: 'Confirm', handleClick: this.publishWeek, image: false }];
+    let publishModalOptions = [{type: 'white', title: 'Go Back', handleClick: this.goBack, image: false},
+      {type: 'blue', title: 'Confirm', handleClick: this.publishWeek, image: false}];
     if (this.state.redirect) {
       return (
         <Redirect to={{ pathname: '/schedule/recurring', viewName: this.props.view }} />
@@ -620,44 +641,199 @@ class ShiftPublishComponent extends Component {
                                                  action={publishModalOptions} closeAction={this.modalClose} />
         }
 
-        <div className="col-md-12">
-          <div className="col-sm-offset-3 col-sm-5 rectangle">
-            { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
-              <div>
-                <img src={statusImg} />
-                <p className="col-sm-offset-2">
-                  {status}
-                </p>
-              </div> }
+        <div className="calendar-top-heading">
+
+          <div style={{display: 'flex', flexDirection: 'Row'}}>
+
+            <div className="col-md-1 heading-left-right"
+                 style={{display: 'flex', flexDirection: 'Row', justifyContent: 'spaceBetween'}}>
+              <div className="calendar-next-btn" onClick={() => this.navigateCalender("PREV")}>
+                <img src="/assets/Buttons/calendar-left.png"/>
+                <span style={{
+                  wordWrap: 'normal',
+                  textAlign: 'center',
+                  color: '#999999',
+                  fontFamily: "Lato",
+                  fontSize: 11,
+                  fontWeight: 300,
+                  lineHeight: 1.2
+                }}>LAST WEEK</span>
+              </div>
+              <div className="calendar-next-btn" onClick={() => this.navigateCalender("NEXT")}>
+                <img src="/assets/Buttons/calendar-right.png"/>
+                <span style={{
+                  wordWrap: 'normal',
+                  textAlign: 'center',
+                  color: '#999999',
+                  fontFamily: "Lato",
+                  fontSize: 11,
+                  fontWeight: 300,
+                  lineHeight: 1.2
+                }}>NEXT WEEK</span>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div className="calendar-schedule-title">
+                { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
+                  <ul>
+                    <li><span>{moment(start).format('MMM D')}
+                      — {moment(start).add(6, 'days').format('MMM D')}, {moment(start).format('YYYY')}</span></li>
+                    <img src={statusImg} style={{paddingBottom: 2, width: 20, height: 'auto'}}/>&nbsp;&nbsp;
+                    <li><span>{status}</span></li>
+                  </ul>}
+              </div>
+              <div className="btn-action-calendar">
+                {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
+                  <div className="div-ui-action"
+                  >
+                    <CreateShiftButton
+                      open={this.state.isCreateShiftModalOpen}
+                      onButtonClick={this.openCreateShiftModal}
+                      onCreateShift={this.openShiftDrawer}
+                      onModalClose={this.closeDrawerAndModal}
+                      weekPublishedId={publishId}
+                      weekStart={start}/>
+                    <button className="action-btn adayblue-button" onClick={() => this.viewRecurring()}>VIEW REPEATING
+                      SHIFTS
+                    </button>
+
+                    {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+
+                  </div> :
+                  <div>
+                    <button className="action-btn adayblue-button" onClick={() => this.viewRecurring()}>VIEW REPEATING
+                      SHIFTS
+                    </button>
+                  </div>
+                }
+              </div>
+              <div className="calendar-search-tags">
+                <div className="search-tags-input">
+                  <Dropdown placeholder='Search By Tags' fluid multiple selection options={tags}
+                            style={{marginTop: 3.5}}/>
+                  <i className=""></i>
+                </div>
+                <div className="search-filters">
+                  <ul style={{marginLeft: 5}}>
+                    <li><span>QUICK FILTERS:</span></li>
+                    &nbsp;
+                    <li><a href="#">NON-TRAINEE SHIFTS</a></li>
+                    &nbsp;
+                    <li><a href="#">TRAINEE SHIFTS</a></li>
+                    &nbsp;
+                    <li><a href="#">ALL SHIFTS</a></li>
+                    &nbsp;
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {/* If this is adhered strictly to the design then the below shouild be col-md-4, and the two adjacent dividers should be col-md-6 */}
+            <div className="col-md-4 heading-center-spesh"></div>
+            {!this.props.isHoursReceived ?
+              <div className="col-md-6 calendar-info-right">
+                <div style={{display: 'flex', flexDirection: 'Column'}}>
+                    <span
+                      className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}
+                      of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}
+                      ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
+                  <span
+                    className="cale-info">NON-TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked}
+                    of {this.props.getHoursBooked.weeklyHoursTotal}
+                    ({this.props.getHoursBooked.weeklyTotalHoursBooked}%)</span>
+                  <span
+                    className="cale-info">TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyTraineesHoursBooked}<img
+                    style={{margin: 3, paddingBottom: 5}}
+                    src="/assets/Icons/job-shadower-filled.png"/><span>of {this.props.getHoursBooked.weeklyTraineesTotal}<img
+                    style={{margin: 3, paddingBottom: 5}}
+                    src="/assets/Icons/job-shadower-unfilled.png"/></span><span>({this.props.getHoursBooked.weeklyTraineesTotalHoursBooked}%)</span></span>
+                </div>
+                <div style={{display: 'flex', flexDirection: 'Column'}}>
+                  <span className="cale-sub-info">TOTAL SPEND BUDGET BOOKED: $11,049 of $16,038</span>
+                  <span className="cale-info">NON-TRAINEE BUDGET BOOKED:  $11,049 of $13,000 (85%)</span>
+                  <span className="cale-info">TRAINEE BUDGET BOOKED: $0<img style={{margin: 3, paddingBottom: 5}}
+                                                                            src="/assets/Icons/job-shadower-filled.png"/><span>of $3,038<img
+                    style={{margin: 3, paddingBottom: 5}}
+                    src="/assets/Icons/job-shadower-unfilled.png"/></span><span>(0%)</span></span>
+                </div>
+
+
+              </div>
+              : <div><Halogen.SyncLoader color='#00A863'/></div> }
+              {!this.props.isHoursReceived &&
+              <div className="col-md-1 heading-left-right"
+                   style={{display: 'flex', flexDirection: 'Row', justifyContent: 'spaceBetween'}}>
+
+                <div onClick={this.downloadExcel} style={{display: 'flex', flexDirection: 'Column', cursor: "pointer"}}>
+                  <img style={{margin: 4}} src="/assets/Buttons/spreadsheet.png"/>
+                  <span style={{
+                    wordWrap: 'normal',
+                    textAlign: 'center',
+                    color: '#999999',
+                    fontFamily: "Lato",
+                    fontSize: 11,
+                    fontWeight: 300
+                  }}>EXCEL</span>
+                </div>
+
+
+                <div className="calendar-print-btn">
+                  <img src="/assets/Buttons/printer.png"/>
+                  <span style={{
+                    wordWrap: 'normal',
+                    textAlign: 'center',
+                    color: '#999999',
+                    fontFamily: "Lato",
+                    fontSize: 11,
+                    fontWeight: 300
+                  }}>PRINT</span>
+                </div>
+              </div>
+              }
           </div>
         </div>
-        <div className="btn-action">
-          {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
-            <div>
-              <Button className="btn-image">
-                <CreateShiftButton
-                  open={this.state.isCreateShiftModalOpen}
-                  onButtonClick={this.openCreateShiftModal}
-                  onCreateShift={this.openShiftDrawer}
-                  onModalClose={this.closeDrawerAndModal}
-                  weekPublishedId={publishId}
-                  weekStart={start} />
-              </Button>
-              {(is_publish == false) &&
-              <Button className="btn-image flr" onClick={this.onPublish}>
-                <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
-              </Button> }
-              {(is_publish != 'none') &&
-              <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}>
-                <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
-              </Button>}
-              {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
-            </div> :
-            <div>
-            </div>
-          }
 
-        </div>
+        {/*<div className="col-md-12">
+         <div className="col-sm-offset-3 col-sm-5 rectangle">
+         { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
+         <div>
+         <img src={statusImg} />
+         <p className="col-sm-offset-2">
+         {status}
+         </p>
+         </div> }
+         </div>
+         </div>*/}
+        {/*<div className="btn-action">
+         {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
+         <div>
+         <Button className="btn-image">
+         <CreateShiftButton
+         open={this.state.isCreateShiftModalOpen}
+         onButtonClick={this.openCreateShiftModal}
+         onCreateShift={this.openShiftDrawer}
+         onModalClose={this.closeDrawerAndModal}
+         weekPublishedId={publishId}
+         weekStart={start} />
+         </Button>
+         <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
+         {isPublished &&
+         <Button className="btn-image flr" onClick={this.onPublish}>
+         <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
+         </Button> }
+         {(is_publish != 'none') &&
+         <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}>
+         <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
+         </Button>}
+         /!*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*!/
+
+         </div> :
+         <div>
+         <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
+         </div>
+         }
+
+         </div>*/}
         <CreateShiftDrawer
           width={styles.drawer.width}
           open={this.state.isCreateShiftOpen}
@@ -704,7 +880,7 @@ const ShiftPublish = compose(
   }),
   graphql( createCallUserPositionMutation, {
     name: 'createCallUserPosition'
-  }), 
+  }),
   graphql(updateWorkplacePublishedIdMutation, {
     name: 'updateWorkplacePublishedIdMutation'
   }),

@@ -3,6 +3,75 @@ body{
     font-family: 'Roboto-Regular';
 }
 
+.calendar-info-right {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.adayblue-button {
+  width: 180px;
+  height: 35px;
+  border-radius: 1px !important;
+  color: rgb(0, 33, 161) !important;
+  background-color: transparent;
+  box-shadow: 0 0 0 2px #0021A1 inset!important;
+  backgrond-image: none;
+  background: transparent none;
+  text-shadow: none!important;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-block;
+  min-height: 1em;
+  border: none;
+  vertical-align: baseline;
+  font-family: "Roboto Condensed";
+  margin: 0 .25em 0 0;
+  padding: .78571429em 1.5em .78571429em;
+  text-transform: none;
+  font-weight: 700;
+  line-height: 1em;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.adayblue-button:hover {
+  width: 180px;
+  height: 35px;
+  border-radius: 1px !important;
+  color: rgb(0, 33, 161) !important;
+  color: #FFF !important;
+  box-shadow: 0 0 0 2px #0021A1 inset!important;
+  backgrond-image: none;
+  background: #0021A1 none;
+  text-shadow: none!important;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-block;
+  min-height: 1em;
+  border: none;
+  vertical-align: baseline;
+  font-family: "Roboto Condensed";
+  margin: 0 .25em 0 0;
+  padding: .78571429em 1.5em .78571429em;
+  font-weight: 700;
+  line-height: 1em;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  transition: opacity .1s ease,background-color .1s ease,color .1s ease,box-shadow .1s ease,background .1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ui.inverted.blue.button, .ui.inverted.blue.buttons .button {
+    box-shadow: 0 0 0 2px #0021A1 inset!important;
+}
+
 .rbc-calendar *, .rbc-calendar *:before, .rbc-calendar *:after {
     box-sizing: inherit;
     table-layout: fixed;
@@ -78,7 +147,7 @@ table.table.emp_view_table {
 }*/
 
 td.headcol, td.long {
-    width: 178px;
+    width: 220px;
 }
 
 .atable .penalheading {
@@ -86,11 +155,11 @@ td.headcol, td.long {
     height: 21px;
     width: 110px;
     padding: 0 8px;
-    color: #000;
-    font-family: 'RobotoCondensed-Regular';
-    font-size: 20px;
+    color: #4A4A4A;
+    font-family: "Roboto Condensed";
+    font-size: 18px;
     font-weight: bold;
-    line-height: 22px;
+    line-height: 21px;
     vertical-align: top;
     white-space: normal;
     word-wrap: break-word;
@@ -99,10 +168,10 @@ td.headcol, td.long {
 .atable .penalheading p {
     display: flex;
     color: #4A4A4A;
-    font-family: 'Lato-Regular';
-    font-size: 14px;
-    font-weight: 200;
-    line-height: 21px;
+    font-family: "lato";
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: normal;
 }
 
 .user_img, .user_desc {
@@ -262,7 +331,7 @@ td.shiftbox {
 
 .day-item {
     box-sizing: border-box;
-    width: 133px;
+    width: 188px;
     border: 1px solid #b3b3b3;
     border-radius: 4px;
     box-shadow: 0 4px 4px 0 #999999;
@@ -273,7 +342,7 @@ td.shiftbox {
 }
 
 .day-item-title {
-    margin-left: 30px;
+    margin-left: 27px;
 }
 
 .day-item-title a.glyphicon.glyphicon-plus {
@@ -286,10 +355,23 @@ td.shiftbox {
 .day-item .day-item-title {
     margin-bottom: 0px;
     margin-top: 5px;
+    clear: both;
+    overflow: hidden;
 }
 
 .day-item .day-item-title span {
     margin-right: 4px;
+}
+
+.day-item .day-item-title span.bitmap {
+  width: 23%;
+  float: right;
+  text-align: right;
+  height: 22px;
+}
+
+.day-item .day-item-title span.bitmap img {
+  width: 25px;
 }
 
 .day-item .day-item-title p {
@@ -308,18 +390,26 @@ td.shiftbox {
     color: #4A4A4A;
     line-height: 0px;
     font-size: 18px;
-    margin-bottom: 10px;
-    height: 35px;
+    margin-bottom: 0px;
+    width: 100%;
+    margin-top: 0;
 }
 
 .start-time .date-time {
     width: 50%;
     color: #0022A1;
-    font-weight: light;
-    font-family: 'VarelaRound-Regular' Round;
-    font-size: 22px;
-    line-height: 22px;
+    font-family: Varela Round;
+    font-size: 18px;
+    line-height: 18px;
     margin-top: 0px;
+    margin-bottom: 0;
+}
+
+.start-time p {
+  font-size: 14px;
+  font-family: "Roboto Condensed";
+  color: #4A4A4A;
+  width: 23%;
 }
 
 .start-time {
@@ -331,7 +421,7 @@ td.shiftbox {
 }
 
 .start-time .duration {
-    width: 37%;
+    width: 33%;
     font-size: 11px;
     float: right;
     color: #4B4B4B;
@@ -343,7 +433,7 @@ td.shiftbox {
     align-items: center;
     justify-content: center;
     display: flex;
-    margin: 4px;
+    margin: 4px 4px 4px 0;
 }
 
 .location .jobTypeIcon {
@@ -351,20 +441,28 @@ td.shiftbox {
     align-items: center;
     justify-content: center;
     display: flex;
-    margin: 2px;
+    margin: 5px 2px 6px;
 }
 
 /**
  * the next three selectors affect the "location" row
  */
 .location .fa-map-marker {
-    margin-left: 2px;
     width: 13%; /* ensures proper alignment of start/end times for the shift and the location */
     font-size: 20px;
     align-items: center;
     justify-content: center;
     display: flex;
-    margin: 2px;
+    margin: 4px 4px 4px 0;
+}
+
+.location span {
+  width: 60%;
+}
+
+.location span.shape-job {
+  width: 23%;
+  text-align: right;
 }
 
 .day-item .location {
@@ -596,6 +694,7 @@ img.btn-image {
 .atable p.scheduled_tag {
     color: #999;
     font-size: 13px;
+    font-weight: normal;
 }
 
 .atable tbody.tbody_scroll {
@@ -890,8 +989,8 @@ table.atable td.shiftbox {
         font-size: 1px;
     }
     .start-time .date-time {
-        width: 80%;
-        font-size: 20px;
+        width: 60%;
+        font-size: 18px;
     }
 }
 

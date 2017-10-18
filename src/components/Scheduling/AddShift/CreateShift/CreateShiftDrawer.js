@@ -772,13 +772,15 @@ class DrawerHelper extends Component {
                   </div>
 
 
-                  { (this.props.isPublished == true) && shift.recurringShift != 'weekly' &&
+                  { (this.props.isPublished == true) && shift.recurringShift != 'weekly' && 
                   <div>
-                    <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={this.openShiftHistory}
-                            color='red'>View Phone Tree
-                    </button>
+                    {( isShiftInvalid)
+                      &&  <Tooltip className="tooltip-message" text={"Fill Out Shift Information To Generate Phone Tree"}>
+                        <RaisedButton label="View Phone Tree" disabled={ true} />
+                      </Tooltip> || <RaisedButton label="View Phone Tree" onClick={this.openShiftHistory} />   }
                   </div>
                   }
+                  
                   { (!this.props.isPublished || shift.recurringShift == 'weekly') &&
                   <div>
                     {( isTeamMembersFull)

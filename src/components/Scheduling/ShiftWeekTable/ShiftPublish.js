@@ -476,6 +476,7 @@ class ShiftPublishComponent extends Component {
     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     var newId = uuidv4()
+    const _this = this
     const payload = {
       id: newId,
       workplaceId: shift.workplaceId,
@@ -515,7 +516,7 @@ class ShiftPublishComponent extends Component {
       let _this = this;
       CreateShiftHelper.createShiftTags(shift.tags, data.createShift.shift.id)
         .then(() => console.log('Shift tags have been created.'));
-        let is_publish = this.props.isPublish;
+        let is_publish = _this.props.isPublish;
         if (is_publish == 'none'){
             is_publish = false
         }
@@ -551,7 +552,7 @@ class ShiftPublishComponent extends Component {
                     contentType: 'application/json',
                     json: {
                       "data": {
-                        "weekPublishedId": this.props.publishId,
+                        "weekPublishedId": _this.props.publishId,
                         "shiftId": newId,
                       }
                     }

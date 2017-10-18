@@ -96,6 +96,10 @@ class ShiftWeekTableComponent extends Week {
     this.setState({calendarView: this.props.eventPropGetter()});
   };
 
+  forceRefetch = () => {
+    this.props.data.refetch(allShiftsByWeeksPublished)
+  }
+
   getSummary = (summary, start) => {
     let summaryDetail = [];
     for (let i = 0; i <= 6; i++) {
@@ -573,7 +577,8 @@ class ShiftWeekTableComponent extends Week {
                     users={this.props.allUsers}
                     view={this.state.calendarView}
                     isPublished={isPublished}
-                    publishedId={publishedId} />
+                    publishedId={publishedId}
+                    forceRefetch={this.forceRefetch} />
                 )
               )
               }
@@ -586,6 +591,7 @@ class ShiftWeekTableComponent extends Week {
                 view={this.state.calendarView}
                 isPublished={isPublished}
                 publishedId={publishedId}
+                forceRefetch={this.forceRefetch}
               />
               }
             </TableBody>

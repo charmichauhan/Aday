@@ -80,9 +80,10 @@ class EventPopupComponent extends Component {
   deleteSingle = () => {
     this.deleteShift(this.props.data.id)
 
+    const _this = this
     this.props.data.workersAssigned.map(function(user, i){
       var uri = 'http://localhost:8080/api/kronosApi'
-      let data = this.props.data
+      let data = _this.props.data
 
         var options = {
             uri: uri,
@@ -92,10 +93,10 @@ class EventPopupComponent extends Component {
                   "actionType": "deleteShift",
                   "testing": true,
                   "user_id": user,
-                  "date": moment(data.startTime).format('YYYY/MM/DD'),
+                  "date": moment(data.startTime).format('YYYY-MM-DD'),
                   "startTime": moment(data.startTime).format('HH:mm'),
                   "endTime": moment(data.endTime).format('HH:mm'),
-                  "singlEdit": false
+                  "singleEdit": false
               }
          };
          rp(options)
@@ -108,7 +109,7 @@ class EventPopupComponent extends Component {
   }
 
   deleteRecurringShift = () => {
-    let {id} = this.props.data, {startTime} = this.props.data;
+    let {id} = this.props.data, {startTime, endTime} = this.props.data;
     let {recurringShiftId} = this.props.data;
     let that = this;
     const newEdges = []
@@ -155,7 +156,9 @@ class EventPopupComponent extends Component {
                 "sec": "QDVPZJk54364gwnviz921",
                 "actionType": "deleteRecurring",
                 "recurring_shift_id": recurringShiftId,
-                "date": moment(startTime).startOf('day').format(),
+                "date": moment(startTime).format('YYYY-MM-DD'),
+                "start_time": moment(startTime).format('HH:mm'),
+                "end_time": moment(endTime).format('HH:mm'),
                 "edit": false
             }
        };
@@ -269,12 +272,11 @@ class EventPopupComponent extends Component {
                       json: {
                             "sec": "QDVPZJk54364gwnviz921",
                             "actionType": "deleteShift",
-                            "testing": true,
                             "user_id": value,
-                            "date": moment(oldShift.startTime).format("YYYY/MM/DD"),
+                            "date": moment(oldShift.startTime).format("YYYY-MM-DD"),
                             "start_time": moment(oldShift.startTime).format("HH:MM"),
                             "end_time": moment(oldShift.endTime).format("HH:MM"),
-                            "edit": isEdit,
+                            "singleEdit": isEdit,
                             "shift_id": oldShift.id
                       }
                   };
@@ -282,9 +284,6 @@ class EventPopupComponent extends Component {
                   console.log(options)
                   rp(options)
                   .then(function(response) {
-                      console.log("TEST")
-                      console.log("HELLO")
-                      console.log(response)
                   }).catch((error) => {
                     console.log('there was an error sending the query', error);
                   });
@@ -463,6 +462,7 @@ class EventPopupComponent extends Component {
 
       console.log(payload)
 
+      var _this = this
       this.props.updateRecurringShiftById({
         variables: {
           data: {
@@ -487,6 +487,8 @@ class EventPopupComponent extends Component {
         };
          rp(options)
           .then(function(response) {
+              console.log(response)
+              _this.props.forceRefetch()
               //that.setState({redirect:true})
           }).catch((error) => {
             console.log('there was an error sending the query', error);

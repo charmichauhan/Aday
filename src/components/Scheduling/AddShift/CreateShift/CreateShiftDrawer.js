@@ -568,9 +568,9 @@ class DrawerHelper extends Component {
             </div>
 
             <div style={{ flex: 3, alignSelf: 'center' }}>
-              <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={() => handleAdvance(shift)}
+            {/*  <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={() => handleAdvance(shift)}
                       color='red'>Advanced
-              </button>
+              </button> */} 
             </div>
           </div>
 

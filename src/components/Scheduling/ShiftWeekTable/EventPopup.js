@@ -575,20 +575,23 @@ class EventPopupComponent extends Component {
     const mappedUsers = users && users.allUsers && users.allUsers.edges.map(({ node }) => node);
     let pastDate = moment().diff(data.startTime) > 0;
     let startTime = moment(data.startTime).format('h:mm A');
-    let endTime = moment(data.endTime).format('h:mm A');
     let startTimeDiff = moment(data.startTime);
     let endTimeDiff = moment(data.endTime);
-    const duration = moment.duration(endTimeDiff.diff(startTimeDiff));
-    let hoursDiff = parseInt(duration.asHours());
-    let minDiff = parseInt(duration.asMinutes())-hoursDiff*60;
-    let {recurringShiftId} = this.props.data;
-
-    if (startTime == 'Invalid date') {
+    let endTime = moment(data.endTime).format('h:mm A');
+    
+     if (startTime == 'Invalid date') {
       let start = data.startTime.split(':');
       let end = data.endTime.split(':');
       startTime = moment().hour(parseInt(start[0])).minute(parseInt(start[1])).format('hh:mm A');
       endTime = moment().hour(parseInt(end[0])).minute(parseInt(end[1])).format('hh:mm A');
+      startTimeDiff =moment().hour(parseInt(start[0])).minute(parseInt(start[1]));
+      endTimeDiff = moment().hour(parseInt(end[0])).minute(parseInt(end[1]));
     }
+
+    let duration = moment.duration(endTimeDiff.diff(startTimeDiff));
+    let hoursDiff = parseInt(duration.asHours());
+    let minDiff = parseInt(duration.asMinutes())-hoursDiff*60;
+    let {recurringShiftId} = this.props.data;
 
     let h = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('HH');
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');

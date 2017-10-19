@@ -119,7 +119,7 @@ class ShiftPublishComponent extends Component {
 
   automateSchedule = (publishId) => {
     console.log(publishId);
-    var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/algorithm/'
+    var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/algorithm/'
     var options = {
       uri: uri,
       method: 'POST',
@@ -195,7 +195,7 @@ class ShiftPublishComponent extends Component {
       }).then((res) => {
         console.log('Inside the data', res);
         this.modalClose();
-        var uri = 'http://localhost:8080/api/kronosApi'
+        var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/kronosApi'
 
                 var options = {
                     uri: uri,
@@ -219,7 +219,7 @@ class ShiftPublishComponent extends Component {
         variables: { id: this.props.publishId, date: moment().format() }
       }).then((res) => {
         this.modalClose();
-        var uri = 'http://localhost:8080/api/kronosApi'
+        var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/kronosApi'
 
                 var options = {
                     uri: uri,
@@ -347,7 +347,7 @@ class ShiftPublishComponent extends Component {
 
               let workersAssigned = shiftRecure.teamMembers.map(({ id }) => id);
               workersAssigned.map(function(user, i){
-                  var uri = 'http://localhost:8080/api/kronosApi'
+                  var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/kronosApi'
 
                   var options = {
                       uri: uri,
@@ -450,7 +450,7 @@ class ShiftPublishComponent extends Component {
       }
     }).then(({data})=>{
 
-        var uri = 'http://localhost:8080/api/newRecurring'
+        var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/newRecurring'
 
         var options = {
               uri: uri,
@@ -567,7 +567,7 @@ class ShiftPublishComponent extends Component {
           }).then(({ data }) => {
           count += 1;
           if (count == length){
-            var callURI = 'http://localhost:8080/api/callEmployee/'
+            var callURI = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/callEmployee/'
                   var options = {
                     uri: callURI,
                     method: 'POST',
@@ -694,9 +694,9 @@ class ShiftPublishComponent extends Component {
                       onModalClose={this.closeDrawerAndModal}
                       weekPublishedId={publishId}
                       weekStart={start}/>
-                    <button className="action-btn adayblue-button" onClick={() => this.viewRecurring()}>VIEW REPEATING
-                      SHIFTS
-                    </button>
+                    {(is_publish != true) &&
+                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS 
+                    </button>}
 
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
 
@@ -817,10 +817,6 @@ class ShiftPublishComponent extends Component {
          weekStart={start} />
          </Button>
          <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
-         {isPublished &&
-         <Button className="btn-image flr" onClick={this.onPublish}>
-         <img className="btn-image flr" src="/assets/Buttons/publish.png" alt="Publish" />
-         </Button> }
          {(is_publish != 'none') &&
          <Button className="btn-image flr" onClick={() => this.automateSchedule(publishId)}>
          <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />

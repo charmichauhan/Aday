@@ -280,7 +280,7 @@ class ShiftWeekTableComponent extends Week {
                 if(moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null) {
                     const positionName = shift.node.positionByPositionId.positionName;
                         let assigned = shift.node.assignees
-                        if (assigned.length < shift.node.workerCount) {
+                        if (!assigned || assigned.length < shift.node.workerCount) {
                           const rowHash = {};
                           rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
                           rowHash['userFirstName'] = 'Open'
@@ -292,6 +292,7 @@ class ShiftWeekTableComponent extends Week {
                             calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)]
                           }
                         }
+                        if (assigned){
                         assigned.map((v) => {
                           const rowHash = {}
                           rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
@@ -305,6 +306,7 @@ class ShiftWeekTableComponent extends Week {
                             calendarHash[userName] = [Object.assign(rowHash, shift.node)];
                           }
                         })
+                      }
               }
           })
           }
@@ -314,7 +316,7 @@ class ShiftWeekTableComponent extends Week {
                     const positionName = shift.node.positionByPositionId.positionName;
                         let assigned = shift.node.assignees
 
-            if (assigned.length < shift.node.workerCount) {
+            if (!assigned || assigned.length < shift.node.workerCount) {
               const rowHash = {};
               rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
               rowHash['userFirstName'] = 'Open';
@@ -326,6 +328,7 @@ class ShiftWeekTableComponent extends Week {
                 calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)];
               }
             }
+            if (assigned){
             assigned.map((v) => {
               const rowHash = {};
               rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
@@ -339,6 +342,7 @@ class ShiftWeekTableComponent extends Week {
                 calendarHash[userName] = [Object.assign(rowHash, shift.node)];
               }
             })
+          }
           }
         })
       }

@@ -702,9 +702,6 @@ class ShiftPublishComponent extends Component {
 
                   </div> :
                   <div>
-                    <button className="action-btn adayblue-button" onClick={() => this.viewRecurring()}>VIEW REPEATING
-                      SHIFTS
-                    </button>
                   </div>
                 }
               </div>

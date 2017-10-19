@@ -29,16 +29,6 @@ const allShiftsByWeeksPublished = gql`
               brandName
             }
           }
-          shiftTagsByShiftId {
-            nodes {
-              tagId
-              shiftId
-              tagByTagId {
-                id
-                name
-              }
-            }
-          }
           workplaceByWorkplaceId {
             id
             workplaceName

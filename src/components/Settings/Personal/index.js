@@ -113,8 +113,13 @@ class Personal extends Component {
     .field('id', localStorage.getItem('userId'))
     .attach("theseNamesMustMatch", files[0])
     .end((err, res) => {
-      if (err) console.log(err);
-      alert('File uploaded!');
+      if (err) {
+        console.log(err);
+        alert('Error Uploading File');
+      } else {
+        alert('File uploaded!');
+      }
+
     })
     this.setState({ blob: files[0] });
   };
@@ -147,7 +152,7 @@ class Personal extends Component {
   };
 
   handleImageSave = (img) => {
-    this.handleImageUpload([img]);
+    this.handleImageUpload(img);
   };
 
   render() {
@@ -157,7 +162,6 @@ class Personal extends Component {
     }
     return (
       <div className="content personal-content">
-        <img src={userInfo.avatarUrl}/>
         <h2 className="heading">Personal Information</h2>
         <div className="personal-info-img">
           <div className="personal-info">
@@ -253,7 +257,7 @@ class Personal extends Component {
               border={10}
               color={[74, 74, 74, 0.5]}
               onSave={this.handleImageSave}
-              image={userInfo.avatarUrl || this.state.blob} />
+              image={userInfo.avatarUrl + "?" + new Date().getTime() || this.state.blob} />
           </div>}
         </div>
         {/*<div className="payment-option">

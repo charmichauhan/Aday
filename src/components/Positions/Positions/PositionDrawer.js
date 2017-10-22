@@ -112,8 +112,10 @@ class DrawerHelper extends Component {
     .field('id', this.state.position.id)
     .attach("theseNamesMustMatch", files[0])
     .end((err, res) => {
-      if (err) console.log(err);
-      else {
+      if (err) {
+        console.log(err);
+        alert('Error Uploading File');
+      } else {
         const position = Object.assign(this.state.position, { positionIconUrl : res.text });
         this.setState({position: position});
         alert('File uploaded!');

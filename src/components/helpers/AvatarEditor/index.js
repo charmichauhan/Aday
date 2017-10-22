@@ -75,7 +75,6 @@ class AvatarEditor extends Component {
       <div className="avatar-editor">
         <ReactAvatarEditor
           ref={this.setEditorRef}
-          crossOrigin="anonymous"
           scale={parseFloat(scale)}
           width={width}
           height={height}

@@ -47,8 +47,10 @@ class DrawerHelper extends Component {
     .field('id', this.state.brand.id)
     .attach("theseNamesMustMatch", files[0])
     .end((err, res) => {
-      if (err) console.log(err);
-      else {
+      if (err) {
+        console.log(err);
+        alert('Error Uploading File');
+      } else {
         const brand = Object.assign(this.state.brand, { brandIconUrl : res.text });
         this.setState({brand: brand});
         alert('File uploaded!');

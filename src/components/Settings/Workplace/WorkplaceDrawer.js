@@ -69,8 +69,10 @@ class DrawerHelper extends Component {
     .field('id', this.state.workplace.id)
     .attach("theseNamesMustMatch", files[0])
     .end((err, res) => {
-      if (err) console.log(err);
-      else {
+      if (err) {
+        console.log(err);
+        alert('Error Uploading File');
+      } else {
         const workplace = Object.assign(this.state.workplace, { workplaceImageUrl : res.text });
         this.setState({workplace: workplace});
         alert('File uploaded!');

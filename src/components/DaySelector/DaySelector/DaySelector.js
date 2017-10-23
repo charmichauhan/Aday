@@ -141,7 +141,7 @@ export default class DaySelector extends React.Component {
 DaySelector.propTypes = {
   tableSize: PropTypes.number.isRequired,
   startDate: PropTypes.object.isRequired,
-  selectedDate: PropTypes.string,
+  selectedDate: PropTypes.any,
   //formCallback: PropTypes.func.isRequired,
 };
 

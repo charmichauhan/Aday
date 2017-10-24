@@ -326,7 +326,7 @@ class ShiftPublishComponent extends Component {
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             let isAfter = (moment(day).isAfter(moment(shift.startDate)))
-            let isBefore = (moment(day).isBefore(moment(shift.endDate)) || 
+            let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
               moment(shift.endDate).format() == "Invalid date")
             if(isAfter && isBefore) {
               this.saveShift(shiftRecure, day, publishId);
@@ -645,36 +645,55 @@ class ShiftPublishComponent extends Component {
 
           <div style={{display: 'flex', flexDirection: 'Row'}}>
 
-            <div className="col-md-1 heading-left-right"
-                 style={{display: 'flex', flexDirection: 'Row', justifyContent: 'spaceBetween'}}>
-              <div className="calendar-next-btn" onClick={() => this.navigateCalender("PREV")}>
-                <img src="/assets/Buttons/calendar-left.png"/>
-                <span style={{
-                  wordWrap: 'normal',
-                  textAlign: 'center',
-                  color: '#999999',
-                  fontFamily: "Lato",
-                  fontSize: 11,
-                  fontWeight: 300,
-                  lineHeight: 1.2
-                }}>LAST WEEK</span>
+            <div className="col-md-3 calendar-info-left">
+              <div className="weekname">
+                <h4>Week of oct 2</h4>
+                <span>oct 2, 2017 - oct 8, 2017</span>
               </div>
-              <div className="calendar-next-btn" onClick={() => this.navigateCalender("NEXT")}>
-                <img src="/assets/Buttons/calendar-right.png"/>
-                <span style={{
-                  wordWrap: 'normal',
-                  textAlign: 'center',
-                  color: '#999999',
-                  fontFamily: "Lato",
-                  fontSize: 11,
-                  fontWeight: 300,
-                  lineHeight: 1.2
-                }}>NEXT WEEK</span>
+              <div className="cal-next-pre">
+                <div className="calendar-next-btn" onClick={() => this.navigateCalender("PREV")}>
+                  <span style={{
+                    wordWrap: 'normal',
+                    textAlign: 'center'
+                  }}>LAST WEEK</span>
+                  <img src="/assets/Buttons/calendar-left.png"/>
+                </div>
+                <div className="calendar-next-btn" onClick={() => this.navigateCalender("NEXT")}>
+                  <img src="/assets/Buttons/calendar-right.png"/>
+                  <span style={{
+                    wordWrap: 'normal',
+                    textAlign: 'center'
+                  }}>NEXT WEEK</span>
+                </div>
               </div>
             </div>
 
             <div className="col-md-6">
-              <div className="calendar-schedule-title">
+              <div className="weekly-budget-booked">
+                <div className="weekly-budget">
+                  <div className="weekly-budget-title">
+                    <h5>$26,038</h5>
+                    <span>Total weekly budget</span>
+                  </div>
+                  <div className="weekly-budget-trainee">
+                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> $16,038 STANDARD BUDGET</span>
+                    <span><img src="/assets/Icons/job-shadower-filled.png"/> $10,000 TRAINEE BUDGET</span>
+                  </div>
+                </div>
+                <div className="weekly-budget">
+                  <div className="weekly-budget-title">
+                    <h5>89%</h5>
+                    <span>STANDARD HOURS BOOKED</span>
+                  </div>
+                  <div className="weekly-budget-trainee">
+                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> 10 of 100 (10%)</span>
+                    <span>TRAINEE HOURS BOOKED</span>
+                  </div>
+                </div>
+              </div>
+
+
+              {/*<div className="calendar-schedule-title">
                 { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
                   <ul>
                     <li><span>{moment(start).format('MMM D')}
@@ -682,8 +701,8 @@ class ShiftPublishComponent extends Component {
                     <img src={statusImg} style={{paddingBottom: 2, width: 20, height: 'auto'}}/>&nbsp;&nbsp;
                     <li><span>{status}</span></li>
                   </ul>}
-              </div>
-              <div className="btn-action-calendar">
+              </div>*/}
+              {/*<div className="btn-action-calendar">
                 {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
                   <div className="div-ui-action"
                   >
@@ -695,10 +714,10 @@ class ShiftPublishComponent extends Component {
                       weekPublishedId={publishId}
                       weekStart={start}/>
                     {(is_publish != true) &&
-                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS 
+                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS
                     </button>}
 
-                    {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+                    /!*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*!/
 
                   </div> :
                   <div>
@@ -723,13 +742,55 @@ class ShiftPublishComponent extends Component {
                     &nbsp;
                   </ul>
                 </div>
-              </div>
+              </div>*/}
             </div>
             {/* If this is adhered strictly to the design then the below shouild be col-md-4, and the two adjacent dividers should be col-md-6 */}
             <div className="col-md-4 heading-center-spesh"></div>
             {!this.props.isHoursReceived ?
               <div className="col-md-6 calendar-info-right">
-                <div style={{display: 'flex', flexDirection: 'Column'}}>
+
+                <div className="btn-action-calendar">
+                  {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
+                    <div className="div-ui-action"
+                    >
+                      <CreateShiftButton
+                        open={this.state.isCreateShiftModalOpen}
+                        onButtonClick={this.openCreateShiftModal}
+                        onCreateShift={this.openShiftDrawer}
+                        onModalClose={this.closeDrawerAndModal}
+                        weekPublishedId={publishId}
+                        weekStart={start}/>
+                      {(is_publish != true) &&
+                      <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS
+                      </button>}
+
+                      {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
+
+                    </div> :
+                    <div>
+                    </div>
+                  }
+                </div>
+                <div className="calendar-search-tags">
+                  <div className="search-tags-input">
+                    <Dropdown placeholder='Search By Tags' fluid multiple selection options={tags} />
+                    <i className=""></i>
+                  </div>
+                  <div className="search-filters">
+                    <ul style={{marginLeft: 5}}>
+                      <li><span>QUICK FILTERS:</span></li>
+                      &nbsp;
+                      <li><a href="#">NON-TRAINEE SHIFTS</a></li>
+                      &nbsp;
+                      <li><a href="#">TRAINEE SHIFTS</a></li>
+                      &nbsp;
+                      <li><a href="#">ALL SHIFTS</a></li>
+                      &nbsp;
+                    </ul>
+                  </div>
+                </div>
+
+                {/*<div style={{display: 'flex', flexDirection: 'Column'}}>
                     <span
                       className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}
                       of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}
@@ -752,7 +813,7 @@ class ShiftPublishComponent extends Component {
                                                                             src="/assets/Icons/job-shadower-filled.png"/><span>of $3,038<img
                     style={{margin: 3, paddingBottom: 5}}
                     src="/assets/Icons/job-shadower-unfilled.png"/></span><span>(0%)</span></span>
-                </div>
+                </div>*/}
 
 
               </div>
@@ -761,28 +822,28 @@ class ShiftPublishComponent extends Component {
               <div className="col-md-1 heading-left-right"
                    style={{display: 'flex', flexDirection: 'Row', justifyContent: 'spaceBetween'}}>
 
-                <div onClick={this.downloadExcel} style={{display: 'flex', flexDirection: 'Column', cursor: "pointer"}}>
+                <div onClick={this.downloadExcel} className="calendar-print-btn" style={{cursor: "pointer"}}>
                   <img style={{margin: 4}} src="/assets/Buttons/spreadsheet.png"/>
                   <span style={{
                     wordWrap: 'normal',
                     textAlign: 'center',
                     color: '#999999',
-                    fontFamily: "Lato",
-                    fontSize: 11,
-                    fontWeight: 300
+                    fontFamily: "Roboto Condensed",
+                    fontSize: 13,
+                    fontWeight: 300,
+                    display: 'block'
                   }}>EXCEL</span>
                 </div>
-
-
                 <div className="calendar-print-btn">
-                  <img src="/assets/Buttons/printer.png"/>
+                  <img style={{margin: 4}} src="/assets/Buttons/printer.png"/>
                   <span style={{
                     wordWrap: 'normal',
                     textAlign: 'center',
                     color: '#999999',
-                    fontFamily: "Lato",
-                    fontSize: 11,
-                    fontWeight: 300
+                    fontFamily: "Roboto Condensed",
+                    fontSize: 13,
+                    fontWeight: 300,
+                    display: 'block'
                   }}>PRINT</span>
                 </div>
               </div>

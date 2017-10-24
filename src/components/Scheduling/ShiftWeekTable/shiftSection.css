@@ -493,38 +493,116 @@
 }
 
 .calendar-print-btn img, .calendar-next-btn img {
-  display: block;
-  margin: 0 auto 4px;
+  display: inline-block;
+  margin: 0 auto 0px;
+  vertical-align: middle;
 }
 
 .calendar-print-btn span, .calendar-next-btn span {
-  display: block;
+  display: inline-block;
   width: 42px;
   margin: 0 auto;
+  vertical-align: middle;
+  color: #999999;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.2;
+  font-family: "Roboto Condensed";
 }
 
-/* Table */
+.weekname {
+  text-align: center;
+}
+
+.weekname h4 {
+  color: #0022A1;
+  font-family: "Roboto Condensed";
+  font-size: 30px;
+  line-height: 30px;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+
+.weekname span {
+  color: #999999;
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.cal-next-pre {
+  text-align: center;
+}
+
+.weekly-budget-booked .weekly-budget {
+  width: 50%;
+  display: inline-table;
+  text-align: center;
+}
+
+.weekly-budget-booked .weekly-budget .weekly-budget-title h5 {
+  color: #4A4A4A;
+  font-family: "Roboto Condensed";
+  font-size: 36px;
+  line-height: 36px;
+  margin-bottom: 9px;
+  font-weight: normal;
+}
+
+.weekly-budget-booked .weekly-budget .weekly-budget-title span {
+  color: #999999;
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  line-height: 18px;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+.weekly-budget-booked .weekly-budget .weekly-budget-trainee {
+  margin-top: 8px;
+}
+.weekly-budget-booked .weekly-budget .weekly-budget-trainee span {
+  color: #4A4A4A;
+  font-family: "Roboto Condensed";
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 23px;
+  text-transform: uppercase;
+  display: block;
+}
+
+.btn-action-calendar .div-ui-action .raise-btn { width: 47%; margin-right: 12px;}
+.adayblue-button { width: 47% !important; padding: .78571429em 0.5em .78571429em !important; font-size: 14px !important;}
+
+  /* Table */
 .table-responsive table td .user_profile .user_img { width: 60px;}
 .table-responsive .atable .penalheading { width: 140px;}
 
 
 @media screen and (max-width: 1800px) and (min-width: 1600px) {
-  .heading-left-right { width: 104px; padding: 0;}
+  .heading-left-right { width: 125px; padding: 0 15px 0 0;}
   .heading-center-spesh { width: 18%;}
   .calendar-schedule-title li span { font-size: 20px;}
+
 }
 
 @media screen and (max-width: 1799px) and (min-width: 1300px) {
-  .heading-left-right { width: 104px; padding: 0;}
+  .heading-left-right { width: 125px; padding: 0 15px 0 0;}
   .heading-center-spesh { width: 5%;}
   .calendar-schedule-title li span { font-size: 15px;}
-  .btn-action-calendar .div-ui-action .raise-btn { width: 160px; margin-right: 12px;}
-  .adayblue-button { width: 160px !important; padding: .78571429em 0.5em .78571429em !important; font-size: 14px !important;}
+  .btn-action-calendar .div-ui-action .raise-btn { width: 47%; margin-right: 12px;}
+  .adayblue-button { width: 47% !important; padding: .78571429em 0.5em .78571429em !important; font-size: 14px !important;}
   .calendar-info-right span.cale-sub-info { font-size: 18px;}
+  .weekly-budget-booked .weekly-budget .weekly-budget-title h5 { font-size: 28px;}
+  .weekly-budget-booked .weekly-budget .weekly-budget-title span { font-size: 13px;}
+  .weekly-budget-booked .weekly-budget .weekly-budget-trainee span { font-size: 11px; line-height: 12px;}
+  .weekname h4 { font-size: 22px;}
+  .weekname span { font-size: 14px;}
+  .calendar-info-left { width: 295px; padding-right: 0;}
+  .calendar-print-btn span, .calendar-next-btn span { width: 36px;}
 }
 
 @media screen and (max-width: 1299px) and (min-width: 1200px) {
-  .heading-left-right { width: 104px; padding: 0;}
+  .heading-left-right { width: 125px; padding: 0 15px 0 0;}
   .heading-center-spesh { width: 3%;}
   .calendar-schedule-title li span { font-size: 13px;}
   .btn-action-calendar .div-ui-action .raise-btn { width: 138px; margin-right: 12px;}

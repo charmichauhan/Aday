@@ -98,7 +98,6 @@ class ShiftWeekTableComponent extends Week {
   }
 
   componentWillReceiveProps = (nextProps) => {
-      this.props.data.refetch(allShiftsByWeeksPublished);
       if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.unappliedRecurring.loading) {
 
         // this.props.data.loading || this.props.allUsers.loading || this.props.unappliedRecurring.loading
@@ -110,7 +109,7 @@ class ShiftWeekTableComponent extends Week {
         let {data} = nextProps;
         let recurring = nextProps.unappliedRecurring;
         //let recurring = "hello"
-        let jobData = this.state.calendarView == 'job' ? this.getDataJobView(workplaceId, data, recurring, start) : this.getDataEmployeeView(workplaceId, data, this.nextProps.allUsers, recurring, start);
+        let jobData = this.state.calendarView == 'job' ? this.getDataJobView(workplaceId, data, recurring, start) : this.getDataEmployeeView(workplaceId, data, nextProps.allUsers, recurring, start);
         let jobDataKeys = Object.keys(jobData)
         let openShiftIndex = jobDataKeys.indexOf('Open Shifts')
         if (openShiftIndex > -1) {

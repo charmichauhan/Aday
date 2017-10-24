@@ -2,7 +2,14 @@ import React, { Component } from 'react';
 import { Menu, Image } from 'semantic-ui-react';
 import { NavLink, withRouter } from 'react-router-dom';
 import { gql, graphql, compose } from 'react-apollo';
-var Halogen = require('halogen');
+const Halogen = require('halogen').SyncLoader;
+
+const styles = {
+  brandLogo: {
+    width: 120,
+    marginTop: 15
+  }
+};
 
 import './nav.css';
 
@@ -37,7 +44,7 @@ class NavComponent extends Component {
 
   render() {
     if (this.props.data.loading || this.props.allBrands.loading) {
-      return (<div><Halogen.SyncLoader color='#00A863' /></div>)
+      return (<div><Halogen color='#00A863' /></div>)
     }
 
     if (this.props.data.error) {
@@ -54,45 +61,35 @@ class NavComponent extends Component {
     }
     const brands = this.props.allBrands.allBrands.nodes;
     const filteredWorkplaces = this.props.data.allWorkplaces.nodes.filter((w) => w.brandId == brandId);
-    //console.log(filteredWorkplaces);
     return (
-			<div className="left-menu_item">
-				{/*<EmergencyShiftButton/>*/}
-				<Menu vertical fluid>
-					<Menu.Item className="menu-item left-menu-logo">
-						<Menu.Header><Image src="/images/logos_aday.png" width="102" height="31" centered={true}/></Menu.Header>
-						<Menu.Header><Image src={brandLogo} width="100" centered={true}/></Menu.Header>
-						<Menu.Header className="dropdown-menu-item">
-							<select onChange={this.handleChangeBrand} id="brand" value={brandId}>
-                { brands.map((v,i)=>(
-                    <option value={v.id} key={i}>{v.brandName}</option>
-                  ))
-                }
+      <div className="left-menu_item">
+        <Menu vertical fluid>
+          <Menu.Item className="menu-item left-menu-logo">
+            <Menu.Header><Image src={brandLogo} style={styles.brandLogo} centered={true} /></Menu.Header>
+            <Menu.Header className="dropdown-menu-item">
+              <select onChange={this.handleChangeBrand} id="brand" value={brandId}>
+                {brands.map((v, i) => (
+                  <option value={v.id} key={i}>{v.brandName}</option>
+                ))}
               </select>
             </Menu.Header>
             <Menu.Header>
               <select onChange={this.changeWorkplace} id="workplace" value={workplaceId + ',' + isUnion }>
                 <option value="">CHOOSE WORKPLACE</option>
-                {
-                  filteredWorkplaces.map((v, i) => (
-                      <option value={ v.id + ',' + v.isUnion } key={i}> { v.workplaceName } </option>
-                    )
-                  )}
+                {filteredWorkplaces.map((v, i) => (
+                  <option value={ v.id + ',' + v.isUnion } key={i}>{ v.workplaceName }</option>
+                ))}
               </select>
             </Menu.Header>
           </Menu.Item>
           <div className="left-menu-fixed">
             <Menu.Item className="menu-item">
               <Menu.Menu>
-                <Menu.Item><i><Image src="/images/Sidebar/time-attendance.png" /></i>
+                <Menu.Item><i><Image src="/images/Sidebar/dashboard-white.png" /></i>
                   <div className="menu_item_left"><span>DASHBOARD</span></div>
                 </Menu.Item>
-              </Menu.Menu>
-            </Menu.Item>
-            <Menu.Item className="menu-item">
-              <Menu.Menu>
                 <Menu.Item className="menu-item-list" name="schedule" as={NavLink} to="/schedule/team"
-                           active={this.props.isemployeeview}><i><Image src="/images/Sidebar/schedule.png" /></i>
+                           active={this.props.isemployeeview}><i><Image src="/images/Sidebar/schedule-white.png" /></i>
                   <div className="menu_item_left"><span>SCHEDULE</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/attendance"><i><Image
@@ -100,31 +97,31 @@ class NavComponent extends Component {
                   <div className="menu_item_left"><span>TIME & ATTENDANCE</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/team"><i><Image
-                  src="/images/Sidebar/team-member.png" /></i>
+                  src="/images/Sidebar/team-members-white.png" /></i>
                   <div className="menu_item_left"><span>TEAM MEMBERS</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/hiring"><i><Image
-                  src="/images/Sidebar/hiring.png" /></i>
+                  src="/images/Sidebar/hiring-white.png" /></i>
                   <div className="menu_item_left"><span>CROSSTRAINING</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/positions"><i><Image
-                  src="/images/Sidebar/positions.png" /></i>
+                  src="/images/Sidebar/positions-white.png" /></i>
                   <div className="menu_item_left"><span>POSITIONS</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/workplaces/mine"><i><Image
-                  src="/images/Sidebar/my-workplace.png" /></i>
+                  src="/images/Sidebar/my-workplace-white.png" /></i>
                   <div className="menu_item_left"><span>MY WORKPLACE</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/settings"><i><Image
-                  src="/images/Sidebar/settings.png" /></i>
+                  src="/images/Sidebar/settings-white.png" /></i>
                   <div className="menu_item_left"><span>SETTINGS</span></div>
                 </Menu.Item>
               </Menu.Menu>
             </Menu.Item>
           </div>
-          <Menu.Item className="menu-item-logout">
-            <Menu.Item className="menu-item-list"><i><Image onClick={this.logout}
-                                                            src="/images/Sidebar/logout-icon.png" /></i>
+          <Menu.Item className="menu-item-footer">
+            <Menu.Item onClick={this.logout} className="menu-item-list">
+              <i><Image src="/images/Sidebar/logout-white.png" /></i>
               <div className="menu_item_left"><span>LOGOUT</span></div>
             </Menu.Item>
           </Menu.Item>

@@ -67,11 +67,11 @@ class ScheduleComponent extends Component {
     if(currentlyView == "job"){
       viewName="Job View";
       currentView="employee";
-      this.setState({view:currentView});
+      this.setState((state) => ({view:currentView}));
     } else {
       viewName="Employee View";
       currentView="job";
-      this.setState({view:currentView});
+      this.setState((state) => ({view:currentView}));
     }
   };
   csvDataDownload = () => {
@@ -186,7 +186,7 @@ class ScheduleComponent extends Component {
     let is_publish = "none";
     let publish_id = "";
     let isWorkplacePublished = false;
-    const date = this.state.date; 
+    const date = this.state.date;
     if (this.props.data.allWeekPublisheds){
       this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
         if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
@@ -241,11 +241,12 @@ class ScheduleComponent extends Component {
                    views={{today: true, week: ShiftWeekTable, day: true}}
                    eventPropGetter={this.onViewChange}
                    onNavigate={(date) => { this.setState({ selectedDate: date })}}
+                   customEvent={this.customEvent}
                    components={{
                      event: this.customEvent,
                      toolbar:CustomToolbar
                    }}
-                /> 
+                />
             </div>
         </div>
     );

@@ -8,6 +8,7 @@ import localizer from 'react-big-calendar/lib/localizer';
 import uuidv4 from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
 
+import { BASE_API } from '../../../constants';
 import CreateShiftButton from '../AddShift/CreateShiftButton';
 import CreateShiftDrawer from '../AddShift/CreateShift/CreateShiftDrawerContainer';
 import CreateShiftHelper from '../AddShift/CreateShift/CreateShiftHelper';
@@ -119,7 +120,7 @@ class ShiftPublishComponent extends Component {
 
   automateSchedule = (publishId) => {
     console.log(publishId);
-    var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/algorithm/'
+    var uri = `${BASE_API}/api/algorithm/`;
     var options = {
       uri: uri,
       method: 'POST',
@@ -194,7 +195,7 @@ class ShiftPublishComponent extends Component {
       }).then((res) => {
         console.log('Inside the data', res);
         this.modalClose();
-        var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/kronosApi'
+        var uri = `${BASE_API}/api/kronosApi`;
 
                 var options = {
                     uri: uri,
@@ -218,7 +219,7 @@ class ShiftPublishComponent extends Component {
         variables: { id: this.props.publishId, date: moment().format() }
       }).then((res) => {
         this.modalClose();
-        var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/kronosApi'
+        var uri = `${BASE_API}/api/kronosApi`;
 
                 var options = {
                     uri: uri,
@@ -326,7 +327,7 @@ class ShiftPublishComponent extends Component {
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             let isAfter = (moment(day).isAfter(moment(shift.startDate)))
-            let isBefore = (moment(day).isBefore(moment(shift.endDate)) || 
+            let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
               moment(shift.endDate).format() == "Invalid date")
             if(isAfter && isBefore) {
               this.saveShift(shiftRecure, day, publishId);
@@ -347,7 +348,7 @@ class ShiftPublishComponent extends Component {
 
               let workersAssigned = shiftRecure.teamMembers.map(({ id }) => id);
               workersAssigned.map(function(user, i){
-                  var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/kronosApi'
+                  var uri = `${BASE_API}/api/kronosApi`;
 
                   var options = {
                       uri: uri,
@@ -450,7 +451,7 @@ class ShiftPublishComponent extends Component {
       }
     }).then(({data})=>{
 
-        var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/newRecurring'
+        var uri = `${BASE_API}/api/newRecurring`;
 
         var options = {
               uri: uri,
@@ -546,7 +547,7 @@ class ShiftPublishComponent extends Component {
         if (is_publish == true){
            if (shift.phoneTree.length > 1) {
 
-            const count = 1
+            let count = 1
             const length = shift.phoneTree.length
             shift.phoneTree.map(function(userId, index){
 
@@ -567,7 +568,7 @@ class ShiftPublishComponent extends Component {
           }).then(({ data }) => {
           count += 1;
           if (count == length){
-            var callURI = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/callEmployee/'
+            var callURI = `${BASE_API}/api/callEmployee/`;
                   var options = {
                     uri: callURI,
                     method: 'POST',
@@ -695,7 +696,7 @@ class ShiftPublishComponent extends Component {
                       weekPublishedId={publishId}
                       weekStart={start}/>
                     {(is_publish != true) &&
-                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS 
+                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS
                     </button>}
 
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}

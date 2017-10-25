@@ -9,6 +9,7 @@ import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
 import uuidv4 from 'uuid/v4';
 
+import { BASE_API } from '../../../../constants';
 import WorkplaceSelector from '../../AddShift/CreateShift/workplaceSelector'
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
@@ -382,7 +383,7 @@ class DrawerHelper extends Component {
     console.log(endTime)
 
     const _this = this
-    var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/phoneTreeList'
+    const uri = `${BASE_API}/api/phoneTreeList`;
     console.log(this.props.weekPublishedId)
     var options = {
       uri: uri,
@@ -570,7 +571,7 @@ class DrawerHelper extends Component {
             <div style={{ flex: 3, alignSelf: 'center' }}>
             {/*  <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={() => handleAdvance(shift)}
                       color='red'>Advanced
-              </button> */} 
+              </button> */}
             </div>
           </div>
 
@@ -773,7 +774,7 @@ class DrawerHelper extends Component {
                   </div>
 
 
-                  { (this.props.isPublished == true) && shift.recurringShift != 'weekly' && 
+                  { (this.props.isPublished == true) && shift.recurringShift != 'weekly' &&
                   <div>
                     {( isShiftInvalid)
                       &&  <Tooltip className="tooltip-message" text={"Fill Out Shift Information To Generate Phone Tree"}>

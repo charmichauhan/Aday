@@ -1,4 +1,18 @@
-// do not modify these - these constants are as observed in the universe
+let env = 'dev';
+if (process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production') {
+  env = 'prod';
+} else if (process.env.NODE_ENV === 'local') {
+  env = 'local';
+}
+
+const baseUrls = {
+  prod: 'https://20170808t142850-dot-forward-chess-157313.appspot.com',
+  dev: 'https://forward-chess-157313.appspot.com',
+  local: 'http://localhost:8080'
+};
+
+export const BASE_API =  baseUrls[env];
+// do not modify these -these constants are as observed in the universe
 export const MILISECONDS_TO_SECONDS = 1000.0;
 
 export const WEEK_LENGTH = 7;

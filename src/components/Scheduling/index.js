@@ -185,10 +185,11 @@ class ScheduleComponent extends Component {
     let events= [];
     let is_publish = "none";
     let publish_id = "";
-    let calendar_offset = "";
+    let calendar_offset = 5;
+    /*
     if(this.props.data.brandById.displaySetting){
       calendar_offset =  calendar_offset = JSON.parse(this.props.data.brandById.displaySetting).calendarOffset;
-    }
+    } */
     let isWorkplacePublished = false;
     let date = moment(this.state.date).add(calendar_offset, 'days'); 
     if (this.props.allWeekPublisheds.allWeekPublisheds){
@@ -330,7 +331,7 @@ const allWeekPublisheds = gql
   const brandDisplay = gql 
   `query brandById($brandid: Uuid!){
     brandById(id: $brandid){
-      displaySetting
+      id
     }
   }`
 ///

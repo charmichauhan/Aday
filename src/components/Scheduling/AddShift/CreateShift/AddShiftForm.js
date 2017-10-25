@@ -375,6 +375,7 @@ const createShiftMutation = gql`
         instructions
         managersOnShift
         traineesRequestedNum
+        traineesAssigned
         unpaidBreakTime
         weekPublishedId
         recurringShiftId

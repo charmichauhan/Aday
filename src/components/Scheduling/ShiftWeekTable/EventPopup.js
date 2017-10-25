@@ -29,6 +29,7 @@ const styles = {
 };
 
 class EventPopupComponent extends Component {
+
   constructor(props) {
     super(props);
     const workplaceId = props.data.workplaceByWorkplaceId && props.data.workplaceByWorkplaceId.id;
@@ -716,7 +717,8 @@ class EventPopupComponent extends Component {
           handleAdvance={this.handleAdvanceToggle}
           closeDrawer={this.closeEditShiftModal}
           recurringEdit={this.props.recurringEdit}
-          weekStart={moment(data.startTime).startOf('week')} />
+          weekStart={moment(data.startTime).startOf('week')}
+          calendarOffset={this.props.calendarOffset} />
         <CreateShiftAdvanceDrawerContainer
           width={styles.drawer.width}
           shift={this.state.drawerShift}

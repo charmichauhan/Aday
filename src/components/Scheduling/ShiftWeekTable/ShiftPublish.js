@@ -176,7 +176,6 @@ class ShiftPublishComponent extends Component {
             let workplacePublished = mutationResult.data.createWorkplacePublished.workplacePublished;
 
             previousQueryResult.allWeekPublisheds.nodes.forEach(function (value) {
-
               if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
                 || (moment(date).isSame(moment(value.start), 'day'))
                 || (moment(date).isSame(moment(value.end), 'day'))
@@ -280,13 +279,14 @@ class ShiftPublishComponent extends Component {
 
     if (!publishId) {
       publishId = uuidv4();
+      const shiftCopy = shift
       this.props.createWeekPublished({
         variables: {
           data: {
             weekPublished: {
               id: publishId,
-              start: moment(days[0]).startOf('week').format(),
-              end: moment(days[0]).endOf('week').format(),
+              start: moment(days[0]).startOf('week').add(this.props.calendarOffset, 'days').format(),
+              end: moment(days[0]).endOf('week').add(this.props.calendarOffset, 'days').format(),
               published: false, datePublished: moment().format(),
               brandId: shift.brandId
             }
@@ -302,7 +302,7 @@ class ShiftPublishComponent extends Component {
           },
         },
       }).then(({ data }) => {
-        this.submitShifts({ dayNames, days, shift, publishId });
+        this.submitShifts(dayNames, days, shiftCopy, publishId);
       }).catch((error) => {
         console.log('there was an error sending the query', error);
         this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
@@ -311,7 +311,6 @@ class ShiftPublishComponent extends Component {
     }
     // else create all shifts with existing week published
     else {
-      console.log(shift)
       this.submitShifts(dayNames, days, shift, publishId);
     }
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
@@ -392,7 +391,7 @@ class ShiftPublishComponent extends Component {
           id: recurring,
           workplaceId: shift.workplaceId,
           brandId: localStorage.getItem("brandId"),
-          lastWeekApplied: moment().startOf('week').add(8, 'weeks').format()
+          lastWeekApplied: moment().startOf('week').add(this.props.calendarOffset, 'days').add(8, 'weeks').format()
         };
         console.log("PAYLOAD")
         console.log(payload)
@@ -633,7 +632,7 @@ class ShiftPublishComponent extends Component {
     }
     let { date } = this.props;
     let { start } = ShiftPublish.range(date, this.props);
-
+    start = moment(start).add(this.props.calendarOffset, "days")
     return (
       <div className="shift-section">
         {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
@@ -684,7 +683,7 @@ class ShiftPublishComponent extends Component {
                   </ul>}
               </div>
               <div className="btn-action-calendar">
-                {moment(startDate).startOf('week').diff(moment().startOf('week'), 'days') > -7 ?
+                {moment(startDate).startOf('week').add(this.props.calendarOffset, 'days').diff(moment().startOf('week'), 'days') > -7 ?
                   <div className="div-ui-action"
                   >
                     <CreateShiftButton

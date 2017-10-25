@@ -47,6 +47,7 @@ export const createShiftMutation = gql`
         instructions
         managersOnShift
         traineesRequestedNum
+        traineesAssigned
         unpaidBreakTime
         recurringShiftId
         weekPublishedId

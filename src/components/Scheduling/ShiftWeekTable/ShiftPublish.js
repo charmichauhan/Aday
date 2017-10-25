@@ -280,13 +280,14 @@ class ShiftPublishComponent extends Component {
     if (!publishId) {
       publishId = uuidv4();
       const shiftCopy = shift
+
       this.props.createWeekPublished({
         variables: {
           data: {
             weekPublished: {
               id: publishId,
-              start: moment(days[0]).startOf('week').add(this.props.calendarOffset, 'days').format(),
-              end: moment(days[0]).endOf('week').add(this.props.calendarOffset, 'days').format(),
+              start: moment(this.props.date).startOf('week').add(this.props.calendarOffset, 'days').format(),
+              end: moment(this.props.date).endOf('week').add(this.props.calendarOffset, 'days').format(),
               published: false, datePublished: moment().format(),
               brandId: shift.brandId
             }

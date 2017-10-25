@@ -14,7 +14,7 @@ export default class EditShiftDrawerContainer extends Component {
 		if (this.props.isPublished != true){
 		published = false;
 		}
-
+		
 		if (this.props.open){
 			if ( !!this.props.shift.recurringShiftId ) {
 				return(
@@ -30,6 +30,7 @@ export default class EditShiftDrawerContainer extends Component {
 				      closeDrawer={this.props.closeDrawer}
 				      isPublished={published}
 				      weekPublishedId={this.props.weekPublishedId}
+				      calendarOffset={this.props.calendarOffset} 
 					/>
 		        )
 			} else {
@@ -45,7 +46,8 @@ export default class EditShiftDrawerContainer extends Component {
 				      handleAdvance={this.props.handleAdvance}
 				      closeDrawer={this.props.closeDrawer}
 				      isPublished={published}
-				      weekPublishedId={this.props.weekPublishedId} />
+				      weekPublishedId={this.props.weekPublishedId}
+				      calendarOffset={this.props.calendarOffset} />
 				)
 			}
 		} else {

@@ -27,12 +27,18 @@ export default class JobsRow extends Component {
 
   render() {
     let data = this.props.data;
-   const daysOfWeek = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
-        const hashByDay = {"SUNDAY": [], "MONDAY": [], "TUESDAY": [], "WEDNESDAY": [], "THURSDAY": [], "FRIDAY": [], "SATURDAY": []};
+    let start = this.props.start;
+    const daysOfWeek = [];
+    const hashByDay = {};
+
+    for(let i = 0; i <= 6; i++) {
+        daysOfWeek.push(moment(start).add(i, 'd').format("dddd").toUpperCase());
+        hashByDay[moment(start).add(i, 'd').format("dddd").toUpperCase()] = "";
+    }
 
     data.map((value, index) => {
 
-      if (value.days){
+      if (value.days) {
         value.days.map((day, index) => {
             if (hashByDay[day]) {
                 hashByDay[day] = [...hashByDay[day], value];
@@ -40,7 +46,6 @@ export default class JobsRow extends Component {
                 hashByDay[day] = [value];
               }
         })
-
       } else {
          const day = moment(value.startTime, 'YYYY-MM-DD HH:mm:ss').format('dddd').toUpperCase();
           if (hashByDay[day]) {
@@ -121,7 +126,7 @@ export default class JobsRow extends Component {
                 {
                   Object.values(hashByDay[value]).map((y, index) => (
                     <EventPopup managers={this.state.managers} users={this.props.users} data={y} key={index} 
-                    view={this.props.view} isPublished={this.props.isPublished} 
+                    view={this.props.view} isPublished={this.props.isPublished}  calendarOffset={this.props.calendarOffset}
                     publishedId={this.props.PublishedId}  forceRefetch={this.props.forceRefetch}/>
                   ))
                 }

@@ -382,7 +382,7 @@ class DrawerHelper extends Component {
     console.log(endTime)
 
     const _this = this
-    var uri = 'http://localhost:8080/api/phoneTreeList'
+    var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/phoneTreeList'
     console.log(this.props.weekPublishedId)
     var options = {
       uri: uri,
@@ -694,7 +694,7 @@ class DrawerHelper extends Component {
                     {'THIS SHIFT REPEATS THIS EVERY:'}
                   </label>
                   <RecurringShiftSelect recurringShift={shift.recurringShiftId} selectedDate={selectedDate}
-                                        startDate={weekStart} formCallBack={this.updateFormState} />
+                                        startDate={weekStart} formCallBack={this.updateFormState} calendarOffset={this.props.calendarOffset} />
                 </Grid.Column>
               </Grid.Row>}
 

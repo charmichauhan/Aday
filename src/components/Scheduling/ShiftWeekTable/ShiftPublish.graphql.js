@@ -20,6 +20,16 @@ export const createWeekPublishedMutation = gql`
         start
         end
         published
+        workplacePublishedsByWeekPublishedId
+              {
+                edges{
+                  node{
+                    workplaceId
+                    published
+                    id
+                  }
+                }
+              }
       }
     }
   }`;

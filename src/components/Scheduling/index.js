@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import moment from "moment";
 import BigCalendar from "react-big-calendar";
-import {gql, graphql} from "react-apollo";
+import {gql, graphql, compose} from "react-apollo";
 import {groupBy,findIndex, cloneDeep} from "lodash";
 import {Modal} from "semantic-ui-react";
 import Toolbar from "react-big-calendar/lib/Toolbar";
@@ -172,7 +172,7 @@ class ScheduleComponent extends Component {
   render() {
     BigCalendar.momentLocalizer(moment);
 
-    if (this.props.data.loading) {
+    if (this.props.data.loading || this.props.allWeekPublisheds.loading) {
       return (<div><Halogen.SyncLoader color='#00A863'/></div>);
     }
 
@@ -185,10 +185,14 @@ class ScheduleComponent extends Component {
     let events= [];
     let is_publish = "none";
     let publish_id = "";
+    let calendar_offset = "";
+    if(this.props.data.brandById.displaySetting){
+      calendar_offset =  calendar_offset = JSON.parse(this.props.data.brandById.displaySetting).calendarOffset;
+    }
     let isWorkplacePublished = false;
-    const date = this.state.date; 
-    if (this.props.data.allWeekPublisheds){
-      this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
+    let date = moment(this.state.date).add(calendar_offset, 'days'); 
+    if (this.props.allWeekPublisheds.allWeekPublisheds){
+      this.props.allWeekPublisheds.allWeekPublisheds.nodes.forEach(function (value) {
         if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
           || (moment(date).isSame(moment(value.start), 'day'))
           || (moment(date).isSame(moment(value.end), 'day'))
@@ -205,6 +209,7 @@ class ScheduleComponent extends Component {
         }
       });
     }
+    events.calendar_offset = calendar_offset
     events.publish_id = publish_id;
     events.is_publish = is_publish
     let publishModalOptions = [{type: "white", title: "Go Back", handleClick: this.goBack, image: false},
@@ -218,11 +223,12 @@ class ScheduleComponent extends Component {
                 isWorkplacePublished={ isWorkplacePublished }
                 isPublish={ is_publish }
                 publishId={ publish_id }
-                view={this.state.view}
-                excel = {this.csvDataDownload}
-                navigateCalender = {this.navigateCalender}
-                getHoursBooked = {this.state.getHoursObj}
-                isHoursReceived = {this.state.isHoursReceived}/>
+                view={ this.state.view }
+                excel = { this.csvDataDownload}
+                navigateCalender = { this.navigateCalender }
+                getHoursBooked = { this.state.getHoursObj }
+                isHoursReceived = { this.state.isHoursReceived } 
+                calendarOffset = { calendar_offset } />
             </div>
             <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                    message="Are you sure that you want to delete this shift?"
@@ -302,31 +308,48 @@ class CustomToolbar extends Toolbar {
 const allWeekPublisheds = gql
   `query allWeekPublisheds($brandid: Uuid!){
         allWeekPublisheds(condition: { brandId: $brandid }){
-            nodes{
-            id
-            published
-            start
-            end
-            workplacePublishedsByWeekPublishedId
-            {
-              edges{
-                node{
-                  workplaceId
-                  published
-                  id
+            nodes {
+              id
+              published
+              start
+              end
+              workplacePublishedsByWeekPublishedId
+              {
+                edges{
+                  node{
+                    workplaceId
+                    published
+                    id
+                  }
                 }
               }
-            }
             }
         }
   }`
 
-const Schedule = graphql(allWeekPublisheds, {
+  const brandDisplay = gql 
+  `query brandById($brandid: Uuid!){
+    brandById(id: $brandid){
+      displaySetting
+    }
+  }`
+///
+const Schedule = compose(
+ graphql(allWeekPublisheds, {
   options: (ownProps) => ({
     variables: {
       brandid:localStorage.getItem('brandId')
     }
   }),
-})(ScheduleComponent);
+  name: "allWeekPublisheds"
+}),
+  graphql(brandDisplay, {
+  options: (ownProps) => ({
+    variables: {
+      brandid: localStorage.getItem('brandId')
+    }
+  }),
+})
+)(ScheduleComponent);
 
 export default Schedule

@@ -91,6 +91,7 @@ export default class EditHelper extends Component {
 			      closeDrawer={this.handleCloseDrawer} 
 			      isPublished={this.props.isPublished}
 			      recurringEdit={this.state.recurring}
+			      calendarOffset={this.props.calendarOffset}
 				  /> 
 			}
 		 </div>

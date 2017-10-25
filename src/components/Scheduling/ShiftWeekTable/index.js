@@ -50,18 +50,21 @@ const styles = {
     // minWidth: 1750,
   },
   wrapperStyle: {
-    // minWidth: 1610
+     minWidth: 1750
   },
   root: {
     borderCollapse: 'separate',
-    borderSpacing: '8px 8px',
+    borderSpacing: '0px 0px',
     paddingLeft: '0px',
     marginBottom: 0,
   },
   tableFooter: {
-    padding: 0,
+    padding: '6px',
     height: 'auto',
-    border: '0 none'
+    borderTop: '0 none',
+    borderLeft: '0 none',
+    borderRight: '1px solid #ddd',
+    borderBottom: '1px solid #ddd',
   },
   headerStyle: {
     padding: 0
@@ -637,34 +640,65 @@ class ShiftWeekTableComponent extends Week {
                 <TableRowColumn style={styles.tableFooter} className="long dayname">
                   {/*<div><p className="weekDay">Hours Booked</p>*/}
                   {/*<p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
+                  <div className="long-start">
+                    <span>START OF WEEK</span>
+                    <p>SUNDAY </p>
+                  </div>
                   <div className="calendar-emp-job-btn">
                     <div className="cal-emp-job-btn">
-                      <button className={this.state.empView} onClick={this.empView}>Employee view</button>
-                      <button className={this.state.jobView} onClick={this.jobView}>Job view</button>
+                      <button className={this.state.empView} onClick={this.empView}>Employee</button>
+                      <button className={this.state.jobView} onClick={this.jobView}>Job</button>
                     </div>
                   </div>
                 </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate"> {moment(start).day(0).format('ddd')} {moment(start).day(0).format('MM')}/{moment(start).day(0).format('D')}</p>
+                <TableRowColumn style={styles.tableFooter} className="dayname">
+                  <p className="weekDate"> {moment(start).day(0).format('ddd')} <strong>{moment(start).day(0).format('MM')}/{moment(start).day(0).format('D')}</strong></p>
+                  <div className="calendar-table-head">
+                    <span><i>+</i> Holiday</span>
+                    <span><i>+</i> ADD SHIFT</span>
+                  </div>
                 </TableRowColumn>
                 <TableRowColumn style={styles.tableFooter} className="dayname">
-                  <p
-                    className="weekDate">{moment(start).day(1).format('ddd')} {moment(start).day(1).format('MM')}/{moment(start).day(1).format('D')}</p>
+                  <p className="weekDate">{moment(start).day(1).format('ddd')} <strong>{moment(start).day(1).format('MM')}/{moment(start).day(1).format('D')}</strong></p>
+                  <div className="calendar-table-head">
+                    <span><i>+</i> Holiday</span>
+                    <span><i>+</i> ADD SHIFT</span>
+                  </div>
                 </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate"> {moment(start).day(2).format('ddd')} {moment(start).day(2).format('MM')}/{moment(start).day(2).format('D')}</p>
+                <TableRowColumn style={styles.tableFooter} className="dayname">
+                  <p className="weekDate"> {moment(start).day(2).format('ddd')} <strong>{moment(start).day(2).format('MM')}/{moment(start).day(2).format('D')}</strong></p>
+                  <div className="calendar-table-head">
+                    <span><i>+</i> Holiday</span>
+                    <span><i>+</i> ADD SHIFT</span>
+                  </div>
                 </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate"> {moment(start).day(3).format('ddd')} {moment(start).day(3).format('MM')}/{moment(start).day(3).format('D')}</p>
+                <TableRowColumn style={styles.tableFooter} className="dayname">
+                  <p className="weekDate"> {moment(start).day(3).format('ddd')} <strong>{moment(start).day(3).format('MM')}/{moment(start).day(3).format('D')}</strong></p>
+                  <div className="calendar-table-head">
+                    <span><i>+</i> Holiday</span>
+                    <span><i>+</i> ADD SHIFT</span>
+                  </div>
                 </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate">{moment(start).day(4).format('ddd')} {moment(start).day(4).format('MM')}/{moment(start).day(4).format('D')}</p>
+                <TableRowColumn style={styles.tableFooter} className="dayname">
+                  <p className="weekDate">{moment(start).day(4).format('ddd')} <strong>{moment(start).day(4).format('MM')}/{moment(start).day(4).format('D')}</strong></p>
+                  <div className="calendar-table-head">
+                    <span><i>+</i> Holiday</span>
+                    <span><i>+</i> ADD SHIFT</span>
+                  </div>
                 </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate">{moment(start).day(5).format('ddd')} {moment(start).day(5).format('MM')}/{moment(start).day(5).format('D')}</p>
+                <TableRowColumn style={styles.tableFooter} className="dayname">
+                  <p className="weekDate">{moment(start).day(5).format('ddd')} <strong>{moment(start).day(5).format('MM')}/{moment(start).day(5).format('D')}</strong></p>
+                  <div className="calendar-table-head">
+                    <span><i>+</i> Holiday</span>
+                    <span><i>+</i> ADD SHIFT</span>
+                  </div>
                 </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                  className="weekDate">{moment(start).day(6).format('ddd')} {moment(start).day(6).format('MM')}/{moment(start).day(6).format('D')}</p>
+                <TableRowColumn style={styles.tableFooter} className="dayname">
+                  <p className="weekDate">{moment(start).day(6).format('ddd')} <strong>{moment(start).day(6).format('MM')}/{moment(start).day(6).format('D')}</strong></p>
+                  <div className="calendar-table-head">
+                    <span><i>+</i> Holiday</span>
+                    <span><i>+</i> ADD SHIFT</span>
+                  </div>
                 </TableRowColumn>
               </TableRow>
             </TableHeader>

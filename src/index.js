@@ -9,6 +9,7 @@ import { renderRoutes } from 'react-router-config';
 //import App from './App';
 
 import routes from './routes.config.js'
+import { BASE_API } from './constants';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'semantic-ui-css/semantic.min.css';
@@ -17,9 +18,7 @@ import './index.css';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
-// production: https://20170808t142850-dot-forward-chess-157313.appspot.com/graphql
-// dev: https://forward-chess-157313.appspot.com/graphql
-const networkInterface =  createNetworkInterface({ uri: 'https://forward-chess-157313.appspot.com/graphql'})
+const networkInterface =  createNetworkInterface({ uri: `${BASE_API}/graphql`});
 
 networkInterface.use([{
 applyMiddleware(req, next) {

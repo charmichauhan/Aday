@@ -7,6 +7,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import Dropzone from 'react-dropzone';
 import SuperAgent from 'superagent';
 
+import { BASE_API } from '../../../constants';
 import { closeButton, colors } from '../../styles';
 import CircleButton from '../../helpers/CircleButton';
 
@@ -40,9 +41,7 @@ class DrawerHelper extends Component {
 
   handleImageUpload = (files) => {
     console.log(files);
-    // prod endpoint: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
-    // dev/test endpoint: http://localhost:8080/api/uploadImage
-    SuperAgent.post('http://localhost:8080/api/uploadImage')
+    SuperAgent.post(`${BASE_API}/api/uploadImage`)
     .field('keyword', 'brand')
     .field('id', this.state.brand.id)
     .attach("theseNamesMustMatch", files[0])

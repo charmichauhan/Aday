@@ -42,6 +42,8 @@ let that;
 let viewName="Employee View";
 let currentView = "job";
 let csvData = "";
+let calendar_offset = 5;
+
 class ScheduleComponent extends Component {
     constructor(props){
         super(props);
@@ -113,21 +115,22 @@ class ScheduleComponent extends Component {
   };
 
   getCSVData = (csvData) => {
-    let displayCsvData = [];
-    displayCsvData.push({
-      FirstName:'',
-      LastName:'',
-      PositionName:'',
-      Sunday:'',
-      Monday:'',
-      Tuesday:'',
-      Wednesday:'',
-      Thursday:'',
-      Friday:'',
-      Saturday:''
-  });
+    let displayCsvData = [],displayCsvDataFiled = [];
+    displayCsvDataFiled.push(
+      'FirstName',
+      'LastName',
+      'PositionName',
+      moment().day(calendar_offset).format('dddd'),
+      moment().day(calendar_offset + 1).format('dddd'),
+      moment().day(calendar_offset + 2).format('dddd'),
+      moment().day(calendar_offset + 3).format('dddd'),
+      moment().day(calendar_offset + 4).format('dddd'),
+      moment().day(calendar_offset + 5).format('dddd'),
+      moment().day(calendar_offset + 6).format('dddd')
+    );
 
     const displayData ={};
+
     csvData.forEach((value) => {
       const userId = value.userId;
       const positionId = value.positionId;
@@ -160,11 +163,12 @@ class ScheduleComponent extends Component {
     this.setState({ csvData: displayCsvData, dataReceived: true });
 
     if(!this.state.dataReceived){
-      var result = json2csv({ data: displayCsvData });
+      var result = json2csv({ data: displayCsvData, fields: displayCsvDataFiled});
       var hiddenElement = document.createElement('a');
       hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(result);
       hiddenElement.target = '_blank';
-      hiddenElement.download = moment(new Date()).format('MM/DD/YYYY, H:mm:ss') + '.csv';
+      // hiddenElement.download = moment(new Date()).format('MM/DD/YYYY_H:mm:ss') + '.csv';
+      hiddenElement.download = moment().day(calendar_offset).format('MM-DD-YYYY') + '_' + moment().day(calendar_offset).add(6, 'days').format('MM-DD-YYYY') + '.csv';
       hiddenElement.click();
     }
   };
@@ -185,7 +189,7 @@ class ScheduleComponent extends Component {
     let events= [];
     let is_publish = "none";
     let publish_id = "";
-    let calendar_offset = 5;
+    // let calendar_offset = 5;
     /*
     if(this.props.data.brandById.displaySetting){
       calendar_offset =  calendar_offset = JSON.parse(this.props.data.brandById.displaySetting).calendarOffset;

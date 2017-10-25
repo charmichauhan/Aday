@@ -186,7 +186,7 @@ class ScheduleComponent extends Component {
     let is_publish = "none";
     let publish_id = "";
     let isWorkplacePublished = false;
-    const date = this.state.date; 
+    const date = this.state.date;
     if (this.props.data.allWeekPublisheds){
       this.props.data.allWeekPublisheds.nodes.forEach(function (value) {
         if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
@@ -211,7 +211,7 @@ class ScheduleComponent extends Component {
       {type: "blue", title: "Confirm", handleClick: this.onConfirm, image: false}];
 
     return (
-        <div style={{maxWidth: '1750px'}}>
+        <div>
             <div style={{float: 'left',marginBottom: '10px', width: '100%'}}>
               <ShiftPublish
                 date={this.state.date}
@@ -245,7 +245,7 @@ class ScheduleComponent extends Component {
                      event: this.customEvent,
                      toolbar:CustomToolbar
                    }}
-                /> 
+                />
             </div>
         </div>
     );

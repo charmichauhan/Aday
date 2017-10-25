@@ -46,18 +46,17 @@ function shiftReducer(state = {}, action) {
 
 const styles = {
   bodyStyle: {
-    maxHeight: 990,
-    minWidth: 1750,
+    // maxHeight: 990,
+    // minWidth: 1750,
   },
   wrapperStyle: {
-    minWidth: 1610
+    // minWidth: 1610
   },
   root: {
     borderCollapse: 'separate',
     borderSpacing: '8px 8px',
     paddingLeft: '0px',
     marginBottom: 0,
-    minWidth: 1750,
   },
   tableFooter: {
     padding: 0,
@@ -70,15 +69,11 @@ const styles = {
   tableFooterHeading: {
     paddingLeft: '0px',
     paddingRight: '0px',
-    width: 178
+
   },
   footerStyle: {
     position: 'fixed',
-    bottom: 10,
-    /*
-     width:'calc(100% - 320px)',
-     */
-    boxShadow: '0 1px 2px 0 rgba(74, 74, 74, 0.5)'
+    bottom: 0,
   },
   heightremove: {
     height: 'auto'
@@ -116,8 +111,8 @@ class ShiftWeekTableComponent extends Week {
         <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours booked:</p>
           <p className="sfont">
             {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalBookedHours'] || 0}
-            of {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalHours'] || 0}
-            |
+            &nbsp;of&nbsp;{summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalHours'] || 0} &nbsp;
+            |&nbsp;&nbsp;
             {summary && summary[moment(start).day(i).format('D')] && Math.round((summary[moment(start).day(i).format('D')]['totalBookedHours'] * 100) / summary[moment(start).day(i).format('D')]['totalHours']) || 0}%
           </p>
         </div>
@@ -701,18 +696,22 @@ class ShiftWeekTableComponent extends Week {
               />
               }
             </TableBody>
+
             <TableFooter adjustForCheckbox={false}>
+
               <TableRow displayBorder={false}>
                 <TableRowColumn style={styles.tableFooterHeading}>
                   <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
-                    hours booked:</p><p className="sfont">{weeklyHoursBooked} of {weeklyHoursTotal}
-                    | {weeklyTotalHoursBooked}%</p></div>
+                    hours booked:</p><p className="sfont">{weeklyHoursBooked}&nbsp;of&nbsp;{weeklyHoursTotal}&nbsp;
+                    |&nbsp;&nbsp;{weeklyTotalHoursBooked}%</p></div>
                 </TableRowColumn>
                 {this.getSummary(summary, start)}
               </TableRow>
-              <TableRow displayBorder={false}>
-              </TableRow>
+
+              <TableRow displayBorder={false} />
+
             </TableFooter>
+
           </Table>
         </div>
       </Provider>

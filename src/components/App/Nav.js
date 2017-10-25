@@ -86,35 +86,35 @@ class NavComponent extends Component {
             <Menu.Item className="menu-item">
               <Menu.Menu>
                 <Menu.Item><i><Image src="/images/Sidebar/dashboard-white.png" /></i>
-                  <div className="menu_item_left"><span>DASHBOARD</span></div>
+                  <div className="menu_item_left"><span>Dashboard</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" name="schedule" as={NavLink} to="/schedule/team"
                            active={this.props.isemployeeview}><i><Image src="/images/Sidebar/schedule-white.png" /></i>
-                  <div className="menu_item_left"><span>SCHEDULE</span></div>
+                  <div className="menu_item_left"><span>Schedule</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/attendance"><i><Image
-                  src="/images/Sidebar/time-attendance.png" /></i>
-                  <div className="menu_item_left"><span>TIME & ATTENDANCE</span></div>
+                  src="/images/Sidebar/star-performance.png" /></i>
+                  <div className="menu_item_left"><span>Performance</span></div>
                 </Menu.Item>
-                <Menu.Item className="menu-item-list" as={NavLink} to="/team"><i><Image
-                  src="/images/Sidebar/team-members-white.png" /></i>
-                  <div className="menu_item_left"><span>TEAM MEMBERS</span></div>
+                <Menu.Item className="menu-item-list" as={NavLink} to="/team">
+                  <i><Image  src="/images/Sidebar/team-members-white.png" /></i>
+                  <div className="menu_item_left"><span>Team Members</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/hiring"><i><Image
                   src="/images/Sidebar/hiring-white.png" /></i>
-                  <div className="menu_item_left"><span>CROSSTRAINING</span></div>
+                  <div className="menu_item_left"><span>Hiring</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/positions"><i><Image
                   src="/images/Sidebar/positions-white.png" /></i>
-                  <div className="menu_item_left"><span>POSITIONS</span></div>
+                  <div className="menu_item_left"><span>Positions</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/workplaces/mine"><i><Image
                   src="/images/Sidebar/my-workplace-white.png" /></i>
-                  <div className="menu_item_left"><span>MY WORKPLACE</span></div>
+                  <div className="menu_item_left"><span>My Workplace</span></div>
                 </Menu.Item>
                 <Menu.Item className="menu-item-list" as={NavLink} to="/settings"><i><Image
                   src="/images/Sidebar/settings-white.png" /></i>
-                  <div className="menu_item_left"><span>SETTINGS</span></div>
+                  <div className="menu_item_left"><span>Settings</span></div>
                 </Menu.Item>
               </Menu.Menu>
             </Menu.Item>

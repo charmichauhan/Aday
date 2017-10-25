@@ -95,6 +95,7 @@ const userInfo = gql
 }`
 
 // will be localStorage.getItem('email') with authentication
+// will be test@example.com without authentication
 const App = graphql(userInfo, {
   options: (ownProps) => ({
     variables: {

@@ -10,7 +10,7 @@ import '../style.css';
 
 export default class JobsRow extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {};
   }
@@ -125,7 +125,7 @@ export default class JobsRow extends Component {
                               style={{ paddingLeft: '0px', paddingRight: '0px', backgroundColor: '#F5F5F5' }}>
                 {
                   Object.values(hashByDay[value]).map((y, index) => (
-                    <EventPopup managers={this.state.managers} users={this.props.users} data={y} key={index} 
+                    <EventPopup managers={this.state.managers} users={this.props.users} data={y} key={index}
                     view={this.props.view} isPublished={this.props.isPublished}  calendarOffset={this.props.calendarOffset}
                     publishedId={this.props.PublishedId}  forceRefetch={this.props.forceRefetch}/>
                   ))

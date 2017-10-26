@@ -3,10 +3,35 @@ import Drawer from 'material-ui/Drawer';
 import { find, pick } from 'lodash';
 import { Header, Icon, Table, Image, List } from 'semantic-ui-react';
 import FlatButton from 'material-ui/FlatButton';
-import { gql, graphql, compose } from 'react-apollo';
-var Halogen = require('halogen');
+import { gql, withApollo } from 'react-apollo';
 
+import Loading from '../../../helpers/Loading';
 import CircleButton from '../../../helpers/CircleButton';
+
+const allMarkets = gql`
+  query allMarkets($shiftId: Uuid!) {
+    allMarkets (condition: { shiftId: $shiftId }) {
+      nodes {
+        id
+        workerId
+        shiftId
+        shiftExpirationDate
+        isTexted
+        isCalled
+        isBooked
+        isEmailed
+        isPhoneAnswered
+        workerResponse
+        marketRulesByMarketId {
+          nodes {
+            ruleByRuleId {
+              ruleName
+            }
+          }
+        }
+      }
+    }
+  }`;
 
 const unassignedTeamMember = {
   user: {
@@ -30,112 +55,30 @@ const User = ({ user }) => (
   </div>
 );
 
-export default class ShiftHistoryNonSortDrawer extends Component {
+class ShiftHistoryNonSortDrawer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shiftHistory: [
-        {
-          user: {
-            firstName: 'Eric',
-            otherNames: 'Wise',
-            avatar: 'https://pickaface.net/assets/images/slides/slide2.png'
-          },
-          emailed: true,
-          seniority: '0021',
-          texted: true,
-          called: false,
-          replied: true,
-          accepted: true,
-          showDetails: false,
-          notes: [
-            {
-              title: 'Ashley did not receive this shift because:',
-              points: [
-                'Hourly Limit Exceeded',
-                'Less Siniority'
-              ]
-            }
-          ]
-        },
-        {
-          user: {
-            firstName: 'Steve',
-            otherNames: 'Nice',
-            avatar: 'http://www.shieldnutra.com/wp-content/uploads/2015/02/Shield-Nutra-Steve-e1449597474132-300x300.jpg'
-          },
-          seniority: '0135',
-          emailed: false,
-          texted: true,
-          called: true,
-          replied: false,
-          accepted: false,
-          showDetails: false,
-          notes: [
-            {
-              title: 'Ashley did not receive this shift because:',
-              points: [
-                'Hourly Limit Exceeded',
-                'Less Siniority'
-              ]
-            }
-          ]
-        },
-        {
-          user: {
-            firstName: 'Ashly',
-            otherNames: 'Good',
-            avatar: 'http://images2.fanpop.com/images/photos/4300000/Ashly-ashley-tisdale-4376203-282-229.jpg'
-          },
-          seniority: '0492',
-          emailed: true,
-          texted: true,
-          called: true,
-          replied: true,
-          accepted: -1,
-          showDetails: false,
-          notes: [
-            {
-              title: 'Ashley did not receive this shift because:',
-              points: [
-                'Hourly Limit Exceeded',
-                'Less Siniority'
-              ]
-            }
-          ]
-        },
-        {
-          user: {
-            firstName: 'Lydia',
-            otherNames: 'Watson',
-            avatar: 'https://media.licdn.com/mpr/mpr/shrinknp_200_200/p/7/005/05c/3a5/0c4d159.jpg'
-          },
-          seniority: '0490',
-          emailed: true,
-          texted: true,
-          called: true,
-          replied: true,
-          accepted: true,
-          showDetails: false,
-          notes: [
-            {
-              title: 'Ashley did not receive this shift because:',
-              points: [
-                'Hourly Limit Exceeded',
-                'Less Siniority'
-              ]
-            }
-          ]
-        }
-      ],
       historyDetails: [],
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-      const historyDetails = this.getInitialData(nextProps.MarketsData);
-      this.setState({historyDetails});
+  componentWillMount() {
+    this.getMarkets();
   }
+
+  getMarkets = () => {
+    this.setState({ loading: true });
+    this.props.client.query({
+      query: allMarkets,
+      variables: { shiftId: this.props.shift && this.props.shift.id }
+    }).then((res) => {
+      if (res.data) {
+        const historyDetails = this.getInitialData(res.data);
+        this.setState({ loading: false, MarketsData: res.data, historyDetails });
+      }
+    }).catch(err => console.log('An error occurred, err: ', err));
+  };
 
   getInitialData = ({ allMarkets = [] }) => {
     const marketsByShiftId = allMarkets.nodes.map((shiftMarket = {}) => {
@@ -188,8 +131,8 @@ export default class ShiftHistoryNonSortDrawer extends Component {
       openSecondary = true,
       docked = false
     } = this.props;
-    console.log(this.props)
-    let historyDetails = this.getInitialData(this.props.MarketsData);
+
+    const { loading, historyDetails } = this.state;
 
     return (
       <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
@@ -223,6 +166,7 @@ export default class ShiftHistoryNonSortDrawer extends Component {
                   </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
+              {loading && <div style={{ width: 200, marginTop: 10 }}><Loading /></div>}
               {historyDetails && historyDetails.map((history, i) => (
                 <Table.Body key={i}>
                   <Table.Row onClick={() => this.showDetails( historyDetails, i)}>
@@ -286,3 +230,5 @@ export default class ShiftHistoryNonSortDrawer extends Component {
     );
   };
 }
+
+export default withApollo(ShiftHistoryNonSortDrawer);

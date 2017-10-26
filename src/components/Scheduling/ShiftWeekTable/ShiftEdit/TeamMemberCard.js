@@ -90,7 +90,7 @@ export default class TeamMemberCard extends Component {
           fluid
           id={id}
           className="dropdown-team">
-          <Dropdown.Menu fluid>
+          <Dropdown.Menu>
             <Dropdown.Item value="searchInput" onClick={(e) => {
               e.stopPropagation();
             }}>

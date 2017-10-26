@@ -168,7 +168,8 @@ class ScheduleComponent extends Component {
       hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(result);
       hiddenElement.target = '_blank';
       // hiddenElement.download = moment(new Date()).format('MM/DD/YYYY_H:mm:ss') + '.csv';
-      hiddenElement.download = moment().day(calendar_offset).format('MM-DD-YYYY') + '_' + moment().day(calendar_offset).add(6, 'days').format('MM-DD-YYYY') + '.csv';
+      hiddenElement.download = moment(this.state.date).startOf("week").day(calendar_offset).format('MM-DD-YYYY') + '_' 
+        + moment(this.state.date).endOf('week').day(calendar_offset).add(6, 'days').format('MM-DD-YYYY') + '.csv';
       hiddenElement.click();
     }
   };

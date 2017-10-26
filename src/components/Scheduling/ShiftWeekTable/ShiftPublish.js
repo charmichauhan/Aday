@@ -327,7 +327,7 @@ class ShiftPublishComponent extends Component {
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             let isAfter = (moment(day).isAfter(moment(shift.startDate)))
-            let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
+            let isBefore = (moment(day).isBefore(moment(shift.endDate)) || 
               moment(shift.endDate).format() == "Invalid date")
             if(isAfter && isBefore) {
               this.saveShift(shiftRecure, day, publishId);
@@ -696,7 +696,7 @@ class ShiftPublishComponent extends Component {
                       weekPublishedId={publishId}
                       weekStart={start}/>
                     {(is_publish != true) &&
-                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS
+                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS 
                     </button>}
 
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
@@ -732,8 +732,9 @@ class ShiftPublishComponent extends Component {
               <div className="col-md-6 calendar-info-right">
                 <div style={{display: 'flex', flexDirection: 'Column'}}>
                     <span
-                      className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked} of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}
-                      ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))) || 0 )}%)</span>
+                      className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}
+                      of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}
+                      ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
                   <span
                     className="cale-info">NON-TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked}
                     of {this.props.getHoursBooked.weeklyHoursTotal}

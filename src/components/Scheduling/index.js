@@ -74,11 +74,9 @@ class ScheduleComponent extends Component {
       this.setState({view:currentView});
     }
   };
-
   csvDataDownload = () => {
     this.setState({ dataReceived:false });
   };
-
   navigateCalender = (nav) => {
     if(nav === "NEXT" ){
       this.setState({date: moment(this.state.date).add(7, "days"),isHoursReceived : true});
@@ -86,11 +84,9 @@ class ScheduleComponent extends Component {
       this.setState({date: moment(this.state.date).subtract(7, "days"),isHoursReceived : true});
     }
   };
-
   getHoursBooked = (getHoursObj) => {
     this.setState({ getHoursObj, isHoursReceived : false});
   };
-
   onViewChange = () => {
     return this.state.view;
   };
@@ -114,10 +110,6 @@ class ScheduleComponent extends Component {
       }
     }
     that = this;
-  };
-
-  componentWillReceiveProps = () => {
-    this.setState({ isHoursReceived : true});
   };
 
   getCSVData = (csvData) => {
@@ -255,12 +247,12 @@ class ScheduleComponent extends Component {
                    isHoursReceived = {this.state.isHoursReceived}
                    views={{today: true, week: ShiftWeekTable, day: true}}
                    eventPropGetter={this.onViewChange}
-                   customEvent={this.customEvent}
                    onNavigate={(date) => { this.setState({ selectedDate: date })}}
                    components={{
+                     event: this.customEvent,
                      toolbar:CustomToolbar
                    }}
-                />
+                /> 
             </div>
         </div>
     );
@@ -271,8 +263,32 @@ class CustomToolbar extends Toolbar {
 
   render() {
     // const { csvData } = this.state;
+    let month = moment(this.props.date).format("MMMM YYYY");
     return (
-      <div></div>
+      <div>
+        {/*<nav className="navbar">
+          <div className="container-fluid">
+            <div className="wrapper-div" style={{paddingTop:'5px'}}>
+              <div className="navbar-header">
+                <button type="button " className="btn btn-default navbar-btn btnnav glyphicon glyphicon-arrow-left" onClick={() => this.navigate("PREV")}/>
+                <button type="button" className="btn btn-default navbar-btn btnnav glyphicon glyphicon-arrow-right" onClick={() => this.navigate("NEXT")}/>
+              </div>
+              <ul className="nav navbar-nav">
+                <button type="button" className="btn btn-default btnnav navbar-btn m8 " style={{width:150}} onClick={() => that.csvDataDownload()}>Download CSV</button>
+              </ul>
+              <div className="maintitle">
+       {month}
+       </div>
+       <ul className="nav navbar-nav navbar-right">
+            <li>
+                  <button type="button" className="btn btn-default btnnav navbar-btn m8 "
+                          onClick={() => this.view("week")}><strong>WEEK</strong></button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>*/}
+      </div>
     );
   }
 }

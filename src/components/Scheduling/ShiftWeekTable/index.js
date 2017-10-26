@@ -49,9 +49,6 @@ const styles = {
     // maxHeight: 990,
     // minWidth: 1750,
   },
-  wrapperStyle: {
-     minWidth: 1750
-  },
   root: {
     borderCollapse: 'separate',
     borderSpacing: '0px 0px',
@@ -59,12 +56,12 @@ const styles = {
     marginBottom: 0,
   },
   tableFooter: {
-    padding: '6px',
+    // padding: '6px',
     height: 'auto',
     borderTop: '0 none',
     borderLeft: '0 none',
-    borderRight: '1px solid #ddd',
-    borderBottom: '1px solid #ddd',
+    // borderRight: '1px solid #ddd',
+    // borderBottom: '1px solid #ddd',
   },
   headerStyle: {
     padding: 0
@@ -72,7 +69,6 @@ const styles = {
   tableFooterHeading: {
     paddingLeft: '0px',
     paddingRight: '0px',
-
   },
   footerStyle: {
     position: 'fixed',
@@ -80,7 +76,6 @@ const styles = {
   },
   heightremove: {
     height: 'auto'
-
   }
 };
 

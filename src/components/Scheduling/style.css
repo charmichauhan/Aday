@@ -925,15 +925,16 @@ table.atable td.shiftbox {
 }
 
 .ui.grid>.row>[class*="twelve wide"].column.main-content {
-    width: -webkit-calc(100% - 260px) !important;
-    width: -moz-calc(100% - 260px) !important;
-    width: calc(100% - 260px) !important;
-    padding-bottom: 144px;
+    width: -webkit-calc(87.8vw) !important;
+    width: -moz-calc(87.8vw) !important;
+    width: 87.8vw !important;
+    /*padding-bottom: 144px;*/
     padding-left: 0;
     padding-right: 0;
 }
+
 .ui.grid>.row>[class*="three wide"].column.left-content {
-    width: 260px !important;
+    width: 12vw !important;
     padding-left: 0;
     margin-right: 0px;
 }

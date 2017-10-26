@@ -9,6 +9,7 @@ import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
 import uuidv4 from 'uuid/v4';
 
+import { BASE_API } from '../../../../constants';
 import WorkplaceSelector from '../../AddShift/CreateShift/workplaceSelector'
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
@@ -222,12 +223,6 @@ class DrawerHelper extends Component {
           const { shift } = this.state;
           shift.startDate = moment(recurringShift.startDate);
           shift.endDate = recurringShift.expiration && moment(recurringShift.expiration) || null;
-          if (Array.isArray(recurringShift.days) && recurringShift.days.length) {
-            const selectedDate = recurringShift.days.map((day) => {
-              return moment().day(day).format('MM-DD-YYYY');
-            });
-            this.setState({ selectedDate });
-          }
           this.setState({ shift });
         })
         .catch(err => console.error(err));
@@ -387,9 +382,9 @@ class DrawerHelper extends Component {
     console.log(startTime);
     console.log(endTime);
 
-    const _this = this;
-    var uri = 'http://localhost:8080/api/phoneTreeList';
-    console.log(this.props.weekPublishedId);
+    const _this = this
+    const uri = `${BASE_API}/api/phoneTreeList`;
+    console.log(this.props.weekPublishedId)
     var options = {
       uri: uri,
       method: 'POST',
@@ -699,7 +694,7 @@ class DrawerHelper extends Component {
                     {'THIS SHIFT REPEATS THIS EVERY:'}
                   </label>
                   <RecurringShiftSelect recurringShift={shift.recurringShiftId} selectedDate={selectedDate}
-                                        startDate={weekStart} formCallBack={this.updateFormState} />
+                                        startDate={weekStart} formCallBack={this.updateFormState} calendarOffset={this.props.calendarOffset} />
                 </Grid.Column>
               </Grid.Row>}
 

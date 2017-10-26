@@ -6,6 +6,7 @@ import IconButton from 'material-ui/IconButton';
 import { withApollo } from 'react-apollo';
 import pick from 'lodash/pick';
 
+import { BASE_API } from '../../../constants';
 import Loading from '../../helpers/Loading';
 import AvatarEditor from '../../helpers/AvatarEditor';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
@@ -106,9 +107,7 @@ class Personal extends Component {
 
   handleImageUpload = (files) => {
     console.log(files);
-    // prod endpoint: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
-    // dev/test endpoint: http://localhost:8080/api/uploadImage
-    SuperAgent.post('http://localhost:8080/api/uploadImage')
+    SuperAgent.post(`${BASE_API}/api/uploadImage`)
     .field('keyword', 'user')
     .field('id', localStorage.getItem('userId'))
     .attach("theseNamesMustMatch", files[0])

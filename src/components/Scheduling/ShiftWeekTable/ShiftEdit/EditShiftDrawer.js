@@ -19,6 +19,8 @@ import TeamMemberCard from './TeamMemberCard';
 import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
 const uuidv4 = require('uuid/v4');
+
+import { BASE_API } from '../../../../constants';
 import './shift-edit.css';
 var rp = require('request-promise');
 var Halogen = require('halogen');
@@ -222,7 +224,7 @@ class DrawerHelper extends Component {
        var shift = this.props.shift
         /*
         if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
-          var uriRemoved = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
+          var uriRemoved = `${BASE_API}/api/cancellationCall`
 
               var options = {
                   uri: uriRemoved,
@@ -248,7 +250,7 @@ class DrawerHelper extends Component {
         */
         /*
         if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
-             var uriAdded = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/userAdded'
+             var uriAdded = `${BASE_API}/api/userAdded`;
               var options = {
                   uri: uriAdded,
                   method: 'POST',
@@ -299,7 +301,7 @@ class DrawerHelper extends Component {
 
     /*
     if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
-        var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
+        var uri = `${BASE_API}/api/cancellationCall`
 
         var options = {
             uri: uri,

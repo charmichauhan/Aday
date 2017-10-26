@@ -171,7 +171,6 @@ class ShiftWeekTableComponent extends Week {
         userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
       });
 
-
       data.allShifts.edges.map((value, index) => {
         if (workplaceId != '') {
           if (workplaceId == value.node.workplaceByWorkplaceId.id) {
@@ -443,31 +442,39 @@ class ShiftWeekTableComponent extends Week {
       return (<div><Halogen.SyncLoader color='#00A863' /></div>)
     }
 
+    let isPublished = this.props.events.is_publish;
+    let publishedId = this.props.events.publish_id;
+    let calendar_offset = parseInt(this.props.events.calendar_offset);
+
     let { date } = this.props;
     let { start } = ShiftWeekTable.range(date, this.props);
+    //console.log("calendar_offset")
+    //console.log(calendar_offset)
+    //start = moment(start).add(calendar_offset, 'd')
+
     const TableRowHeader = ( <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
       <TableRow displayBorder={false}>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
-          className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset).format('dddd')}</p><p
+          className="weekDate">{moment(start).day(calendar_offset).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(1).format('dddd')} </p>
-          <p className="weekDate">{moment(start).day(1).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 1).format('dddd')} </p>
+          <p className="weekDate">{moment(start).day(calendar_offset + 1).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(2).format('dddd')} </p>
-          <p className="weekDate">  {moment(start).day(2).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 2).format('dddd')} </p>
+          <p className="weekDate">  {moment(start).day(calendar_offset + 2).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(3).format('dddd')} </p><p
-          className="weekDate">  {moment(start).day(3).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 3).format('dddd')} </p><p
+          className="weekDate">  {moment(start).day(calendar_offset + 3).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(4).format('dddd')} </p><p
-          className="weekDate">  {moment(start).day(4).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 4).format('dddd')} </p><p
+          className="weekDate">  {moment(start).day(calendar_offset + 4).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(5).format('dddd')} </p><p
-          className="weekDate">  {moment(start).day(5).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 5).format('dddd')} </p><p
+          className="weekDate">  {moment(start).day(calendar_offset + 5).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(6).format('dddd')} </p><p
-          className="weekDate">{moment(start).day(6).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 6).format('dddd')} </p><p
+          className="weekDate">{moment(start).day(calendar_offset + 6).format('D')}</p></TableRowColumn>
       </TableRow>
     </TableHeader>);
 
@@ -598,9 +605,6 @@ class ShiftWeekTableComponent extends Week {
       weeklyHoursTotal
     });
 
-    let isPublished = this.props.events.is_publish;
-    let publishedId = this.props.events.publish_id;
-
     return (
       <div className="table-responsive">
         <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
@@ -619,26 +623,26 @@ class ShiftWeekTableComponent extends Week {
                 </div>
               </TableRowColumn>
               <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate"> {moment(start).day(0).format('ddd')} {moment(start).day(0).format('MM')}/{moment(start).day(0).format('D')}</p>
+                className="weekDate"> {moment(start).day(calendar_offset).format('ddd')} {moment(start).day(calendar_offset).format('MM')}/{moment(start).day(calendar_offset).format('D')}</p>
               </TableRowColumn>
               <TableRowColumn style={styles.tableFooter} className="dayname">
                 <p
-                  className="weekDate">{moment(start).day(1).format('ddd')} {moment(start).day(1).format('MM')}/{moment(start).day(1).format('D')}</p>
+                  className="weekDate">{moment(start).day(calendar_offset + 1).format('ddd')} {moment(start).day(calendar_offset + 1).format('MM')}/{moment(start).day(calendar_offset + 1).format('D')}</p>
               </TableRowColumn>
               <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate"> {moment(start).day(2).format('ddd')} {moment(start).day(2).format('MM')}/{moment(start).day(2).format('D')}</p>
+                className="weekDate"> {moment(start).day(calendar_offset + 2).format('ddd')} {moment(start).day(calendar_offset + 2).format('MM')}/{moment(start).day(calendar_offset + 2).format('D')}</p>
               </TableRowColumn>
               <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate"> {moment(start).day(3).format('ddd')} {moment(start).day(3).format('MM')}/{moment(start).day(3).format('D')}</p>
+                className="weekDate"> {moment(start).day(calendar_offset + 3).format('ddd')} {moment(start).day(calendar_offset + 3).format('MM')}/{moment(start).day(calendar_offset + 3).format('D')}</p>
               </TableRowColumn>
               <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate">{moment(start).day(4).format('ddd')} {moment(start).day(4).format('MM')}/{moment(start).day(4).format('D')}</p>
+                className="weekDate">{moment(start).day(calendar_offset + 4).format('ddd')} {moment(start).day(calendar_offset + 4).format('MM')}/{moment(start).day(calendar_offset + 4).format('D')}</p>
               </TableRowColumn>
               <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate">{moment(start).day(5).format('ddd')} {moment(start).day(5).format('MM')}/{moment(start).day(5).format('D')}</p>
+                className="weekDate">{moment(start).day(calendar_offset + 5).format('ddd')} {moment(start).day(calendar_offset + 5).format('MM')}/{moment(start).day(calendar_offset + 5).format('D')}</p>
               </TableRowColumn>
               <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate">{moment(start).day(6).format('ddd')} {moment(start).day(6).format('MM')}/{moment(start).day(6).format('D')}</p>
+                className="weekDate">{moment(start).day(calendar_offset + 6).format('ddd')} {moment(start).day(calendar_offset + 6).format('MM')}/{moment(start).day(calendar_offset + 6).format('D')}</p>
               </TableRowColumn>
             </TableRow>
           </TableHeader>
@@ -653,7 +657,9 @@ class ShiftWeekTableComponent extends Week {
                   view={this.state.calendarView}
                   isPublished={isPublished}
                   publishedId={publishedId}
-                  forceRefetch={this.forceRefetch} />
+                  forceRefetch={this.forceRefetch}
+                  start={moment(start).day(calendar_offset).format()}
+                  calendarOffset={calendar_offset} />
               )
             )
             }
@@ -667,6 +673,8 @@ class ShiftWeekTableComponent extends Week {
               isPublished={isPublished}
               publishedId={publishedId}
               forceRefetch={this.forceRefetch}
+              start={moment(start).day(calendar_offset).format()}
+              calendarOffset={calendar_offset}
             />
             }
           </TableBody>
@@ -762,7 +770,7 @@ const ShiftWeekTable = compose(
     options: (ownProps) => ({
       variables: {
         brandId: localStorage.getItem('brandId'),
-        lastApplied: moment(ownProps.date).startOf('week')
+        lastApplied: moment(ownProps.date).startOf('week').add(ownProps.events.calendar_offset, 'days')
       }
     }),
     name: 'unappliedRecurring'

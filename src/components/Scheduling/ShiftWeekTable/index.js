@@ -31,11 +31,12 @@ const styles = {
     paddingLeft: '0px',
     marginBottom: 0,
     minWidth: 1750,
+    tableLayout:'auto'
   },
   tableFooter: {
     padding: 0,
     height: 'auto',
-    border: '0 none'
+    border: '0 none',
   },
   headerStyle: {
     padding: 0
@@ -48,14 +49,10 @@ const styles = {
   footerStyle: {
     position: 'fixed',
     bottom: 0,
-    /*
-     width:'calc(100% - 320px)',
-     */
     boxShadow: '0 1px 2px 0 rgba(74, 74, 74, 0.5)'
   },
   heightremove: {
     height: 'auto'
-
   }
 };
 

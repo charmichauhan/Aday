@@ -47,7 +47,7 @@ const styles = {
   },
   footerStyle: {
     position: 'fixed',
-    bottom: 10,
+    bottom: 0,
     /*
      width:'calc(100% - 320px)',
      */

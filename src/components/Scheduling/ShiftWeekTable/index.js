@@ -47,7 +47,8 @@ const styles = {
   },
   footerStyle: {
     position: 'fixed',
-    bottom: 0,
+    // Add back in once issues AW-219, AW-213 are completed
+    // bottom: 0,
     boxShadow: '0 1px 2px 0 rgba(74, 74, 74, 0.5)'
   },
   heightremove: {

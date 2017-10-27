@@ -88,7 +88,6 @@ const styles = {
   }
 };
 
-
 class ShiftWeekTableComponent extends Week {
   constructor(props) {
     super(props);
@@ -98,130 +97,6 @@ class ShiftWeekTableComponent extends Week {
       empView: 'cal-emp-btn'
     });
   }
-
-  // componentWillUpdate(prevProps, prevState) {
-  //   debugger;
-  //   // only update chart if the data has changed
-  //   if (prevProps.data !== this.props.data) {
-  //     debugger;
-  //     // let {date} = this.props;
-  //     // let {start} = ShiftWeekTable.range(date, this.props);
-  //     // let workplaceId = localStorage.getItem('workplaceId');
-  //     // let {data} = this.props;
-  //     // let recurring = this.props.unappliedRecurring;
-  //     // //let recurring = "hello"
-  //     // let jobData = this.state.calendarView == 'job' ? this.getDataJobView(workplaceId, data, recurring, start) : this.getDataEmployeeView(workplaceId, data, this.props.allUsers, recurring, start);
-  //     // let jobDataKeys = Object.keys(jobData)
-  //     // let openShiftIndex = jobDataKeys.indexOf('Open Shifts')
-  //     // if (openShiftIndex > -1) {
-  //     //   jobDataKeys.splice(openShiftIndex, 1);
-  //     // }
-  //     // let jobs = [];
-  //     // (Object.keys(jobData)).forEach((jobType, index) => {
-  //     //   jobs = concat(jobs, jobData[jobType])
-  //     // });
-  //     // let sortedData = jobs.map((job) => ({...job, startDate: new Date(job.startTime).getUTCDate()}));
-  //     // let groupedData = groupBy(sortedData, 'startDate');
-  //     // let summary = {};
-  //     // let weeklyTraineesTotal = 0;
-  //     // let weeklyHoursTotal = 0;
-  //     // let weeklyHoursBooked = 0;
-  //     // let weeklyTraineesHoursBooked = 0;
-  //     // let weeklyTotalHoursBooked = 0;
-  //     // let weeklyTraineesTotalHoursBooked = 0;
-  //     // // calculating total hours
-  //     //
-  //     // if (this.state.calendarView == 'job') {
-  //     //   Object.keys(groupedData).forEach((shift, index) => {
-  //     //     let totalHours = 0;
-  //     //     let totalTraineesHours = 0;
-  //     //     let totalBookedHours = 0;
-  //     //     let totalTraineesBookedHours = 0;
-  //     //     let shiftData = groupedData[shift];
-  //     //     Object.keys(shiftData).forEach((data, index) => {
-  //     //       let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
-  //     //       let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
-  //     //
-  //     //       let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
-  //     //       let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
-  //     //       let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
-  //     //
-  //     //       let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
-  //     //       let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
-  //     //       let openTraineesShift = shiftData[data]['traineesRequestedNum'] - traineesAssigned;
-  //     //
-  //     //       let openShiftTotal = shiftHours * openShift;
-  //     //       let openTraineesShiftTotal = shiftHours * openTraineesShift;
-  //     //
-  //     //       let workersAssignedTotal = shiftHours * (workerAssigned);
-  //     //       let workersInvitedTotal = shiftHours * (workerInvited);
-  //     //       let traineesAssignedTotal = openTraineesShiftTotal * (traineesAssigned);
-  //     //
-  //     //       let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
-  //     //       let traineeShiftHours = openTraineesShift + traineesAssignedTotal;
-  //     //
-  //     //       totalHours += parseInt(workerShiftHours);
-  //     //       totalTraineesHours += parseInt(traineeShiftHours);
-  //     //
-  //     //       totalBookedHours += workersAssignedTotal;
-  //     //       totalTraineesBookedHours += traineesAssignedTotal;
-  //     //     });
-  //     //     summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
-  //     //     weeklyHoursTotal += totalHours;
-  //     //     weeklyTraineesTotal += totalTraineesHours;
-  //     //
-  //     //     weeklyHoursBooked += totalBookedHours;
-  //     //     weeklyTraineesHoursBooked += totalTraineesBookedHours;
-  //     //   });
-  //     //   weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
-  //     //   weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
-  //     // } else {
-  //     //   Object.keys(groupedData).forEach((shift, index) => {
-  //     //     let totalHours = 0;
-  //     //     let totalTraineesHours = 0;
-  //     //     let totalBookedHours = 0;
-  //     //     let totalTraineesBookedHours = 0;
-  //     //     let shiftData = groupedData[shift];
-  //     //     Object.keys(shiftData).forEach((data, index) => {
-  //     //       let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
-  //     //       let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
-  //     //       let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
-  //     //       if (shiftData[data]['userFirstName'] == 'Open' && shiftData[data]['userLastName'] == 'Shifts') {
-  //     //         let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
-  //     //         let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
-  //     //
-  //     //         let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
-  //     //         let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
-  //     //         let openTraineesShift = shiftData[data]['traineesRequestedNum'] - ( workerAssigned + workerInvited );
-  //     //         totalHours += shiftHours * openShift;
-  //     //         totalTraineesHours += shiftHours * openTraineesShift;
-  //     //       } else {
-  //     //         totalHours += shiftHours;
-  //     //         totalTraineesHours += shiftHours;
-  //     //         totalBookedHours += shiftHours;
-  //     //         totalTraineesBookedHours += shiftHours;
-  //     //       }
-  //     //     });
-  //     //     summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
-  //     //     weeklyHoursTotal += totalHours;
-  //     //     weeklyTraineesTotal += totalTraineesHours;
-  //     //     weeklyHoursBooked += totalBookedHours;
-  //     //     weeklyTraineesHoursBooked += totalTraineesBookedHours;
-  //     //   });
-  //     //   weeklyTotalHoursBooked = Math.round(((weeklyHoursBooked + weeklyTraineesHoursBooked ) * 100) / (weeklyHoursTotal + weeklyTraineesTotal)) || 0;
-  //     //   weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
-  //     // }
-  //     // this.setState({jobDataKeys, jobData, weeklyHoursBooked, weeklyHoursTotal, weeklyTotalHoursBooked, summary});
-  //     // this.props.hoursBooked({
-  //     //   weeklyTraineesTotalHoursBooked,
-  //     //   weeklyTotalHoursBooked,
-  //     //   weeklyTraineesHoursBooked,
-  //     //   weeklyHoursBooked,
-  //     //   weeklyTraineesTotal,
-  //     //   weeklyHoursTotal
-  //     // });
-  //   }
-  // }
 
   componentWillReceiveProps = (nextProps) => {
 

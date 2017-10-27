@@ -206,17 +206,6 @@ class CustomToolbar extends Toolbar {
     let month = moment(this.props.date).format("MMMM YYYY");
     return (
       <div>
-        {/*<ShiftPublish*/}
-          {/*date={that.state.date}*/}
-          {/*isWorkplacePublished={ that.isWorkplacePublished }*/}
-          {/*isPublish={ that.is_publish }*/}
-          {/*publishId={ that.publish_id }*/}
-          {/*view={ that.state.view }*/}
-          {/*excel = { that.csvDataDownload}*/}
-          {/*navigateCalender = { that.navigateCalender }*/}
-          {/*getHoursBooked = { that.state.getHoursObj }*/}
-          {/*isHoursReceived = { that.state.isHoursReceived }*/}
-          {/*calendarOffset = { calendar_offset } />*/}
         {/*<nav className="navbar">
           <div className="container-fluid">
             <div className="wrapper-div" style={{paddingTop:'5px'}}>

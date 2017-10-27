@@ -345,11 +345,9 @@ class ShiftPublishComponent extends Component {
 
           /* THIS IS PROBABLY OBSOLETE AS WE WON'T HAVE USERS ON NEW SINGLE PUBLISHED SHIFTS
             if (shiftRecure.phoneTree.length < 1 & shiftRecure.teamMembers) {
-
               let workersAssigned = shiftRecure.teamMembers.map(({ id }) => id);
               workersAssigned.map(function(user, i){
                   var uri = `${BASE_API}/api/kronosApi`;
-
                   var options = {
                       uri: uri,
                       method: 'POST',
@@ -371,7 +369,6 @@ class ShiftPublishComponent extends Component {
                       console.log('there was an error sending the query', error);
                     });
              })
-
             }
           */
 
@@ -696,7 +693,7 @@ class ShiftPublishComponent extends Component {
                       weekPublishedId={publishId}
                       weekStart={start}/>
                     {(is_publish != true) &&
-                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS
+                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS 
                     </button>}
 
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
@@ -737,11 +734,11 @@ class ShiftPublishComponent extends Component {
                 <div style={{display: 'flex', flexDirection: 'Column'}}>
                     <span
                       className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}
-                      &nbsp;of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal} &nbsp;
+                      of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}
                       ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
                   <span
-                    className="cale-info">NON-TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked}&nbsp;
-                    of&nbsp;{this.props.getHoursBooked.weeklyHoursTotal} &nbsp;
+                    className="cale-info">NON-TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked}
+                    of {this.props.getHoursBooked.weeklyHoursTotal}
                     ({this.props.getHoursBooked.weeklyTotalHoursBooked}%)</span>
                   <span
                     className="cale-info">TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyTraineesHoursBooked}<img
@@ -824,13 +821,11 @@ class ShiftPublishComponent extends Component {
          <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
          </Button>}
          /!*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*!/
-
          </div> :
          <div>
          <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
          </div>
          }
-
          </div>*/}
         <CreateShiftDrawer
           width={styles.drawer.width}

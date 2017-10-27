@@ -42,7 +42,7 @@ const User = ({ user }) => (
   </div>
 );
 
-const SortableItem = SortableElement(({ history, awardorder, index, that }) =>
+const SortableItem = SortableElement(({ history, awardorder, index, historyLen, that }) =>
   (
     <Paper style={styles.paperStyle}
            zDepth={1}
@@ -78,8 +78,8 @@ const SortableItem = SortableElement(({ history, awardorder, index, that }) =>
           </div>
         </GridColumn>
         <GridColumn width={1}>
-          <div className="wrapper-element text-center">
-            <Image src="/images/Sidebar/up-arrow.png" className="history-img" size="mini" />
+          <div className="wrapper-element text-center" onClick={() => that.navigateUser(awardorder,"UP", 0)} style={{cursor: "pointer"}}>
+             <Image src="/images/Sidebar/up-arrow.png" className="history-img" size="mini" />
           </div>
         </GridColumn>
         <GridColumn width={2}>
@@ -90,7 +90,9 @@ const SortableItem = SortableElement(({ history, awardorder, index, that }) =>
         </GridColumn>
         <GridColumn width={2} className="down-arrow">
           <div className="wrapper-element text-center">
-            <Image src="/images/Sidebar/down-arrow.png" className="history-img" size="mini" />
+            <div className="wrapper-element text-center" onClick={() => that.navigateUser(awardorder,"DOWN",historyLen - 1)} style={{cursor: "pointer"}}>
+              <Image src="/images/Sidebar/down-arrow.png" className="history-img" size="mini" />
+            </div>
           </div>
         </GridColumn>
         <GridColumn width={1}>
@@ -105,7 +107,7 @@ const SortableItem = SortableElement(({ history, awardorder, index, that }) =>
 const SortableList = SortableContainer(({ historyDetails, that }) => {
   return (
     <div>
-      {historyDetails.map((history, index) => <SortableItem index={index} awardorder={index} history={history}
+      {historyDetails.map((history, index) => <SortableItem index={index} awardorder={index} history={history} historyLen={historyDetails.length}
                                                             that={that} />)}
     </div>
   );
@@ -138,26 +140,25 @@ class ShiftHistoryDrawerComponent extends Component {
         if (!foundWorker) foundWorker = { node: unassignedTeamMember.user };
         var newFoundWorker = {
           ...foundWorker.node.userByUserId,
-          hireDate: foundWorker.node.hireDate > 0 ? foundWorker.node.hireDate : 0,
-          yearsOfExp: foundWorker.node.ytdOvertimeHours ? foundWorker.node.ytdOvertimeHours : 0,
+          hireDate: foundWorker.node.hireDate,
           isChecked: true
         };
-        return pick(newFoundWorker, ['id', 'avatarUrl', 'firstName', 'lastName', 'yearsOfExp', 'ytdOverTimeHours', 'isChecked']);
+        return pick(newFoundWorker, ['id', 'avatarUrl', 'firstName', 'lastName', 'hireDate', 'ytdOverTimeHours', 'isChecked']);
       });
 
       allUsers.allEmployees.edges.map
-      let sortedEmployees = orderBy(allUsers.allEmployees.edges,  (user) => user.node.yearsOfExp, ['asc']);
+      let sortedEmployees = orderBy(allUsers.allEmployees.edges,  (user) => user.node.hireDate, ['asc']);
 
-      let sortedSeniority = sortedEmployees.map((values, index) => {
-        return { ...values, seniority: index + 1 };
+      let sortedSeniority = {} 
+
+      sortedEmployees.map((values, index) => {
+        sortedSeniority[values.node.userByUserId.id] = index + 1;
       });
-
-      console.log("sortedSeniority")
-      console.log(sortedSeniority)
 
       let filteredData = userData.map((values, index) => {
-        return { ...values, seniority: index + 1 };
+        return { ...values, seniority: sortedSeniority[values.id] };
       });
+
       this.setState({ filteredData: filteredData });
     }
   }
@@ -165,6 +166,13 @@ class ShiftHistoryDrawerComponent extends Component {
   handleBack = () => {
     this.props.handleHistory();
     this.props.handleBack();
+  };
+
+  navigateUser = (index, navi, len) => {
+    if(navi === "UP" && index > 0)
+      this.onSortEnd({oldIndex : index, newIndex : index - 1});
+    else if(index < len)
+      this.onSortEnd({oldIndex : index, newIndex : index + 1});
   };
 
   onSortEnd = ({ oldIndex, newIndex }) => {

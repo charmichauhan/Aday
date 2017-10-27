@@ -31,7 +31,6 @@ const styles = {
     paddingLeft: '0px',
     marginBottom: 0,
     minWidth: 1750,
-    tableLayout:'auto'
   },
   tableFooter: {
     padding: 0,

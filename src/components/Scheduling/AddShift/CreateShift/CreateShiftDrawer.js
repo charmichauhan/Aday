@@ -833,8 +833,12 @@ class DrawerHelper extends Component {
             <div className="drawer-footer">
               <div className="buttons text-center">
                 <CircleButton handleClick={this.closeShiftDrawer} type="white" title="Cancel" />
-                <CircleButton disabled={isShiftInvalid} handleClick={() => this.handleShiftSubmit(this.state.shift)}
-                              type="blue" title={isEdit ? 'Edit Hours' : 'Add Hours'} />
+                { shift.recurringShift? 
+                      <CircleButton disabled={isShiftInvalid} handleClick={() => this.openEditSubmit(this.state.shift)}
+                        type="blue" title={'Edit Hours'} /> :
+                      <CircleButton disabled={isShiftInvalid} handleClick={() => this.handleShiftSubmit(this.state.shift)}
+                        type="blue" title={isEdit ? 'Edit Hours' : 'Add Hours'} />
+                }
               </div>
             </div>
           </div>

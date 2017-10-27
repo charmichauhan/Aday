@@ -693,7 +693,7 @@ class ShiftPublishComponent extends Component {
                       weekPublishedId={publishId}
                       weekStart={start}/>
                     {(is_publish != true) &&
-                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS 
+                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS
                     </button>}
 
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
@@ -734,12 +734,12 @@ class ShiftPublishComponent extends Component {
                 <div style={{display: 'flex', flexDirection: 'Column'}}>
                     <span
                       className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}
-                      of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}
+                      &nbsp;of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}&nbsp;
                       ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
                   <span
                     className="cale-info">NON-TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked}
-                    of {this.props.getHoursBooked.weeklyHoursTotal}
-                    ({this.props.getHoursBooked.weeklyTotalHoursBooked}%)</span>
+                    &nbsp;of {this.props.getHoursBooked.weeklyHoursTotal}
+                    &nbsp;({this.props.getHoursBooked.weeklyTotalHoursBooked}%)</span>
                   <span
                     className="cale-info">TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyTraineesHoursBooked}<img
                     style={{margin: 3, paddingBottom: 5}}

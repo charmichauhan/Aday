@@ -4,6 +4,7 @@ import { createStore, combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
 import { Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn } from 'material-ui/Table';
 import moment from 'moment';
+import json2csv from 'json2csv';
 import Week from 'react-big-calendar/lib/Week';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
@@ -14,6 +15,8 @@ import { gql, graphql, compose } from 'react-apollo';
 import jobsData from './jobs.json';
 import '../style.css';
 import allShiftsByWeeksPublished from './shiftsByWeeksPublishedQuery'
+import ShiftPublish from './ShiftPublish'
+
 var Halogen = require('halogen');
 /*
 import EditShift from './ShiftEdit/Edit';
@@ -30,7 +33,6 @@ function shiftReducer(state = {}, action) {
           {
             //date: action.date,
             workplace: action.workplace,
-
             /*template: action.template,
              certification: action.certification,
              start: action.start,
@@ -97,10 +99,253 @@ class ShiftWeekTableComponent extends Week {
     });
   }
 
+  // componentWillUpdate(prevProps, prevState) {
+  //   debugger;
+  //   // only update chart if the data has changed
+  //   if (prevProps.data !== this.props.data) {
+  //     debugger;
+  //     // let {date} = this.props;
+  //     // let {start} = ShiftWeekTable.range(date, this.props);
+  //     // let workplaceId = localStorage.getItem('workplaceId');
+  //     // let {data} = this.props;
+  //     // let recurring = this.props.unappliedRecurring;
+  //     // //let recurring = "hello"
+  //     // let jobData = this.state.calendarView == 'job' ? this.getDataJobView(workplaceId, data, recurring, start) : this.getDataEmployeeView(workplaceId, data, this.props.allUsers, recurring, start);
+  //     // let jobDataKeys = Object.keys(jobData)
+  //     // let openShiftIndex = jobDataKeys.indexOf('Open Shifts')
+  //     // if (openShiftIndex > -1) {
+  //     //   jobDataKeys.splice(openShiftIndex, 1);
+  //     // }
+  //     // let jobs = [];
+  //     // (Object.keys(jobData)).forEach((jobType, index) => {
+  //     //   jobs = concat(jobs, jobData[jobType])
+  //     // });
+  //     // let sortedData = jobs.map((job) => ({...job, startDate: new Date(job.startTime).getUTCDate()}));
+  //     // let groupedData = groupBy(sortedData, 'startDate');
+  //     // let summary = {};
+  //     // let weeklyTraineesTotal = 0;
+  //     // let weeklyHoursTotal = 0;
+  //     // let weeklyHoursBooked = 0;
+  //     // let weeklyTraineesHoursBooked = 0;
+  //     // let weeklyTotalHoursBooked = 0;
+  //     // let weeklyTraineesTotalHoursBooked = 0;
+  //     // // calculating total hours
+  //     //
+  //     // if (this.state.calendarView == 'job') {
+  //     //   Object.keys(groupedData).forEach((shift, index) => {
+  //     //     let totalHours = 0;
+  //     //     let totalTraineesHours = 0;
+  //     //     let totalBookedHours = 0;
+  //     //     let totalTraineesBookedHours = 0;
+  //     //     let shiftData = groupedData[shift];
+  //     //     Object.keys(shiftData).forEach((data, index) => {
+  //     //       let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
+  //     //       let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
+  //     //
+  //     //       let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
+  //     //       let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
+  //     //       let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
+  //     //
+  //     //       let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
+  //     //       let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
+  //     //       let openTraineesShift = shiftData[data]['traineesRequestedNum'] - traineesAssigned;
+  //     //
+  //     //       let openShiftTotal = shiftHours * openShift;
+  //     //       let openTraineesShiftTotal = shiftHours * openTraineesShift;
+  //     //
+  //     //       let workersAssignedTotal = shiftHours * (workerAssigned);
+  //     //       let workersInvitedTotal = shiftHours * (workerInvited);
+  //     //       let traineesAssignedTotal = openTraineesShiftTotal * (traineesAssigned);
+  //     //
+  //     //       let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
+  //     //       let traineeShiftHours = openTraineesShift + traineesAssignedTotal;
+  //     //
+  //     //       totalHours += parseInt(workerShiftHours);
+  //     //       totalTraineesHours += parseInt(traineeShiftHours);
+  //     //
+  //     //       totalBookedHours += workersAssignedTotal;
+  //     //       totalTraineesBookedHours += traineesAssignedTotal;
+  //     //     });
+  //     //     summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
+  //     //     weeklyHoursTotal += totalHours;
+  //     //     weeklyTraineesTotal += totalTraineesHours;
+  //     //
+  //     //     weeklyHoursBooked += totalBookedHours;
+  //     //     weeklyTraineesHoursBooked += totalTraineesBookedHours;
+  //     //   });
+  //     //   weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
+  //     //   weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
+  //     // } else {
+  //     //   Object.keys(groupedData).forEach((shift, index) => {
+  //     //     let totalHours = 0;
+  //     //     let totalTraineesHours = 0;
+  //     //     let totalBookedHours = 0;
+  //     //     let totalTraineesBookedHours = 0;
+  //     //     let shiftData = groupedData[shift];
+  //     //     Object.keys(shiftData).forEach((data, index) => {
+  //     //       let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
+  //     //       let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
+  //     //       let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
+  //     //       if (shiftData[data]['userFirstName'] == 'Open' && shiftData[data]['userLastName'] == 'Shifts') {
+  //     //         let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
+  //     //         let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
+  //     //
+  //     //         let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
+  //     //         let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
+  //     //         let openTraineesShift = shiftData[data]['traineesRequestedNum'] - ( workerAssigned + workerInvited );
+  //     //         totalHours += shiftHours * openShift;
+  //     //         totalTraineesHours += shiftHours * openTraineesShift;
+  //     //       } else {
+  //     //         totalHours += shiftHours;
+  //     //         totalTraineesHours += shiftHours;
+  //     //         totalBookedHours += shiftHours;
+  //     //         totalTraineesBookedHours += shiftHours;
+  //     //       }
+  //     //     });
+  //     //     summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
+  //     //     weeklyHoursTotal += totalHours;
+  //     //     weeklyTraineesTotal += totalTraineesHours;
+  //     //     weeklyHoursBooked += totalBookedHours;
+  //     //     weeklyTraineesHoursBooked += totalTraineesBookedHours;
+  //     //   });
+  //     //   weeklyTotalHoursBooked = Math.round(((weeklyHoursBooked + weeklyTraineesHoursBooked ) * 100) / (weeklyHoursTotal + weeklyTraineesTotal)) || 0;
+  //     //   weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
+  //     // }
+  //     // this.setState({jobDataKeys, jobData, weeklyHoursBooked, weeklyHoursTotal, weeklyTotalHoursBooked, summary});
+  //     // this.props.hoursBooked({
+  //     //   weeklyTraineesTotalHoursBooked,
+  //     //   weeklyTotalHoursBooked,
+  //     //   weeklyTraineesHoursBooked,
+  //     //   weeklyHoursBooked,
+  //     //   weeklyTraineesTotal,
+  //     //   weeklyHoursTotal
+  //     // });
+  //   }
+  // }
+
   componentWillReceiveProps = (nextProps) => {
-      this.props.data.refetch(allShiftsByWeeksPublished)
-      if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
-        this.props.setCSVData(this.csvData(nextProps));
+
+    if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.unappliedRecurring.loading) {
+      // this.props.data.loading || this.props.allUsers.loading || this.props.unappliedRecurring.loading
+      let {date} = nextProps;
+      let {start} = ShiftWeekTable.range(date, nextProps);
+      let workplaceId = localStorage.getItem('workplaceId');
+      let {data} = nextProps;
+      let recurring = nextProps.unappliedRecurring;
+      //let recurring = "hello"
+      let jobData = this.state.calendarView == 'job' ? this.getDataJobView(workplaceId, data, recurring, start) : this.getDataEmployeeView(workplaceId, data, nextProps.allUsers, recurring, start);
+      let jobDataKeys = Object.keys(jobData)
+      let openShiftIndex = jobDataKeys.indexOf('Open Shifts')
+      if (openShiftIndex > -1) {
+        jobDataKeys.splice(openShiftIndex, 1);
+      }
+      let jobs = [];
+      (Object.keys(jobData)).forEach((jobType, index) => {
+        jobs = concat(jobs, jobData[jobType])
+      });
+      let sortedData = jobs.map((job) => ({...job, startDate: new Date(job.startTime).getUTCDate()}));
+      let groupedData = groupBy(sortedData, 'startDate');
+      let summary = {};
+      let weeklyTraineesTotal = 0;
+      let weeklyHoursTotal = 0;
+      let weeklyHoursBooked = 0;
+      let weeklyTraineesHoursBooked = 0;
+      let weeklyTotalHoursBooked = 0;
+      let weeklyTraineesTotalHoursBooked = 0;
+      // calculating total hours
+
+      if (this.state.calendarView == 'job') {
+        Object.keys(groupedData).forEach((shift, index) => {
+          let totalHours = 0;
+          let totalTraineesHours = 0;
+          let totalBookedHours = 0;
+          let totalTraineesBookedHours = 0;
+          let shiftData = groupedData[shift];
+          Object.keys(shiftData).forEach((data, index) => {
+            let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
+            let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
+
+            let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
+            let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
+            let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
+
+            let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
+            let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
+            let openTraineesShift = shiftData[data]['traineesRequestedNum'] - traineesAssigned;
+
+            let openShiftTotal = shiftHours * openShift;
+            let openTraineesShiftTotal = shiftHours * openTraineesShift;
+
+            let workersAssignedTotal = shiftHours * (workerAssigned);
+            let workersInvitedTotal = shiftHours * (workerInvited);
+            let traineesAssignedTotal = openTraineesShiftTotal * (traineesAssigned);
+
+            let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
+            let traineeShiftHours = openTraineesShift + traineesAssignedTotal;
+
+            totalHours += parseInt(workerShiftHours);
+            totalTraineesHours += parseInt(traineeShiftHours);
+
+            totalBookedHours += workersAssignedTotal;
+            totalTraineesBookedHours += traineesAssignedTotal;
+          });
+          summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
+          weeklyHoursTotal += totalHours;
+          weeklyTraineesTotal += totalTraineesHours;
+
+          weeklyHoursBooked += totalBookedHours;
+          weeklyTraineesHoursBooked += totalTraineesBookedHours;
+        });
+        weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
+        weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
+      } else {
+        Object.keys(groupedData).forEach((shift, index) => {
+          let totalHours = 0;
+          let totalTraineesHours = 0;
+          let totalBookedHours = 0;
+          let totalTraineesBookedHours = 0;
+          let shiftData = groupedData[shift];
+          Object.keys(shiftData).forEach((data, index) => {
+            let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
+            let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
+            let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
+            if (shiftData[data]['userFirstName'] == 'Open' && shiftData[data]['userLastName'] == 'Shifts') {
+              let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
+              let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
+
+              let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
+              let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
+              let openTraineesShift = shiftData[data]['traineesRequestedNum'] - ( workerAssigned + workerInvited );
+              totalHours += shiftHours * openShift;
+              totalTraineesHours += shiftHours * openTraineesShift;
+            } else {
+              totalHours += shiftHours;
+              totalTraineesHours += shiftHours;
+              totalBookedHours += shiftHours;
+              totalTraineesBookedHours += shiftHours;
+            }
+          });
+          summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
+          weeklyHoursTotal += totalHours;
+          weeklyTraineesTotal += totalTraineesHours;
+          weeklyHoursBooked += totalBookedHours;
+          weeklyTraineesHoursBooked += totalTraineesBookedHours;
+        });
+        weeklyTotalHoursBooked = Math.round(((weeklyHoursBooked + weeklyTraineesHoursBooked ) * 100) / (weeklyHoursTotal + weeklyTraineesTotal)) || 0;
+        weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
+      }
+      this.setState({jobDataKeys, jobData, weeklyHoursBooked, weeklyHoursTotal, weeklyTotalHoursBooked, summary});
+
+
+      this.setState({getHoursBooked:{
+        weeklyTraineesTotalHoursBooked,
+        weeklyTotalHoursBooked,
+        weeklyTraineesHoursBooked,
+        weeklyHoursBooked,
+        weeklyTraineesTotal,
+        weeklyHoursTotal
+      }});
+
       }
     this.setState({calendarView: this.props.eventPropGetter()});
   };
@@ -108,6 +353,68 @@ class ShiftWeekTableComponent extends Week {
   forceRefetch = () => {
     this.props.data.refetch(allShiftsByWeeksPublished)
   }
+
+  getCSVData = (csvData) => {
+    let displayCsvData = [],displayCsvDataFiled = [];
+    const that = this;
+    let { calendarOffset } = that.props;
+    displayCsvDataFiled.push(
+      'FirstName',
+      'LastName',
+      'PositionName',
+      moment().day(calendarOffset).format('dddd'),
+      moment().day(calendarOffset + 1).format('dddd'),
+      moment().day(calendarOffset + 2).format('dddd'),
+      moment().day(calendarOffset + 3).format('dddd'),
+      moment().day(calendarOffset + 4).format('dddd'),
+      moment().day(calendarOffset + 5).format('dddd'),
+      moment().day(calendarOffset + 6).format('dddd')
+    );
+
+    const displayData ={};
+
+    csvData.forEach((value) => {
+      const userId = value.userId;
+      const positionId = value.positionId;
+      delete value.userId;
+      delete value.positionId;
+      if(displayData[positionId]) {
+        if (displayData[positionId][userId]) {
+          ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach((day) => {
+            if (displayData[positionId][userId][day]) {
+              if (value[day]) {
+                value[day] = `${displayData[positionId][userId][day]} & ${value[day]}`;
+              } else {
+                value[day] = `${displayData[positionId][userId][day]}`;
+              }
+            }
+          });
+          Object.assign(displayData[positionId][userId], value);
+        } else {
+          displayData[positionId][userId] = value;
+        }
+      }else{
+        var objuser = {};
+        objuser[userId]=value;
+        displayData[positionId] = objuser;
+      }
+    });
+    Object.values(displayData).map((value)=>{
+      displayCsvData = displayCsvData.concat(Object.values(value));
+    });
+    this.setState({ csvData: displayCsvData, dataReceived: true });
+
+
+      var result = json2csv({ data: displayCsvData, fields: displayCsvDataFiled});
+      var hiddenElement = document.createElement('a');
+      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(result);
+      hiddenElement.target = '_blank';
+      // hiddenElement.download = moment(new Date()).format('MM/DD/YYYY_H:mm:ss') + '.csv';
+      hiddenElement.download = moment(that.props.date).startOf("week").day(that.props.calendarOffset).format('MM-DD-YYYY') + '_'
+        + moment(that.props.date).endOf('week').day(that.props.calendarOffset).add(6, 'days').format('MM-DD-YYYY') + '.csv';
+      hiddenElement.click();
+
+  };
 
   getSummary = (summary, start) => {
     let summaryDetail = [];
@@ -147,7 +454,6 @@ class ShiftWeekTableComponent extends Week {
   };
 
   csvData = (props) => {
-
     const userAssignedShifts =  props.data.allShifts.edges.map(({node}) => {
         return this.getShiftData(node, props);
     }).filter((shift) => { return shift.workersAssigned.length });
@@ -185,7 +491,7 @@ class ShiftWeekTableComponent extends Week {
         });
       }
     });
-    return csvShifts;
+    this.getCSVData(csvShifts);
   };
 
   getDataEmployeeView = (workplaceId, data, allUsers, recurring, start) => {
@@ -195,7 +501,6 @@ class ShiftWeekTableComponent extends Week {
       allUsers.allUsers.edges.map((value, index) => {
         userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
       });
-
 
 
       data.allShifts.edges.map((value, index) => {
@@ -519,127 +824,29 @@ class ShiftWeekTableComponent extends Week {
     }
 
     let workplaceId = localStorage.getItem('workplaceId');
-    let {data} = this.props;
-    let recurring = this.props.unappliedRecurring;
-    //let recurring = "hello"
-    let jobData = this.state.calendarView == 'job' ? this.getDataJobView(workplaceId, data, recurring, start) : this.getDataEmployeeView(workplaceId, data, this.props.allUsers, recurring, start);
-    let jobDataKeys = Object.keys(jobData)
-    let openShiftIndex = jobDataKeys.indexOf('Open Shifts')
-    if (openShiftIndex > -1) {
-      jobDataKeys.splice(openShiftIndex, 1);
-    }
-    let jobs = [];
-    (Object.keys(jobData)).forEach((jobType, index) => {
-      jobs = concat(jobs, jobData[jobType])
-    });
-    let sortedData = jobs.map((job) => ({...job, startDate: new Date(job.startTime).getUTCDate()}));
-    let groupedData = groupBy(sortedData, 'startDate');
-    let summary = {};
-    let weeklyTraineesTotal = 0;
-    let weeklyHoursTotal = 0;
-    let weeklyHoursBooked = 0;
-    let weeklyTraineesHoursBooked = 0;
-    let weeklyTotalHoursBooked = 0;
-    let weeklyTraineesTotalHoursBooked = 0;
-    // calculating total hours
-    if (this.state.calendarView == 'job') {
-      Object.keys(groupedData).forEach((shift, index) => {
-        let totalHours = 0;
-        let totalTraineesHours = 0;
-        let totalBookedHours = 0;
-        let totalTraineesBookedHours = 0;
-        let shiftData = groupedData[shift];
-        Object.keys(shiftData).forEach((data, index) => {
-          let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
-          let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
 
-          let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
-          let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
-          let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
-
-          let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
-          let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
-          let openTraineesShift = shiftData[data]['traineesRequestedNum'] - traineesAssigned;
-
-          let openShiftTotal = shiftHours * openShift;
-          let openTraineesShiftTotal = shiftHours * openTraineesShift;
-
-          let workersAssignedTotal = shiftHours * (workerAssigned);
-          let workersInvitedTotal = shiftHours * (workerInvited);
-          let traineesAssignedTotal = openTraineesShiftTotal * (traineesAssigned);
-
-          let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
-          let traineeShiftHours = openTraineesShift + traineesAssignedTotal;
-
-          totalHours += parseInt(workerShiftHours);
-          totalTraineesHours += parseInt(traineeShiftHours);
-
-          totalBookedHours += workersAssignedTotal;
-          totalTraineesBookedHours += traineesAssignedTotal;
-        });
-        summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
-        weeklyHoursTotal += totalHours;
-        weeklyTraineesTotal += totalTraineesHours;
-
-        weeklyHoursBooked += totalBookedHours;
-        weeklyTraineesHoursBooked += totalTraineesBookedHours;
-      });
-      weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
-      weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
-    } else {
-      Object.keys(groupedData).forEach((shift, index) => {
-        let totalHours = 0;
-        let totalTraineesHours = 0;
-        let totalBookedHours = 0;
-        let totalTraineesBookedHours = 0;
-        let shiftData = groupedData[shift];
-        Object.keys(shiftData).forEach((data, index) => {
-          let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
-          let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
-          let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
-          if (shiftData[data]['userFirstName'] == 'Open' && shiftData[data]['userLastName'] == 'Shifts') {
-            let workerAssigned = shiftData[data]['workersAssigned'] && shiftData[data]['workersAssigned'].length;
-            let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
-
-            let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
-            let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
-            let openTraineesShift = shiftData[data]['traineesRequestedNum'] - ( workerAssigned + workerInvited );
-            totalHours += shiftHours * openShift;
-            totalTraineesHours += shiftHours * openTraineesShift;
-          } else {
-            totalHours += shiftHours;
-            totalTraineesHours += shiftHours;
-            totalBookedHours += shiftHours;
-            totalTraineesBookedHours += shiftHours;
-          }
-        });
-        summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
-        weeklyHoursTotal += totalHours;
-        weeklyTraineesTotal += totalTraineesHours;
-        weeklyHoursBooked += totalBookedHours;
-        weeklyTraineesHoursBooked += totalTraineesBookedHours;
-      });
-      weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
-      weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
-    }
-
-    if (this.props.isHoursReceived) this.props.hoursBooked({
-      weeklyTraineesTotalHoursBooked,
-      weeklyTotalHoursBooked,
-      weeklyTraineesHoursBooked,
-      weeklyHoursBooked,
-      weeklyTraineesTotal,
-      weeklyHoursTotal
-    });
-
-      const reducer = combineReducers({ form: formReducer, shifts: shiftReducer });
-      const store = createStore(reducer, { shifts: [] });
-      let unsubscribe = store.subscribe(() =>
-        console.log(store.getState())
-      );
+    // let isPublished = this.props.events.is_publish;
+    // let publishedId = this.props.events.publish_id;
+    const reducer = combineReducers({form: formReducer, shifts: shiftReducer});
+    const store = createStore(reducer, {shifts: []});
+    let unsubscribe = store.subscribe(() =>
+      console.log(store.getState())
+    );
     return (
-      <Provider store={store}>
-        <div className="table-responsive">
+      <div>
+        <Provider store={store}>
+
+          <div className="table-responsive">
+            <ShiftPublish
+              date={this.props.date}
+              isWorkplacePublished={ this.props.isWorkplacePublished }
+              isPublish={ isPublished }
+              publishId={ publishedId }
+              view={ this.props.spview }
+              excel = { () => this.csvData(this.props)}
+              navigateCalender = { this.props.navigateCalender }
+              getHoursBooked = { this.state.getHoursBooked }
+              calendarOffset = { calendar_offset } />
           <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
                  fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
                  className="table atable emp_view_table" style={styles.root}>
@@ -682,9 +889,9 @@ class ShiftWeekTableComponent extends Week {
             <TableBody>
               <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay}/>
 
-              {jobDataKeys.map((value, index) => (
+              {this.state.jobDataKeys.map((value, index) => (
                   <JobsRow
-                    data={jobData[value]}
+                    data={this.state.jobData[value]}
                     key={value}
                     users={this.props.allUsers}
                     view={this.state.calendarView}
@@ -697,9 +904,9 @@ class ShiftWeekTableComponent extends Week {
               )
               }
 
-              {jobData['Open Shifts'] &&
+              {this.state.jobData['Open Shifts'] &&
               <JobsRow
-                data={jobData['Open Shifts']}
+                data={this.state.jobData['Open Shifts']}
                 key={'Open Shifts'}
                 users={this.props.allUsers}
                 view={this.state.calendarView}
@@ -715,10 +922,10 @@ class ShiftWeekTableComponent extends Week {
               <TableRow displayBorder={false}>
                 <TableRowColumn style={styles.tableFooterHeading}>
                   <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
-                    hours booked:</p><p className="sfont">{weeklyHoursBooked} of {weeklyHoursTotal}
-                    | {weeklyTotalHoursBooked}%</p></div>
+                    hours booked:</p><p className="sfont">{this.state.weeklyHoursBooked} of {this.state.weeklyHoursTotal}
+                    | {this.state.weeklyTotalHoursBooked}%</p></div>
                 </TableRowColumn>
-                {this.getSummary(summary, start)}
+                {this.getSummary(this.state.summary, start)}
               </TableRow>
               <TableRow displayBorder={false}>
               </TableRow>
@@ -726,6 +933,7 @@ class ShiftWeekTableComponent extends Week {
           </Table>
         </div>
       </Provider>
+      </div>
     );
   }
 }

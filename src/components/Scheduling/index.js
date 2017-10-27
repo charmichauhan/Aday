@@ -5,9 +5,7 @@ import {gql, graphql, compose} from "react-apollo";
 import {groupBy,findIndex, cloneDeep} from "lodash";
 import {Modal} from "semantic-ui-react";
 import Toolbar from "react-big-calendar/lib/Toolbar";
-import json2csv from 'json2csv';
 import ShiftWeekTable from "./ShiftWeekTable";
-import ShiftPublish from "./ShiftWeekTable/ShiftPublish";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "fullcalendar/dist/fullcalendar.min.css";
@@ -76,9 +74,7 @@ class ScheduleComponent extends Component {
       this.setState({view:currentView});
     }
   };
-  csvDataDownload = () => {
-    this.setState({ dataReceived:false });
-  };
+
   navigateCalender = (nav) => {
     if(nav === "NEXT" ){
       this.setState({date: moment(this.state.date).add(7, "days"),isHoursReceived : true});
@@ -86,9 +82,11 @@ class ScheduleComponent extends Component {
       this.setState({date: moment(this.state.date).subtract(7, "days"),isHoursReceived : true});
     }
   };
+
   getHoursBooked = (getHoursObj) => {
     this.setState({ getHoursObj, isHoursReceived : false});
   };
+
   onViewChange = () => {
     return this.state.view;
   };
@@ -114,64 +112,8 @@ class ScheduleComponent extends Component {
     that = this;
   };
 
-  getCSVData = (csvData) => {
-    let displayCsvData = [],displayCsvDataFiled = [];
-    displayCsvDataFiled.push(
-      'FirstName',
-      'LastName',
-      'PositionName',
-      moment().day(calendar_offset).format('dddd'),
-      moment().day(calendar_offset + 1).format('dddd'),
-      moment().day(calendar_offset + 2).format('dddd'),
-      moment().day(calendar_offset + 3).format('dddd'),
-      moment().day(calendar_offset + 4).format('dddd'),
-      moment().day(calendar_offset + 5).format('dddd'),
-      moment().day(calendar_offset + 6).format('dddd')
-    );
-
-    const displayData ={};
-
-    csvData.forEach((value) => {
-      const userId = value.userId;
-      const positionId = value.positionId;
-      delete value.userId;
-      delete value.positionId;
-      if(displayData[positionId]) {
-        if (displayData[positionId][userId]) {
-          ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach((day) => {
-            if (displayData[positionId][userId][day]) {
-              if (value[day]) {
-                value[day] = `${displayData[positionId][userId][day]} & ${value[day]}`;
-              } else {
-                value[day] = `${displayData[positionId][userId][day]}`;
-              }
-            }
-          });
-          Object.assign(displayData[positionId][userId], value);
-        } else {
-          displayData[positionId][userId] = value;
-        }
-      }else{
-        var objuser = {};
-        objuser[userId]=value;
-        displayData[positionId] = objuser;
-      }
-    });
-    Object.values(displayData).map((value)=>{
-      displayCsvData = displayCsvData.concat(Object.values(value));
-    });
-    this.setState({ csvData: displayCsvData, dataReceived: true });
-
-    if(!this.state.dataReceived){
-      var result = json2csv({ data: displayCsvData, fields: displayCsvDataFiled});
-      var hiddenElement = document.createElement('a');
-      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(result);
-      hiddenElement.target = '_blank';
-      // hiddenElement.download = moment(new Date()).format('MM/DD/YYYY_H:mm:ss') + '.csv';
-      hiddenElement.download = moment(this.state.date).startOf("week").day(calendar_offset).format('MM-DD-YYYY') + '_' 
-        + moment(this.state.date).endOf('week').day(calendar_offset).add(6, 'days').format('MM-DD-YYYY') + '.csv';
-      hiddenElement.click();
-    }
+  componentWillReceiveProps = () => {
+    this.setState({ isHoursReceived : true});
   };
 
   render() {
@@ -215,26 +157,16 @@ class ScheduleComponent extends Component {
         }
       });
     }
-    events.calendar_offset = calendar_offset
+    events.calendar_offset = calendar_offset;
     events.publish_id = publish_id;
-    events.is_publish = is_publish
+    events.is_publish = is_publish;
     let publishModalOptions = [{type: "white", title: "Go Back", handleClick: this.goBack, image: false},
       {type: "blue", title: "Confirm", handleClick: this.onConfirm, image: false}];
 
     return (
         <div style={{maxWidth: '1750px'}}>
             <div style={{float: 'left',marginBottom: '10px', width: '100%'}}>
-              <ShiftPublish
-                date={this.state.date}
-                isWorkplacePublished={ isWorkplacePublished }
-                isPublish={ is_publish }
-                publishId={ publish_id }
-                view={ this.state.view }
-                excel = { this.csvDataDownload}
-                navigateCalender = { this.navigateCalender }
-                getHoursBooked = { this.state.getHoursObj }
-                isHoursReceived = { this.state.isHoursReceived }
-                calendarOffset = { calendar_offset } />
+
             </div>
             <Modal title="Confirm" isOpen={this.state.publishModalPopped}
                    message="Are you sure that you want to delete this shift?"
@@ -246,7 +178,9 @@ class ScheduleComponent extends Component {
                    endAccessor='endDate'
                    defaultView='week'
                    date={this.state.date}
-                   setCSVData={this.getCSVData}
+                   isWorkplacePublished={ isWorkplacePublished }
+                   calendarOffset = { calendar_offset }
+                   spview={ this.state.view }
                    dataReceived={this.state.dataReceived}
                    hoursBooked = {this.getHoursBooked}
                    isHoursReceived = {this.state.isHoursReceived}
@@ -272,6 +206,17 @@ class CustomToolbar extends Toolbar {
     let month = moment(this.props.date).format("MMMM YYYY");
     return (
       <div>
+        {/*<ShiftPublish*/}
+          {/*date={that.state.date}*/}
+          {/*isWorkplacePublished={ that.isWorkplacePublished }*/}
+          {/*isPublish={ that.is_publish }*/}
+          {/*publishId={ that.publish_id }*/}
+          {/*view={ that.state.view }*/}
+          {/*excel = { that.csvDataDownload}*/}
+          {/*navigateCalender = { that.navigateCalender }*/}
+          {/*getHoursBooked = { that.state.getHoursObj }*/}
+          {/*isHoursReceived = { that.state.isHoursReceived }*/}
+          {/*calendarOffset = { calendar_offset } />*/}
         {/*<nav className="navbar">
           <div className="container-fluid">
             <div className="wrapper-div" style={{paddingTop:'5px'}}>

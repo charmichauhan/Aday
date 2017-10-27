@@ -81,7 +81,7 @@ class ShiftPublishComponent extends Component {
   componentDidMount() {
     this.getUsers();
     this.getManagers();
-  }
+ }
 
   modalClose = () => {
     this.setState({
@@ -327,7 +327,7 @@ class ShiftPublishComponent extends Component {
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             let isAfter = (moment(day).isAfter(moment(shift.startDate)))
-            let isBefore = (moment(day).isBefore(moment(shift.endDate)) || 
+            let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
               moment(shift.endDate).format() == "Invalid date")
             if(isAfter && isBefore) {
               this.saveShift(shiftRecure, day, publishId);
@@ -696,7 +696,7 @@ class ShiftPublishComponent extends Component {
                       weekPublishedId={publishId}
                       weekStart={start}/>
                     {(is_publish != true) &&
-                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS 
+                    <button className="action-btn adayblue-button" onClick={this.onPublish}>PUBLISH SHIFTS
                     </button>}
 
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
@@ -851,7 +851,6 @@ class ShiftPublishComponent extends Component {
     )
   }
 }
-
 ShiftPublishComponent.range = (date, { culture }) => {
   let firstOfWeek = localizer.startOfWeek(culture);
   let start = dates.startOf(date, 'week', firstOfWeek);

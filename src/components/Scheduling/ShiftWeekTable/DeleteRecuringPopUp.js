@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Dialog from 'material-ui/Dialog';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import CircleButton from '../../../components/helpers/CircleButton';
 import './shiftSection.css';
-import { Image } from 'semantic-ui-react';
+import {Image} from 'semantic-ui-react';
 const style = {
   titleStyle: {
     paddingLeft: '0',
@@ -16,9 +16,10 @@ const style = {
     padding: '0'
   },
   contentStyle: {
-    width: 600,
+    width: 900,
     height: 333,
-    borderRadius: 6
+    borderRadius: 6,
+    maxWidth: 900
   }
 };
 
@@ -31,22 +32,28 @@ export default class DeleteRecuringPopUp extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.state.isOpen !== nextProps.isOpen) this.setState({ isOpen: nextProps.isOpen });
+    if (this.state.isOpen !== nextProps.isOpen) this.setState({isOpen: nextProps.isOpen});
   };
 
   render() {
-    let { title, message, action, closeAction, handleClickOutside } = this.props;
+    let {title, action, closeAction, handleClickOutside} = this.props;
     const actions = action.map((action, index) =>
-      (<div className="instance-following" key={index}>
-          <button title={action.title} onClick={action.handleClick}> {action.title} </button>
-          <p>{message}</p>
-        </div>)
+      (<div className="delete-popup" onClick={action.handleClick} style={{cursor: "pointer"}}>
+          <div className="delete-popup-icon">
+            <i><img src={action.image} alt=""/></i>
+          </div>
+          <div className="delete-popup-title">
+            <h5>{action.title}</h5>
+            <p>{action.message}</p>
+          </div>
+        </div>
+      )
     );
     const titleMessage = (<div>
       <h5 className="confirm-popup">{title}</h5>
       <div className="confirm-popup-close">
-        <IconButton style={{ borderRadius: '50%', boxShadow: '0px 2px 9px -2px #000' }} onClick={closeAction}>
-          <Image src="/images/Icons_Red_Cross.png" size="mini" />
+        <IconButton style={{borderRadius: '50%', boxShadow: '0px 2px 9px -2px #000'}} onClick={closeAction}>
+          <Image src="/images/Icons_Red_Cross.png" size="mini"/>
         </IconButton>
       </div>
     </div>);
@@ -61,7 +68,9 @@ export default class DeleteRecuringPopUp extends Component {
           onRequestClose={handleClickOutside}
           open={this.state.isOpen}>
           <div className="confirm-popup-body">
-            {actions}
+            <div className="delete-shift-popup">
+              {actions}
+            </div>
             {this.props.children}
           </div>
         </Dialog>

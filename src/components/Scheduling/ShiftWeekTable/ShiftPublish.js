@@ -393,7 +393,7 @@ class ShiftPublishComponent extends Component {
           id: recurring,
           workplaceId: shift.workplaceId,
           brandId: localStorage.getItem("brandId"),
-          lastWeekApplied: moment().startOf('week').add(this.props.calendarOffset, 'days').add(8, 'weeks').format()
+          lastWeekApplied: moment().startOf('week').add(this.props.calendarOffset, 'days').add(12, 'weeks').format()
         };
         console.log("PAYLOAD")
         console.log(payload)
@@ -549,7 +549,7 @@ class ShiftPublishComponent extends Component {
 
             let count = 1
             const length = shift.phoneTree.length
-            shift.phoneTree.map(function(userId, index){
+            shift.phoneTree.reverse().map(function(userId, index){
 
               const positionPayload = {
                 id: uuidv4(),
@@ -706,6 +706,7 @@ class ShiftPublishComponent extends Component {
                   </div>
                 }
               </div>
+              {/*
               <div className="calendar-search-tags">
                 <div className="search-tags-input">
                   <Dropdown placeholder='Search By Tags' fluid multiple selection options={tags}
@@ -725,7 +726,10 @@ class ShiftPublishComponent extends Component {
                   </ul>
                 </div>
               </div>
+               */}
+
             </div>
+
             {/* If this is adhered strictly to the design then the below shouild be col-md-4, and the two adjacent dividers should be col-md-6 */}
             <div className="col-md-4 heading-center-spesh"></div>
             {!this.props.isHoursReceived ?
@@ -746,14 +750,14 @@ class ShiftPublishComponent extends Component {
                     style={{margin: 3, paddingBottom: 5}}
                     src="/assets/Icons/job-shadower-unfilled.png"/></span><span>({this.props.getHoursBooked.weeklyTraineesTotalHoursBooked}%)</span></span>
                 </div>
-                <div style={{display: 'flex', flexDirection: 'Column'}}>
+                {/*<div style={{display: 'flex', flexDirection: 'Column'}}>
                   <span className="cale-sub-info">TOTAL SPEND BUDGET BOOKED: $11,049 of $16,038</span>
                   <span className="cale-info">NON-TRAINEE BUDGET BOOKED:  $11,049 of $13,000 (85%)</span>
                   <span className="cale-info">TRAINEE BUDGET BOOKED: $0<img style={{margin: 3, paddingBottom: 5}}
                                                                             src="/assets/Icons/job-shadower-filled.png"/><span>of $3,038<img
                     style={{margin: 3, paddingBottom: 5}}
                     src="/assets/Icons/job-shadower-unfilled.png"/></span><span>(0%)</span></span>
-                </div>
+                </div>*/}
 
 
               </div>

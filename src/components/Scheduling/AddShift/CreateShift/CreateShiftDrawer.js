@@ -383,6 +383,7 @@ class DrawerHelper extends Component {
     console.log(endTime);
 
     const _this = this
+
     const uri = `${BASE_API}/api/phoneTreeList`;
     console.log(this.props.weekPublishedId)
     var options = {

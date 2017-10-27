@@ -130,7 +130,7 @@ class ShiftHistoryDrawerComponent extends Component {
     if (this.state.filteredData.length < 1 || this.props.allEmployees.loading !== nextProps.allEmployees.loading) {
       console.log(nextProps.allEmployees);
       const allUsers = nextProps.allEmployees;
-      const usersCropped = this.props.users.slice(1, 30);
+      const usersCropped = this.props.users;
       var userData = usersCropped.map(function (userId, i) {
         console.log(userId)
         let foundWorker = find(allUsers.allEmployees.edges, (user) => user.node.userId === userId);
@@ -145,8 +145,17 @@ class ShiftHistoryDrawerComponent extends Component {
         return pick(newFoundWorker, ['id', 'avatarUrl', 'firstName', 'lastName', 'yearsOfExp', 'ytdOverTimeHours', 'isChecked']);
       });
 
-      let sortedData = orderBy(userData, ['yearsOfExp'], ['asc']);
-      let filteredData = sortedData.map((values, index) => {
+      allUsers.allEmployees.edges.map
+      let sortedEmployees = orderBy(allUsers.allEmployees.edges,  (user) => user.node.yearsOfExp, ['asc']);
+
+      let sortedSeniority = sortedEmployees.map((values, index) => {
+        return { ...values, seniority: index + 1 };
+      });
+
+      console.log("sortedSeniority")
+      console.log(sortedSeniority)
+
+      let filteredData = userData.map((values, index) => {
         return { ...values, seniority: index + 1 };
       });
       this.setState({ filteredData: filteredData });

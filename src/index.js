@@ -18,7 +18,7 @@ import './index.css';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
-const networkInterface =  createNetworkInterface({ uri: `${BASE_API}/graphql`});
+const networkInterface =  createNetworkInterface({ uri: `https://20170808t142850-dot-forward-chess-157313.appspot.com/graphql`});
 
 networkInterface.use([{
 applyMiddleware(req, next) {

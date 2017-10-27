@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { cloneDeep, findLastIndex, differenceBy } from 'lodash';
 import { gql, graphql, compose } from 'react-apollo';
+
 import {
   updateShiftMutation,
   deleteShiftMutation,
   updateRecurringShiftById
 } from './ShiftEdit/EditShiftDrawer.graphql';
 import { createShiftMutation } from './ShiftPublish.graphql';
+import { BASE_API } from '../../../constants';
 import Modal from '../../helpers/Modal';
 import CreateShiftAdvanceDrawerContainer from '../AddShift/CreateShift/CreateShiftAdvanceDrawerContainer';
 import CreateShiftDrawerContainer from '../AddShift/CreateShift/CreateShiftDrawerContainer';
@@ -17,6 +19,7 @@ import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer
 import DeleteRecuringPopUp from './DeleteRecuringPopUp';
 import '../style.css';
 import './shiftWeekTable.css';
+
 var rp = require('request-promise');
 const uuidv4 = require('uuid/v4');
 
@@ -65,7 +68,7 @@ class EventPopupComponent extends Component {
   };
 
   deleteShift = (id) => {
-    let data = this.props.data
+    let data = this.props.data;
     let that = this;
     that.props.deleteShiftById(uuidv4(), id)
       .then(({ data }) => {
@@ -75,55 +78,55 @@ class EventPopupComponent extends Component {
     });
     that.setState({ deleteModalPopped: false });
   };
-  
+
   // deleteRecurringShiftById
   deleteSingle = () => {
-    this.deleteShift(this.props.data.id)
+    this.deleteShift(this.props.data.id);
 
-    const _this = this
-    this.props.data.workersAssigned.map(function(user, i){
-      var uri = 'http://localhost:8080/api/kronosApi'
-      let data = _this.props.data
+    const _this = this;
+    this.props.data.workersAssigned.map(function (user, i) {
+      var uri = `${BASE_API}/api/kronosApi`;
+      let data = _this.props.data;
 
-        var options = {
-            uri: uri,
-            method: 'POST',
-            json: {
-                  "sec": "QDVPZJk54364gwnviz921",
-                  "actionType": "deleteShift",
-                  "testing": true,
-                  "user_id": user,
-                  "date": moment(data.startTime).format('YYYY-MM-DD'),
-                  "startTime": moment(data.startTime).format('HH:mm'),
-                  "endTime": moment(data.endTime).format('HH:mm'),
-                  "singleEdit": false
-              }
-         };
-         rp(options)
-          .then(function(response) {
-              //that.setState({redirect:true})
-          }).catch((error) => {
-            console.log('there was an error sending the query', error);
-          });
+      var options = {
+        uri: uri,
+        method: 'POST',
+        json: {
+          'sec': 'QDVPZJk54364gwnviz921',
+          'actionType': 'deleteShift',
+          'testing': true,
+          'user_id': user,
+          'date': moment(data.startTime).format('YYYY-MM-DD'),
+          'startTime': moment(data.startTime).format('HH:mm'),
+          'endTime': moment(data.endTime).format('HH:mm'),
+          'singleEdit': false
+        }
+      };
+      rp(options)
+        .then(function (response) {
+          //that.setState({redirect:true})
+        }).catch((error) => {
+        console.log('there was an error sending the query', error);
+      });
     })
-  }
+  };
 
- deleteRecurringShift = () => {
-    let {id} = this.props.data, {startTime, endTime} = this.props.data;
-    let {recurringShiftId} = this.props.data;
+  deleteRecurringShift = () => {
+    let { id } = this.props.data, { startTime, endTime } = this.props.data;
+    let { recurringShiftId } = this.props.data;
     let that = this;
-    const newEdges = []
-    const oldEdges = []
+    const newEdges = [];
+    const oldEdges = [];
     that.setState({ deleteModalPopped: false });
 
     this.props.updateRecurringShiftById({
-        variables: {
-          data: {
-            id: recurringShiftId,
-            recurringShiftPatch: {expiration: startTime}
-          }
-        },
-       updateQueries: {
+      variables: {
+        data: {
+          id: recurringShiftId,
+          recurringShiftPatch: { expiration: startTime }
+        }
+      },
+      updateQueries: {
         allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
           previousQueryResult.allShifts.edges.map((value) => {
             if (value.node.recurringShiftId != recurringShiftId) {
@@ -131,7 +134,7 @@ class EventPopupComponent extends Component {
             } else {
               oldEdges.push(value.node.id)
             }
-          })
+          });
 
           return {
             allShifts: previousQueryResult.allShifts
@@ -139,36 +142,36 @@ class EventPopupComponent extends Component {
         },
       },
     }).then(({ data }) => {
-        console.log('Updated', data);
-        oldEdges.map(function(id, index){
-          that.deleteShift(id);
-        })
-      }).catch((error) => {
+      console.log('Updated', data);
+      oldEdges.map(function (id, index) {
+        that.deleteShift(id);
+      })
+    }).catch((error) => {
       console.log('there was an error sending the query deleteRecurringShift', error);
     });
 
-    var uri = 'http://localhost:8080/api/kronosApi'
+    var uri = `${BASE_API}/api/kronosApi`;
 
-      var options = {
-          uri: uri,
-          method: 'POST',
-          json: {
-                "sec": "QDVPZJk54364gwnviz921",
-                "actionType": "deleteRecurring",
-                "recurring_shift_id": recurringShiftId,
-                "date": moment(startTime).format('YYYY-MM-DD'),
-                "start_time": moment(startTime).format('HH:mm'),
-                "end_time": moment(endTime).format('HH:mm'),
-                "edit": false
-            }
-       };
-       console.log(options)
-       rp(options)
-        .then(function(response) {
-            //that.setState({redirect:true})
-        }).catch((error) => {
-          console.log('there was an error sending the query', error);
-        });
+    var options = {
+      uri: uri,
+      method: 'POST',
+      json: {
+        'sec': 'QDVPZJk54364gwnviz921',
+        'actionType': 'deleteRecurring',
+        'recurring_shift_id': recurringShiftId,
+        'date': moment(startTime).format('YYYY-MM-DD'),
+        'start_time': moment(startTime).format('HH:mm'),
+        'end_time': moment(endTime).format('HH:mm'),
+        'edit': false
+      }
+    };
+    console.log(options);
+    rp(options)
+      .then(function (response) {
+        //that.setState({redirect:true})
+      }).catch((error) => {
+      console.log('there was an error sending the query', error);
+    });
 
 
     that.setState({ deleteModalPopped: false });
@@ -176,16 +179,16 @@ class EventPopupComponent extends Component {
 
   deleteRecurringShiftSeries = () => {
 
-    let {recurringShiftId} = this.props.data;
+    let { recurringShiftId } = this.props.data;
     let that = this;
-    const newEdges = []
-    const oldEdges = []
+    const newEdges = [];
+    const oldEdges = [];
 
     this.props.updateRecurringShiftById({
       variables: {
         data: {
           id: recurringShiftId,
-          recurringShiftPatch: {expiration: moment().format('YYYY-MM-DDThh:mm:ss')}
+          recurringShiftPatch: { expiration: moment().format('YYYY-MM-DDThh:mm:ss') }
         }
       },
       updateQueries: {
@@ -201,28 +204,28 @@ class EventPopupComponent extends Component {
       },
     }).then(({ data }) => {
       console.log('Updated', data);
-      oldEdges.map(function(id, index){
+      oldEdges.map(function (id, index) {
         that.deleteShift(id);
       })
     }).catch((error) => {
       console.log('there was an error sending the query deleteRecurringShift', error);
     });
 
-    var uri = 'http://localhost:8080/api/kronosApi'
+    var uri = `${BASE_API}/api/kronosApi`;
 
     var options = {
       uri: uri,
       method: 'POST',
       json: {
-        "sec": "QDVPZJk54364gwnviz921",
-        "actionType": "deleteRecurring",
-        "recurring_shift_id": recurringShiftId,
-        "date": moment().format('YYYY-MM-DDThh:mm:ss'),
-        "edit": false
+        'sec': 'QDVPZJk54364gwnviz921',
+        'actionType': 'deleteRecurring',
+        'recurring_shift_id': recurringShiftId,
+        'date': moment().format('YYYY-MM-DDThh:mm:ss'),
+        'edit': false
       }
     };
     rp(options)
-      .then(function(response) {
+      .then(function (response) {
         //that.setState({redirect:true})
       }).catch((error) => {
       console.log('there was an error sending the query', error);
@@ -258,7 +261,7 @@ class EventPopupComponent extends Component {
 
   handleShiftUpdateSubmit = (shiftValue) => {
 
-    const oldShift = this.props.data
+    const oldShift = this.props.data;
     const shift = cloneDeep(shiftValue);
 
     if (shift.recurringEdit) {
@@ -283,96 +286,96 @@ class EventPopupComponent extends Component {
         unpaidBreakTime: shift.unpaidBreak
       };
       if (shift.teamMembers && shift.teamMembers.length) {
-        payload.workersAssigned  = []
-        shift.teamMembers.map(function (member){
-            if (member['id'] != 0 && member['id'] != null) {
-              payload.workersAssigned.push(member['id'])
-            }
+        payload.workersAssigned = [];
+        shift.teamMembers.map(function (member) {
+          if (member['id'] != 0 && member['id'] != null) {
+            payload.workersAssigned.push(member['id'])
+          }
         });
       }
 
       this.props.updateShiftMutation({
-          variables: {
-            data: {
-              id: shiftValue.id,
-              shiftPatch: payload
-            }
-          },
+        variables: {
+          data: {
+            id: shiftValue.id,
+            shiftPatch: payload
+          }
+        },
       }).then(({ data }) => {
         //if published then update kronos after edit
-        console.log(this.props.isPublished)
+        console.log(this.props.isPublished);
         if (this.props.isPublished == true) {
-            // # TO DO:: MAKE SURE MARKETS EXIST, WITH KRONOS CALLS ON THE SERVER
-            //if users added or deletes
-              console.log("WERE PUBLISHED")
+          // # TO DO:: MAKE SURE MARKETS EXIST, WITH KRONOS CALLS ON THE SERVER
+          //if users added or deletes
+          console.log('WERE PUBLISHED');
 
-              var uri = 'http://localhost:8080/api/kronosApi'
-              var removedUsers = []
-              var sameUsers = []
-              var newUsers = []
-              console.log(oldShift.workersAssigned)
-              console.log(oldShift)
-              oldShift.workersAssigned.map((value) => {
-                var isEdit = false
-                console.log(payload.workersAssigned)
-                console.log(value)
-                if (payload.workersAssigned.includes(value)){
-                  sameUsers.push(value)
-                  isEdit = true
-                }else{
-                  removedUsers.push(value)
+          var uri = `${BASE_API}/api/kronosApi`;
+          var removedUsers = [];
+          var sameUsers = [];
+          var newUsers = [];
+          console.log(oldShift.workersAssigned);
+          console.log(oldShift);
+          oldShift.workersAssigned.map((value) => {
+            var isEdit = false;
+            console.log(payload.workersAssigned);
+            console.log(value);
+            if (payload.workersAssigned.includes(value)) {
+              sameUsers.push(value);
+              isEdit = true
+            } else {
+              removedUsers.push(value)
+            }
+            var options = {
+              uri: uri,
+              method: 'POST',
+              json: {
+                'sec': 'QDVPZJk54364gwnviz921',
+                'actionType': 'deleteShift',
+                'user_id': value,
+                'date': moment(oldShift.startTime).format('YYYY-MM-DD'),
+                'start_time': moment(oldShift.startTime).format('HH:MM'),
+                'end_time': moment(oldShift.endTime).format('HH:MM'),
+                'singleEdit': isEdit,
+                'shift_id': oldShift.id
+              }
+            };
+
+            console.log(options);
+            rp(options)
+              .then(function (response) {
+              }).catch((error) => {
+              console.log('there was an error sending the query', error);
+            });
+
+          });
+
+          //CREATE NEW SHIFT
+          payload['workersAssigned'].map((value) => {
+            if (sameUsers.includes(value)) {
+              // User was already on the shift
+            } else {
+              var options = {
+                uri: uri,
+                method: 'POST',
+                json: {
+                  'sec': 'QDVPZJk54364gwnviz921',
+                  'actionType': 'assignShift',
+                  'testing': true,
+                  'user_id': value,
+                  'date': moment(payload['startTime']).format('YYYY/MM/DD'),
+                  'start_time': moment(payload['startTime']).format('HH:MM'),
+                  'end_time': moment(payload['endTime']).format('HH:MM'),
                 }
-                  var options = {
-                      uri: uri,
-                      method: 'POST',
-                      json: {
-                            "sec": "QDVPZJk54364gwnviz921",
-                            "actionType": "deleteShift",
-                            "user_id": value,
-                            "date": moment(oldShift.startTime).format("YYYY-MM-DD"),
-                            "start_time": moment(oldShift.startTime).format("HH:MM"),
-                            "end_time": moment(oldShift.endTime).format("HH:MM"),
-                            "singleEdit": isEdit,
-                            "shift_id": oldShift.id
-                      }
-                  };
+              };
+              rp(options)
+                .then(function (response) {
+                  //that.setState({redirect:true})
+                }).catch((error) => {
+                console.log('there was an error sending the query', error);
+              });
 
-                  console.log(options)
-                  rp(options)
-                  .then(function(response) {
-                  }).catch((error) => {
-                    console.log('there was an error sending the query', error);
-                  });
-
-            })
-
-              //CREATE NEW SHIFT
-              payload['workersAssigned'].map((value) => {
-                if (sameUsers.includes(value)){
-                  // User was already on the shift
-                } else {
-                  var options = {
-                      uri: uri,
-                      method: 'POST',
-                      json: {
-                            "sec": "QDVPZJk54364gwnviz921",
-                            "actionType": "assignShift",
-                            "testing": true,
-                            "user_id": value,
-                            "date": moment(payload['startTime']).format("YYYY/MM/DD"),
-                            "start_time": moment(payload['startTime']).format("HH:MM"),
-                            "end_time": moment(payload['endTime']).format("HH:MM"),
-                      }
-                  };
-                   rp(options)
-                    .then(function(response) {
-                        //that.setState({redirect:true})
-                    }).catch((error) => {
-                      console.log('there was an error sending the query', error);
-                    });
-
-                }
-                })
+            }
+          })
         }
         console.log('got data', data);
         let updatedTags = shift.tags;
@@ -391,217 +394,217 @@ class EventPopupComponent extends Component {
   };
 
 
-  recurringEditUpdate(shift){
-    console.log("HIT RECURRING EDIT UPDATE")
-    const updateShiftIds = []
-    const removedShiftIds = []
-    const createdShiftDays = []
+  recurringEditUpdate(shift) {
+    console.log('HIT RECURRING EDIT UPDATE');
+    const updateShiftIds = [];
+    const removedShiftIds = [];
+    const createdShiftDays = [];
 
-    const days = []
-    Object.keys(shift.shiftDaysSelected).map(function(day){
-        if (shift.shiftDaysSelected[day] == true && day !== 'undefined'){
-          days.push(day)
-        }
-    })
+    const days = [];
+    Object.keys(shift.shiftDaysSelected).map(function (day) {
+      if (shift.shiftDaysSelected[day] == true && day !== 'undefined') {
+        days.push(day)
+      }
+    });
 
-   this.saveRecurringShift(shift, days)
+    this.saveRecurringShift(shift, days);
 
 
-    const previousDays = Object.keys(shift.shiftIdsUpdate)
+    const previousDays = Object.keys(shift.shiftIdsUpdate);
 
-    previousDays.map(function(prev, i){
-        if (days.includes(prev)){
-          updateShiftIds.push(shift.shiftIdsUpdate[prev])
-        } else {
-          removedShiftIds.push(shift.shiftIdsUpdate[prev])
-        }
-    })
-    days.map(function(day, i){
-      if (previousDays.includes(day) == false){
+    previousDays.map(function (prev, i) {
+      if (days.includes(prev)) {
+        updateShiftIds.push(shift.shiftIdsUpdate[prev])
+      } else {
+        removedShiftIds.push(shift.shiftIdsUpdate[prev])
+      }
+    });
+    days.map(function (day, i) {
+      if (previousDays.includes(day) == false) {
         createdShiftDays.push(day)
       }
-    })
+    });
 
-     console.log("UPDATE SHIFT IDS")
-     console.log(updateShiftIds)
-     console.log("REMOVE SHIFT IDS")
-     console.log(removedShiftIds)
-     console.log("CREATE SHIFT IDS")
-     console.log(createdShiftDays)
+    console.log('UPDATE SHIFT IDS');
+    console.log(updateShiftIds);
+    console.log('REMOVE SHIFT IDS');
+    console.log(removedShiftIds);
+    console.log('CREATE SHIFT IDS');
+    console.log(createdShiftDays)
     /*
-    // If Removed
-    const _this = this
-    removedShiftIds.map(function(removed){
-      _this.props.deleteShiftById(uuidv4(), removed)
-        .then(({ data }) => {
-          console.log('Delete Data', data);
-        }).catch((error) => {
-        console.log('there was an error sending the query', error);
-      });
-    })
-    // If Added
-    createdShiftDays.map(function(day, i){
-      _this.saveShift(shift, day, _this.props.publishedId)
-    })
-    // If Updated
-    updateShiftIds.map(function(id){
-        const shiftDay = shift.startTime;
-        const shiftDate = shiftDay.date();
-        const shiftMonth = shiftDay.month();
-        const shiftYear = shiftDay.year();
-        shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-        shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+     // If Removed
+     const _this = this
+     removedShiftIds.map(function(removed){
+     _this.props.deleteShiftById(uuidv4(), removed)
+     .then(({ data }) => {
+     console.log('Delete Data', data);
+     }).catch((error) => {
+     console.log('there was an error sending the query', error);
+     });
+     })
+     // If Added
+     createdShiftDays.map(function(day, i){
+     _this.saveShift(shift, day, _this.props.publishedId)
+     })
+     // If Updated
+     updateShiftIds.map(function(id){
+     const shiftDay = shift.startTime;
+     const shiftDate = shiftDay.date();
+     const shiftMonth = shiftDay.month();
+     const shiftYear = shiftDay.year();
+     shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+     shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
 
-        const payload = {
-          workplaceId: shift.workplaceId,
-          positionId: shift.positionId,
-          workersRequestedNum: shift.numberOfTeamMembers,
-          creatorId: localStorage.getItem('userId'),
-          startTime: moment.utc(shift.startTime),
-          endTime: moment.utc(shift.endTime),
-          instructions: shift.instructions,
-          unpaidBreakTime: shift.unpaidBreak
-        };
-        if (shift.teamMembers && shift.teamMembers.length) {
-          payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
-        }
-        _this.props.updateShiftMutation({
-            variables: {
-              data: {
-                id: id,
-                shiftPatch: payload
-              }
-            },
-        }).then(({ data }) => {
-        })
-    })
-    */
+     const payload = {
+     workplaceId: shift.workplaceId,
+     positionId: shift.positionId,
+     workersRequestedNum: shift.numberOfTeamMembers,
+     creatorId: localStorage.getItem('userId'),
+     startTime: moment.utc(shift.startTime),
+     endTime: moment.utc(shift.endTime),
+     instructions: shift.instructions,
+     unpaidBreakTime: shift.unpaidBreak
+     };
+     if (shift.teamMembers && shift.teamMembers.length) {
+     payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
+     }
+     _this.props.updateShiftMutation({
+     variables: {
+     data: {
+     id: id,
+     shiftPatch: payload
+     }
+     },
+     }).then(({ data }) => {
+     })
+     })
+     */
   }
 
 
-  saveRecurringShift(shift, days){
+  saveRecurringShift(shift, days) {
 
-      const daysWeek = []
-      days.map(function(day,i){
-        if (day !== undefined) {
-          daysWeek.push(moment(day).format("dddd").toUpperCase())
+    const daysWeek = [];
+    days.map(function (day, i) {
+      if (day !== undefined) {
+        daysWeek.push(moment(day).format('dddd').toUpperCase())
+      }
+    });
+
+    let endDate = shift.endDate;
+    if (endDate != null) {
+      endDate = moment(shift.endDate).format()
+    }
+
+    const payload = {
+      positionId: shift.positionId,
+      workerCount: shift.numberOfTeamMembers,
+      creator: localStorage.getItem('userId'),
+      startTime: moment(shift.startTime).format('HH:mm'),
+      endTime: moment(shift.endTime).format('HH:mm'),
+      instructions: shift.instructions,
+      unpaidBreakTime: shift.unpaidBreak,
+      startDate: moment(shift.startDate).format(),
+      expiration: endDate,
+      days: daysWeek,
+    };
+
+    if (shift.teamMembers && shift.teamMembers.length) {
+      payload.assignees = [];
+      shift.teamMembers.map(function (member) {
+        if (member['id'] != 0 && member['id'] != null) {
+          payload.assignees.push(member['id'])
         }
-      })
-
-      let endDate = shift.endDate
-      if (endDate != null){
-        endDate = moment(shift.endDate).format()
-      }
-
-      const payload = {
-        positionId: shift.positionId,
-        workerCount: shift.numberOfTeamMembers,
-        creator: localStorage.getItem('userId'),
-        startTime: moment(shift.startTime).format('HH:mm'),
-        endTime: moment(shift.endTime).format('HH:mm'),
-        instructions: shift.instructions,
-        unpaidBreakTime: shift.unpaidBreak,
-        startDate: moment(shift.startDate).format(),
-        expiration: endDate,
-        days: daysWeek,
-      };
-
-      if (shift.teamMembers && shift.teamMembers.length) {
-        payload.assignees = []
-        shift.teamMembers.map(function (member){
-            if (member['id'] != 0 && member['id'] != null) {
-               payload.assignees.push(member['id'])
-            }
-        });
-      }
-
-
-      console.log(payload)
-
-      var _this = this
-      this.props.updateRecurringShiftById({
-        variables: {
-          data: {
-            id: shift.recurringShiftId,
-            recurringShiftPatch: payload
-          }
-        },
-      }).then(({ data }) => {
-
-        var uri = 'http://localhost:8080/api/kronosApi'
-
-        var options = {
-            uri: uri,
-            method: 'POST',
-            json: {
-                  "sec": "QDVPZJk54364gwnviz921",
-                  "actionType": "deleteRecurring",
-                  "recurring_shift_id": shift.recurringShiftId,
-                  "date": moment().format(),
-                  "edit": true
-              }
-        };
-         rp(options)
-          .then(function(response) {
-              console.log(response)
-              _this.props.forceRefetch()
-              //that.setState({redirect:true})
-          }).catch((error) => {
-            console.log('there was an error sending the query', error);
-          });
-
-        console.log('got data', data);
-      }).catch(err => {
-        console.log('There was error in saving shift', err);
       });
+    }
+
+
+    console.log(payload);
+
+    var _this = this;
+    this.props.updateRecurringShiftById({
+      variables: {
+        data: {
+          id: shift.recurringShiftId,
+          recurringShiftPatch: payload
+        }
+      },
+    }).then(({ data }) => {
+
+      var uri = `${BASE_API}/api/kronosApi`;
+
+      var options = {
+        uri: uri,
+        method: 'POST',
+        json: {
+          'sec': 'QDVPZJk54364gwnviz921',
+          'actionType': 'deleteRecurring',
+          'recurring_shift_id': shift.recurringShiftId,
+          'date': moment().format(),
+          'edit': true
+        }
+      };
+      rp(options)
+        .then(function (response) {
+          console.log(response);
+          _this.props.forceRefetch()
+          //that.setState({redirect:true})
+        }).catch((error) => {
+        console.log('there was an error sending the query', error);
+      });
+
+      console.log('got data', data);
+    }).catch(err => {
+      console.log('There was error in saving shift', err);
+    });
   };
 
 
   saveShift(shiftValue, day, weekPublishedId) {
     const shift = cloneDeep(shiftValue);
 
-    const shiftDay = moment(day)
+    const shiftDay = moment(day);
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
 
     /*
-    const recurringShiftId = shift.recurringShiftId;
-    shift.startTime = moment(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-    shift.endTime = moment(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+     const recurringShiftId = shift.recurringShiftId;
+     shift.startTime = moment(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+     shift.endTime = moment(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
 
-    const payload = {
-      id: uuidv4(),
-      workplaceId: shift.workplaceId,
-      positionId: shift.positionId,
-      workersRequestedNum: shift.numberOfTeamMembers,
-      creatorId: localStorage.getItem('userId'),
-      managersOnShift: [null],
-      startTime: moment(shift.startTime).format(),
-      endTime: moment(shift.endTime).format(),
-      shiftDateCreated: moment().format(),
-      weekPublishedId: weekPublishedId,
-      recurringShiftId: recurringShiftId ? recurringShiftId : null,
-      instructions: shift.instructions,
-      unpaidBreakTime: shift.unpaidBreak
-    };
-    if (shift.teamMembers && shift.teamMembers.length) {
-      payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
-    }
-    console.log(payload)
-    this.props.createShift({
-      variables: {
-        data: {
-          shift: payload
-        }
-      },
-    }).then(({ data }) => {
-      // SHOULD CREATE MARKETS HERE FOR ANY ASSIGNED WORKERS
-      console.log('got data', data);
-    }).catch(err => {
-      console.log('There was error in saving shift', err);
-    });
-    */
+     const payload = {
+     id: uuidv4(),
+     workplaceId: shift.workplaceId,
+     positionId: shift.positionId,
+     workersRequestedNum: shift.numberOfTeamMembers,
+     creatorId: localStorage.getItem('userId'),
+     managersOnShift: [null],
+     startTime: moment(shift.startTime).format(),
+     endTime: moment(shift.endTime).format(),
+     shiftDateCreated: moment().format(),
+     weekPublishedId: weekPublishedId,
+     recurringShiftId: recurringShiftId ? recurringShiftId : null,
+     instructions: shift.instructions,
+     unpaidBreakTime: shift.unpaidBreak
+     };
+     if (shift.teamMembers && shift.teamMembers.length) {
+     payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
+     }
+     console.log(payload)
+     this.props.createShift({
+     variables: {
+     data: {
+     shift: payload
+     }
+     },
+     }).then(({ data }) => {
+     // SHOULD CREATE MARKETS HERE FOR ANY ASSIGNED WORKERS
+     console.log('got data', data);
+     }).catch(err => {
+     console.log('There was error in saving shift', err);
+     });
+     */
   }
 
 
@@ -634,28 +637,43 @@ class EventPopupComponent extends Component {
     let startTimeDiff = moment(data.startTime);
     let endTimeDiff = moment(data.endTime);
     let endTime = moment(data.endTime).format('h:mm A');
-    
-     if (startTime == 'Invalid date') {
+
+    if (startTime == 'Invalid date') {
       let start = data.startTime.split(':');
       let end = data.endTime.split(':');
       startTime = moment().hour(parseInt(start[0])).minute(parseInt(start[1])).format('hh:mm A');
       endTime = moment().hour(parseInt(end[0])).minute(parseInt(end[1])).format('hh:mm A');
-      startTimeDiff =moment().hour(parseInt(start[0])).minute(parseInt(start[1]));
+      startTimeDiff = moment().hour(parseInt(start[0])).minute(parseInt(start[1]));
       endTimeDiff = moment().hour(parseInt(end[0])).minute(parseInt(end[1]));
     }
 
     let duration = moment.duration(endTimeDiff.diff(startTimeDiff));
     let hoursDiff = parseInt(duration.asHours());
-    let minDiff = parseInt(duration.asMinutes())-hoursDiff*60;
-    let {recurringShiftId} = this.props.data;
+    let minDiff = parseInt(duration.asMinutes()) - hoursDiff * 60;
+    let { recurringShiftId } = this.props.data;
 
     let h = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('HH');
     let m = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('mm');
     let deleteShiftAction = [{ type: 'white', title: 'Cancel', handleClick: this.handleClose, image: false },
       { type: 'red', title: 'Delete Shift', handleClick: this.deleteSingle, image: '/images/modal/close.png' }];
-    let deleteShiftRenderAction = [{ title: 'This Shift', message: 'ALL OTHER SHIFT IN THIS SERIES WELL REMAIN', handleClick: this.deleteSingle, image: '/images/Assets/Icons/Buttons/only-this-shift.png' },
-      { title: 'This Shift Forward', message: 'This and all the following shifts will be deleted', handleClick: this.deleteRecurringShift, image: '/images/Assets/Icons/Buttons/following-shift.png' },
-      { title: 'This Shift Series', message: 'All shifts created alongside this shift will be deleted', handleClick: this.deleteRecurringShiftSeries, image: '/images/Assets/Icons/Buttons/alongside-shift.png' }];
+    let deleteShiftRenderAction = [{
+      title: 'This Shift',
+      message: 'ALL OTHER SHIFT IN THIS SERIES WELL REMAIN',
+      handleClick: this.deleteSingle,
+      image: '/images/Assets/Icons/Buttons/only-this-shift.png'
+    },
+      {
+        title: 'This Shift Forward',
+        message: 'This and all the following shifts will be deleted',
+        handleClick: this.deleteRecurringShift,
+        image: '/images/Assets/Icons/Buttons/following-shift.png'
+      },
+      {
+        title: 'This Shift Series',
+        message: 'All shifts created alongside this shift will be deleted',
+        handleClick: this.deleteRecurringShiftSeries,
+        image: '/images/Assets/Icons/Buttons/alongside-shift.png'
+      }];
     if (data.workersAssigned == null) {
       data.workersAssigned = [];
     }
@@ -673,7 +691,7 @@ class EventPopupComponent extends Component {
           <span className="fa fa-clock-o" />
           <p className="date-time"> {startTime.replace('M', '')} <br /> {endTime.replace('M', '')}</p>
           {/*<p className="duration">{h} HRS & &thinsp; <br /> {m} MINS</p>*/}
-          <p > {hoursDiff} HR <br/> {minDiff} MIN</p>
+          <p > {hoursDiff} HR <br /> {minDiff} MIN</p>
         </div>
 
         {this.props.view == 'job'
@@ -686,7 +704,7 @@ class EventPopupComponent extends Component {
                 </span>
 
             {data.traineesRequestedNum > 0 && <span className="shape-job">
-              <i><img src="/assets/Icons/job-shadower-filled.png" alt="jobtype"/></i>
+              <i><img src="/assets/Icons/job-shadower-filled.png" alt="jobtype" /></i>
               <sup>{data.traineesRequestedNum}</sup>
             </span>
             }
@@ -695,7 +713,7 @@ class EventPopupComponent extends Component {
             <span className="jobTypeIcon"><img src="/assets/Icons/cashier.png" alt="jobtype" /></span>
             <span className="jobType">{data.positionByPositionId.positionName}</span>
             {data.traineesRequestedNum > 0 && <span className="shape-job">
-              <i><img src="/assets/Icons/job-shadower-filled.png" alt="jobtype"/></i>
+              <i><img src="/assets/Icons/job-shadower-filled.png" alt="jobtype" /></i>
               <sup>{data.traineesRequestedNum}</sup>
             </span>
             }
@@ -710,7 +728,7 @@ class EventPopupComponent extends Component {
             }{data.workersAssigned.length > 0 &&
           <span className="box-title filledshift">{data.workersAssigned.length}</span>}
             {data.recurringShiftId &&
-              <span className="bitmap"><img src="/assets/Icons/repeating-shifts.png" alt="jobtype" /></span>
+            <span className="bitmap"><img src="/assets/Icons/repeating-shifts.png" alt="jobtype" /></span>
             }
           </div>
           : <div>
@@ -734,10 +752,10 @@ class EventPopupComponent extends Component {
 
         {recurringShiftId ?
           <DeleteRecuringPopUp
-          title="Delete Repeating Shift"
-          isOpen={this.state.deleteModalPopped}
-          action={deleteShiftRenderAction}
-          closeAction={this.modalClose} />:
+            title="Delete Repeating Shift"
+            isOpen={this.state.deleteModalPopped}
+            action={deleteShiftRenderAction}
+            closeAction={this.modalClose} /> :
           <Modal
             title="delete"
             isOpen={this.state.deleteModalPopped}
@@ -800,34 +818,34 @@ class EventPopupComponent extends Component {
 }
 
 const EventPopup = compose(graphql(deleteShiftMutation, {
-  props: ({ ownProps, mutate }) => ({
-    deleteShiftById: (clientMutationId, id) => mutate({
-      variables: { clientMutationId: clientMutationId, id: id },
-      updateQueries: {
-        allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
-          let newEdges = [];
-          previousQueryResult.allShifts.edges.map((value) => {
-            if (value.node.id != mutationResult.data.deleteShiftById.shift.id) {
-              newEdges.push(value)
-            }
-          });
-          previousQueryResult.allShifts.edges = newEdges;
-          return {
-            allShifts: previousQueryResult.allShifts
-          };
+    props: ({ ownProps, mutate }) => ({
+      deleteShiftById: (clientMutationId, id) => mutate({
+        variables: { clientMutationId: clientMutationId, id: id },
+        updateQueries: {
+          allShiftsByWeeksPublished: (previousQueryResult, { mutationResult }) => {
+            let newEdges = [];
+            previousQueryResult.allShifts.edges.map((value) => {
+              if (value.node.id != mutationResult.data.deleteShiftById.shift.id) {
+                newEdges.push(value)
+              }
+            });
+            previousQueryResult.allShifts.edges = newEdges;
+            return {
+              allShifts: previousQueryResult.allShifts
+            };
+          },
         },
-      },
+      }),
     }),
   }),
-}),
-graphql(updateRecurringShiftById, {
+  graphql(updateRecurringShiftById, {
     name: 'updateRecurringShiftById'
-}),
-graphql(createShiftMutation, {
-  name: 'createShift'
-}),
-graphql(updateShiftMutation, {
+  }),
+  graphql(createShiftMutation, {
+    name: 'createShift'
+  }),
+  graphql(updateShiftMutation, {
     name: 'updateShiftMutation'
-}))(EventPopupComponent);
+  }))(EventPopupComponent);
 
 export default EventPopup;

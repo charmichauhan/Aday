@@ -30,8 +30,7 @@ const styles = {
     borderSpacing: '8px 8px',
     paddingLeft: '0px',
     marginBottom: 0,
-    minWidth: 1750,
-    tableLayout:'auto'
+    minWidth: 1750
   },
   tableFooter: {
     padding: 0,

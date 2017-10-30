@@ -60,8 +60,7 @@ const styles = {
     height: 'auto',
     borderTop: '0 none',
     borderLeft: '0 none',
-    borderRight: '1px solid #ddd',
-    borderBottom: '1px solid #ddd',
+    borderRight: '1px solid #ddd'
   },
   headerStyle: {
     padding: 0
@@ -88,7 +87,7 @@ class ShiftWeekTableComponent extends Week {
     this.state = ({
       calendarView: 'job',
       jobView: 'cal-emp-btn active',
-      empView: 'cal-emp-btn'
+      empView: 'cal-emp-btn',
     });
   }
 
@@ -120,7 +119,6 @@ class ShiftWeekTableComponent extends Week {
     }
     return summaryDetail;
   };
-
 
   getUserById = (id, props) => {
     const users = props.allUsers;
@@ -350,6 +348,7 @@ class ShiftWeekTableComponent extends Week {
     this.props.components.event('job');
     this.setState({ empView: 'cal-emp-btn active', jobView: 'cal-emp-btn' });
   };
+
   jobView = () => {
     this.props.components.event('employee');
     this.setState({ jobView: 'cal-emp-btn active', empView: 'cal-emp-btn' });
@@ -645,30 +644,32 @@ class ShiftWeekTableComponent extends Week {
                 </div>
               </TableRowColumn>
               <TableRowColumn style={styles.tableFooter} className="dayname">
-                <p className="weekDate"> {moment(start).day(calendar_offset).format('ddd')} {moment(start).day(calendar_offset).format('MM')}/{moment(start).day(calendar_offset).format('D')}</p>
-                <div className="calendar-table-head">
-                  <span><i>+</i> Holiday</span>
-                  <span><i>+</i> ADD SHIFT</span>
-                </div>
+                <p className="weekDate"> {moment(start).day(calendar_offset).format('ddd')} <strong>{moment(start).day(calendar_offset).format('MM')}/{moment(start).day(calendar_offset).format('D')}</strong></p>
+
               </TableRowColumn>
               <TableRowColumn style={styles.tableFooter} className="dayname">
-                <p
-                  className="weekDate">{moment(start).day(calendar_offset + 1).format('ddd')} {moment(start).day(calendar_offset + 1).format('MM')}/{moment(start).day(calendar_offset + 1).format('D')}</p>
+                <p className="weekDate">{moment(start).day(calendar_offset + 1).format('ddd')} <strong>{moment(start).day(calendar_offset + 1).format('MM')}/{moment(start).day(calendar_offset + 1).format('D')}</strong></p>
+
               </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate"> {moment(start).day(calendar_offset + 2).format('ddd')} {moment(start).day(calendar_offset + 2).format('MM')}/{moment(start).day(calendar_offset + 2).format('D')}</p>
+              <TableRowColumn style={styles.tableFooter} className="dayname">
+                <p className="weekDate"> {moment(start).day(calendar_offset + 2).format('ddd')} <strong>{moment(start).day(calendar_offset + 2).format('MM')}/{moment(start).day(calendar_offset + 2).format('D')}</strong></p>
+
               </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate"> {moment(start).day(calendar_offset + 3).format('ddd')} {moment(start).day(calendar_offset + 3).format('MM')}/{moment(start).day(calendar_offset + 3).format('D')}</p>
+              <TableRowColumn style={styles.tableFooter} className="dayname">
+                <p className="weekDate"> {moment(start).day(calendar_offset + 3).format('ddd')} <strong>{moment(start).day(calendar_offset + 3).format('MM')}/{moment(start).day(calendar_offset + 3).format('D')}</strong></p>
+
               </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate">{moment(start).day(calendar_offset + 4).format('ddd')} {moment(start).day(calendar_offset + 4).format('MM')}/{moment(start).day(calendar_offset + 4).format('D')}</p>
+              <TableRowColumn style={styles.tableFooter} className="dayname">
+                <p className="weekDate">{moment(start).day(calendar_offset + 4).format('ddd')} <strong>{moment(start).day(calendar_offset + 4).format('MM')}/{moment(start).day(calendar_offset + 4).format('D')}</strong></p>
+
               </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate">{moment(start).day(calendar_offset + 5).format('ddd')} {moment(start).day(calendar_offset + 5).format('MM')}/{moment(start).day(calendar_offset + 5).format('D')}</p>
+              <TableRowColumn style={styles.tableFooter} className="dayname">
+                <p className="weekDate">{moment(start).day(calendar_offset + 5).format('ddd')} <strong>{moment(start).day(calendar_offset + 5).format('MM')}/{moment(start).day(calendar_offset + 5).format('D')}</strong></p>
+
               </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname"><p
-                className="weekDate">{moment(start).day(calendar_offset + 6).format('ddd')} {moment(start).day(calendar_offset + 6).format('MM')}/{moment(start).day(calendar_offset + 6).format('D')}</p>
+              <TableRowColumn style={styles.tableFooter} className="dayname">
+                <p className="weekDate">{moment(start).day(calendar_offset + 6).format('ddd')} <strong>{moment(start).day(calendar_offset + 6).format('MM')}/{moment(start).day(calendar_offset + 6).format('D')}</strong></p>
+
               </TableRowColumn>
             </TableRow>
           </TableHeader>

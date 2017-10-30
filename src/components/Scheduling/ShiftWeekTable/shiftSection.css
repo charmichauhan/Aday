@@ -584,6 +584,26 @@
 .adayblue-button { width: 47% !important; padding: .78571429em 0.5em .78571429em !important; font-size: 14px !important;}
 
   /* Table */
+table td {
+  border-right: 1px solid rgb(221, 221, 221);
+}
+
+.spday td {
+  border-bottom: 1px solid rgb(221, 221, 221);
+}
+
+table .user_profile {
+  padding-top: 10px;
+}
+
+table td:first-child {
+  width: 240px;
+}
+
+.emp_view_table thead tr td {
+  border-top: 1px solid rgb(221, 221, 221) !important;
+}
+
 .table-responsive table td .user_profile .user_img { width: 60px;}
 .table-responsive .atable .penalheading { width: 140px;}
 
@@ -598,6 +618,7 @@
 .delete-shift-popup {
   text-align: center;
 }
+
 .delete-shift-popup .delete-popup {
   width: 260px;
   background: #fff;

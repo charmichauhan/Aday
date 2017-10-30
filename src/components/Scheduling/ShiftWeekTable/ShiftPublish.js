@@ -8,6 +8,7 @@ import localizer from 'react-big-calendar/lib/localizer';
 import uuidv4 from 'uuid/v4';
 import cloneDeep from 'lodash/cloneDeep';
 
+import { BASE_API } from '../../../constants';
 import CreateShiftButton from '../AddShift/CreateShiftButton';
 import CreateShiftDrawer from '../AddShift/CreateShift/CreateShiftDrawerContainer';
 import CreateShiftHelper from '../AddShift/CreateShift/CreateShiftHelper';
@@ -119,7 +120,7 @@ class ShiftPublishComponent extends Component {
 
   automateSchedule = (publishId) => {
     console.log(publishId);
-    var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/algorithm/'
+    var uri = `${BASE_API}/api/algorithm/`;
     var options = {
       uri: uri,
       method: 'POST',
@@ -176,7 +177,6 @@ class ShiftPublishComponent extends Component {
             let workplacePublished = mutationResult.data.createWorkplacePublished.workplacePublished;
 
             previousQueryResult.allWeekPublisheds.nodes.forEach(function (value) {
-
               if ((moment(date).isAfter(moment(value.start)) && moment(date).isBefore(moment(value.end)))
                 || (moment(date).isSame(moment(value.start), 'day'))
                 || (moment(date).isSame(moment(value.end), 'day'))
@@ -195,7 +195,7 @@ class ShiftPublishComponent extends Component {
       }).then((res) => {
         console.log('Inside the data', res);
         this.modalClose();
-        var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/kronosApi'
+        var uri = `${BASE_API}/api/kronosApi`;
 
                 var options = {
                     uri: uri,
@@ -219,7 +219,7 @@ class ShiftPublishComponent extends Component {
         variables: { id: this.props.publishId, date: moment().format() }
       }).then((res) => {
         this.modalClose();
-        var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/kronosApi'
+        var uri = `${BASE_API}/api/kronosApi`;
 
                 var options = {
                     uri: uri,
@@ -280,13 +280,15 @@ class ShiftPublishComponent extends Component {
 
     if (!publishId) {
       publishId = uuidv4();
+      const shiftCopy = shift
+
       this.props.createWeekPublished({
         variables: {
           data: {
             weekPublished: {
               id: publishId,
-              start: moment(days[0]).startOf('week').format(),
-              end: moment(days[0]).endOf('week').format(),
+              start: moment(this.props.date).startOf('week').add(this.props.calendarOffset, 'days').format(),
+              end: moment(this.props.date).endOf('week').add(this.props.calendarOffset, 'days').format(),
               published: false, datePublished: moment().format(),
               brandId: shift.brandId
             }
@@ -302,7 +304,7 @@ class ShiftPublishComponent extends Component {
           },
         },
       }).then(({ data }) => {
-        this.submitShifts({ dayNames, days, shift, publishId });
+        this.submitShifts(dayNames, days, shiftCopy, publishId);
       }).catch((error) => {
         console.log('there was an error sending the query', error);
         this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR)
@@ -311,7 +313,6 @@ class ShiftPublishComponent extends Component {
     }
     // else create all shifts with existing week published
     else {
-      console.log(shift)
       this.submitShifts(dayNames, days, shift, publishId);
     }
     this.setState({ isCreateShiftOpen: false, isCreateShiftModalOpen: false });
@@ -344,11 +345,9 @@ class ShiftPublishComponent extends Component {
 
           /* THIS IS PROBABLY OBSOLETE AS WE WON'T HAVE USERS ON NEW SINGLE PUBLISHED SHIFTS
             if (shiftRecure.phoneTree.length < 1 & shiftRecure.teamMembers) {
-
               let workersAssigned = shiftRecure.teamMembers.map(({ id }) => id);
               workersAssigned.map(function(user, i){
-                  var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/kronosApi'
-
+                  var uri = `${BASE_API}/api/kronosApi`;
                   var options = {
                       uri: uri,
                       method: 'POST',
@@ -370,7 +369,6 @@ class ShiftPublishComponent extends Component {
                       console.log('there was an error sending the query', error);
                     });
              })
-
             }
           */
 
@@ -392,7 +390,7 @@ class ShiftPublishComponent extends Component {
           id: recurring,
           workplaceId: shift.workplaceId,
           brandId: localStorage.getItem("brandId"),
-          lastWeekApplied: moment().startOf('week').add(8, 'weeks').format()
+          lastWeekApplied: moment().startOf('week').add(this.props.calendarOffset, 'days').add(12, 'weeks').format()
         };
         console.log("PAYLOAD")
         console.log(payload)
@@ -450,7 +448,7 @@ class ShiftPublishComponent extends Component {
       }
     }).then(({data})=>{
 
-        var uri = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/newRecurring'
+        var uri = `${BASE_API}/api/newRecurring`;
 
         var options = {
               uri: uri,
@@ -546,9 +544,9 @@ class ShiftPublishComponent extends Component {
         if (is_publish == true){
            if (shift.phoneTree.length > 1) {
 
-            const count = 1
+            let count = 1
             const length = shift.phoneTree.length
-            shift.phoneTree.map(function(userId, index){
+            shift.phoneTree.reverse().map(function(userId, index){
 
               const positionPayload = {
                 id: uuidv4(),
@@ -567,7 +565,7 @@ class ShiftPublishComponent extends Component {
           }).then(({ data }) => {
           count += 1;
           if (count == length){
-            var callURI = 'https://20170919t201545-dot-forward-chess-157313.appspot.com/api/callEmployee/'
+            var callURI = `${BASE_API}/api/callEmployee/`;
                   var options = {
                     uri: callURI,
                     method: 'POST',
@@ -633,7 +631,7 @@ class ShiftPublishComponent extends Component {
     }
     let { date } = this.props;
     let { start } = ShiftPublish.range(date, this.props);
-
+    start = moment(start).add(this.props.calendarOffset, "days")
     return (
       <div className="shift-section">
         {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
@@ -724,6 +722,7 @@ class ShiftPublishComponent extends Component {
                   </div>
                 }
               </div>
+              {/*
               <div className="calendar-search-tags">
                 <div className="search-tags-input">
                   <Dropdown placeholder='Search By Tags' fluid multiple selection options={tags}
@@ -742,8 +741,11 @@ class ShiftPublishComponent extends Component {
                     &nbsp;
                   </ul>
                 </div>
-              </div>*/}
+              </div>
+               */}
+
             </div>
+
             {/* If this is adhered strictly to the design then the below shouild be col-md-4, and the two adjacent dividers should be col-md-6 */}
             <div className="col-md-4 heading-center-spesh"></div>
             {!this.props.isHoursReceived ?
@@ -793,12 +795,12 @@ class ShiftPublishComponent extends Component {
                 {/*<div style={{display: 'flex', flexDirection: 'Column'}}>
                     <span
                       className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}
-                      of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}
+                      &nbsp;of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}&nbsp;
                       ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
                   <span
                     className="cale-info">NON-TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked}
-                    of {this.props.getHoursBooked.weeklyHoursTotal}
-                    ({this.props.getHoursBooked.weeklyTotalHoursBooked}%)</span>
+                    &nbsp;of {this.props.getHoursBooked.weeklyHoursTotal}
+                    &nbsp;({this.props.getHoursBooked.weeklyTotalHoursBooked}%)</span>
                   <span
                     className="cale-info">TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyTraineesHoursBooked}<img
                     style={{margin: 3, paddingBottom: 5}}
@@ -806,7 +808,7 @@ class ShiftPublishComponent extends Component {
                     style={{margin: 3, paddingBottom: 5}}
                     src="/assets/Icons/job-shadower-unfilled.png"/></span><span>({this.props.getHoursBooked.weeklyTraineesTotalHoursBooked}%)</span></span>
                 </div>
-                <div style={{display: 'flex', flexDirection: 'Column'}}>
+                {/*<div style={{display: 'flex', flexDirection: 'Column'}}>
                   <span className="cale-sub-info">TOTAL SPEND BUDGET BOOKED: $11,049 of $16,038</span>
                   <span className="cale-info">NON-TRAINEE BUDGET BOOKED:  $11,049 of $13,000 (85%)</span>
                   <span className="cale-info">TRAINEE BUDGET BOOKED: $0<img style={{margin: 3, paddingBottom: 5}}
@@ -880,13 +882,11 @@ class ShiftPublishComponent extends Component {
          <img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate" />
          </Button>}
          /!*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*!/
-
          </div> :
          <div>
          <Button basic style={{width:150, height: 44}} onClick={() => this.viewRecurring()}>View Repeating Shifts</Button>
          </div>
          }
-
          </div>*/}
         <CreateShiftDrawer
           width={styles.drawer.width}

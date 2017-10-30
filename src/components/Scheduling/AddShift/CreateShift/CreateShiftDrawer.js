@@ -9,6 +9,7 @@ import { Image, TextArea, Dropdown, Grid } from 'semantic-ui-react';
 import { withApollo } from 'react-apollo';
 import uuidv4 from 'uuid/v4';
 
+import { BASE_API } from '../../../../constants';
 import WorkplaceSelector from '../../AddShift/CreateShift/workplaceSelector'
 import ShiftDaySelector from '../../../DaySelector/ShiftDaySelector.js';
 import { closeButton } from '../../../styles';
@@ -364,12 +365,12 @@ class DrawerHelper extends Component {
     //number of workers needed, workers assigned (in order to make the difference,
     //the unpaid time and of course the start/end in order to open the shift drawer
     //will be a request to server
-    const { shift } = this.state
+    const { shift } = this.state;
 
-    let day = Object.keys(shift.shiftDaysSelected)[0]
-    console.log(day)
+    let day = Object.keys(shift.shiftDaysSelected)[0];
+    console.log(day);
     const shiftDay = moment.utc(day, 'MM-DD-YYYY');
-    console.log(shiftDay)
+    console.log(shiftDay);
 
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
@@ -378,11 +379,12 @@ class DrawerHelper extends Component {
     var startTime = moment(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
     var endTime = moment(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
 
-    console.log(startTime)
-    console.log(endTime)
+    console.log(startTime);
+    console.log(endTime);
 
     const _this = this
-    var uri = 'http://localhost:8080/api/phoneTreeList'
+
+    const uri = `${BASE_API}/api/phoneTreeList`;
     console.log(this.props.weekPublishedId)
     var options = {
       uri: uri,
@@ -399,8 +401,8 @@ class DrawerHelper extends Component {
     };
     rp(options)
       .then(function (response) {
-        console.log(response)
-        _this.setState((state) => ({ shift: { ...state.shift, phoneTree: response } }))
+        console.log(response);
+        _this.setState((state) => ({ shift: { ...state.shift, phoneTree: response } }));
         _this.setState({ shiftHistoryDrawer: true })
       }).catch((error) => {
       console.log('there was an error sending the query', error);
@@ -484,7 +486,7 @@ class DrawerHelper extends Component {
         }
       }
     }
-    console.log(shiftErrors)
+    console.log(shiftErrors);
     this.setState({ isShiftInvalid: Object.keys(shiftErrors).length });
   };
 
@@ -495,19 +497,18 @@ class DrawerHelper extends Component {
 
   render() {
 
-    const { width, open, handleAdvance } = this.props;
+    const { width, open, weekStart } = this.props;
     const {
       shift,
       positions,
-      weekStart,
       selectedDate,
       filteredManagers,
       users,
       isEdit,
       isShiftInvalid
     } = this.state;
-    let positionOptions;
 
+    let positionOptions;
 
     if (positions) {
       positionOptions = positions.map(position => ({
@@ -570,7 +571,7 @@ class DrawerHelper extends Component {
             <div style={{ flex: 3, alignSelf: 'center' }}>
             {/*  <button className="semantic-ui-button" style={{ borderRadius: 5 }} onClick={() => handleAdvance(shift)}
                       color='red'>Advanced
-              </button> */} 
+              </button> */}
             </div>
           </div>
 
@@ -618,19 +619,19 @@ class DrawerHelper extends Component {
                 <Grid.Column width={14} style={{ marginLeft: -20 }}>
                   <label className="text-uppercase blue-heading">Position</label>
                   <Dropdown
-                    fluid
-                    selection
                     placeholder={
                       shift.workplaceId && 'WHICH POSITION CERTIFICATION MUST THE TEAM MEMBER HAVE?'
                       || 'SELECT WORKPLACE TO SEE AVAILABLE POSITIONS'
                     }
-                    name="positionId"
-                    onChange={(_, data) => this.handleChange({ target: data })}
-                    value={shift.positionId}
                     selectOnBlur={false}
                     forceSelection={false}
                     disabled={!positions || !shift.workplaceId}
-                    options={positionOptions} />
+                    fluid
+                    selection
+                    value={shift.positionId}
+                    name="positionId"
+                    options={positionOptions}
+                    onChange={(_, data) => this.handleChange({ target: data })} />
                 </Grid.Column>
               </Grid.Row>
 
@@ -694,7 +695,7 @@ class DrawerHelper extends Component {
                     {'THIS SHIFT REPEATS THIS EVERY:'}
                   </label>
                   <RecurringShiftSelect recurringShift={shift.recurringShiftId} selectedDate={selectedDate}
-                                        startDate={weekStart} formCallBack={this.updateFormState} />
+                                        startDate={weekStart} formCallBack={this.updateFormState} calendarOffset={this.props.calendarOffset} />
                 </Grid.Column>
               </Grid.Row>}
 
@@ -773,7 +774,7 @@ class DrawerHelper extends Component {
                   </div>
 
 
-                  { (this.props.isPublished == true) && shift.recurringShift != 'weekly' && 
+                  { (this.props.isPublished == true) && shift.recurringShift != 'weekly' &&
                   <div>
                     {( isShiftInvalid)
                       &&  <Tooltip className="tooltip-message" text={"Fill Out Shift Information To Generate Phone Tree"}>

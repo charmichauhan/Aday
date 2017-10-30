@@ -594,6 +594,43 @@
 .calendar-table-head span { display: block; text-align: center; color: #999999;	font-family: Lato; font-size: 14px; letter-spacing: 1px; line-height: 20px; text-transform: uppercase;}
 .calendar-table-head span i { font-style: normal;}
 
+/* Delete Shift Popup */
+.delete-shift-popup {
+  text-align: center;
+}
+.delete-shift-popup .delete-popup {
+  width: 260px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0px 3px 6px #333333;
+  text-align: center;
+  margin: 0 10px 20px;
+  padding: 45px 0px 20px;
+  display: inline-block;
+}
+
+.delete-shift-popup .delete-popup h5 {
+  color: #0022A1;
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  line-height: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: normal;
+  text-transform: uppercase;
+  margin-top: 15px;
+}
+
+.delete-shift-popup .delete-popup p {
+  color: #4A4A4A;
+  font-family: Lato;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 0 20px;
+}
+
 
 @media screen and (max-width: 1800px) and (min-width: 1600px) {
   .heading-left-right { width: 125px; padding: 0 15px 0 0;}

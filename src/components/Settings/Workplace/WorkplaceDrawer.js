@@ -6,6 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { cloneDeep, map } from 'lodash';
 import Dropzone from 'react-dropzone';
 
+import { BASE_API } from '../../../constants';
 import CircleButton from '../../helpers/CircleButton';
 import { stateOptions } from '../../helpers/common/states';
 import { closeButton, colors } from '../../styles';
@@ -62,9 +63,7 @@ class DrawerHelper extends Component {
 
   handleImageUpload = (files) => {
     console.log(files);
-    // prod endpoint: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
-    // dev/test endpoint: http://localhost:8080/api/uploadImage
-    SuperAgent.post('http://localhost:8080/api/uploadImage')
+    SuperAgent.post(`${BASE_API}/api/uploadImage`)
     .field('keyword', 'workplace')
     .field('id', this.state.workplace.id)
     .attach("theseNamesMustMatch", files[0])
@@ -178,7 +177,7 @@ class DrawerHelper extends Component {
               <label className="text-uppercase">Address Line1</label>
               <input name="address"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.address}
+                     value={DrawerWorkplace.address || ''}
                      id="address-line1"
                      type="text"
                      className="form-control" />
@@ -187,7 +186,7 @@ class DrawerHelper extends Component {
               <label className="text-uppercase">Address Line2</label>
               <input name="address2"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.address2}
+                     value={DrawerWorkplace.address2 || ''}
                      id="address-line2"
                      type="text"
                      className="form-control" />
@@ -197,7 +196,7 @@ class DrawerHelper extends Component {
                 <label htmlFor="city" className="text-uppercase">City</label>
                 <input name="city"
                        onChange={this.handleChange}
-                       value={DrawerWorkplace.city}
+                       value={DrawerWorkplace.city || ''}
                        type="text"
                        className="form-control"
                        id="city" />
@@ -215,7 +214,7 @@ class DrawerHelper extends Component {
                 <label htmlFor="zip" className="text-uppercase">Zip Code:</label>
                 <input name="zip"
                        onChange={this.handleChange}
-                       value={DrawerWorkplace.zip}
+                       value={DrawerWorkplace.zip || ''}
                        type="text"
                        className="form-control"
                        id="zip" />

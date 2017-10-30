@@ -5,6 +5,8 @@ import {Header,Image,Button,Divider,Segment, Modal, Label,Dropdown,Input,Icon,Fo
 import {Scrollbars} from 'react-custom-scrollbars';
 import ReactScrollbar from 'react-scrollbar-js';
 import moment from 'moment';
+
+import { BASE_API } from '../../../constants';
 import ShiftDaySelector from '../../DaySelector/ShiftDaySelector.js';
 import TimePicker from '../../TimePicker/TimePicker.js';
 import NumberOfTeamMembers from '../AddShift/CreateShift/NumberOfTeamMembers';
@@ -119,7 +121,7 @@ export class UpdateShiftForm extends Component{
           // only update employees if shift is less than a week away
           /*
           if ((moment(startTime).diff(moment().format(), 'days')) <=7 ){
-              var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/updatedCall'
+              var uri = `${BASE_API}/api/updatedCall`
               var options = {
                   uri: uri,
                   method: 'POST',
@@ -315,10 +317,10 @@ export class UpdateShiftForm extends Component{
 
 
 const updateShiftMutation = gql`
- mutation updateShiftById($data:UpdateShiftByIdInput!){
-  updateShiftById(input:$data)
-  {
-    shift{
+  mutation updateShiftById($data:UpdateShiftByIdInput!){
+    updateShiftById(input:$data)
+    {
+      shift{
         id
         startTime
         endTime
@@ -329,24 +331,25 @@ const updateShiftMutation = gql`
         traineesRequestedNum
         managersOnShift
         unpaidBreakTime
-        recurringShiftId`
+        recurringShiftId
         positionByPositionId{
           id
           positionName
           positionIconUrl
-              brandByBrandId {
-                id
-                  brandName
-              }
+          brandByBrandId {
+            id
+            brandName
+          }
         }
         workplaceByWorkplaceId{
           id
-            workplaceName
+          workplaceName
         }
+      }
     }
-  }
-}`
+  }`;
 
 const UpdateShift = graphql(updateShiftMutation,
-  { name : 'updateShift'})(UpdateShiftForm)
-export default UpdateShift
+  { name: 'updateShift' })(UpdateShiftForm);
+
+export default UpdateShift;

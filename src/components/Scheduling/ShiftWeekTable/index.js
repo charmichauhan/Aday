@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
-import { createStore, combineReducers } from 'redux';
-import { reducer as formReducer } from 'redux-form';
 import { Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn } from 'material-ui/Table';
 import moment from 'moment';
 import Week from 'react-big-calendar/lib/Week';
@@ -16,55 +13,29 @@ import '../style.css';
 import allShiftsByWeeksPublished from './shiftsByWeeksPublishedQuery'
 var Halogen = require('halogen');
 /*
-import EditShift from './ShiftEdit/Edit';
-import DeleteShift from './ShiftEdit/DeleteShift';
+ import EditShift from './ShiftEdit/Edit';
+ import DeleteShift from './ShiftEdit/DeleteShift';
  */
-
-
-function shiftReducer(state = {}, action) {
-  switch (action.type) {
-    case 'SUBMIT_NEW_SHIFT':
-      return Object.assign({}, state, {
-        shifts: [
-          ...(state.shifts || []),
-          {
-            //date: action.date,
-            workplace: action.workplace,
-
-            /*template: action.template,
-             certification: action.certification,
-             start: action.start,
-             end: action.end*/
-          }
-        ]
-      });
-    default:
-      return state
-  }
-}
-
 
 const styles = {
   bodyStyle: {
-    // maxHeight: 990,
-    // minWidth: 1750,
+    maxHeight: 990,
+    minWidth: 1750,
   },
   wrapperStyle: {
-     minWidth: 1750
+    minWidth: 1610
   },
   root: {
     borderCollapse: 'separate',
-    borderSpacing: '0px 0px',
+    borderSpacing: '8px 8px',
     paddingLeft: '0px',
     marginBottom: 0,
+    minWidth: 1750
   },
   tableFooter: {
-    padding: '6px',
+    padding: 0,
     height: 'auto',
-    borderTop: '0 none',
-    borderLeft: '0 none',
-    borderRight: '1px solid #ddd',
-    borderBottom: '1px solid #ddd',
+    border: '0 none',
   },
   headerStyle: {
     padding: 0
@@ -72,15 +43,16 @@ const styles = {
   tableFooterHeading: {
     paddingLeft: '0px',
     paddingRight: '0px',
-
+    width: 178
   },
   footerStyle: {
     position: 'fixed',
-    bottom: 0,
+    // Add back in once issues AW-219, AW-213 are completed
+    // bottom: 0,
+    boxShadow: '0 1px 2px 0 rgba(74, 74, 74, 0.5)'
   },
   heightremove: {
     height: 'auto'
-
   }
 };
 
@@ -96,26 +68,26 @@ class ShiftWeekTableComponent extends Week {
   }
 
   componentWillReceiveProps = (nextProps) => {
-      this.props.data.refetch(allShiftsByWeeksPublished)
-      if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
-        this.props.setCSVData(this.csvData(nextProps));
-      }
-    this.setState({calendarView: this.props.eventPropGetter()});
+    this.props.data.refetch(allShiftsByWeeksPublished);
+    if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
+      this.props.setCSVData(this.csvData(nextProps));
+    }
+    this.setState({ calendarView: this.props.eventPropGetter() });
   };
 
   forceRefetch = () => {
     this.props.data.refetch(allShiftsByWeeksPublished)
-  }
+  };
 
   getSummary = (summary, start) => {
     let summaryDetail = [];
     for (let i = 0; i <= 6; i++) {
-      summaryDetail.push(<TableRowColumn style={styles.tableFooter}>
+      summaryDetail.push(<TableRowColumn key={i} style={styles.tableFooter}>
         <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours booked:</p>
           <p className="sfont">
             {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalBookedHours'] || 0}
-            &nbsp;of&nbsp;{summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalHours'] || 0} &nbsp;
-            |&nbsp;&nbsp;
+            of {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalHours'] || 0}
+            |
             {summary && summary[moment(start).day(i).format('D')] && Math.round((summary[moment(start).day(i).format('D')]['totalBookedHours'] * 100) / summary[moment(start).day(i).format('D')]['totalHours']) || 0}%
           </p>
         </div>
@@ -133,22 +105,24 @@ class ShiftWeekTableComponent extends Week {
   };
 
   getShiftData = (shiftValue, props) => {
-    const shift = {...shiftValue};
+    const shift = { ...shiftValue };
     if (!shift.workersAssigned) shift.workersAssigned = [];
-      shift.workersAssigned = shift.workersAssigned.map(worker => {
-        if (typeof worker === 'string') {
-          return this.getUserById(worker, props);
-        }
-        return null;
-      });
+    shift.workersAssigned = shift.workersAssigned.map(worker => {
+      if (typeof worker === 'string') {
+        return this.getUserById(worker, props);
+      }
+      return null;
+    });
     return shift;
   };
 
   csvData = (props) => {
 
-    const userAssignedShifts =  props.data.allShifts.edges.map(({node}) => {
-        return this.getShiftData(node, props);
-    }).filter((shift) => { return shift.workersAssigned.length });
+    const userAssignedShifts = props.data.allShifts.edges.map(({ node }) => {
+      return this.getShiftData(node, props);
+    }).filter((shift) => {
+      return shift.workersAssigned.length
+    });
 
     const csvShifts = [];
 
@@ -193,8 +167,6 @@ class ShiftWeekTableComponent extends Week {
       allUsers.allUsers.edges.map((value, index) => {
         userHash[value.node.id] = [value.node.firstName, value.node.lastName, value.node.avatarUrl]
       });
-
-
 
       data.allShifts.edges.map((value, index) => {
         if (workplaceId != '') {
@@ -241,7 +213,7 @@ class ShiftWeekTableComponent extends Week {
             assigned = [];
           }
           if (assigned.length < value.node.workersRequestedNum) {
-            const rowHash = {}
+            const rowHash = {};
             rowHash['weekday'] = dayOfWeek;
             rowHash['userFirstName'] = 'Open';
             rowHash['userLastName'] = 'Shifts';
@@ -271,52 +243,52 @@ class ShiftWeekTableComponent extends Week {
 
 
     recurring.unappliedRecurring.edges.map((value, index) => {
-      let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
+      let workplaceName = value.node.workplaceByWorkplaceId.workplaceName;
       if (workplaceId != '') {
         if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-            value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null) {
-                    const positionName = shift.node.positionByPositionId.positionName;
-                        let assigned = shift.node.assignees
-                        if (!assigned || assigned.length < shift.node.workerCount) {
-                          const rowHash = {};
-                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                          rowHash['userFirstName'] = 'Open'
-                          rowHash['userLastName'] = 'Shifts'
-                          rowHash['userAvatar'] = '/assets/Icons/search.png'
-                          if (calendarHash['Open Shifts']) {
-                            calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)]
-                          } else {
-                            calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)]
-                          }
-                        }
-                        if (assigned){
-                        assigned.map((v) => {
-                          const rowHash = {}
-                          rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                          const userName = userHash[v];
-                          rowHash['userFirstName'] = userHash[v][0]
-                          rowHash['userLastName'] = userHash[v][1]
-                          rowHash['userAvatar'] = userHash[v][2]
-                          if (calendarHash[userName]) {
-                            calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)]
-                          } else {
-                            calendarHash[userName] = [Object.assign(rowHash, shift.node)];
-                          }
-                        })
-                      }
+          value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+            if (moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null) {
+              const positionName = shift.node.positionByPositionId.positionName;
+              let assigned = shift.node.assignees;
+              if (!assigned || assigned.length < shift.node.workerCount) {
+                const rowHash = {};
+                rowHash['workplaceByWorkplaceId'] = { 'workplaceName': workplaceName };
+                rowHash['userFirstName'] = 'Open';
+                rowHash['userLastName'] = 'Shifts';
+                rowHash['userAvatar'] = '/assets/Icons/search.png';
+                if (calendarHash['Open Shifts']) {
+                  calendarHash['Open Shifts'] = [...calendarHash['Open Shifts'], Object.assign(rowHash, shift.node)]
+                } else {
+                  calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)]
+                }
               }
+              if (assigned) {
+                assigned.map((v) => {
+                  const rowHash = {};
+                  rowHash['workplaceByWorkplaceId'] = { 'workplaceName': workplaceName };
+                  const userName = userHash[v];
+                  rowHash['userFirstName'] = userHash[v][0];
+                  rowHash['userLastName'] = userHash[v][1];
+                  rowHash['userAvatar'] = userHash[v][2];
+                  if (calendarHash[userName]) {
+                    calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)]
+                  } else {
+                    calendarHash[userName] = [Object.assign(rowHash, shift.node)];
+                  }
+                })
+              }
+            }
           })
-          }
-        } else {
-            value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration)) ||  shift.node.expiration == null) {
-                    const positionName = shift.node.positionByPositionId.positionName;
-                        let assigned = shift.node.assignees
+        }
+      } else {
+        value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+          if (moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null) {
+            const positionName = shift.node.positionByPositionId.positionName;
+            let assigned = shift.node.assignees;
 
             if (!assigned || assigned.length < shift.node.workerCount) {
               const rowHash = {};
-              rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
+              rowHash['workplaceByWorkplaceId'] = { 'workplaceName': workplaceName };
               rowHash['userFirstName'] = 'Open';
               rowHash['userLastName'] = 'Shifts';
               rowHash['userAvatar'] = '/assets/Icons/search.png';
@@ -326,36 +298,36 @@ class ShiftWeekTableComponent extends Week {
                 calendarHash['Open Shifts'] = [Object.assign(rowHash, shift.node)];
               }
             }
-            if (assigned){
-            assigned.map((v) => {
-              const rowHash = {};
-              rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName};
-              const userName = userHash[v];
-              rowHash['userFirstName'] = userHash[v][0];
-              rowHash['userLastName'] = userHash[v][1];
-              rowHash['userAvatar'] = userHash[v][2];
-              if (calendarHash[userName]) {
-                calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)];
-              } else {
-                calendarHash[userName] = [Object.assign(rowHash, shift.node)];
-              }
-            })
-          }
+            if (assigned) {
+              assigned.map((v) => {
+                const rowHash = {};
+                rowHash['workplaceByWorkplaceId'] = { 'workplaceName': workplaceName };
+                const userName = userHash[v];
+                rowHash['userFirstName'] = userHash[v][0];
+                rowHash['userLastName'] = userHash[v][1];
+                rowHash['userAvatar'] = userHash[v][2];
+                if (calendarHash[userName]) {
+                  calendarHash[userName] = [...calendarHash[userName], Object.assign(rowHash, shift.node)];
+                } else {
+                  calendarHash[userName] = [Object.assign(rowHash, shift.node)];
+                }
+              })
+            }
           }
         })
       }
-    })
+    });
 
     return calendarHash;
   };
 
   empView = () => {
-    this.props.components.event("job");
-    this.setState({empView: "cal-emp-btn active", jobView: "cal-emp-btn"});
+    this.props.components.event('job');
+    this.setState({ empView: 'cal-emp-btn active', jobView: 'cal-emp-btn' });
   };
   jobView = () => {
-    this.props.components.event("employee");
-    this.setState({jobView: "cal-emp-btn active", empView: "cal-emp-btn"});
+    this.props.components.event('employee');
+    this.setState({ jobView: 'cal-emp-btn active', empView: 'cal-emp-btn' });
   };
 
   getDataJobView = (workplaceId, data, recurring, start) => {
@@ -388,50 +360,50 @@ class ShiftWeekTableComponent extends Week {
     });
 
     recurring.unappliedRecurring.edges.map((value, index) => {
-          let workplaceName = value.node.workplaceByWorkplaceId.workplaceName
-           if (workplaceId != '') {
-             if (workplaceId == value.node.workplaceByWorkplaceId.id) {
-              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null ) {
-                  const positionName = shift.node.positionByPositionId.positionName;
-                       const rowHash = {};
-                       rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                       rowHash['workersAssigned'] = shift.node.assignees
+      let workplaceName = value.node.workplaceByWorkplaceId.workplaceName;
+      if (workplaceId != '') {
+        if (workplaceId == value.node.workplaceByWorkplaceId.id) {
+          value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+            if (moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null) {
+              const positionName = shift.node.positionByPositionId.positionName;
+              const rowHash = {};
+              rowHash['workplaceByWorkplaceId'] = { 'workplaceName': workplaceName };
+              rowHash['workersAssigned'] = shift.node.assignees;
 
-                       if (calendarHash[positionName]) {
-                          calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
-                       } else {
-                        calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
-                       }
-                }
-              })
+              if (calendarHash[positionName]) {
+                calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
+              } else {
+                calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
+              }
             }
+          })
+        }
+      } else {
+        value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
+          if (moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null) {
+            const positionName = shift.node.positionByPositionId.positionName;
+            const rowHash = {};
+            rowHash['workplaceByWorkplaceId'] = { 'workplaceName': workplaceName };
+            rowHash['workersAssigned'] = shift.node.assignees;
+            if (calendarHash[positionName]) {
+              calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
             } else {
-              value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
-                if(moment(start).isBefore(moment(shift.node.expiration)) || shift.node.expiration == null) {
-                  const positionName = shift.node.positionByPositionId.positionName;
-                       const rowHash = {};
-                       rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-                       rowHash['workersAssigned'] = shift.node.assignees
-                       if (calendarHash[positionName]) {
-                          calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
-                       } else {
-                        calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
-                       }
-                }
-              })
+              calendarHash[positionName] = [Object.assign(rowHash, shift.node)];
             }
+          }
+        })
+      }
       if (workplaceId != '') {
         if (workplaceId == value.node.workplaceByWorkplaceId.id) {
           value.node.recurringShiftsByRecurringId.edges.map((shift, shiftIndex) => {
             if (moment(start).isBefore(moment(shift.node.expiration))) {
               const positionName = shift.node.positionByPositionId.positionName;
               const rowHash = {};
-              rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-              rowHash['workersAssigned'] = []
+              rowHash['workplaceByWorkplaceId'] = { 'workplaceName': workplaceName };
+              rowHash['workersAssigned'] = [];
               shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
                 rowHash['workersAssigned'].push(assignees.node.userId)
-              })
+              });
               if (calendarHash[positionName]) {
                 calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
               } else {
@@ -445,11 +417,11 @@ class ShiftWeekTableComponent extends Week {
           if (moment(start).isBefore(moment(shift.node.expiration))) {
             const positionName = shift.node.positionByPositionId.positionName;
             const rowHash = {};
-            rowHash['workplaceByWorkplaceId'] = {'workplaceName': workplaceName}
-            rowHash['workersAssigned'] = []
+            rowHash['workplaceByWorkplaceId'] = { 'workplaceName': workplaceName };
+            rowHash['workersAssigned'] = [];
             shift.node.recurringShiftAssigneesByRecurringShiftId.edges.map((assignees, aIndex) => {
               rowHash['workersAssigned'].push(assignees.node.userId)
-            })
+            });
             if (calendarHash[positionName]) {
               calendarHash[positionName] = [...calendarHash[positionName], Object.assign(rowHash, shift.node)]
             } else {
@@ -458,42 +430,50 @@ class ShiftWeekTableComponent extends Week {
           }
         })
       }
-    })
+    });
     return calendarHash;
   };
 
   render() {
     if (this.props.data.loading || this.props.allUsers.loading || this.props.unappliedRecurring.loading) {
-      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
+      return (<div><Halogen.SyncLoader color='#00A863' /></div>)
     }
 
-    let {date} = this.props;
-    let {start} = ShiftWeekTable.range(date, this.props);
+    let isPublished = this.props.events.is_publish;
+    let publishedId = this.props.events.publish_id;
+    let calendar_offset = parseInt(this.props.events.calendar_offset);
+
+    let { date } = this.props;
+    let { start } = ShiftWeekTable.range(date, this.props);
+    //console.log("calendar_offset")
+    //console.log(calendar_offset)
+    //start = moment(start).add(calendar_offset, 'd')
+
     const TableRowHeader = ( <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
       <TableRow displayBorder={false}>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(0).format('dddd')}</p><p
-          className="weekDate">{moment(start).day(0).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset).format('dddd')}</p><p
+          className="weekDate">{moment(start).day(calendar_offset).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(1).format('dddd')} </p>
-          <p className="weekDate">{moment(start).day(1).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 1).format('dddd')} </p>
+          <p className="weekDate">{moment(start).day(calendar_offset + 1).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(2).format('dddd')} </p>
-          <p className="weekDate">  {moment(start).day(2).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 2).format('dddd')} </p>
+          <p className="weekDate">  {moment(start).day(calendar_offset + 2).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(3).format('dddd')} </p><p
-          className="weekDate">  {moment(start).day(3).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 3).format('dddd')} </p><p
+          className="weekDate">  {moment(start).day(calendar_offset + 3).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(4).format('dddd')} </p><p
-          className="weekDate">  {moment(start).day(4).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 4).format('dddd')} </p><p
+          className="weekDate">  {moment(start).day(calendar_offset + 4).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(5).format('dddd')} </p><p
-          className="weekDate">  {moment(start).day(5).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 5).format('dddd')} </p><p
+          className="weekDate">  {moment(start).day(calendar_offset + 5).format('D')}</p></TableRowColumn>
         <TableRowColumn style={styles.tableFooter} className="dayname"><p
-          className="weekDay"> {moment(start).day(6).format('dddd')} </p><p
-          className="weekDate">{moment(start).day(6).format('D')}</p></TableRowColumn>
+          className="weekDay"> {moment(start).day(calendar_offset + 6).format('dddd')} </p><p
+          className="weekDate">{moment(start).day(calendar_offset + 6).format('D')}</p></TableRowColumn>
       </TableRow>
-    </TableHeader>)
+    </TableHeader>);
 
 
     if (this.props.data.error) {
@@ -509,12 +489,12 @@ class ShiftWeekTableComponent extends Week {
     }
 
     let workplaceId = localStorage.getItem('workplaceId');
-    let {data} = this.props;
+    let { data } = this.props;
     let recurring = this.props.unappliedRecurring;
     //let recurring = "hello"
     let jobData = this.state.calendarView == 'job' ? this.getDataJobView(workplaceId, data, recurring, start) : this.getDataEmployeeView(workplaceId, data, this.props.allUsers, recurring, start);
-    let jobDataKeys = Object.keys(jobData)
-    let openShiftIndex = jobDataKeys.indexOf('Open Shifts')
+    let jobDataKeys = Object.keys(jobData);
+    let openShiftIndex = jobDataKeys.indexOf('Open Shifts');
     if (openShiftIndex > -1) {
       jobDataKeys.splice(openShiftIndex, 1);
     }
@@ -522,7 +502,7 @@ class ShiftWeekTableComponent extends Week {
     (Object.keys(jobData)).forEach((jobType, index) => {
       jobs = concat(jobs, jobData[jobType])
     });
-    let sortedData = jobs.map((job) => ({...job, startDate: new Date(job.startTime).getUTCDate()}));
+    let sortedData = jobs.map((job) => ({ ...job, startDate: new Date(job.startTime).getUTCDate() }));
     let groupedData = groupBy(sortedData, 'startDate');
     let summary = {};
     let weeklyTraineesTotal = 0;
@@ -567,7 +547,7 @@ class ShiftWeekTableComponent extends Week {
           totalBookedHours += workersAssignedTotal;
           totalTraineesBookedHours += traineesAssignedTotal;
         });
-        summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
+        summary[shift] = { 'totalHours': totalHours, 'totalBookedHours': totalBookedHours };
         weeklyHoursTotal += totalHours;
         weeklyTraineesTotal += totalTraineesHours;
 
@@ -603,7 +583,7 @@ class ShiftWeekTableComponent extends Week {
             totalTraineesBookedHours += shiftHours;
           }
         });
-        summary[shift] = {'totalHours': totalHours, 'totalBookedHours': totalBookedHours};
+        summary[shift] = { 'totalHours': totalHours, 'totalBookedHours': totalBookedHours };
         weeklyHoursTotal += totalHours;
         weeklyTraineesTotal += totalTraineesHours;
         weeklyHoursBooked += totalBookedHours;
@@ -622,143 +602,107 @@ class ShiftWeekTableComponent extends Week {
       weeklyHoursTotal
     });
 
-      let isPublished = this.props.events.is_publish;
-      let publishedId = this.props.events.publish_id;
-      const reducer = combineReducers({ form: formReducer, shifts: shiftReducer });
-      const store = createStore(reducer, { shifts: [] });
-      let unsubscribe = store.subscribe(() =>
-        console.log(store.getState())
-      );
     return (
-      <Provider store={store}>
-        <div className="table-responsive">
-          <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
-                 fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
-                 className="table atable emp_view_table" style={styles.root}>
-            <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-              <TableRow displayBorder={false} style={styles.heightremove}>
-                <TableRowColumn style={styles.tableFooter} className="long dayname">
-                  {/*<div><p className="weekDay">Hours Booked</p>*/}
-                  {/*<p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
-                  <div className="long-start">
-                    <span>START OF WEEK</span>
-                    <p>SUNDAY </p>
+      <div className="table-responsive">
+        <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
+               fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
+               className="table atable emp_view_table" style={styles.root}>
+          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+            <TableRow displayBorder={false} style={styles.heightremove}>
+              <TableRowColumn style={styles.tableFooter} className="long dayname">
+                {/*<div><p className="weekDay">Hours Booked</p>*/}
+                {/*<p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
+                <div className="calendar-emp-job-btn">
+                  <div className="cal-emp-job-btn">
+                    <button className={this.state.empView} onClick={this.empView}>Employee</button>
+                    <button className={this.state.jobView} onClick={this.jobView}>Job</button>
                   </div>
-                  <div className="calendar-emp-job-btn">
-                    <div className="cal-emp-job-btn">
-                      <button className={this.state.empView} onClick={this.empView}>Employee</button>
-                      <button className={this.state.jobView} onClick={this.jobView}>Job</button>
-                    </div>
-                  </div>
-                </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname">
-                  <p className="weekDate"> {moment(start).day(0).format('ddd')} <strong>{moment(start).day(0).format('MM')}/{moment(start).day(0).format('D')}</strong></p>
-                  <div className="calendar-table-head">
-                    <span><i>+</i> Holiday</span>
-                    <span><i>+</i> ADD SHIFT</span>
-                  </div>
-                </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname">
-                  <p className="weekDate">{moment(start).day(1).format('ddd')} <strong>{moment(start).day(1).format('MM')}/{moment(start).day(1).format('D')}</strong></p>
-                  <div className="calendar-table-head">
-                    <span><i>+</i> Holiday</span>
-                    <span><i>+</i> ADD SHIFT</span>
-                  </div>
-                </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname">
-                  <p className="weekDate"> {moment(start).day(2).format('ddd')} <strong>{moment(start).day(2).format('MM')}/{moment(start).day(2).format('D')}</strong></p>
-                  <div className="calendar-table-head">
-                    <span><i>+</i> Holiday</span>
-                    <span><i>+</i> ADD SHIFT</span>
-                  </div>
-                </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname">
-                  <p className="weekDate"> {moment(start).day(3).format('ddd')} <strong>{moment(start).day(3).format('MM')}/{moment(start).day(3).format('D')}</strong></p>
-                  <div className="calendar-table-head">
-                    <span><i>+</i> Holiday</span>
-                    <span><i>+</i> ADD SHIFT</span>
-                  </div>
-                </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname">
-                  <p className="weekDate">{moment(start).day(4).format('ddd')} <strong>{moment(start).day(4).format('MM')}/{moment(start).day(4).format('D')}</strong></p>
-                  <div className="calendar-table-head">
-                    <span><i>+</i> Holiday</span>
-                    <span><i>+</i> ADD SHIFT</span>
-                  </div>
-                </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname">
-                  <p className="weekDate">{moment(start).day(5).format('ddd')} <strong>{moment(start).day(5).format('MM')}/{moment(start).day(5).format('D')}</strong></p>
-                  <div className="calendar-table-head">
-                    <span><i>+</i> Holiday</span>
-                    <span><i>+</i> ADD SHIFT</span>
-                  </div>
-                </TableRowColumn>
-                <TableRowColumn style={styles.tableFooter} className="dayname">
-                  <p className="weekDate">{moment(start).day(6).format('ddd')} <strong>{moment(start).day(6).format('MM')}/{moment(start).day(6).format('D')}</strong></p>
-                  <div className="calendar-table-head">
-                    <span><i>+</i> Holiday</span>
-                    <span><i>+</i> ADD SHIFT</span>
-                  </div>
-                </TableRowColumn>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay}/>
+                </div>
+              </TableRowColumn>
+              <TableRowColumn style={styles.tableFooter} className="dayname">
+                <p className="weekDate"> {moment(start).day(calendar_offset).format('ddd')} {moment(start).day(calendar_offset).format('MM')}/{moment(start).day(calendar_offset).format('D')}</p>
+                <div className="calendar-table-head">
+                  <span><i>+</i> Holiday</span>
+                  <span><i>+</i> ADD SHIFT</span>
+                </div>
+              </TableRowColumn>
+              <TableRowColumn style={styles.tableFooter} className="dayname">
+                <p
+                  className="weekDate">{moment(start).day(calendar_offset + 1).format('ddd')} {moment(start).day(calendar_offset + 1).format('MM')}/{moment(start).day(calendar_offset + 1).format('D')}</p>
+              </TableRowColumn>
+              <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                className="weekDate"> {moment(start).day(calendar_offset + 2).format('ddd')} {moment(start).day(calendar_offset + 2).format('MM')}/{moment(start).day(calendar_offset + 2).format('D')}</p>
+              </TableRowColumn>
+              <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                className="weekDate"> {moment(start).day(calendar_offset + 3).format('ddd')} {moment(start).day(calendar_offset + 3).format('MM')}/{moment(start).day(calendar_offset + 3).format('D')}</p>
+              </TableRowColumn>
+              <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                className="weekDate">{moment(start).day(calendar_offset + 4).format('ddd')} {moment(start).day(calendar_offset + 4).format('MM')}/{moment(start).day(calendar_offset + 4).format('D')}</p>
+              </TableRowColumn>
+              <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                className="weekDate">{moment(start).day(calendar_offset + 5).format('ddd')} {moment(start).day(calendar_offset + 5).format('MM')}/{moment(start).day(calendar_offset + 5).format('D')}</p>
+              </TableRowColumn>
+              <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                className="weekDate">{moment(start).day(calendar_offset + 6).format('ddd')} {moment(start).day(calendar_offset + 6).format('MM')}/{moment(start).day(calendar_offset + 6).format('D')}</p>
+              </TableRowColumn>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay} />
 
-              {jobDataKeys.map((value, index) => (
-                  <JobsRow
-                    data={jobData[value]}
-                    key={value}
-                    users={this.props.allUsers}
-                    view={this.state.calendarView}
-                    isPublished={isPublished}
-                    publishedId={publishedId}
-                    forceRefetch={this.forceRefetch} />
-                )
+            {jobDataKeys.map((value, index) => (
+                <JobsRow
+                  data={jobData[value]}
+                  key={value}
+                  users={this.props.allUsers}
+                  view={this.state.calendarView}
+                  isPublished={isPublished}
+                  publishedId={publishedId}
+                  forceRefetch={this.forceRefetch}
+                  start={moment(start).day(calendar_offset).format()}
+                  calendarOffset={calendar_offset} />
               )
-              }
+            )
+            }
 
-              {jobData['Open Shifts'] &&
-              <JobsRow
-                data={jobData['Open Shifts']}
-                key={'Open Shifts'}
-                users={this.props.allUsers}
-                view={this.state.calendarView}
-                isPublished={isPublished}
-                publishedId={publishedId}
-                forceRefetch={this.forceRefetch}
-              />
-              }
-            </TableBody>
-
-            <TableFooter adjustForCheckbox={false}>
-
-              <TableRow displayBorder={false}>
-                <TableRowColumn style={styles.tableFooterHeading}>
-                  <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
-                    hours booked:</p><p className="sfont">{weeklyHoursBooked}&nbsp;of&nbsp;{weeklyHoursTotal}&nbsp;
-                    |&nbsp;&nbsp;{weeklyTotalHoursBooked}%</p></div>
-                </TableRowColumn>
-                {this.getSummary(summary, start)}
-              </TableRow>
-
-              <TableRow displayBorder={false} />
-
-            </TableFooter>
-
-          </Table>
-        </div>
-      </Provider>
+            {jobData['Open Shifts'] &&
+            <JobsRow
+              data={jobData['Open Shifts']}
+              key={'Open Shifts'}
+              users={this.props.allUsers}
+              view={this.state.calendarView}
+              isPublished={isPublished}
+              publishedId={publishedId}
+              forceRefetch={this.forceRefetch}
+              start={moment(start).day(calendar_offset).format()}
+              calendarOffset={calendar_offset}
+            />
+            }
+          </TableBody>
+          <TableFooter adjustForCheckbox={false}>
+            <TableRow displayBorder={false}>
+              <TableRowColumn style={styles.tableFooterHeading}>
+                <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
+                  hours booked:</p><p className="sfont">{weeklyHoursBooked} of {weeklyHoursTotal}
+                  | {weeklyTotalHoursBooked}%</p></div>
+              </TableRowColumn>
+              {this.getSummary(summary, start)}
+            </TableRow>
+            <TableRow displayBorder={false}>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
     );
   }
 }
 
 
-ShiftWeekTableComponent.range = (date, {culture}) => {
+ShiftWeekTableComponent.range = (date, { culture }) => {
   let firstOfWeek = localizer.startOfWeek(culture);
   let start = moment(dates.startOf(date, 'week', firstOfWeek));
   let end = moment(dates.endOf(date, 'week', firstOfWeek));
-  return {start, end};
+  return { start, end };
 };
 
 
@@ -798,8 +742,8 @@ const unappliedRecurring = gql`
           }
         }
       }
-      }
-}`
+    }
+  }`;
 
 const allUsers = gql`
   query allUsers {
@@ -827,13 +771,13 @@ const ShiftWeekTable = compose(
     options: (ownProps) => ({
       variables: {
         brandId: localStorage.getItem('brandId'),
-        lastApplied: moment(ownProps.date).startOf('week')
+        lastApplied: moment(ownProps.date).startOf('week').add(ownProps.events.calendar_offset, 'days')
       }
     }),
     name: 'unappliedRecurring'
 
   }),
-  graphql(allUsers, {name: 'allUsers'})
+  graphql(allUsers, { name: 'allUsers' })
 )(ShiftWeekTableComponent);
 
 export default ShiftWeekTable

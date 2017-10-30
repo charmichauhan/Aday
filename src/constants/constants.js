@@ -14,7 +14,7 @@ const baseUrls = {
   local: 'http://localhost:8080'
 };
 
-export const BASE_API =  "https://20170808t142850-dot-forward-chess-157313.appspot.com";
+export const BASE_API =  baseUrls[env];
 
 // do not modify these -these constants are as observed in the universe
 export const MILISECONDS_TO_SECONDS = 1000.0;

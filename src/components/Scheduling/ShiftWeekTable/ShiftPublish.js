@@ -546,7 +546,7 @@ class ShiftPublishComponent extends Component {
 
             let count = 1
             const length = shift.phoneTree.length
-            shift.phoneTree.reverse().map(function(userId, index){
+            shift.phoneTree.map(function(userId, index){
 
               const positionPayload = {
                 id: uuidv4(),

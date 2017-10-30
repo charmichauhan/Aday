@@ -17,25 +17,51 @@ var Halogen = require('halogen');
  import DeleteShift from './ShiftEdit/DeleteShift';
  */
 
+
+function shiftReducer(state = {}, action) {
+  switch (action.type) {
+    case 'SUBMIT_NEW_SHIFT':
+      return Object.assign({}, state, {
+        shifts: [
+          ...(state.shifts || []),
+          {
+            //date: action.date,
+            workplace: action.workplace,
+
+            /*template: action.template,
+             certification: action.certification,
+             start: action.start,
+             end: action.end*/
+          }
+        ]
+      });
+    default:
+      return state
+  }
+}
+
+
 const styles = {
   bodyStyle: {
     maxHeight: 990,
     minWidth: 1750,
   },
   wrapperStyle: {
-    minWidth: 1610
+     minWidth: 1750
   },
   root: {
     borderCollapse: 'separate',
-    borderSpacing: '8px 8px',
+    borderSpacing: '0px 0px',
     paddingLeft: '0px',
     marginBottom: 0,
-    minWidth: 1750
   },
   tableFooter: {
-    padding: 0,
+    padding: '6px',
     height: 'auto',
-    border: '0 none',
+    borderTop: '0 none',
+    borderLeft: '0 none',
+    borderRight: '1px solid #ddd',
+    borderBottom: '1px solid #ddd',
   },
   headerStyle: {
     padding: 0
@@ -43,16 +69,15 @@ const styles = {
   tableFooterHeading: {
     paddingLeft: '0px',
     paddingRight: '0px',
-    width: 178
+
   },
   footerStyle: {
     position: 'fixed',
-    // Add back in once issues AW-219, AW-213 are completed
-    // bottom: 0,
-    boxShadow: '0 1px 2px 0 rgba(74, 74, 74, 0.5)'
+    bottom: 0,
   },
   heightremove: {
     height: 'auto'
+
   }
 };
 

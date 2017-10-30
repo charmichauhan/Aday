@@ -684,7 +684,7 @@ class ShiftPublishComponent extends Component {
                     <span>STANDARD HOURS BOOKED</span>
                   </div>
                   <div className="weekly-budget-trainee">
-                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> 10 of 100 (10%)</span>
+                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> 0 of 0 (0%)</span>
                     <span>TRAINEE HOURS BOOKED</span>
                   </div>
                 </div>

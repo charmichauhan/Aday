@@ -336,6 +336,12 @@ class DrawerHelper extends Component {
     const endTime = dataValue.endTime || this.state.shift.endTime;
     if (startTime && startTime.isValid() && endTime && endTime.isValid()) {
       let minDiff = endTime.diff(startTime, 'minutes');
+      // Checking if the end time is smaller then the start time.
+      if (minDiff < 0) {
+        endTime.add(1, 'days');
+        minDiff = endTime.diff(startTime, 'minutes');
+        dataValue.endTime = endTime;
+      }
       if (minDiff > 0) {
         dataValue.duration = {
           hours: (minDiff - (minDiff % 60) ) / 60,

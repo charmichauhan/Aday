@@ -326,7 +326,7 @@ class ShiftPublishComponent extends Component {
         shiftRecure.recurringShiftId = res;
         days.forEach((day) => {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
-            let isAfter = (moment(day).isAfter(moment(shift.startDate)))
+            let isAfter = (moment(day).isAfter(moment(shift.startDate).subtract(1, 'days')))
             let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
               moment(shift.endDate).format() == "Invalid date")
             if(isAfter && isBefore) {
@@ -425,8 +425,8 @@ class ShiftPublishComponent extends Component {
       positionId: shift.positionId,
       workerCount: shift.numberOfTeamMembers,
       creator: localStorage.getItem('userId'),
-      startTime: moment(shift.startTime).format('HH:mm'),
-      endTime: moment(shift.endTime).format('HH:mm'),
+      startTime: moment.utc(shift.startTime).format('HH:mm'),
+      endTime: moment.utc(shift.endTime).format('HH:mm'),
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak,
       expiration: endDate,
@@ -546,7 +546,7 @@ class ShiftPublishComponent extends Component {
 
             let count = 1
             const length = shift.phoneTree.length
-            shift.phoneTree.reverse().map(function(userId, index){
+            shift.phoneTree.map(function(userId, index){
 
               const positionPayload = {
                 id: uuidv4(),

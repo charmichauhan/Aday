@@ -488,20 +488,29 @@ class EventPopupComponent extends Component {
         }
       })
 
+      console.log("WHATS THE ENDDATE BEFORE")
+      console.log(shift.endDate)
+
       let endDate = shift.endDate
       if (endDate != null){
         endDate = moment(shift.endDate).format()
       }
 
+      console.log("WHATS THE ENDDATE")
+      console.log(shift.endDate)
+      console.log("WHATS THE STARTDATE")
+      console.log(shift.startDate)
+
+
       const payload = {
         positionId: shift.positionId,
         workerCount: shift.numberOfTeamMembers,
         creator: localStorage.getItem('userId'),
-        startTime: moment(shift.startTime).format('HH:mm'),
-        endTime: moment(shift.endTime).format('HH:mm'),
+        startTime: moment.utc(shift.startTime).format('HH:mm'),
+        endTime: moment.utc(shift.endTime).format('HH:mm'),
         instructions: shift.instructions,
         unpaidBreakTime: shift.unpaidBreak,
-        startDate: moment(shift.startDate).format(),
+        startDate: moment(shift.startDate).subtract(1, 'week').format(),
         expiration: endDate,
         days: daysWeek,
       };

@@ -55,6 +55,11 @@ export const createShiftMutation = gql`
           id
           positionName
           positionIconUrl
+          minimumLiftWeight
+          traineeHours
+          partTimeWage
+          trainingUrl
+          exchangeLevel
           brandByBrandId {
             id
             brandName
@@ -163,10 +168,12 @@ export const createRecurringShift = gql`
           id
           positionName
           positionIconUrl
+          minimumLiftWeight
+          traineeHours
+          partTimeWage
+          trainingUrl
+          exchangeLevel
         }
       }
     }
   }`;
-
-
-

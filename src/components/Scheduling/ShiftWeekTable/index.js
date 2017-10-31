@@ -535,6 +535,8 @@ class ShiftWeekTableComponent extends Week {
     let weeklyTraineesHoursBooked = 0;
     let weeklyTotalHoursBooked = 0;
     let weeklyTraineesTotalHoursBooked = 0;
+    let totalBudget = 0;
+    debugger;
     // calculating total hours
     if (this.state.calendarView == 'job') {
       Object.keys(groupedData).forEach((shift, index) => {
@@ -758,6 +760,11 @@ const unappliedRecurring = gql`
                   id
                   positionName
                   positionIconUrl
+                  minimumLiftWeight
+                  traineeHours
+                  partTimeWage
+                  trainingUrl
+                  exchangeLevel
                   brandByBrandId {
                     id
                     brandName

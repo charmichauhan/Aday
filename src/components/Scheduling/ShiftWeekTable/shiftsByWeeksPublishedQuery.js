@@ -24,6 +24,11 @@ const allShiftsByWeeksPublished = gql`
             id
             positionName
             positionIconUrl
+            minimumLiftWeight
+            traineeHours
+            partTimeWage
+            trainingUrl
+            exchangeLevel
             brandByBrandId {
               id
               brandName

@@ -631,7 +631,8 @@ class ShiftPublishComponent extends Component {
     }
     let { date } = this.props;
     let { start } = ShiftPublish.range(date, this.props);
-    start = moment(start).add(this.props.calendarOffset, "days")
+    start = moment(start).add(this.props.calendarOffset, "days");
+
     return (
       <div className="shift-section">
         {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
@@ -645,8 +646,8 @@ class ShiftPublishComponent extends Component {
 
             <div className="col-md-3 calendar-info-left">
               <div className="weekname">
-                <h4>Week of oct 2</h4>
-                <span>oct 2, 2017 - oct 8, 2017</span>
+                <h4>Week of {moment(start).format('MMM DD')}</h4>
+                <span>{moment(start).format('ll')} - {moment(start).add(6,"days").format('ll')}</span>
               </div>
               <div className="cal-next-pre">
                 <div className="calendar-next-btn" onClick={() => this.navigateCalender("PREV")}>
@@ -667,6 +668,7 @@ class ShiftPublishComponent extends Component {
             </div>
 
             <div className="col-md-6">
+                {!this.props.isHoursReceived &&
               <div className="weekly-budget-booked">
                 <div className="weekly-budget">
                   <div className="weekly-budget-title">
@@ -680,15 +682,16 @@ class ShiftPublishComponent extends Component {
                 </div>
                 <div className="weekly-budget">
                   <div className="weekly-budget-title">
-                    <h5>89%</h5>
+                    <h5>{Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%</h5>
                     <span>STANDARD HOURS BOOKED</span>
                   </div>
                   <div className="weekly-budget-trainee">
-                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> 0 of 0 (0%)</span>
+                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> {this.props.getHoursBooked.weeklyTraineesHoursBooked} of {this.props.getHoursBooked.weeklyTraineesTotal} ({(this.props.getHoursBooked.weeklyTraineesHoursBooked * 100 / this.props.getHoursBooked.weeklyTraineesTotal).toFixed(0) && 0}%)</span>
                     <span>TRAINEE HOURS BOOKED</span>
                   </div>
                 </div>
               </div>
+              }
 
 
               {/*<div className="calendar-schedule-title">
@@ -789,7 +792,7 @@ class ShiftPublishComponent extends Component {
                       <li><a href="#">ALL SHIFTS</a></li>
                       &nbsp;
                     </ul>
-                  </div>
+                    </div>
                 </div>
 
                 {/*<div style={{display: 'flex', flexDirection: 'Column'}}>

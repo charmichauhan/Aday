@@ -179,7 +179,7 @@ class ShiftHistoryDrawerComponent extends Component {
     this.setState({
       filteredData: arrayMove(this.state.filteredData, oldIndex, newIndex)
     });
-    this.filterDataCallBack 
+    this.filterDataCallBack
   };
 
   toggle = (e, history) => {

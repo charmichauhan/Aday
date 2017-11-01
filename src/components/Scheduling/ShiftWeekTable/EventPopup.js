@@ -17,6 +17,7 @@ import CreateShiftHelper from '../AddShift/CreateShift/CreateShiftHelper';
 import ShiftHistoryDrawerContainer from './ShiftEdit/ShiftHistoryDrawerContainer';
 import DeleteRecuringPopUp from './DeleteRecuringPopUp';
 import '../style.css';
+import { BASE_API } from '../../../constants';
 import './shiftWeekTable.css';
 var rp = require('request-promise');
 const uuidv4 = require('uuid/v4');
@@ -76,14 +77,14 @@ class EventPopupComponent extends Component {
     });
     that.setState({ deleteModalPopped: false });
   };
-  
+
   // deleteRecurringShiftById
   deleteSingle = () => {
     this.deleteShift(this.props.data.id)
 
     const _this = this
     this.props.data.workersAssigned.map(function(user, i){
-      var uri = 'http://localhost:8080/api/kronosApi'
+      var uri = `${BASE_API}/api/kronosApi`
       let data = _this.props.data
 
         var options = {
@@ -148,7 +149,7 @@ class EventPopupComponent extends Component {
       console.log('there was an error sending the query deleteRecurringShift', error);
     });
 
-    var uri = 'http://localhost:8080/api/kronosApi'
+    var uri = `${BASE_API}/api/kronosApi`
 
       var options = {
           uri: uri,
@@ -209,7 +210,7 @@ class EventPopupComponent extends Component {
       console.log('there was an error sending the query deleteRecurringShift', error);
     });
 
-    var uri = 'http://localhost:8080/api/kronosApi'
+    var uri = `${BASE_API}/api/kronosApi`
 
     var options = {
       uri: uri,
@@ -276,12 +277,8 @@ class EventPopupComponent extends Component {
     if (shift && type != 'SINGLE') {
       this.recurringEditUpdate(shift, type)
     } else if (this.state.editShift) {
-      const shiftDay = shift.startTime;
-      const shiftDate = shiftDay.date();
-      const shiftMonth = shiftDay.month();
-      const shiftYear = shiftDay.year();
-      shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-      shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+      shift.startTime = moment(shift.startTime);
+      shift.endTime = moment(shift.endTime);
 
       const payload = {
         id: shift.id,
@@ -289,8 +286,8 @@ class EventPopupComponent extends Component {
         positionId: shift.positionId,
         workersRequestedNum: shift.numberOfTeamMembers,
         creatorId: localStorage.getItem('userId'),
-        startTime: moment(shift.startTime),
-        endTime: moment(shift.endTime),
+        startTime: shift.startTime,
+        endTime: shift.endTime,
         instructions: shift.instructions,
         unpaidBreakTime: shift.unpaidBreak
       };
@@ -318,7 +315,7 @@ class EventPopupComponent extends Component {
             //if users added or deletes
               console.log("WERE PUBLISHED")
 
-              var uri = 'http://localhost:8080/api/kronosApi'
+              var uri = `${BASE_API}/api/kronosApi`
               var removedUsers = []
               var sameUsers = []
               var newUsers = []
@@ -414,15 +411,25 @@ class EventPopupComponent extends Component {
     let {recurringShiftId} = this.props.data;
     const daysWeek = []
     days.map(function(day,i){
+
         if (day !== undefined) {
           daysWeek.push(moment(day).format("dddd").toUpperCase())
         }
       })
 
+      console.log("WHATS THE ENDDATE BEFORE")
+      console.log(shift.endDate)
+
       let endDate = shift.endDate
       if (endDate != null){
         endDate = moment(shift.endDate).format()
       }
+
+      console.log("WHATS THE ENDDATE")
+      console.log(shift.endDate)
+      console.log("WHATS THE STARTDATE")
+      console.log(shift.startDate)
+
 
       const payload = {
         positionId: shift.positionId,
@@ -432,7 +439,7 @@ class EventPopupComponent extends Component {
         endTime: moment(shift.endTime).format('HH:mm'),
         instructions: shift.instructions,
         unpaidBreakTime: shift.unpaidBreak,
-        startDate: moment(shift.startDate).format(),
+        startDate: moment(shift.startDate).subtract(1, 'week').format(),
         expiration: endDate,
         days: daysWeek,
       };
@@ -456,12 +463,14 @@ class EventPopupComponent extends Component {
         },
       }).then(({ data }) => {
 
-        var uri = 'http://localhost:8080/api/kronosApi'
-       
         let apiDate = moment().format()
         if(type == 'ALL'){
           apiDate = moment(shift.startTime).format()
         } 
+
+        var uri = `${BASE_API}/api/kronosApi`
+
+
         var options = {
             uri: uri,
             method: 'POST',
@@ -517,7 +526,7 @@ class EventPopupComponent extends Component {
     let startTimeDiff = moment(data.startTime);
     let endTimeDiff = moment(data.endTime);
     let endTime = moment(data.endTime).format('h:mm A');
-    
+
      if (startTime == 'Invalid date') {
       let start = data.startTime.split(':');
       let end = data.endTime.split(':');

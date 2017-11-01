@@ -539,7 +539,6 @@ class ShiftWeekTableComponent extends Week {
     let weeklyTotalHoursBudget = 0;
     let weeklyTotalHoursBudgetAssigned = 0;
     let weeklyTraineeTotalHoursBudgetAssigned = 0;
-    debugger;
     // calculating total hours
     if (this.state.calendarView == 'job') {
       Object.keys(groupedData).forEach((shift, index) => {
@@ -604,7 +603,7 @@ class ShiftWeekTableComponent extends Week {
         weeklyTraineesHoursBooked += totalTraineesBookedHours;
         weeklyTotalHoursBudgetAssigned += totalBudgetShiftAssignedHours;
         weeklyTraineeTotalHoursBudgetAssigned += totalTraineesBudgetShiftHours;
-        debugger;
+
       });
       //this is
       weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;

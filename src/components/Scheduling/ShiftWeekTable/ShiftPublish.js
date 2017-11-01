@@ -672,21 +672,21 @@ class ShiftPublishComponent extends Component {
               <div className="weekly-budget-booked">
                 <div className="weekly-budget">
                   <div className="weekly-budget-title">
-                    <h5>$26,038</h5>
+                    <h5>${this.props.getHoursBooked.weeklyTotalHoursBudget + this.props.getHoursBooked.weeklyTotalHoursBudgetAssigned + this.props.getHoursBooked.weeklyTraineeTotalHoursBudgetAssigned}</h5>
                     <span>Total weekly budget</span>
                   </div>
                   <div className="weekly-budget-trainee">
-                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> $16,038 STANDARD BUDGET</span>
-                    <span><img src="/assets/Icons/job-shadower-filled.png"/> $10,000 TRAINEE BUDGET</span>
+                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> ${this.props.getHoursBooked.weeklyTotalHoursBudget + this.props.getHoursBooked.weeklyTotalHoursBudgetAssigned} STANDARD BUDGET</span>
+                    <span><img src="/assets/Icons/job-shadower-filled.png"/> ${this.props.getHoursBooked.weeklyTraineeTotalHoursBudgetAssigned} TRAINEE BUDGET</span>
                   </div>
                 </div>
                 <div className="weekly-budget">
                   <div className="weekly-budget-title">
-                    <h5>{Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%</h5>
+                    <h5>{Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0)) || 0}%</h5>
                     <span>STANDARD HOURS BOOKED</span>
                   </div>
                   <div className="weekly-budget-trainee">
-                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> {this.props.getHoursBooked.weeklyTraineesHoursBooked} of {this.props.getHoursBooked.weeklyTraineesTotal} ({(this.props.getHoursBooked.weeklyTraineesHoursBooked * 100 / this.props.getHoursBooked.weeklyTraineesTotal).toFixed(0) && 0}%)</span>
+                    <span className="cale-info"><img src="/assets/Icons/job-shadower-filled.png"/> {this.props.getHoursBooked.weeklyTraineesHoursBooked} of {this.props.getHoursBooked.weeklyTraineesTotal} ({(this.props.getHoursBooked.weeklyTraineesHoursBooked * 100 / this.props.getHoursBooked.weeklyTraineesTotal) ? (this.props.getHoursBooked.weeklyTraineesHoursBooked * 100 / this.props.getHoursBooked.weeklyTraineesTotal).toFixed(0): 0}%)</span>
                     <span>TRAINEE HOURS BOOKED</span>
                   </div>
                 </div>

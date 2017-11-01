@@ -124,7 +124,7 @@ class ShiftWeekTableComponent extends Week {
     const users = props.allUsers;
     let foundWorker = find(users.allUsers.edges, (user) => user.node.id === id);
     if (!foundWorker) return null;
-    return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
+    return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName','employeesByUserId']);
   };
 
   getShiftData = (shiftValue, props) => {
@@ -532,10 +532,13 @@ class ShiftWeekTableComponent extends Week {
     let weeklyTraineesTotal = 0;
     let weeklyHoursTotal = 0;
     let weeklyHoursBooked = 0;
+
     let weeklyTraineesHoursBooked = 0;
     let weeklyTotalHoursBooked = 0;
     let weeklyTraineesTotalHoursBooked = 0;
-    let totalBudget = 0;
+    let weeklyTotalHoursBudget = 0;
+    let weeklyTotalHoursBudgetAssigned = 0;
+    let weeklyTraineeTotalHoursBudgetAssigned = 0;
     debugger;
     // calculating total hours
     if (this.state.calendarView == 'job') {
@@ -545,6 +548,9 @@ class ShiftWeekTableComponent extends Week {
         let totalBookedHours = 0;
         let totalTraineesBookedHours = 0;
         let shiftData = groupedData[shift];
+        let totalBudgetShiftHours = 0;
+        let totalTraineesBudgetShiftHours = 0;
+        let totalBudgetShiftAssignedHours = 0;
         Object.keys(shiftData).forEach((data, index) => {
           let startTime = moment(shiftData[data]['startTime']).format('hh:mm A');
           let endTime = moment(shiftData[data]['endTime']).format('hh:mm A');
@@ -553,6 +559,8 @@ class ShiftWeekTableComponent extends Week {
           let workerInvited = shiftData[data]['workersInvited'] && shiftData[data]['workersInvited'].length;
           let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
 
+
+          // positionByPositionId
           let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
           let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
           let openTraineesShift = shiftData[data]['traineesRequestedNum'] - traineesAssigned;
@@ -567,19 +575,38 @@ class ShiftWeekTableComponent extends Week {
           let workerShiftHours = openShiftTotal + workersAssignedTotal + workersInvitedTotal;
           let traineeShiftHours = openTraineesShift + traineesAssignedTotal;
 
+          let budgetShiftHours = workerShiftHours * shiftData[data]['positionByPositionId']['partTimeWage'];
+          let budgetTraineesShiftHours = traineeShiftHours * shiftData[data]['positionByPositionId']['partTimeWage'];
+          let budgetShiftHoursAssigned = 0;
+          let userAssignedBudget = this.getShiftData(shiftData[data], this.props);
+          userAssignedBudget.workersAssigned.forEach((values) => {
+            if(values.employeesByUserId.edges.length > 0)
+              budgetShiftHoursAssigned += workerShiftHours * values.employeesByUserId.edges[0].node.wage;
+          })
+
           totalHours += parseInt(workerShiftHours);
           totalTraineesHours += parseInt(traineeShiftHours);
 
           totalBookedHours += workersAssignedTotal;
           totalTraineesBookedHours += traineesAssignedTotal;
+
+          totalBudgetShiftHours += parseInt(budgetShiftHours);
+          totalTraineesBudgetShiftHours += parseInt(budgetTraineesShiftHours);
+          totalBudgetShiftAssignedHours += parseInt(budgetShiftHoursAssigned);
+
         });
         summary[shift] = { 'totalHours': totalHours, 'totalBookedHours': totalBookedHours };
         weeklyHoursTotal += totalHours;
         weeklyTraineesTotal += totalTraineesHours;
+        weeklyTotalHoursBudget += totalBudgetShiftHours;
 
         weeklyHoursBooked += totalBookedHours;
         weeklyTraineesHoursBooked += totalTraineesBookedHours;
+        weeklyTotalHoursBudgetAssigned += totalBudgetShiftAssignedHours;
+        weeklyTraineeTotalHoursBudgetAssigned += totalTraineesBudgetShiftHours;
+        debugger;
       });
+      //this is
       weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
       weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
     } else {
@@ -614,6 +641,7 @@ class ShiftWeekTableComponent extends Week {
         weeklyTraineesTotal += totalTraineesHours;
         weeklyHoursBooked += totalBookedHours;
         weeklyTraineesHoursBooked += totalTraineesBookedHours;
+        //this is hear main
       });
       weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
       weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
@@ -625,7 +653,10 @@ class ShiftWeekTableComponent extends Week {
       weeklyTraineesHoursBooked,
       weeklyHoursBooked,
       weeklyTraineesTotal,
-      weeklyHoursTotal
+      weeklyHoursTotal,
+      weeklyTotalHoursBudget,
+      weeklyTotalHoursBudgetAssigned,
+      weeklyTraineeTotalHoursBudgetAssigned
     });
 
     return (
@@ -787,6 +818,14 @@ const allUsers = gql`
           firstName
           lastName
           avatarUrl
+          employeesByUserId{
+            edges{
+              node{
+                id
+                wage
+              }
+            }
+          }
         }
       }
     }

@@ -493,8 +493,8 @@ class ShiftPublishComponent extends Component {
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
     const recurringShiftId = shift.recurringShiftId;
-    shift.startTime = moment(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-    shift.endTime = moment(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+    shift.startTime = moment.utc(shift.startTime);
+    shift.endTime = moment.utc(shift.endTime);
     var newId = uuidv4()
     const _this = this
     const payload = {

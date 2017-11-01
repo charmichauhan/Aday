@@ -76,7 +76,7 @@ class EventPopupComponent extends Component {
     });
     that.setState({ deleteModalPopped: false });
   };
-  
+
   // deleteRecurringShiftById
   deleteSingle = () => {
     this.deleteShift(this.props.data.id)
@@ -265,12 +265,8 @@ class EventPopupComponent extends Component {
     if (shift.recurringEdit) {
       this.recurringEditUpdate(shift)
     } else {
-      const shiftDay = shiftValue.startTime;
-      const shiftDate = shiftDay.date();
-      const shiftMonth = shiftDay.month();
-      const shiftYear = shiftDay.year();
-      shift.startTime = moment.utc(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
-      shift.endTime = moment.utc(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0);
+      shift.startTime = moment.utc(shift.startTime);
+      shift.endTime = moment.utc(shift.endTime);
 
       const payload = {
         id: shift.id,
@@ -642,7 +638,7 @@ class EventPopupComponent extends Component {
     let startTimeDiff = moment(data.startTime);
     let endTimeDiff = moment(data.endTime);
     let endTime = moment(data.endTime).format('h:mm A');
-    
+
      if (startTime == 'Invalid date') {
       let start = data.startTime.split(':');
       let end = data.endTime.split(':');

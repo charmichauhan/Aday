@@ -487,14 +487,19 @@ class ShiftPublishComponent extends Component {
   };
 
   saveShift(shiftValue, day, weekPublishedId) {
+
     const shift = cloneDeep(shiftValue);
-    const shiftDay = moment.utc(day, 'MM-DD-YYYY');
+    const shiftDay = moment(day, 'MM-DD-YYYY');
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
     const recurringShiftId = shift.recurringShiftId;
-    shift.startTime = moment.utc(shift.startTime);
-    shift.endTime = moment.utc(shift.endTime);
+    shift.startTime = moment(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0).format();
+    shift.endTime = moment(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0).format();
+    if (moment(shift.startTime).isAfter(shift.endTime)) {
+        shift.endTime = moment(shift.endTime).add(24, 'hours').format()
+    }
+
     var newId = uuidv4()
     const _this = this
     const payload = {

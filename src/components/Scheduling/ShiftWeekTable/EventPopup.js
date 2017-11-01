@@ -265,8 +265,9 @@ class EventPopupComponent extends Component {
     if (shift.recurringEdit) {
       this.recurringEditUpdate(shift)
     } else {
-      shift.startTime = moment.utc(shift.startTime);
-      shift.endTime = moment.utc(shift.endTime);
+
+      shift.startTime = moment(shift.startTime);
+      shift.endTime = moment(shift.endTime);
 
       const payload = {
         id: shift.id,
@@ -274,8 +275,8 @@ class EventPopupComponent extends Component {
         positionId: shift.positionId,
         workersRequestedNum: shift.numberOfTeamMembers,
         creatorId: localStorage.getItem('userId'),
-        startTime: moment.utc(shift.startTime),
-        endTime: moment.utc(shift.endTime),
+        startTime: moment(shift.startTime),
+        endTime: moment(shift.endTime),
         instructions: shift.instructions,
         unpaidBreakTime: shift.unpaidBreak
       };
@@ -502,8 +503,8 @@ class EventPopupComponent extends Component {
         positionId: shift.positionId,
         workerCount: shift.numberOfTeamMembers,
         creator: localStorage.getItem('userId'),
-        startTime: moment.utc(shift.startTime).format('HH:mm'),
-        endTime: moment.utc(shift.endTime).format('HH:mm'),
+        startTime: moment(shift.startTime).format('HH:mm'),
+        endTime: moment(shift.endTime).format('HH:mm'),
         instructions: shift.instructions,
         unpaidBreakTime: shift.unpaidBreak,
         startDate: moment(shift.startDate).subtract(1, 'week').format(),

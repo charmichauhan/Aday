@@ -275,8 +275,8 @@ class EventPopupComponent extends Component {
         positionId: shift.positionId,
         workersRequestedNum: shift.numberOfTeamMembers,
         creatorId: localStorage.getItem('userId'),
-        startTime: moment(shift.startTime),
-        endTime: moment(shift.endTime),
+        startTime: shift.startTime,
+        endTime: shift.endTime,
         instructions: shift.instructions,
         unpaidBreakTime: shift.unpaidBreak
       };

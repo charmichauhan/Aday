@@ -81,7 +81,7 @@ class ShiftPublishComponent extends Component {
   componentDidMount() {
     this.getUsers();
     this.getManagers();
-  }
+ }
 
   modalClose = () => {
     this.setState({
@@ -115,6 +115,8 @@ class ShiftPublishComponent extends Component {
     this.props.excel();
   };
   navigateCalender = (nav) => {
+
+    // const that = this;
     this.props.navigateCalender(nav);
   }
 
@@ -328,6 +330,8 @@ class ShiftPublishComponent extends Component {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             let isAfter = (moment(day).isAfter(moment(shift.startDate).subtract(1, 'days')))
             let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
+            // let isAfter = (moment(day).isAfter(moment(shift.startDate)))
+            // let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
               moment(shift.endDate).format() == "Invalid date")
             if(isAfter && isBefore) {
               this.saveShift(shiftRecure, day, publishId);
@@ -637,6 +641,7 @@ class ShiftPublishComponent extends Component {
     let { date } = this.props;
     let { start } = ShiftPublish.range(date, this.props);
     start = moment(start).add(this.props.calendarOffset, "days")
+    debugger;
     return (
       <div className="shift-section">
         {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}
@@ -708,8 +713,7 @@ class ShiftPublishComponent extends Component {
                   </div>
                 }
               </div>
-              {/*
-              <div className="calendar-search-tags">
+              {/*<div className="calendar-search-tags">
                 <div className="search-tags-input">
                   <Dropdown placeholder='Search By Tags' fluid multiple selection options={tags}
                             style={{marginTop: 3.5}}/>
@@ -738,9 +742,7 @@ class ShiftPublishComponent extends Component {
               <div className="col-md-6 calendar-info-right">
                 <div style={{display: 'flex', flexDirection: 'Column'}}>
                     <span
-                      className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}
-                      &nbsp;of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}&nbsp;
-                      ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
+                      className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal} ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
                   <span
                     className="cale-info">NON-TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked}
                     &nbsp;of {this.props.getHoursBooked.weeklyHoursTotal}
@@ -855,7 +857,6 @@ class ShiftPublishComponent extends Component {
     )
   }
 }
-
 ShiftPublishComponent.range = (date, { culture }) => {
   let firstOfWeek = localizer.startOfWeek(culture);
   let start = dates.startOf(date, 'week', firstOfWeek);

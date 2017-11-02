@@ -145,10 +145,10 @@ class ShiftWeekTableComponent extends Week {
       summaryDetail.push(<TableRowColumn key={i} style={styles.tableFooter}>
         <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours booked:</p>
           <p className="sfont">
-            {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalBookedHours'] || 0}
-            of {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalHours'] || 0}
+            {summary && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')] && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')]['totalBookedHours'] || 0}
+            of {summary && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')] && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')]['totalHours'] || 0}
             |
-            {summary && summary[moment(start).day(i).format('D')] && Math.round((summary[moment(start).day(i).format('D')]['totalBookedHours'] * 100) / summary[moment(start).day(i).format('D')]['totalHours']) || 0}%
+            {summary && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')] && Math.round((summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')]['totalBookedHours'] * 100) / summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')]['totalHours']) || 0}%
           </p>
         </div>
       </TableRowColumn>);
@@ -499,7 +499,7 @@ class ShiftWeekTableComponent extends Week {
     if (this.props.data.loading || this.props.allUsers.loading || this.props.unappliedRecurring.loading) {
       return (<div><Halogen.SyncLoader color='#00A863' /></div>)
     }
-    
+
     let isPublished = this.props.events.is_publish;
     let publishedId = this.props.events.publish_id;
     let calendar_offset = parseInt(this.props.events.calendar_offset);
@@ -741,6 +741,8 @@ class ShiftWeekTableComponent extends Week {
               />
               }
             </TableBody>
+
+
             <TableFooter adjustForCheckbox={false}>
               <TableRow displayBorder={false}>
                 <TableRowColumn style={styles.tableFooterHeading}>
@@ -749,8 +751,6 @@ class ShiftWeekTableComponent extends Week {
                     | {weeklyTotalHoursBooked}%</p></div>
                 </TableRowColumn>
                 {this.getSummary(summary, start)}
-              </TableRow>
-              <TableRow displayBorder={false}>
               </TableRow>
             </TableFooter>
           </Table>

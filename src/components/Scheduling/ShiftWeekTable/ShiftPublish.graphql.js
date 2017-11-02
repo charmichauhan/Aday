@@ -20,16 +20,15 @@ export const createWeekPublishedMutation = gql`
         start
         end
         published
-        workplacePublishedsByWeekPublishedId
-              {
-                edges{
-                  node{
-                    workplaceId
-                    published
-                    id
-                  }
-                }
-              }
+        workplacePublishedsByWeekPublishedId {
+          edges {
+            node {
+              workplaceId
+              published
+              id
+            }
+          }
+        }
       }
     }
   }`;
@@ -98,30 +97,30 @@ export const createCallUserPositionMutation = gql`
         id
       }
     }
-  }`
+  }`;
 
 export const createWorkplacePublishedMutation = gql`
-mutation createWorkplacePublished($workplacePublished: WorkplacePublishedInput!) {
- createWorkplacePublished(input: {workplacePublished: $workplacePublished}){
-   workplacePublished {   
-     id
-     published
-     workplaceId
-     weekPublishedId
-   }
- }
-}`
+  mutation createWorkplacePublished($workplacePublished: WorkplacePublishedInput!) {
+    createWorkplacePublished(input: {workplacePublished: $workplacePublished}){
+      workplacePublished {
+        id
+        published
+        workplaceId
+        weekPublishedId
+      }
+    }
+  }`;
 
 
 export const updateWorkplacePublishedIdMutation = gql`
-mutation($id: Uuid!, $workplacePublishedPatch: WorkplacePublishedPatch!){
-  updateWorkplacePublishedById(input:{id:$id, workplacePublishedPatch: $workplacePublishedPatch}){
-    workplacePublished{
-      id
-      published
+  mutation($id: Uuid!, $workplacePublishedPatch: WorkplacePublishedPatch!){
+    updateWorkplacePublishedById(input:{id:$id, workplacePublishedPatch: $workplacePublishedPatch}){
+      workplacePublished{
+        id
+        published
+      }
     }
-  }
-}`
+  }`;
 
 
 export const findRecurring = gql`
@@ -140,7 +139,7 @@ export const createRecurring = gql`
     createRecurring(input:$data) {
       recurring {
         id
-        workplaceId        
+        workplaceId
         brandId
       }
     }

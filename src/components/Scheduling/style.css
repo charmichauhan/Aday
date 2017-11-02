@@ -8,6 +8,11 @@ body{
   flex-direction: column;
   justify-content: space-around;
 }
+.shift-section {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+}
 
 .adayblue-button {
   width: 180px;
@@ -111,7 +116,7 @@ table.table.atable {
     border-spacing: 5px 14px;
     /*height: 1100px;*/
     width: 100%;
-    table-layout:fixed
+    table-layout: fixed;
 }
 
 table.table.emp_view_table {

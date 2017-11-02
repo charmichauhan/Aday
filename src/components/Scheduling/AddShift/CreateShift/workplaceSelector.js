@@ -64,11 +64,11 @@ export class WorkplaceSelector extends Component {
 
       <div>
         { !this.props.workplace && <Dropdown placeholder="Select Workplace" selection
-                                             options={this.state.workplaces} style={{ fontColor: '#838890' }}
+                                             options={this.state.workplaces} style={{ fontColor: '#838890', width:'100%'}}
                                              onChange={this.onWorkplaceChange} /> }
 
         { this.props.workplace && <Dropdown defaultValue={this.props.workplace} selection
-                                            options={this.state.workplaces} style={{ fontColor: '#838890' }}
+                                            options={this.state.workplaces} style={{ fontColor: '#838890', width:'100%' }}
                                             onChange={this.onWorkplaceChange} /> }
 
       </div>

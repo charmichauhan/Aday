@@ -48,6 +48,7 @@ const queries = {
       recurringShiftById (id: $id) {
         startDate
         expiration
+        days
       }
     }
   `

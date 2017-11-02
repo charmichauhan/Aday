@@ -177,7 +177,7 @@ class DrawerHelper extends Component {
               <label className="text-uppercase">Address Line1</label>
               <input name="address"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.address}
+                     value={DrawerWorkplace.address || ''}
                      id="address-line1"
                      type="text"
                      className="form-control" />
@@ -186,7 +186,7 @@ class DrawerHelper extends Component {
               <label className="text-uppercase">Address Line2</label>
               <input name="address2"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.address2}
+                     value={DrawerWorkplace.address2 || ''}
                      id="address-line2"
                      type="text"
                      className="form-control" />
@@ -196,7 +196,7 @@ class DrawerHelper extends Component {
                 <label htmlFor="city" className="text-uppercase">City</label>
                 <input name="city"
                        onChange={this.handleChange}
-                       value={DrawerWorkplace.city}
+                       value={DrawerWorkplace.city || ''}
                        type="text"
                        className="form-control"
                        id="city" />
@@ -214,7 +214,7 @@ class DrawerHelper extends Component {
                 <label htmlFor="zip" className="text-uppercase">Zip Code:</label>
                 <input name="zip"
                        onChange={this.handleChange}
-                       value={DrawerWorkplace.zip}
+                       value={DrawerWorkplace.zip || ''}
                        type="text"
                        className="form-control"
                        id="zip" />

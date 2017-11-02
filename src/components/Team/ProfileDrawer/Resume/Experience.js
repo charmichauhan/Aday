@@ -1,15 +1,13 @@
 import React from "react";
 import { Image } from 'semantic-ui-react';
 import '../../team.css';
+import moment from "moment";
 
 /**
  * iterable component to list work experience
  * @author Rahkeem Morris
  * @since Sep 23, 2017
  * @param {hash} props receives properties of work experience from parent component
- * @todo allow for no input for both a startDate or endDate
- * @todo allow for input of only a startDate
- * @todo remove duration and bullet point when no duration cannot be computed, including "present"
  */
 const Experience = (props) => {
   const myExperience = (
@@ -22,15 +20,17 @@ const Experience = (props) => {
             </div>
             <div className="resume-content">
               <p className="resume-h1">{exp.jobTitle}</p>
-              <p className="resume-h2">{exp.company}</p>
+              <p className="resume-h2">{exp.emplyerName}</p>
               <div className="resume-h3">
-                <p className="resume-time-period">{exp.startDate}</p>
+                <p className="resume-time-period">{moment(exp.startDate).format("MMM YYYY")}</p>
                 <p style={{paddingTop:3, marginLeft: 5, marginRight: 5, marginBottom:0}}>–</p>
-                <p className="resume-time-period">{exp.endDate}</p>
+                <p className="resume-time-period">{exp.endDate ? moment(exp.endDate).format("MMM YYYY") :
+                                                   "Present"}</p>
                 <p style={{paddingTop:3, marginLeft: 5, marginRight: 5, marginBottom:0}}>•</p>
-                <p className="resume-time-length">{exp.jobDuration}</p>
+                <p className="resume-time-length">{exp.endDate ? moment(exp.endDate).diff(moment(exp.startDate), 'months') + " months" :
+                                                   moment().diff(moment(exp.startDate), 'months') + " months"}</p>
               </div>
-            <p className="resume-h4">{exp.jobLocation}</p>
+            <p className="resume-h4">{exp.city + ", " + exp.state}</p>
             </div>
           </div>
           <div className="section-content">

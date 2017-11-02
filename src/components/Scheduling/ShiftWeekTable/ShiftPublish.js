@@ -641,7 +641,7 @@ class ShiftPublishComponent extends Component {
     let { date } = this.props;
     let { start } = ShiftPublish.range(date, this.props);
     start = moment(start).add(this.props.calendarOffset, "days")
-    debugger;
+
     return (
       <div className="shift-section">
         {this.state.publishModalPopped && <Modal title="Confirm" isOpen={this.state.publishModalPopped}

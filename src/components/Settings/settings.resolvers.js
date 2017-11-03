@@ -92,6 +92,17 @@ export const workplaceResolvers = {
         }
       }
     }
+  `,
+  createPositionMutation: gql`
+    mutation createPosition ($position: PositionInput!) {
+      createPosition (input: { position: $position }) {
+        position {
+          id
+          brandId
+          positionName
+        }
+      }
+    }
   `
 };
 

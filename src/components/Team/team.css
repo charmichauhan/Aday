@@ -1156,3 +1156,8 @@ img.quotation-mark.up {
 .profile-drawer .ant-tabs .ui.grid .row:before {
   display: none;
 }
+
+td.headcol .ant-radio-inner:after {
+  left: 1px;
+  top: 1px;
+}

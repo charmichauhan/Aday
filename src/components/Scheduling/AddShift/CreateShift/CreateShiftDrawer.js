@@ -523,11 +523,6 @@ class DrawerHelper extends Component {
         text: position.positionName,
         selected: shift.positionId === position.id
       }));
-      positionOptions.unshift({
-        key: 'manager',
-        value: 'manager',
-        text: 'Manager'
-      });
     }
     const recurringOptions = [{
       key: 'none',

@@ -160,7 +160,7 @@ class ShiftWeekTableComponent extends Week {
     const users = props.allUsers;
     let foundWorker = find(users.allUsers.edges, (user) => user.node.id === id);
     if (!foundWorker) return null;
-    return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
+    return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName','employeesByUserId']);
   };
 
   getShiftData = (shiftValue, props) => {
@@ -708,8 +708,8 @@ class ShiftWeekTableComponent extends Week {
                   {/*<p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
                   <div className="calendar-emp-job-btn">
                     <div className="cal-emp-job-btn">
-                      <button className={this.state.empView} onClick={this.empView}>Employee view</button>
-                      <button className={this.state.jobView} onClick={this.jobView}>Job view</button>
+                      <button className={this.state.empView} onClick={this.empView}>Employee</button>
+                      <button className={this.state.jobView} onClick={this.jobView}>Job</button>
                     </div>
                   </div>
                 </TableRowColumn>

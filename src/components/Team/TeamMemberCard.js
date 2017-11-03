@@ -53,17 +53,21 @@ class TeamMemberCardComponent extends Component {
                 </Card.Meta>
             )
         }
-
+debugger;
 		return (
             <Card style={{width:250}} color='grey'>
                  {this.state.viewProfileDrawer && <ProfileDrawer
-                                                                                open={this.state.viewProfileDrawer}
-                                                                                openResumeDrawer={this.openResumeDrawer}
-                                                                                handleCloseDrawer={this.handleCloseDrawer}
-                                                                                userId={this.props.userId}
-                                                                            />}
-                {this.state.viewResumeDrawer && <ResumeDrawer
-                                                                                open={this.state.viewResumeDrawer} backProfileDrawer={this.backProfileDrawer} userId={this.props.userId}/>}
+                   open={this.state.viewProfileDrawer}
+                   openResumeDrawer={this.openResumeDrawer}
+                   handleCloseDrawer={this.handleCloseDrawer}
+                   userId={this.props.userId}
+                 />}
+                {this.state.viewResumeDrawer &&
+                  <ResumeDrawer
+                    open={this.state.viewResumeDrawer}
+                    backProfileDrawer={this.backProfileDrawer}
+                    userId={this.props.userId}/>
+                }
 
 		    	<Card.Content>
 			      	<center>

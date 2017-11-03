@@ -499,7 +499,7 @@ class ShiftWeekTableComponent extends Week {
     if (this.props.data.loading || this.props.allUsers.loading || this.props.unappliedRecurring.loading) {
       return (<div><Halogen.SyncLoader color='#00A863' /></div>)
     }
-    
+
     let isPublished = this.props.events.is_publish;
     let publishedId = this.props.events.publish_id;
     let calendar_offset = parseInt(this.props.events.calendar_offset);

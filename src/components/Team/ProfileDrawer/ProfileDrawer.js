@@ -96,7 +96,7 @@ class ProfileDrawerComponent extends Component {
       docked = false,
       open
     } = this.props;
-debugger;
+
     if (this.props.userQuery.loading || this.props.releventPositionsQuery.loading) {
         return(<div><Halogen.BeatLoader color='#00A863'/></div>)
     }
@@ -124,7 +124,7 @@ debugger;
         verticalAlign: 'middle'
       }
     };
-    debugger;
+
     return (
      <Drawer
          docked={docked}

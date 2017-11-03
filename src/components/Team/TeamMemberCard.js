@@ -53,7 +53,7 @@ class TeamMemberCardComponent extends Component {
                 </Card.Meta>
             )
         }
-debugger;
+
 		return (
             <Card style={{width:250}} color='grey'>
                  {this.state.viewProfileDrawer && <ProfileDrawer

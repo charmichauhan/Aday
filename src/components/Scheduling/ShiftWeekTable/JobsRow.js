@@ -35,7 +35,6 @@ export default class JobsRow extends Component {
   };
 
   handleCloseDrawer = () => {
-    debugger;
     this.setState({viewProfileDrawer:false});
   };
 
@@ -48,7 +47,6 @@ export default class JobsRow extends Component {
   };
 
   render() {
-    debugger;
     let data = this.props.data;
     let start = this.props.start;
     const daysOfWeek = [];
@@ -114,7 +112,6 @@ export default class JobsRow extends Component {
     let adHours = Math.floor(finalMinutes / 60);
     finalHours += adHours;
     finalMinutes = finalMinutes - (adHours * 60);
-    debugger;
     return (
       <TableRow className="tableh" displayBorder={false}>
 

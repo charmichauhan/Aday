@@ -537,8 +537,19 @@ class EventPopupComponent extends Component {
     }
 
     let duration = moment.duration(endTimeDiff.diff(startTimeDiff));
+
+    if (data.unpaidBreakTime){
+      let uhours = data.unpaidBreakTime.split(':')[0]
+      let umins = data.unpaidBreakTime.split(':')[1]
+      let unpaidHours = moment.duration(parseInt(uhours), 'h')
+      let unpaidMinutes = moment.duration(parseInt(umins), 'm')
+      duration.subtract(unpaidMinutes).subtract(unpaidHours)
+    }
+    
     let hoursDiff = parseInt(duration.asHours());
     let minDiff = parseInt(duration.asMinutes())-hoursDiff*60;
+
+
     let {recurringShiftId} = this.props.data;
 
     let h = moment.utc(moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'))).format('HH');

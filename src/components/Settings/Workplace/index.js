@@ -179,8 +179,9 @@ class Workplace extends Component {
     this.setState({ open: false });
     const { workplaces } = this.state;
     if (!workplace.id) {
+      const workplace_id = uuidv4();
       // Create
-      workplace.id = uuidv4();
+      workplace.id = workplace_id;
       workplace.corporationId = this.state.corporationId;
       workplace.isUnion = workplace.isRatingsPublic = workplace.isActive = true;
       workplace.address = workplace.address + ' ' + workplace.address2 + ' ' +
@@ -210,7 +211,8 @@ class Workplace extends Component {
         const position = {
           ...managerPositionPrototype,
           id: uuidv4(),
-          brandId: workplace.brandId
+          brandId: workplace.brandId,
+          workplaceId: workplace_id
         };
         this.props.client.mutate({
           mutation: workplaceResolvers.createPositionMutation,

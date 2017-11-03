@@ -692,7 +692,7 @@ class ShiftPublishComponent extends Component {
                   </ul>}
               </div>
               <div className="btn-action-calendar">
-                {moment(startDate).startOf('week').add(this.props.calendarOffset, 'days').diff(moment().startOf('week'), 'days') > -7 ?
+                { /* moment(startDate).startOf('week').add(this.props.calendarOffset, 'days').diff(moment().startOf('week'), 'days') > -7 ? */}
                   <div className="div-ui-action"
                   >
                     <CreateShiftButton
@@ -708,10 +708,10 @@ class ShiftPublishComponent extends Component {
 
                     {/*{(is_publish != "none") && <Button className="btn-image flr" as={NavLink} to="/schedule/recurring"><img className="btn-image flr" src="/assets/Buttons/automate-schedule.png" alt="Automate"/></Button>}*/}
 
-                  </div> :
+                  </div> {/* : 
                   <div>
                   </div>
-                }
+                     } */}
               </div>
               {/*<div className="calendar-search-tags">
                 <div className="search-tags-input">

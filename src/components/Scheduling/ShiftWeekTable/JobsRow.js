@@ -5,6 +5,8 @@ import moment from 'moment';
 
 import EventPopup from './EventPopup';
 import dataHelper from '../../helpers/common/dataHelper';
+import ProfileDrawer from '../../Team/ProfileDrawer/ProfileDrawer';
+import ResumeDrawer from '../../Team/ProfileDrawer/ResumeDrawer';
 
 import '../style.css';
 
@@ -12,7 +14,10 @@ export default class JobsRow extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = ({
+      viewProfileDrawer:false,
+      viewResumeDrawer:false
+    });
   }
 
   componentDidMount() {
@@ -25,7 +30,25 @@ export default class JobsRow extends Component {
       .catch(err => console.error(err));
   };
 
+  handleDrawerOpen = () => {
+    this.setState({viewProfileDrawer:true});
+  };
+
+  handleCloseDrawer = () => {
+    debugger;
+    this.setState({viewProfileDrawer:false});
+  };
+
+  openResumeDrawer = () => {
+    this.setState({viewProfileDrawer:false,viewResumeDrawer:true})
+  };
+
+  backProfileDrawer = () => {
+    this.setState({viewProfileDrawer:true,viewResumeDrawer:false})
+  };
+
   render() {
+    debugger;
     let data = this.props.data;
     let start = this.props.start;
     const daysOfWeek = [];
@@ -91,11 +114,24 @@ export default class JobsRow extends Component {
     let adHours = Math.floor(finalMinutes / 60);
     finalHours += adHours;
     finalMinutes = finalMinutes - (adHours * 60);
-
+    debugger;
     return (
       <TableRow className="tableh" displayBorder={false}>
+
         <TableRowColumn className="headcol" style={{ paddingLeft: '0px', paddingRight: '0px' }}>
           <div className="user_profile" width="80%">
+            {this.state.viewProfileDrawer && <ProfileDrawer
+              open={this.state.viewProfileDrawer}
+              openResumeDrawer={this.openResumeDrawer}
+              handleCloseDrawer={this.handleCloseDrawer}
+              userId={data[0].workersAssigned[0]}
+            />}
+            {this.state.viewResumeDrawer && <ResumeDrawer
+              open={this.state.viewResumeDrawer}
+              backProfileDrawer={this.backProfileDrawer}
+              userId={data[0].workersAssigned[0]}
+            />}
+            <div onClick={this.props.view !== 'job' && this.handleDrawerOpen }>
             <div className="user_img">
               <img src={this.props.view == 'job' ? data[0].positionByPositionId.positionIconUrl : data[0].userAvatar }
                    alt="img" />
@@ -116,6 +152,7 @@ export default class JobsRow extends Component {
 
               <p className="scheduled_tag">BOOKED</p>
 
+            </div>
             </div>
           </div>
         </TableRowColumn>

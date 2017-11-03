@@ -81,7 +81,7 @@ class ShiftPublishComponent extends Component {
   componentDidMount() {
     this.getUsers();
     this.getManagers();
-  }
+ }
 
   modalClose = () => {
     this.setState({
@@ -115,6 +115,8 @@ class ShiftPublishComponent extends Component {
     this.props.excel();
   };
   navigateCalender = (nav) => {
+
+    // const that = this;
     this.props.navigateCalender(nav);
   }
 
@@ -328,6 +330,8 @@ class ShiftPublishComponent extends Component {
           if (day !== 'undefined' && shift.shiftDaysSelected[day] === true) {
             let isAfter = (moment(day).isAfter(moment(shift.startDate).subtract(1, 'days')))
             let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
+            // let isAfter = (moment(day).isAfter(moment(shift.startDate)))
+            // let isBefore = (moment(day).isBefore(moment(shift.endDate)) ||
               moment(shift.endDate).format() == "Invalid date")
             if(isAfter && isBefore) {
               this.saveShift(shiftRecure, day, publishId);
@@ -425,8 +429,8 @@ class ShiftPublishComponent extends Component {
       positionId: shift.positionId,
       workerCount: shift.numberOfTeamMembers,
       creator: localStorage.getItem('userId'),
-      startTime: moment.utc(shift.startTime).format('HH:mm'),
-      endTime: moment.utc(shift.endTime).format('HH:mm'),
+      startTime: moment(shift.startTime).format('HH:mm'),
+      endTime: moment(shift.endTime).format('HH:mm'),
       instructions: shift.instructions,
       unpaidBreakTime: shift.unpaidBreak,
       expiration: endDate,
@@ -487,14 +491,19 @@ class ShiftPublishComponent extends Component {
   };
 
   saveShift(shiftValue, day, weekPublishedId) {
+
     const shift = cloneDeep(shiftValue);
-    const shiftDay = moment.utc(day, 'MM-DD-YYYY');
+    const shiftDay = moment(day, 'MM-DD-YYYY');
     const shiftDate = shiftDay.date();
     const shiftMonth = shiftDay.month();
     const shiftYear = shiftDay.year();
     const recurringShiftId = shift.recurringShiftId;
-    shift.startTime = moment.utc(shift.startTime);
-    shift.endTime = moment.utc(shift.endTime);
+    shift.startTime = moment(shift.startTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0).format();
+    shift.endTime = moment(shift.endTime).date(shiftDate).month(shiftMonth).year(shiftYear).second(0).format();
+    if (moment(shift.startTime).isAfter(shift.endTime)) {
+        shift.endTime = moment(shift.endTime).add(24, 'hours').format()
+    }
+
     var newId = uuidv4()
     const _this = this
     const payload = {
@@ -631,7 +640,7 @@ class ShiftPublishComponent extends Component {
     }
     let { date } = this.props;
     let { start } = ShiftPublish.range(date, this.props);
-    start = moment(start).add(this.props.calendarOffset, "days");
+    start = moment(start).add(this.props.calendarOffset, "days")
 
     return (
       <div className="shift-section">
@@ -725,8 +734,7 @@ class ShiftPublishComponent extends Component {
                   </div>
                 }
               </div>
-              {/*
-              <div className="calendar-search-tags">
+              {/*<div className="calendar-search-tags">
                 <div className="search-tags-input">
                   <Dropdown placeholder='Search By Tags' fluid multiple selection options={tags}
                             style={{marginTop: 3.5}}/>
@@ -797,9 +805,7 @@ class ShiftPublishComponent extends Component {
 
                 {/*<div style={{display: 'flex', flexDirection: 'Column'}}>
                     <span
-                      className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}
-                      &nbsp;of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal}&nbsp;
-                      ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
+                      className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked}of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal} ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
                   <span
                     className="cale-info">NON-TRAINEE HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked}
                     &nbsp;of {this.props.getHoursBooked.weeklyHoursTotal}
@@ -914,7 +920,6 @@ class ShiftPublishComponent extends Component {
     )
   }
 }
-
 ShiftPublishComponent.range = (date, { culture }) => {
   let firstOfWeek = localizer.startOfWeek(culture);
   let start = dates.startOf(date, 'week', firstOfWeek);

@@ -8,6 +8,11 @@ body{
   flex-direction: column;
   justify-content: space-around;
 }
+.shift-section {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+}
 
 .adayblue-button {
   width: 180px;

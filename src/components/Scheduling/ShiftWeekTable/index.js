@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table, TableBody, TableHeader, TableFooter, TableRow, TableRowColumn } from 'material-ui/Table';
 import moment from 'moment';
+import json2csv from 'json2csv';
 import Week from 'react-big-calendar/lib/Week';
 import dates from 'react-big-calendar/lib/utils/dates';
 import localizer from 'react-big-calendar/lib/localizer';
@@ -11,35 +12,13 @@ import { gql, graphql, compose } from 'react-apollo';
 import jobsData from './jobs.json';
 import '../style.css';
 import allShiftsByWeeksPublished from './shiftsByWeeksPublishedQuery'
+import ShiftPublish from './ShiftPublish'
+
 var Halogen = require('halogen');
 /*
  import EditShift from './ShiftEdit/Edit';
  import DeleteShift from './ShiftEdit/DeleteShift';
  */
-
-
-function shiftReducer(state = {}, action) {
-  switch (action.type) {
-    case 'SUBMIT_NEW_SHIFT':
-      return Object.assign({}, state, {
-        shifts: [
-          ...(state.shifts || []),
-          {
-            //date: action.date,
-            workplace: action.workplace,
-
-            /*template: action.template,
-             certification: action.certification,
-             start: action.start,
-             end: action.end*/
-          }
-        ]
-      });
-    default:
-      return state
-  }
-}
-
 
 const styles = {
   bodyStyle: {
@@ -80,7 +59,6 @@ const styles = {
   }
 };
 
-
 class ShiftWeekTableComponent extends Week {
   constructor(props) {
     super(props);
@@ -92,15 +70,73 @@ class ShiftWeekTableComponent extends Week {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    this.props.data.refetch(allShiftsByWeeksPublished);
-    if (!nextProps.data.loading && !nextProps.allUsers.loading && !nextProps.dataReceived) {
-      this.props.setCSVData(this.csvData(nextProps));
-    }
     this.setState({ calendarView: this.props.eventPropGetter() });
   };
 
   forceRefetch = () => {
     this.props.data.refetch(allShiftsByWeeksPublished)
+  };
+
+  getCSVData = (csvData) => {
+    let displayCsvData = [],displayCsvDataFiled = [];
+    const that = this;
+    let { calendarOffset } = that.props;
+    displayCsvDataFiled.push(
+      'FirstName',
+      'LastName',
+      'PositionName',
+      moment().day(calendarOffset).format('dddd'),
+      moment().day(calendarOffset + 1).format('dddd'),
+      moment().day(calendarOffset + 2).format('dddd'),
+      moment().day(calendarOffset + 3).format('dddd'),
+      moment().day(calendarOffset + 4).format('dddd'),
+      moment().day(calendarOffset + 5).format('dddd'),
+      moment().day(calendarOffset + 6).format('dddd')
+    );
+
+    const displayData ={};
+
+    csvData.forEach((value) => {
+      const userId = value.userId;
+      const positionId = value.positionId;
+      delete value.userId;
+      delete value.positionId;
+      if(displayData[positionId]) {
+        if (displayData[positionId][userId]) {
+          ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].forEach((day) => {
+            if (displayData[positionId][userId][day]) {
+              if (value[day]) {
+                value[day] = `${displayData[positionId][userId][day]} & ${value[day]}`;
+              } else {
+                value[day] = `${displayData[positionId][userId][day]}`;
+              }
+            }
+          });
+          Object.assign(displayData[positionId][userId], value);
+        } else {
+          displayData[positionId][userId] = value;
+        }
+      }else{
+        var objuser = {};
+        objuser[userId]=value;
+        displayData[positionId] = objuser;
+      }
+    });
+    Object.values(displayData).map((value)=>{
+      displayCsvData = displayCsvData.concat(Object.values(value));
+    });
+    this.setState({ csvData: displayCsvData, dataReceived: true });
+
+
+      var result = json2csv({ data: displayCsvData, fields: displayCsvDataFiled});
+      var hiddenElement = document.createElement('a');
+      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(result);
+      hiddenElement.target = '_blank';
+      // hiddenElement.download = moment(new Date()).format('MM/DD/YYYY_H:mm:ss') + '.csv';
+      hiddenElement.download = moment(that.props.date).startOf("week").day(that.props.calendarOffset).format('MM-DD-YYYY') + '_'
+        + moment(that.props.date).endOf('week').day(that.props.calendarOffset).add(6, 'days').format('MM-DD-YYYY') + '.csv';
+      hiddenElement.click();
+
   };
 
   getSummary = (summary, start) => {
@@ -124,7 +160,7 @@ class ShiftWeekTableComponent extends Week {
     const users = props.allUsers;
     let foundWorker = find(users.allUsers.edges, (user) => user.node.id === id);
     if (!foundWorker) return null;
-    return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName','employeesByUserId']);
+    return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
   };
 
   getShiftData = (shiftValue, props) => {
@@ -180,7 +216,7 @@ class ShiftWeekTableComponent extends Week {
         });
       }
     });
-    return csvShifts;
+    this.getCSVData(csvShifts);
   };
 
   getDataEmployeeView = (workplaceId, data, allUsers, recurring, start) => {
@@ -646,110 +682,107 @@ class ShiftWeekTableComponent extends Week {
       weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
     }
 
-    if (this.props.isHoursReceived) this.props.hoursBooked({
-      weeklyTraineesTotalHoursBooked,
-      weeklyTotalHoursBooked,
-      weeklyTraineesHoursBooked,
-      weeklyHoursBooked,
-      weeklyTraineesTotal,
-      weeklyHoursTotal,
-      weeklyTotalHoursBudget,
-      weeklyTotalHoursBudgetAssigned,
-      weeklyTraineeTotalHoursBudgetAssigned
-    });
+    // this.setState({});
 
     return (
-      <div className="table-responsive">
-        <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
-               fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
-               className="table atable emp_view_table" style={styles.root}>
-          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-            <TableRow displayBorder={false} style={styles.heightremove}>
-              <TableRowColumn style={styles.tableFooter} className="long dayname">
-                {/*<div><p className="weekDay">Hours Booked</p>*/}
-                {/*<p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
-                <div className="calendar-emp-job-btn">
-                  <div className="cal-emp-job-btn">
-                    <button className={this.state.empView} onClick={this.empView}>Employee</button>
-                    <button className={this.state.jobView} onClick={this.jobView}>Job</button>
+      <div>
+        <ShiftPublish
+          date={this.props.date}
+          isWorkplacePublished={ this.props.isWorkplacePublished }
+          isPublish={ isPublished }
+          publishId={ publishedId }
+          view={ this.props.spview }
+          excel = { () => this.csvData(this.props)}
+          navigateCalender = { this.props.navigateCalender }
+          getHoursBooked = {{weeklyTraineesTotalHoursBooked,weeklyTotalHoursBooked,weeklyTraineesHoursBooked,weeklyHoursBooked,weeklyTraineesTotal,weeklyHoursTotal,weeklyTotalHoursBudget, weeklyTotalHoursBudgetAssigned, weeklyTraineeTotalHoursBudgetAssigned}}
+          calendarOffset = { calendar_offset } />
+          <div className="table-responsive">
+
+          <Table bodyStyle={styles.bodyStyle} wrapperStyle={styles.wrapperStyle} footerStyle={styles.footerStyle}
+                 fixedFooter={true} fixedHeader={true} width="100%" minHeight="100px"
+                 className="table atable emp_view_table" style={styles.root}>
+            <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+              <TableRow displayBorder={false} style={styles.heightremove}>
+                <TableRowColumn style={styles.tableFooter} className="long dayname">
+                  {/*<div><p className="weekDay">Hours Booked</p>*/}
+                  {/*<p className="hoursWorked">{weeklyTotalHoursBooked || 0}%</p></div>*/}
+                  <div className="calendar-emp-job-btn">
+                    <div className="cal-emp-job-btn">
+                      <button className={this.state.empView} onClick={this.empView}>Employee view</button>
+                      <button className={this.state.jobView} onClick={this.jobView}>Job view</button>
+                    </div>
                   </div>
-                </div>
-              </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname">
-                <p className="weekDate"> {moment(start).day(calendar_offset).format('ddd')} <strong>{moment(start).day(calendar_offset).format('MM')}/{moment(start).day(calendar_offset).format('D')}</strong></p>
+                </TableRowColumn>
+                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                  className="weekDate"> {moment(start).day(calendar_offset).format('ddd')} {moment(start).day(calendar_offset).format('MM')}/{moment(start).day(calendar_offset).format('D')}</p>
+                </TableRowColumn>
+                <TableRowColumn style={styles.tableFooter} className="dayname">
+                  <p
+                    className="weekDate">{moment(start).day(calendar_offset + 1).format('ddd')} {moment(start).day(calendar_offset + 1).format('MM')}/{moment(start).day(calendar_offset + 1).format('D')}</p>
+                </TableRowColumn>
+                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                  className="weekDate"> {moment(start).day(calendar_offset + 2).format('ddd')} {moment(start).day(calendar_offset + 2).format('MM')}/{moment(start).day(calendar_offset + 2).format('D')}</p>
+                </TableRowColumn>
+                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                  className="weekDate"> {moment(start).day(calendar_offset + 3).format('ddd')} {moment(start).day(calendar_offset + 3).format('MM')}/{moment(start).day(calendar_offset + 3).format('D')}</p>
+                </TableRowColumn>
+                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                  className="weekDate">{moment(start).day(calendar_offset + 4).format('ddd')} {moment(start).day(calendar_offset + 4).format('MM')}/{moment(start).day(calendar_offset + 4).format('D')}</p>
+                </TableRowColumn>
+                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                  className="weekDate">{moment(start).day(calendar_offset + 5).format('ddd')} {moment(start).day(calendar_offset + 5).format('MM')}/{moment(start).day(calendar_offset + 5).format('D')}</p>
+                </TableRowColumn>
+                <TableRowColumn style={styles.tableFooter} className="dayname"><p
+                  className="weekDate">{moment(start).day(calendar_offset + 6).format('ddd')} {moment(start).day(calendar_offset + 6).format('MM')}/{moment(start).day(calendar_offset + 6).format('D')}</p>
+                </TableRowColumn>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay}/>
 
-              </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname">
-                <p className="weekDate">{moment(start).day(calendar_offset + 1).format('ddd')} <strong>{moment(start).day(calendar_offset + 1).format('MM')}/{moment(start).day(calendar_offset + 1).format('D')}</strong></p>
-
-              </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname">
-                <p className="weekDate"> {moment(start).day(calendar_offset + 2).format('ddd')} <strong>{moment(start).day(calendar_offset + 2).format('MM')}/{moment(start).day(calendar_offset + 2).format('D')}</strong></p>
-
-              </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname">
-                <p className="weekDate"> {moment(start).day(calendar_offset + 3).format('ddd')} <strong>{moment(start).day(calendar_offset + 3).format('MM')}/{moment(start).day(calendar_offset + 3).format('D')}</strong></p>
-
-              </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname">
-                <p className="weekDate">{moment(start).day(calendar_offset + 4).format('ddd')} <strong>{moment(start).day(calendar_offset + 4).format('MM')}/{moment(start).day(calendar_offset + 4).format('D')}</strong></p>
-
-              </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname">
-                <p className="weekDate">{moment(start).day(calendar_offset + 5).format('ddd')} <strong>{moment(start).day(calendar_offset + 5).format('MM')}/{moment(start).day(calendar_offset + 5).format('D')}</strong></p>
-
-              </TableRowColumn>
-              <TableRowColumn style={styles.tableFooter} className="dayname">
-                <p className="weekDate">{moment(start).day(calendar_offset + 6).format('ddd')} <strong>{moment(start).day(calendar_offset + 6).format('MM')}/{moment(start).day(calendar_offset + 6).format('D')}</strong></p>
-
-              </TableRowColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <SpecialDay dateStart={start} setSpecialDay={this.getSpecialDay} />
-
-            {jobDataKeys.map((value, index) => (
-                <JobsRow
-                  data={jobData[value]}
-                  key={value}
-                  users={this.props.allUsers}
-                  view={this.state.calendarView}
-                  isPublished={isPublished}
-                  publishedId={publishedId}
-                  forceRefetch={this.forceRefetch}
-                  start={moment(start).day(calendar_offset).format()}
-                  calendarOffset={calendar_offset} />
+              {jobDataKeys.map((value, index) => (
+                  <JobsRow
+                    data={jobData[value]}
+                    key={value}
+                    users={this.props.allUsers}
+                    view={this.state.calendarView}
+                    isPublished={isPublished}
+                    publishedId={publishedId}
+                    forceRefetch={this.forceRefetch}
+                    start={moment(start).day(calendar_offset).format()}
+                    calendarOffset={calendar_offset} />
+                )
               )
-            )
-            }
+              }
 
-            {jobData['Open Shifts'] &&
-            <JobsRow
-              data={jobData['Open Shifts']}
-              key={'Open Shifts'}
-              users={this.props.allUsers}
-              view={this.state.calendarView}
-              isPublished={isPublished}
-              publishedId={publishedId}
-              forceRefetch={this.forceRefetch}
-              start={moment(start).day(calendar_offset).format()}
-              calendarOffset={calendar_offset}
-            />
-            }
-          </TableBody>
-          <TableFooter adjustForCheckbox={false}>
-            <TableRow displayBorder={false}>
-              <TableRowColumn style={styles.tableFooterHeading}>
-                <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
-                  hours booked:</p><p className="sfont">{weeklyHoursBooked} of {weeklyHoursTotal}
-                  | {weeklyTotalHoursBooked}%</p></div>
-              </TableRowColumn>
-              {this.getSummary(summary, start)}
-            </TableRow>
-            <TableRow displayBorder={false}>
-            </TableRow>
-          </TableFooter>
-        </Table>
+              {jobData['Open Shifts'] &&
+              <JobsRow
+                data={jobData['Open Shifts']}
+                key={'Open Shifts'}
+                users={this.props.allUsers}
+                view={this.state.calendarView}
+                isPublished={isPublished}
+                publishedId={publishedId}
+                forceRefetch={this.forceRefetch}
+                start={moment(start).day(calendar_offset).format()}
+                calendarOffset={calendar_offset}
+              />
+              }
+            </TableBody>
+            <TableFooter adjustForCheckbox={false}>
+              <TableRow displayBorder={false}>
+                <TableRowColumn style={styles.tableFooterHeading}>
+                  <div className="mtitle computed-weekly-scheduled-hour "><p className="bfont">weekly
+                    hours booked:</p><p className="sfont">{weeklyHoursBooked} of {weeklyHoursTotal}
+                    | {weeklyTotalHoursBooked}%</p></div>
+                </TableRowColumn>
+                {this.getSummary(summary, start)}
+              </TableRow>
+              <TableRow displayBorder={false}>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </div>
       </div>
     );
   }

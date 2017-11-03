@@ -16,25 +16,8 @@ export default class EditShiftDrawerContainer extends Component {
 		}
 		
 		if (this.props.open){
-			if ( !!this.props.shift.recurringShiftId ) {
-				return(
-					<DrawerHelper
-				      width={this.props.width}
-				      open={true}
-				      shift={this.props.shift}
-				      users={this.props.users}
-				      managers={this.props.managers}
-				      weekStart={this.props.weekStart}
-				      handleSubmit={this.props.handleSubmit}
-				      handleAdvance={this.props.handleAdvance}
-				      closeDrawer={this.handleCloseDrawer} 
-				      isPublished={this.props.isPublished}
-				      recurringEdit={true}
-				      calendarOffset={this.props.calendarOffset}
-					 /> 
-		        )
-			} else {
-				return (
+			const recurringEdit = !!this.props.shift.recurringShiftId
+			return (
 					<DrawerHelper
 				      width={this.props.width}
 				      open={this.props.open}
@@ -47,9 +30,10 @@ export default class EditShiftDrawerContainer extends Component {
 				      closeDrawer={this.props.closeDrawer}
 				      isPublished={published}
 				      weekPublishedId={this.props.weekPublishedId}
+				      recurringEdit={recurringEdit}
 				      calendarOffset={this.props.calendarOffset} />
 				)
-			}
+			
 		} else {
 			return (
 					<div> </div>

@@ -442,6 +442,7 @@ class ShiftPublishComponent extends Component {
 
     if (shift.teamMembers && shift.teamMembers.length) {
       payload.assignees  = shift.teamMembers.map(({ id }) => id);
+      payload.assignees = payload.assignees.filter((v, i, a) => a.indexOf(v) === i)
     }
 
     this.props.createRecurringShift({
@@ -523,6 +524,7 @@ class ShiftPublishComponent extends Component {
     };
     if (shift.teamMembers && shift.teamMembers.length) {
       payload.workersAssigned = shift.teamMembers.map(({ id }) => id);
+      payload.workersAssigned = payload.workersAssigned.filter((v, i, a) => a.indexOf(v) === i)
     }
     this.props.createShift({
       variables: {

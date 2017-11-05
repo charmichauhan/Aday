@@ -298,6 +298,7 @@ class EventPopupComponent extends Component {
               payload.workersAssigned.push(member['id'])
             }
         });
+        payload.workersAssigned = payload.workersAssigned.filter((v, i, a) => a.indexOf(v) === i)
       }
 
       this.props.updateShiftMutation({
@@ -451,6 +452,8 @@ class EventPopupComponent extends Component {
                payload.assignees.push(member['id'])
             }
         });
+        payload.assignees = payload.assignees.filter((v, i, a) => a.indexOf(v) === i)
+
       }
 
       var _this = this

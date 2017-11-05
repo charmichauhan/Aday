@@ -589,6 +589,11 @@ class ShiftWeekTableComponent extends Week {
           let traineesAssigned = shiftData[data]['traineesAssigned'] && shiftData[data]['traineesAssigned'].length;
 
           let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
+          if (shiftData[data]['unpaidBreakTime']){
+            let uhours = shiftData[data]['unpaidBreakTime'].split(':')[0]
+            let umins = shiftData[data]['unpaidBreakTime'].split(':')[1]
+            shiftHours = shiftHours - uhours - umins/60
+          }
           let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
           let openTraineesShift = shiftData[data]['traineesRequestedNum'] - traineesAssigned;
 
@@ -608,7 +613,7 @@ class ShiftWeekTableComponent extends Week {
           totalBookedHours += workersAssignedTotal;
           totalTraineesBookedHours += traineesAssignedTotal;
         });
-        summary[shift] = { 'totalHours': totalHours, 'totalBookedHours': totalBookedHours };
+        summary[shift] = { 'totalHours': Math.round(totalHours), 'totalBookedHours': Math.round(totalBookedHours) };
         weeklyHoursTotal += totalHours;
         weeklyTraineesTotal += totalTraineesHours;
 
@@ -636,15 +641,26 @@ class ShiftWeekTableComponent extends Week {
             let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
             let openTraineesShift = shiftData[data]['traineesRequestedNum'] - ( workerAssigned + workerInvited );
             totalHours += shiftHours * openShift;
+            if (shiftData[data]['unpaidBreakTime']){
+              let uhours = shiftData[data]['unpaidBreakTime'].split(':')[0]
+              let umins = shiftData[data]['unpaidBreakTime'].split(':')[1]
+              shiftHours = shiftHours - uhours - umins/60
+            }
+
             totalTraineesHours += shiftHours * openTraineesShift;
           } else {
+            if (shiftData[data]['unpaidBreakTime']){
+              let uhours = shiftData[data]['unpaidBreakTime'].split(':')[0]
+              let umins = shiftData[data]['unpaidBreakTime'].split(':')[1]
+              shiftHours = shiftHours - uhours - umins/60
+            }
             totalHours += shiftHours;
             totalTraineesHours += shiftHours;
             totalBookedHours += shiftHours;
             totalTraineesBookedHours += shiftHours;
           }
         });
-        summary[shift] = { 'totalHours': totalHours, 'totalBookedHours': totalBookedHours };
+        summary[shift] = { 'totalHours': Math.round(totalHours), 'totalBookedHours': Math.round(totalBookedHours) };
         weeklyHoursTotal += totalHours;
         weeklyTraineesTotal += totalTraineesHours;
         weeklyHoursBooked += totalBookedHours;

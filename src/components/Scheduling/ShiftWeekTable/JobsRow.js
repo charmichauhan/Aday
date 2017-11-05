@@ -78,20 +78,34 @@ export default class JobsRow extends Component {
     });
     let finalHours = 0;
     let finalMinutes = 0;
+    let totalHours = 0;
+    let totalMinutes = 0;
 
     Object.values(data).map((value, index) => {
-      let startTime = moment(value.startTime).format('hh:mm A');
-      let endTime = moment(value.endTime).format('hh:mm A');
-      let h = moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('HH');
-      let m = moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('mm');
+      let startTime = moment(value.startTime)
+      let endTime = moment(value.endTime)
       let unpaidHours = 0;
       let unpaidMinutes = 0;
-      if (value.unpaidBreakTime) {
-        unpaidHours = parseInt(value.unpaidBreakTime.split(':')[0])
-        unpaidMinutes = parseInt(value.unpaidBreakTime.split(':')[1])
+
+      let duration = moment.duration(endTime.diff(startTime));
+
+      if (value.unpaidBreakTime){
+        let uhours = value.unpaidBreakTime.split(':')[0]
+        let umins = value.unpaidBreakTime.split(':')[1]
+        let unpaidHours = moment.duration(parseInt(uhours), 'h')
+        let unpaidMinutes = moment.duration(parseInt(umins), 'm')
+        duration.subtract(unpaidMinutes).subtract(unpaidHours)
       }
-      h = parseInt(h) - unpaidHours;
-      m = parseInt(m) - unpaidMinutes;
+      
+      let hoursDiff = parseInt(duration.asHours());
+      let minDiff = parseInt(duration.asMinutes())-hoursDiff*60;
+
+      let h  = hoursDiff
+      let m = minDiff
+
+      totalHours +=  h * value['workersRequestedNum']
+      totalMinutes += m * value['workersRequestedNum']
+        
       if (this.props.view == 'job') {
         let workerAssigned = value['workersAssigned'] && value['workersAssigned'].length;
         h = h * workerAssigned;
@@ -108,10 +122,16 @@ export default class JobsRow extends Component {
 
       finalHours += parseInt(h);
       finalMinutes += parseInt(m);
+
     });
     let adHours = Math.floor(finalMinutes / 60);
     finalHours += adHours;
     finalMinutes = finalMinutes - (adHours * 60);
+
+    let adHoursTotal = Math.floor(totalMinutes / 60);
+    totalHours += adHoursTotal;
+    totalMinutes = totalMinutes - (adHoursTotal * 60);
+
     return (
       <TableRow className="tableh" displayBorder={false}>
 
@@ -148,6 +168,12 @@ export default class JobsRow extends Component {
               </Truncate>
 
               <p className="scheduled_tag">BOOKED</p>
+              { this.props.view == 'job' && 
+                <div>
+                <p className="finalHoursTotal"> {totalHours} HRS & <br />{totalMinutes} MINS </p>
+                <p className="scheduled_tag">TOTAL</p>
+                </div>
+              }
 
             </div>
             </div>

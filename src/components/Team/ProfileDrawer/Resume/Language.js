@@ -17,7 +17,7 @@ const Language = (props) => {
           <div className="section-content" style={{width:640}}>
             <div className="resume-image-lane" />
             <div className="resume-content" style={{flex:11}}>
-              <p className="resume-h2">•&nbsp;&nbsp;{lang.language}</p>
+              <p className="resume-h2">•&nbsp;&nbsp;{lang.languageName}</p>
             </div>
           </div>
         </div>

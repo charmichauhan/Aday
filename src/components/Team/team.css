@@ -108,7 +108,7 @@
   width: 16px;
   height: 16px;
   left: 2px;
-  top: 2px;
+  top: 3px;
 }
 
 .ant-switch-checked:after {
@@ -821,7 +821,7 @@ img.list-left-image {
   width: 16px;
   height: 16px;
   left: 2px;
-  top: 2px;
+  top: 3px;
 }
 .ant-switch-checked:after {
   left: 100%;
@@ -1150,4 +1150,14 @@ img.quotation-mark.up {
 }
 .performance-tab {
   min-height: 400px;
+}
+
+
+.profile-drawer .ant-tabs .ui.grid .row:before {
+  display: none;
+}
+
+td.headcol .ant-radio-inner:after {
+  left: 1px;
+  top: 1px;
 }

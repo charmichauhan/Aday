@@ -1,15 +1,13 @@
 import React from "react";
 import { Image } from 'semantic-ui-react';
 import '../../team.css';
+import moment from "moment";
 
 /**
  * iterable component to list education credential
  * @author Rahkeem Morris
  * @since Sep 24, 2017
  * @param {hash} props receives properties of education award from parent component
- * @todo allow for no input for both a startDate or endDate
- * @todo allow for input of only a startDate
- * @todo remove duration and bullet point when no duration cannot be computed, including "present"
  */
 const Education = (props) => {
   const myEducation = (
@@ -21,12 +19,13 @@ const Education = (props) => {
               <Image className="resume-image" src={edu.institutionLogo}/>
             </div>
             <div className="resume-content">
-              <p className="resume-h1">{edu.institutionName}</p>
-              <p className="resume-h2">{edu.awardName}</p>
+              <p className="resume-h1">{edu.educationalInstitutionName}</p>
+              <p className="resume-h2">{edu.awardType}</p>
               <div className="resume-h3">
-                <p className="resume-time-period">{edu.startDate}</p>
+                <p className="resume-time-period">{moment(edu.startDate).format("MMM YYYY")}</p>
                 <p style={{paddingTop:3, marginLeft: 5, marginRight: 5, marginBottom:0}}>–</p>
-                <p className="resume-time-period">{edu.endDate}</p>
+                <p className="resume-time-period">{edu.endDate ? moment(edu.endDate).format("MMM YYYY") :
+                                                   "Present"}</p>
               </div>
             </div>
           </div>

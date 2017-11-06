@@ -124,6 +124,7 @@ class ProfileDrawerComponent extends Component {
         verticalAlign: 'middle'
       }
     };
+
     return (
      <Drawer
          docked={docked}
@@ -182,11 +183,11 @@ class ProfileDrawerComponent extends Component {
                          <input htmlFor="hourly-limits" type="text" className="form-control" onChange={this.dayHour} placeholder={userDetails.employeesByUserId.edges[0].node.dayHourLimit}/>
                      </div>
                      <div className="form-group weekly">
-                         <label htmlFor="weekly" htmlFor="hourly-limits" className="text-uppercase">Max <span style={{color:'darkred'}}> Weekly </span> Hours</label>
+                         <label htmlFor="weekly" className="text-uppercase">Max <span style={{color:'darkred'}}> Weekly </span> Hours</label>
                          <input type="text" htmlFor="hourly-limits" className="form-control" onChange={this.weekHour} placeholder={userDetails.employeesByUserId.edges[0].node.weekHourLimit}/>
                      </div>
                      <div className="form-group monthly">
-                         <label htmlFor="monthly" htmlFor="hourly-limits" className="text-uppercase">Max <span style={{color:'darkred'}}> Monthly </span> Hours</label>
+                         <label htmlFor="monthly" className="text-uppercase">Max <span style={{color:'darkred'}}> Monthly </span> Hours</label>
                          <input type="text" className="form-control" onChange={this.monthHour} placeholder={userDetails.employeesByUserId.edges[0].node.monthHourLimit}/>
                     </div>
                  </form>

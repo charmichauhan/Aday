@@ -12,17 +12,16 @@ export const userQuery = gql `
     userPhoneNumber
     userEmail
     aboutMeText
+    homeAddress
     userReferencesByUserId{
-      edges{
-        node{
-          id
-          firstName
-          lastName
-          referencePhoneNumber
-          referenceEmailAddress
-          relationship
-          userId
-        }
+      nodes{
+        id
+        firstName
+        lastName
+        referencePhoneNumber
+        referenceEmailAddress
+        relationship
+        userId
       }
     }
     jobsByUserId(condition: {isPositionActive: true}){

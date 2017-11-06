@@ -145,10 +145,10 @@ class ShiftWeekTableComponent extends Week {
       summaryDetail.push(<TableRowColumn key={i} style={styles.tableFooter}>
         <div className="stitle computed-weekly-scheduled-hour"><p className="bfont">hours booked:</p>
           <p className="sfont">
-            {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalBookedHours'] || 0}
-            of {summary && summary[moment(start).day(i).format('D')] && summary[moment(start).day(i).format('D')]['totalHours'] || 0}
+            {summary && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')] && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')]['totalBookedHours'] || 0}
+            of {summary && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')] && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')]['totalHours'] || 0}
             |
-            {summary && summary[moment(start).day(i).format('D')] && Math.round((summary[moment(start).day(i).format('D')]['totalBookedHours'] * 100) / summary[moment(start).day(i).format('D')]['totalHours']) || 0}%
+            {summary && summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')] && Math.round((summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')]['totalBookedHours'] * 100) / summary[moment(start).day(i + parseInt(this.props.events.calendar_offset)).format('D')]['totalHours']) || 0}%
           </p>
         </div>
       </TableRowColumn>);
@@ -568,7 +568,6 @@ class ShiftWeekTableComponent extends Week {
     let weeklyTraineesTotal = 0;
     let weeklyHoursTotal = 0;
     let weeklyHoursBooked = 0;
-
     let weeklyTraineesHoursBooked = 0;
     let weeklyTotalHoursBooked = 0;
     let weeklyTraineesTotalHoursBooked = 0;
@@ -597,6 +596,11 @@ class ShiftWeekTableComponent extends Week {
 
           // positionByPositionId
           let shiftHours = parseInt(moment.utc(moment(endTime, 'hh:mm A').diff(moment(startTime, 'hh:mm A'))).format('H'));
+          if (shiftData[data]['unpaidBreakTime']){
+            let uhours = shiftData[data]['unpaidBreakTime'].split(':')[0]
+            let umins = shiftData[data]['unpaidBreakTime'].split(':')[1]
+            shiftHours = shiftHours - uhours - umins/60
+          }
           let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
           let openTraineesShift = shiftData[data]['traineesRequestedNum'] - traineesAssigned;
 
@@ -630,7 +634,7 @@ class ShiftWeekTableComponent extends Week {
           totalBudgetShiftAssignedHours += parseInt(budgetShiftHoursAssigned);
 
         });
-        summary[shift] = { 'totalHours': totalHours, 'totalBookedHours': totalBookedHours };
+        summary[shift] = { 'totalHours': Math.round(totalHours), 'totalBookedHours': Math.round(totalBookedHours) };
         weeklyHoursTotal += totalHours;
         weeklyTraineesTotal += totalTraineesHours;
         weeklyTotalHoursBudget += totalBudgetShiftHours;
@@ -641,7 +645,6 @@ class ShiftWeekTableComponent extends Week {
         weeklyTraineeTotalHoursBudgetAssigned += totalTraineesBudgetShiftHours;
 
       });
-      //this is
       weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
       weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
     } else {
@@ -663,20 +666,30 @@ class ShiftWeekTableComponent extends Week {
             let openShift = shiftData[data]['workersRequestedNum'] - ( workerAssigned + workerInvited );
             let openTraineesShift = shiftData[data]['traineesRequestedNum'] - ( workerAssigned + workerInvited );
             totalHours += shiftHours * openShift;
+            if (shiftData[data]['unpaidBreakTime']){
+              let uhours = shiftData[data]['unpaidBreakTime'].split(':')[0]
+              let umins = shiftData[data]['unpaidBreakTime'].split(':')[1]
+              shiftHours = shiftHours - uhours - umins/60
+            }
+
             totalTraineesHours += shiftHours * openTraineesShift;
           } else {
+            if (shiftData[data]['unpaidBreakTime']){
+              let uhours = shiftData[data]['unpaidBreakTime'].split(':')[0]
+              let umins = shiftData[data]['unpaidBreakTime'].split(':')[1]
+              shiftHours = shiftHours - uhours - umins/60
+            }
             totalHours += shiftHours;
             totalTraineesHours += shiftHours;
             totalBookedHours += shiftHours;
             totalTraineesBookedHours += shiftHours;
           }
         });
-        summary[shift] = { 'totalHours': totalHours, 'totalBookedHours': totalBookedHours };
+        summary[shift] = { 'totalHours': Math.round(totalHours), 'totalBookedHours': Math.round(totalBookedHours) };
         weeklyHoursTotal += totalHours;
         weeklyTraineesTotal += totalTraineesHours;
         weeklyHoursBooked += totalBookedHours;
         weeklyTraineesHoursBooked += totalTraineesBookedHours;
-        //this is hear main
       });
       weeklyTotalHoursBooked = Math.round((weeklyHoursBooked * 100) / weeklyHoursTotal) || 0;
       weeklyTraineesTotalHoursBooked = Math.round((weeklyTraineesHoursBooked * 100) / weeklyTraineesTotal) || 0;
@@ -769,6 +782,8 @@ class ShiftWeekTableComponent extends Week {
               />
               }
             </TableBody>
+
+
             <TableFooter adjustForCheckbox={false}>
               <TableRow displayBorder={false}>
                 <TableRowColumn style={styles.tableFooterHeading}>
@@ -777,8 +792,6 @@ class ShiftWeekTableComponent extends Week {
                     | {weeklyTotalHoursBooked}%</p></div>
                 </TableRowColumn>
                 {this.getSummary(summary, start)}
-              </TableRow>
-              <TableRow displayBorder={false}>
               </TableRow>
             </TableFooter>
           </Table>

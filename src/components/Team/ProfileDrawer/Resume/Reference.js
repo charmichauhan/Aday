@@ -1,6 +1,7 @@
 import React from "react";
 import { Image } from 'semantic-ui-react';
 import '../../team.css';
+import moment from "moment";
 
 /**
  * iterable component to list references
@@ -20,9 +21,9 @@ const Reference = (props) => {
             </div>
             <div className="resume-content">
               <p className="resume-h1">{ref.firstName}&nbsp;{ref.lastName}</p>
-              <p className="resume-h2">{ref.phoneNumber}</p>
+              <p className="resume-h2">{ref.referencePhoneNumber}</p>
               <div className="resume-h3">
-                <p className="resume-time-period"><strong>Reference Date</strong>:&nbsp;{ref.referenceDate}</p>
+                <p className="resume-time-period"><strong>Reference Date</strong>:&nbsp;{moment(ref.referenceDate).format("MMM YYYY")}</p>
               </div>
             <p className="resume-h4"><strong>Relationship:</strong>&nbsp;{ref.relationship}</p>
             </div>

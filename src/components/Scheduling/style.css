@@ -683,6 +683,11 @@ img.btn-image {
     margin-bottom: 0;
 }
 
+.finalHoursTotal {
+    margin-bottom: 0;
+    margin-top: -10px;
+}
+
 .employeeFinalHours {
     margin-top: -8px;
 }
@@ -930,10 +935,23 @@ table.atable td.shiftbox {
 }
 
 .ui.grid>.row>[class*="twelve wide"].column.main-content {
+
+  width: -webkit-calc(100% - 290px) !important;
+  width: -moz-calc(100% - 290px) !important;
+  width: calc(100% - 290px) !important;
+  padding-bottom: 144px;
+}
+.ui.grid>.row>[class*="three wide"].column.left-content {
+  width: 260px !important;
+  padding-left: 0;
+  margin-right: 15px;
+}
+/*
+.ui.grid>.row>[class*="twelve wide"].column.main-content {
     width: -webkit-calc(87.8vw) !important;
     width: -moz-calc(87.8vw) !important;
     width: 87.8vw !important;
-    /*padding-bottom: 144px;*/
+    !*padding-bottom: 144px;*!
     padding-left: 0;
     padding-right: 0;
 }
@@ -942,7 +960,7 @@ table.atable td.shiftbox {
     width: 12vw !important;
     padding-left: 0;
     margin-right: 0px;
-}
+}*/
 
 .left-content .ui.vertical.menu.fluid {
     border-radius: 0;

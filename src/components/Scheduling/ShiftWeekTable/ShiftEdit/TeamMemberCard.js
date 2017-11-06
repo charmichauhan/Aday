@@ -90,10 +90,6 @@ class TeamMemberCardComponent extends Component {
     const { avatarUrl, firstName, id, lastName, content, color, handleRemove, seniority, ytd } = this.props;
     const { userOptions, searchText } = this.state;
 
-    if(this.props.allEmployees.loading) {
-      return(<Loader active inline='centered' />)
-    }
-
     return (
       <div className="teamMemberCard">
         <div className="edits">
@@ -146,7 +142,11 @@ class TeamMemberCardComponent extends Component {
                 placeholder="Search member"
                 onChange={(e) => this.searchChange(e.target, e.target.value)} />
             </Dropdown.Item>
-            {userOptions && userOptions.map((user, index) => (
+              { this.props.allEmployees.loading? 
+                  <Loader active inline='centered' />
+              :
+
+              userOptions && userOptions.map((user, index) => (
               <Dropdown.Item className="team-member-item" key={index} value={index} onClick={() => this.onSelectChange(user, id)}>
                 <TeamMemberOption user={user} />
               </Dropdown.Item>
@@ -186,7 +186,7 @@ const allEmployees = gql`
   options: (ownProps) => ({
     variables: {
       corp: localStorage.getItem('corporationId'),
-      position: ownProps.position || "0000-0000-0000-0000"
+      position: ownProps.position
     },
   }),
   name: 'allEmployees'

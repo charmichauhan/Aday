@@ -10,7 +10,7 @@ const memberCard = (props) => {
       </div>
       <div className="label">
         <b>{user.firstName}</b> <span>{user.lastName}</span> <br />
-        <span className="description">{user.description || ``}</span>
+        <span className="description"> Seniority: { user.seniority || `` }</span>
          <br />
       </div>
     </div>

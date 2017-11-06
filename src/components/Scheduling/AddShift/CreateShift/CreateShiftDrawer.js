@@ -769,6 +769,7 @@ class DrawerHelper extends Component {
                         firstName={tm.firstName}
                         lastName={tm.lastName}
                         seniority={tm.seniority}
+                        ytd={tm.ytd}
                         content={tm.content}
                         isManager={shift.positionId === 'manager'}
                         users={shift.positionId === 'manager' && filteredManagers || users}

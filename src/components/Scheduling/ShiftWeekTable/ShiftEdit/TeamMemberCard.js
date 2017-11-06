@@ -42,10 +42,13 @@ class TeamMemberCardComponent extends Component {
             userHash["firstName"] = user.node.userByUserId.firstName
             userHash["lastName"] = user.node.userByUserId.lastName
             userHash["avatarUrl"] = user.node.userByUserId.avatarUrl
+            
             var seniority = i + 1
             var str = '' + seniority;
+            var str2 = '' + user.node.ytdOvertimeHours
             var pad = '0000';
             userHash["seniority"] = pad.substring(0, pad.length - str.length) + str;
+            userHash["ytd"] = pad.substring(0, pad.length - str2.length) + str2;
             users.push(userHash)
           }
         } 
@@ -84,7 +87,7 @@ class TeamMemberCardComponent extends Component {
   };
 
   render() {
-    const { avatarUrl, firstName, id, lastName, content, color, handleRemove, seniority } = this.props;
+    const { avatarUrl, firstName, id, lastName, content, color, handleRemove, seniority, ytd } = this.props;
     const { userOptions, searchText } = this.state;
 
     if(this.props.allEmployees.loading) {
@@ -118,7 +121,8 @@ class TeamMemberCardComponent extends Component {
               <span className="firstName">{firstName} </span><span className="lastName">{lastName}</span><br />
               {seniority && 
               <span className="description"> 
-                Seniority: { seniority }
+                Seniority: { seniority } -
+                YTD OT: { ytd }
                 </span>
               }
               {/* the break below puts the employee's name near top of card */}

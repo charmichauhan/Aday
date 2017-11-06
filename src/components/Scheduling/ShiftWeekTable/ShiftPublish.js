@@ -655,8 +655,8 @@ class ShiftPublishComponent extends Component {
 
           <div style={{display: 'flex', flexDirection: 'Row'}}>
 
-            <div className="col-md-1 heading-left-right"
-                 style={{display: 'flex', flexDirection: 'Row', justifyContent: 'spaceBetween'}}>
+            <div className="col-md-2 heading-left-right"
+              style={{display: 'flex', flexDirection: 'Row', justifyContent: 'spaceBetween'}}>
               <div className="calendar-next-btn" onClick={() => this.navigateCalender("PREV")}>
                 <img src="/assets/Buttons/calendar-left.png"/>
                 <span style={{
@@ -683,7 +683,8 @@ class ShiftPublishComponent extends Component {
               </div>
             </div>
 
-            <div className="col-md-6">
+            <div className="col-md-6" style={{
+                  marginLeft: '100px'}}>
               <div className="calendar-schedule-title">
                 { is_publish == 'none' ? 'NO SHIFTS FOR GIVEN WEEK' :
                   <ul>
@@ -714,6 +715,7 @@ class ShiftPublishComponent extends Component {
                   </div>
                 }
               </div>
+             
               {/*<div className="calendar-search-tags">
                 <div className="search-tags-input">
                   <Dropdown placeholder='Search By Tags' fluid multiple selection options={tags}
@@ -740,7 +742,7 @@ class ShiftPublishComponent extends Component {
             {/* If this is adhered strictly to the design then the below shouild be col-md-4, and the two adjacent dividers should be col-md-6 */}
             <div className="col-md-4 heading-center-spesh"></div>
             {!this.props.isHoursReceived ?
-              <div className="col-md-6 calendar-info-right">
+              <div className="col-md-4 calendar-info-right">
                 <div style={{display: 'flex', flexDirection: 'Column'}}>
                     <span
                       className="cale-sub-info">HOURS BOOKED: {this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked} of {this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal} ({Number((((this.props.getHoursBooked.weeklyHoursBooked + this.props.getHoursBooked.weeklyTraineesHoursBooked) * 100 / (this.props.getHoursBooked.weeklyHoursTotal + this.props.getHoursBooked.weeklyTraineesTotal))).toFixed(0))}%)</span>
@@ -783,7 +785,7 @@ class ShiftPublishComponent extends Component {
                   }}>EXCEL</span>
                 </div>
 
-
+                { /*
                 <div className="calendar-print-btn">
                   <img src="/assets/Buttons/printer.png"/>
                   <span style={{
@@ -794,7 +796,7 @@ class ShiftPublishComponent extends Component {
                     fontSize: 11,
                     fontWeight: 300
                   }}>PRINT</span>
-                </div>
+                </div> */} 
               </div>
               }
           </div>

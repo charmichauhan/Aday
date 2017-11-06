@@ -446,7 +446,7 @@ class DrawerHelper extends Component {
         ...teamMembers[index],
         ...user,
         content: '',
-        status: 'accepted'
+        status: 'accepted',
       };
       this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
 
@@ -768,9 +768,12 @@ class DrawerHelper extends Component {
                         avatarUrl={tm.avatarUrl}
                         firstName={tm.firstName}
                         lastName={tm.lastName}
+                        seniority={tm.seniority}
+                        ytd={tm.ytd}
                         content={tm.content}
                         isManager={shift.positionId === 'manager'}
                         users={shift.positionId === 'manager' && filteredManagers || users}
+                        position={shift.positionId}
                         color={this.borderColor(tm.status) + 'Border'}
                         key={i}
                         id={i}

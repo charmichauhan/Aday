@@ -6,7 +6,7 @@ import "antd/lib/select/style/css";
 import "antd/lib/dropdown/style/css";
 import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
-import { fetchPrimaryLocation, userQuery, updateEmployeeById } from "../Team.graphql";
+import { fetchPrimaryLocation, updateEmployeeById } from "../Team.graphql";
 import { graphql,compose } from 'react-apollo';
 import CircleButton from '../../helpers/CircleButton';
 import "antd/lib/date-picker/style/css";
@@ -39,19 +39,19 @@ class MemberPersonnelInformationComponent extends Component {
     const employee = this.props.userDetails.employeesByUserId.edges[0].node
     let hireDate = null
     if (employee.hireDate){
-       hireDate = new Date (employee.hireDate)  
-    } 
+       hireDate = new Date (employee.hireDate)
+    }
     let termDate = null
     if (employee.deletionDate){
         termDate = new Date (employee.deletionDate)
-    } 
+    }
     this.state = {
       employee: employee,
       primaryLocation: employee.primaryWorkplace || null,
       wage: employee.wage || 0,
       hire: hireDate,
-      pay: employee.payrollNum || "", 
-      termination: termDate, 
+      pay: employee.payrollNum || "",
+      termination: termDate,
       num: employee.employeeNum || "",
       notify: false,
       notificationType: '',
@@ -116,13 +116,13 @@ class MemberPersonnelInformationComponent extends Component {
     employeeInfo['payrollNum'] = this.state.pay
     employeeInfo['deletionDate'] = this.state.termination
     employeeInfo['employeeNum'] = this.state.num
-    
+
     console.log(employeeInfo)
     this.props.updateEmployee({
       variables: {
-        id: v, 
+        id: v,
         employeeInfo: employeeInfo
-        },  
+        },
         updateQueries: {
           userById: (previousQueryResult, { mutationResult }) => {
                       let employeeData = mutationResult.data.updateEmployeeById.employee
@@ -176,7 +176,7 @@ class MemberPersonnelInformationComponent extends Component {
                   />
                 </div>
                     <p className="info">
-                      Wages are set on the positions worksheet for part-time team members
+                      Use this field to set the override the default wages from the positions page
                     </p>
               </div>
             </div>

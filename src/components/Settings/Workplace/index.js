@@ -45,6 +45,14 @@ const workplaceFields = [
   'isUnion', 'isRatingsPublic', 'isActive', 'address'
 ];
 
+const managerPositionPrototype = {
+  positionName: 'Manager',
+  positionDescription: 'Manager of the workplace',
+  exchangeLevel: 'WORKPLACE_SPECIFIC',
+  partTimeWage: 19.99,
+  minimumAge: 18
+};
+
 const removeEmpty = (obj) => {
   Object.keys(obj).forEach((key) => obj[key] === null || obj[key] === undefined || obj[key] === '' && delete obj[key]);
   return obj;
@@ -109,7 +117,7 @@ class Workplace extends Component {
       notificationType: '',
       notificationMessage: ''
     });
-  }
+  };
 
   getDeleteActions = () => {
     return [
@@ -147,7 +155,7 @@ class Workplace extends Component {
               if (value.id != mutationResult.data.updateWorkplaceById.workplace.id) {
                 newEdges.push(value);
               }
-            })
+            });
             previousQueryResult.allWorkplaces.nodes = newEdges;
             return {
               allWorkplaces: previousQueryResult.allWorkplaces
@@ -171,12 +179,13 @@ class Workplace extends Component {
     this.setState({ open: false });
     const { workplaces } = this.state;
     if (!workplace.id) {
+      const workplace_id = uuidv4();
       // Create
-      workplace.id = uuidv4();
+      workplace.id = workplace_id;
       workplace.corporationId = this.state.corporationId;
       workplace.isUnion = workplace.isRatingsPublic = workplace.isActive = true;
-      workplace.address = workplace.address + " " + workplace.address2 + " " +
-             workplace.city + " " + workplace.state + " " +  workplace.zip
+      workplace.address = workplace.address + ' ' + workplace.address2 + ' ' +
+             workplace.city + ' ' + workplace.state + ' ' +  workplace.zip;
       this.props.client.mutate({
         mutation: workplaceResolvers.createWorkplaceMutation,
         variables: {
@@ -197,6 +206,21 @@ class Workplace extends Component {
         if (!workplace.workplaceImageUrl) workplace.workplaceImageUrl = '/images/workplaces/chao-center.jpg';
         workplaces.push(workplace);
         this.setState({ workplaces });
+
+        // Adding manager position for the workplace
+        const position = {
+          ...managerPositionPrototype,
+          id: uuidv4(),
+          brandId: workplace.brandId,
+          workplaceId: workplace_id
+        };
+        this.props.client.mutate({
+          mutation: workplaceResolvers.createPositionMutation,
+          variables: { position },
+        }).then((res) => {
+          console.log('Manager position created for workplace.');
+        }).catch(err => console.error('Error creating manager position. err: ', err));
+
       }).catch(err => this.showNotification('An error occurred.', NOTIFICATION_LEVELS.ERROR));
     } else {
       // Update
@@ -215,13 +239,13 @@ class Workplace extends Component {
               } else {
                 newEdges.push(mutationResult.data.updateWorkplaceById.workplace);
               }
-            })
+            });
             previousQueryResult.allWorkplaces.edges = newEdges;
             return {
               allWorkplaces: previousQueryResult.allShifts
             };
           },
-        },
+        }
       }).then((res) => {
         this.showNotification('Workplace details updated successfully.', NOTIFICATION_LEVELS.SUCCESS);
         workplace.brand = find(this.props.brands, { 'id': workplace.brandId });
@@ -263,7 +287,7 @@ class Workplace extends Component {
           {workplaces && workplaces.map((workplace) =>
             <Grid key={workplace.id}>
               <GridColumn className="list-left-image-wrapper" width={2}>
-                <img className="list-left-image" src={workplace.workplaceImageUrl} alt={workplace.name} />
+                <img className="list-left-image" src={workplace.workplaceImageUrl + "?" + new Date().getTime()} alt={workplace.name} />
               </GridColumn>
               <GridColumn width={14}>
                 <ListItem

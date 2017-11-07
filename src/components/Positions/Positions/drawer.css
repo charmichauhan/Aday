@@ -8,7 +8,7 @@
 .position-label{
   height: 21px;	width: 555px;
   color: #666666;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 18px;
   line-height: 21px;
 }
@@ -47,4 +47,32 @@
   color: #666666;
   font-size: 18px;
   font-weight: 500;
+}
+
+.positions .drawer-section .upload-wrapper {
+  border: 1px solid #979797;
+  border-radius: 10px;
+  padding: 0 20px 20px 20px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.positions .upload-btn input[type="file"] {
+  display: none;
+}
+
+.positions .drawer-section .upload-btn {
+  margin: 10px auto 0 !important;
+  display: table !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.positions .upload-img {
+  margin: 0 auto;
+}
+
+.positions .upload-desc {
+  margin-top: 10px;
+  color: #4A4A4A;
 }

@@ -33,6 +33,7 @@ const styles = {
 const initialState = {
   open: false,
   openDeleteModal:false
+  // drawerPosition stores data of position to load in drawer
 };
 
 export default class Position extends Component {
@@ -72,18 +73,10 @@ export default class Position extends Component {
   };
   render() {
     var { positions } = this.props;
-    //console.log(positions);
+    // create a sorted version of positions for display
     var positions_copy = JSON.parse(JSON.stringify(positions));
     positions_copy.sort((p1, p2) => p2.traineeHours - p1.traineeHours);
-    // shows wage at first workplace if none is selected
-    function workplaceMatch(opportunity){
-      const workplaceId = localStorage.getItem('workplaceId');
-      if (workplaceId == ""){
-        return true
-      }
-      return opportunity.workplaceId == workplaceId;
-    }
-    console.log(positions_copy);
+    //console.log(positions_copy);
     return (
       <div className="content positions-content">
         <div className="position-add-button">
@@ -91,10 +84,19 @@ export default class Position extends Component {
         </div>
         <Table className="table list-grid">
           <TableBody displayRowCheckbox={false}>
+            // display list of positions
             {positions_copy.map((position) => (
              <TableRow style={styles.noBorder} key={position.id}>
+                // position details
                 <TableRowColumn style={{border:"none",width:"70px",padding:"4px 10px"}}>
-                  <i className="icon-circle-td"><Image src={position.positionIconUrl} size="mini" /></i>
+                  <div style={{marginTop: 12}}
+                       onClick={() => {if(position.positionDescription != "placeholder - waiting for refetch"){
+                                       this.openPositionDrawer("image", position)}
+                                    }}>
+                  {!position.positionIconUrl && <i className="icon-circle-td"/>}
+                  <Image src={position.positionIconUrl+ "?" + new Date().getTime()}
+                         shape="circular" size="tiny" spaced="left" hidden={new Date().getTime() != new Date().getTime()}/>
+                  </div>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
                   <h6 style={{wordWrap:'break-word', whiteSpace: 'normal'}}>{position.positionName}</h6>
@@ -104,7 +106,7 @@ export default class Position extends Component {
                   {position.partTimeWage !== null ?
                    <h6>${position.partTimeWage.toFixed(2)}</h6>
                    : <h6>N/A</h6>}
-                  <span>PART-TIME WAGE</span>
+                  <span>HOURLY WAGE</span>
                 </TableRowColumn>
                 <TableRowColumn style={styles.noBorder}>
                   <h6>{position.traineeHours}</h6><span>TRAINING HOURS</span>
@@ -112,12 +114,14 @@ export default class Position extends Component {
                 <TableRowColumn style={styles.noBorder}>
                   <h6>{position.jobsByPositionId.totalCount}</h6><span>TRAINERS</span>
                 </TableRowColumn>
+                // position action buttons
                 <TableRowColumn style={styles.noBorder} className="grid-actions">
                   <Watch style={styles.iconStyles} onClick={this.handleClick} />
-                  <Edit style={styles.iconStyles} onClick={() => {if(position.positionDescription!="placeholder" && position.opportunitiesByPositionId.nodes.length > 0)
+                  <Edit style={styles.iconStyles} onClick={() => {if(position.positionDescription != "placeholder - waiting for refetch" &&
+                                                                     position.opportunitiesByPositionId.nodes.length > 0)
                                                                     {this.openPositionDrawer("edit", position)}
                                                                  }} />
-                  <Delete style={styles.iconStyles} onClick={() => {if(position.positionDescription!="placeholder")
+                  <Delete style={styles.iconStyles} onClick={() => {if(position.positionDescription != "placeholder - waiting for refetch")
                                                                     {this.handleDeleteClick(position.id)}
                                                                    }} />
                 </TableRowColumn>

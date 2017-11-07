@@ -5,7 +5,9 @@ import { Image } from 'semantic-ui-react';
 import RaisedButton from 'material-ui/RaisedButton';
 import cloneDeep from 'lodash/cloneDeep';
 import Dropzone from 'react-dropzone';
+import SuperAgent from 'superagent';
 
+import { BASE_API } from '../../../constants';
 import { closeButton, colors } from '../../styles';
 import CircleButton from '../../helpers/CircleButton';
 
@@ -38,11 +40,24 @@ class DrawerHelper extends Component {
   };
 
   handleImageUpload = (files) => {
-    // handle image upload code here.
-    console.log('Image upload code goes here');
-    const brand = Object.assign(this.state.brand, { brandIconUrl: files[0] });
-    this.setState({ brand, blob: files[0] });
+    console.log(files);
+    SuperAgent.post(`${BASE_API}/api/uploadImage`)
+    .field('keyword', 'brand')
+    .field('id', this.state.brand.id)
+    .attach("theseNamesMustMatch", files[0])
+    .end((err, res) => {
+      if (err) {
+        console.log(err);
+        alert('Error Uploading File');
+      } else {
+        const brand = Object.assign(this.state.brand, { brandIconUrl : res.text });
+        this.setState({brand: brand});
+        alert('File uploaded!');
+      }
+    })
+    this.setState({ blob: files[0] });
   };
+
 
   handleNewImageUpload = (files) => {
     files[0].preview = window.URL.createObjectURL(files[0]);
@@ -107,7 +122,8 @@ class DrawerHelper extends Component {
           (<div>
             <Image
               className="uploaded-image"
-              src={(this.state.blob && this.state.blob.preview) || DrawerBrand.brandIconUrl}
+              src={(this.state.blob && this.state.blob.preview) ||
+                   (DrawerBrand.brandIconUrl + "?" + new Date().getTime())}
               size="large" />
             <RaisedButton
               backgroundColor={colors.primaryBlue}

@@ -6,6 +6,7 @@ import IconButton from 'material-ui/IconButton';
 import { withApollo } from 'react-apollo';
 import pick from 'lodash/pick';
 
+import { BASE_API } from '../../../constants';
 import Loading from '../../helpers/Loading';
 import AvatarEditor from '../../helpers/AvatarEditor';
 import Notifier, { NOTIFICATION_LEVELS } from '../../helpers/Notifier';
@@ -106,23 +107,24 @@ class Personal extends Component {
 
   handleImageUpload = (files) => {
     console.log(files);
-    //when api feature added to prod: https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImg/
-    SuperAgent.post('https://20170808t142850-dot-forward-chess-157313.appspot.com/api/uploadImage')
-    .field('bucket', 'aday-user')
-    .field('filename', localStorage.getItem('userId'))
+    SuperAgent.post(`${BASE_API}/api/uploadImage`)
+    .field('keyword', 'user')
     .field('id', localStorage.getItem('userId'))
-    .field('table', 'user')
-    .field('column', 'avatar_url')
     .attach("theseNamesMustMatch", files[0])
     .end((err, res) => {
-      if (err) console.log(err);
-      alert('File uploaded!');
+      if (err) {
+        console.log(err);
+        alert('Error Uploading File');
+      } else {
+        alert('File uploaded!');
+      }
+
     })
     this.setState({ blob: files[0] });
   };
 
   handleInputChange = (event) => {
-    function escapeHtml(unsafe) {
+    function escapeMarkings(unsafe) {
       return unsafe
         .replace(/\+/g, '')
         .replace(/-/g, '')
@@ -132,7 +134,7 @@ class Personal extends Component {
     }
 
     const { name, value } = event.target;
-    let phoneNumber = name === personalFields.userPhoneNumber && escapeHtml(value);
+    let phoneNumber = name === personalFields.userPhoneNumber && escapeMarkings(value);
     const isValid = hasError(name, value);
     const userInfo = Object.assign({}, this.state.userInfo, { [name]: phoneNumber || value });
     const errorFields = Object.assign({}, this.state.errorFields, { [name]: isValid });
@@ -254,7 +256,7 @@ class Personal extends Component {
               border={10}
               color={[74, 74, 74, 0.5]}
               onSave={this.handleImageSave}
-              image={userInfo.avatarUrl || this.state.blob} />
+              image={userInfo.avatarUrl + "?" + new Date().getTime() || this.state.blob} />
           </div>}
         </div>
         {/*<div className="payment-option">

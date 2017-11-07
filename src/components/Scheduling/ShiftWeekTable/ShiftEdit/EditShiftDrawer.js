@@ -19,6 +19,8 @@ import TeamMemberCard from './TeamMemberCard';
 import { leftCloseButton } from '../../../styles';
 import CircleButton from '../../../helpers/CircleButton';
 const uuidv4 = require('uuid/v4');
+
+import { BASE_API } from '../../../../constants';
 import './shift-edit.css';
 var rp = require('request-promise');
 var Halogen = require('halogen');
@@ -116,6 +118,7 @@ class DrawerHelper extends Component {
   };
 
   handleShiftHistoryDrawer = () => {
+    console.log("History button clicked");
     this.props.handlerClose();
     this.props.handleHistory();
   };
@@ -221,7 +224,7 @@ class DrawerHelper extends Component {
        var shift = this.props.shift
         /*
         if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
-          var uriRemoved = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
+          var uriRemoved = `${BASE_API}/api/cancellationCall`
 
               var options = {
                   uri: uriRemoved,
@@ -247,7 +250,7 @@ class DrawerHelper extends Component {
         */
         /*
         if ((moment(shift.startTime).diff(moment().format(), 'days')) <= 14 ){
-             var uriAdded = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/userAdded'
+             var uriAdded = `${BASE_API}/api/userAdded`;
               var options = {
                   uri: uriAdded,
                   method: 'POST',
@@ -295,9 +298,10 @@ class DrawerHelper extends Component {
     });
     that.setState({ deleteModalPopped: false });
     this.handleCloseDrawer();
+
     /*
     if ((moment(shift.startTime).diff(moment().format(), 'days')) <=7 ){
-        var uri = 'https://20170808t142850-dot-forward-chess-157313.appspot.com/api/cancellationCall'
+        var uri = `${BASE_API}/api/cancellationCall`
 
         var options = {
             uri: uri,
@@ -334,7 +338,6 @@ class DrawerHelper extends Component {
     };
   };
 
-
   getInitialData = ({ shift: { workersAssigned = [], workersInvited = [], workersRequestedNum = 0 } }) => {
     workersAssigned = workersAssigned.map(worker => {
       if (typeof worker === 'string') return this.getUserById(worker, true);
@@ -352,15 +355,18 @@ class DrawerHelper extends Component {
   };
 
   setTeamMember = (user, index) => {
-    const { teamMembers } = this.state;
+    const { teamMembers } = this.state.shift;
     if (user.id) {
-      teamMembers[index].user = user;
-      teamMembers[index].content = '     ';
-      teamMembers[index].status = 'accepted';
+      teamMembers[index] = {
+        ...teamMembers[index],
+        ...user,
+        content: '',
+        status: 'accepted'
+      }
     } else {
       teamMembers[index] = { ...unassignedTeamMember };
     }
-    this.setState({ teamMembers });
+    this.setState((state) => ({ shift: { ...state.shift, teamMembers } }));
   };
 
   addJobShadower = () => {
@@ -391,7 +397,7 @@ class DrawerHelper extends Component {
   render() {
     console.log(this.props.teamMembers)
     if (this.props.teamMembers.loading) {
-                return (<div><Halogen.SyncLoader color='#00A863'/></div>)
+                return (<div></div>)
     }
 
     const {
@@ -461,7 +467,7 @@ class DrawerHelper extends Component {
             </div>
             <br />
 
-              {teamMembers && teamMembers.map((tm, i) => (
+              {teamMembers && teamMembers.length && teamMembers.map((tm, i) => (
                 <TeamMemberCard
                   avatarUrl={tm.user.avatarUrl}
                   firstName={tm.user.firstName}
@@ -501,7 +507,7 @@ class DrawerHelper extends Component {
                 <p><b>job shadowing shift</b>: <span>No</span></p>
                 <br />
                 <p><b>SHIFT INSTRUCTIONS:</b></p>
-                <p className="dimmedText"> {!shift.instructions.length < 1? <span>{shift.instructions}</span>:<span>n/a</span>}
+                 <p className="dimmedText"> { shift.instructions && !shift.instructions.length < 1 ? <span>{shift.instructions}</span>:<span>n/a</span>}
                 </p>
               </div>
             </div>

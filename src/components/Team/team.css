@@ -20,7 +20,7 @@
 .profile-title {
     height: 35px;
     color: #FFFFFF;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 30px;
     line-height: 35px;
     text-align: center;
@@ -28,15 +28,27 @@
 
 }
 
-.profile-title .resume-title {
+.resume-title {
+  font-family: Source Sans Pro,Helvetica,Arial,sans-serif,Hiragino Kaku Gothic Pro,Meiryo,Hiragino Sans GB W3,Noto Naskh Arabic,Droid Arabic Naskh,Geeza Pro,Simplified Arabic,Noto Sans Thai,Thonburi,Dokchampa,Droid Sans Thai,Droid Sans Fallback,-apple-system,'.SFNSDisplay-Regular',Heiti SC,Microsoft Yahei,Segoe UI;
+  font-weight: 400;
+  line-height: 28px;
+  color: #0021A1;
+  font-size: 21px;
+  align-self: flex-end;
+  padding-top: 7px;
+}
+
+.resume-image {
+  height: 65px;
+  width: auto;
+}
+
+.profile-title {
     height: 35px;
     color: #FFFFFF;
-    font-family: "Roboto Condensed" !important;
+    font-family: 'RobotoCondensed-Regular' !important;
     font-size: 30px;
     line-height: 35px;
-    text-align: center;
-    text-transform: uppercase;
-
 }
 
 .first-name-title {
@@ -96,7 +108,7 @@
   width: 16px;
   height: 16px;
   left: 2px;
-  top: 2px;
+  top: 3px;
 }
 
 .ant-switch-checked:after {
@@ -287,7 +299,7 @@
 
 .team .personal-content .payment-option .payment-service span {
   color: #31363D;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 14px;
   font-weight: bold;
   line-height: 26px;
@@ -423,7 +435,7 @@ img.list-left-image {
   padding: 5px;
   height: 40px;
   color: #4A4A4A;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
 }
 
 .profile-drawer.drawer-section .max-hours-form {
@@ -491,7 +503,7 @@ img.list-left-image {
 .view-profile-btn-text {
     height: 16px;
     width: 72px;
-    font-family: Lato;
+    font-family: 'Lato-Regular';
     font-size: 16px;
     line-height: 16px;
     text-align: center;
@@ -516,7 +528,7 @@ img.list-left-image {
   margin: 0;
   height: 30px;
   color: #4A4A4A;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 20px;
   line-height: 33px;
 }
@@ -536,9 +548,178 @@ img.list-left-image {
 }
 
 /*Resume Drawer*/
+.resume-contact {
+    padding-top: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.resume-icon {
+    width: 32px;
+    height: 32px;
+    margin-right: 15px;
+    margin-left: -5px;
+}
+
+.qualification-title {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.resume-qualification {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/*This is for the entire content section below the header for the resume section*/
+.section-content {
+	padding-left: 10px;
+	padding-right: 10px;
+  padding-top: 10px;
+	display: flex;
+	flex-direction: row;
+}
+
+/*resume image lane are the images to the side of the text content*/
+.resume-image-lane{
+	flex: 2;
+  justify-self: right;
+}
+
+/*this is all of the text immediately right of the image*/
+.resume-content {
+	flex: 10;
+	display: flex;
+	flex-direction: column;
+}
+
+/*This is the first title in the hierarchy, for work experience this will be the user’s positions*/
+.resume-h1 {
+  font-family: Source Sans Pro,Helvetica,Arial,sans-serif,Hiragino Kaku Gothic Pro,Meiryo,Hiragino Sans GB W3,Noto Naskh Arabic,Droid Arabic Naskh,Geeza Pro,Simplified Arabic,Noto Sans Thai,Thonburi,Dokchampa,Droid Sans Thai,Droid Sans Fallback,-apple-system,'.SFNSDisplay-Regular',Heiti SC,Microsoft Yahei,Segoe UI;
+  font-weight: 600;
+  color: rgba(0,0,0,.85);
+  line-height: 24px;
+  font-size: 17px;
+  vertical-align: baseline;
+  margin-bottom: 0px;
+}
+
+/*This is the second title in the section hierarchy, for work experience this will be the user’s prior employer*/
+.resume-h2 {
+  font-family: Source Sans Pro,Helvetica,Arial,sans-serif,Hiragino Kaku Gothic Pro,Meiryo,Hiragino Sans GB W3,Noto Naskh Arabic,Droid Arabic Naskh,Geeza Pro,Simplified Arabic,Noto Sans Thai,Thonburi,Dokchampa,Droid Sans Thai,Droid Sans Fallback,-apple-system,'.SFNSDisplay-Regular',Heiti SC,Microsoft Yahei,Segoe UI;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(0,0,0,.85);
+  font-size: 17px;
+  vertical-align: baseline;
+  margin-bottom: 0px;
+}
+
+/*This is the third title in the section hierarchy, for work experience this will be the user’s employment dates and tenure*/
+.resume-h3 {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 0px;
+}
+
+.resume-time-period {
+  font-family: Source Sans Pro,Helvetica,Arial,sans-serif,Hiragino Kaku Gothic Pro,Meiryo,Hiragino Sans GB W3,Noto Naskh Arabic,Droid Arabic Naskh,Geeza Pro,Simplified Arabic,Noto Sans Thai,Thonburi,Dokchampa,Droid Sans Thai,Droid Sans Fallback,-apple-system,'.SFNSDisplay-Regular',Heiti SC,Microsoft Yahei,Segoe UI;
+  line-height: 20px;
+  color: rgba(0,0,0,.7);
+  font-weight: 400;
+  font-size: 15px;
+  display: inline-block;
+  vertical-align: baseline;
+  margin-bottom: 0;
+}
+
+.resume-time-spacer {
+  margin-bottom: 0;
+  margin-left: 5px;
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.resume-time-length {
+  font-family: Source Sans Pro,Helvetica,Arial,sans-serif,Hiragino Kaku Gothic Pro,Meiryo,Hiragino Sans GB W3,Noto Naskh Arabic,Droid Arabic Naskh,Geeza Pro,Simplified Arabic,Noto Sans Thai,Thonburi,Dokchampa,Droid Sans Thai,Droid Sans Fallback,-apple-system,'.SFNSDisplay-Regular',Heiti SC,Microsoft Yahei,Segoe UI;
+  line-height: 20px;
+  color: rgba(0,0,0,.7);
+  font-weight: 400;
+  font-size: 15px;
+  display: inline-block;
+  vertical-align: baseline;
+  margin-bottom: 0px;
+}
+
+/*This is the fourth title in the section hierarchy, for work experience this will be the user’s city/state of employment*/
+.resume-h4 {
+  font-family: Source Sans Pro,Helvetica,Arial,sans-serif,Hiragino Kaku Gothic Pro,Meiryo,Hiragino Sans GB W3,Noto Naskh Arabic,Droid Arabic Naskh,Geeza Pro,Simplified Arabic,Noto Sans Thai,Thonburi,Dokchampa,Droid Sans Thai,Droid Sans Fallback,-apple-system,'.SFNSDisplay-Regular',Heiti SC,Microsoft Yahei,Segoe UI;
+  line-height: 20px;
+  color: rgba(0,0,0,.7);
+  font-weight: 400;
+  font-size: 15px;
+  vertical-align: baseline;
+  margin-bottom: 0px;
+}
+
+/*This is the fifth title in the section hierarchy, for work experience this will be the user’s description of job responsibilities*/
+.resume-p  {
+  vertical-align: baseline;
+  flex: 10;
+  font-size: 14px;
+  font-family: 'Lato-Regular';
+  font-weight: 300;
+  color: #4A4A4A;
+}
+
+.sub-horizontal-line {
+	min-height: 1px;
+	height: 1px;
+	background-color: rgba(0,0,0,.1);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-right: -25px;
+}
+
+.resume-horizontal-line {
+	min-height: 1px;
+	height: 1px;
+	background-color: rgba(0,0,0,.1);;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: -25px;
+  margin-right: -25px;
+}
+
+.section-item{
+  margin: 10px auto;
+}
+
+.section-item::after {
+  display: flex;
+  content: "";
+  border-bottom: .1rem solid rgb(230,230,230);
+  margin-left: -25px;
+  margin-right: -25px;
+  transform: translateY(-11px);
+}
+
+.section-subitem {
+  margin-bottom: 20px;
+}
+
+.section-subitem::after {
+  display: flex;
+  content: "";
+  border-bottom: .1rem solid rgb(230,230,230);
+  margin-right: -25px;
+  transform: translateY(10px);
+}
 
 .resume-drawer.drawer-section .drawer-content.scroll-div{
-  height: calc(100vh - 440px);
+  height: calc(100vh - 560px);
 }
 
 .resume-drawer .drawer-heading {
@@ -555,7 +736,8 @@ img.list-left-image {
 
 .resume-drawer .resume-subject {
   font-size: 14px;
-  padding: 30px 0;
+  padding-bottom: 10px;
+  padding-top: 250px;
   position: relative;
 }
 
@@ -588,7 +770,7 @@ img.list-left-image {
   margin: 30px 0;
   font-size: 26px;
   font-weight: normal;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   display: inline-block;
   padding: 0 10px;
   color: #0021A1;
@@ -607,8 +789,8 @@ img.list-left-image {
 
 .resume-drawer .address {
   font-size: 20px;
-  font-family: Lato;
-  font-weight: light;
+  font-family: 'Lato-Regular';
+  font-weight: 300;
   color: #4A4A4A;
 }
 
@@ -617,7 +799,7 @@ img.list-left-image {
   font-size: 16px;
 }
 
-.resume-drawer .resume-qualification i.icon {
+.resume-drawer i.icon {
   font-size: 2em;
 }
 
@@ -639,7 +821,7 @@ img.list-left-image {
   width: 16px;
   height: 16px;
   left: 2px;
-  top: 2px;
+  top: 3px;
 }
 .ant-switch-checked:after {
   left: 100%;
@@ -679,7 +861,7 @@ img.list-left-image {
   display: table;
   margin: 0px 50px;
   color: #808080;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 16px;
   font-style: italic;
   font-weight: 100;
@@ -693,14 +875,14 @@ img.list-left-image {
   color: #0022A1;
   display: table-cell;
   vertical-align: middle;
-  font-family: "Roboto Condensed";
+  font-family: 'RobotoCondensed-Regular';
   font-size: 21px;
   font-weight: normal;
 }
 
 .tiny-header {
   color: #4A4A4A;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 12px ;
   text-align: center;
   display: flex;
@@ -711,7 +893,7 @@ img.list-left-image {
 .custom-ant-style-header {
     padding-left: 2px;
     color: #4A4A4A;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 16px;
     font-weight: normal;
 
@@ -725,7 +907,7 @@ img.list-left-image {
 
 .tinier-header {
   color: #999999;
-  font-family: Lato;
+  font-family: 'Lato-Regular';
   font-size: 12px !important;
   text-align: left;
   display: flex;
@@ -820,7 +1002,7 @@ div[style*="border: 1px solid rgb(238, 238, 238)"]:hover {
     height: 19px;
     width: 608px;
     color: #4A4A4A;
-    font-family: Lato-Light;
+    font-family: 'Lato-Regular';
     font-size: 16px;
     font-style: italic;
     font-weight: lighter;
@@ -920,38 +1102,46 @@ div[style*="border: 1px solid rgb(238, 238, 238)"]:hover {
   text-align: right;
 }
 
-.qualification-title {
-  display: table;
-  width: 100%;
-}
 .display-table {
   display: table-cell;
   width: 100%;
 }
+
 .display-table img, .display-table h2, .contact-info-img {
   display: inline-block !important;
   vertical-align: middle !important;
 }
+
 img.quotation-mark {
   position: absolute;
 }
+
 img.quotation-mark.down {
-  top: 30%;
+  top: 83%;
   left: 10%;
 }
+
 img.quotation-mark.up {
-  top: 35%;
+  top: 85%;
   right: 10%;
 }
+
 .resume-subject .tagline {
   padding: 0 10px;
+  font-family: 'VarelaRound-Regular';
+  font-size: 17px !important;
+  font-weight: 100;
+  color: #4A4A4A;
 }
+
 .performance-tagline {
   margin: 10px 0;
 }
+
 .performance-content h3 {
   color: #0022A1;
 }
+
 .view-resume-btn .btn {
   background: transparent;
   color: #4A4A4A;
@@ -960,4 +1150,14 @@ img.quotation-mark.up {
 }
 .performance-tab {
   min-height: 400px;
+}
+
+
+.profile-drawer .ant-tabs .ui.grid .row:before {
+  display: none;
+}
+
+td.headcol .ant-radio-inner:after {
+  left: 1px;
+  top: 1px;
 }

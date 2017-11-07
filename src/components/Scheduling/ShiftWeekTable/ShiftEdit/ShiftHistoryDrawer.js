@@ -1,12 +1,24 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import Drawer from 'material-ui/Drawer';
-import { find, pick } from 'lodash';
-import { Header, Icon, Table, Image, List } from 'semantic-ui-react';
+import Paper from 'material-ui/Paper';
+import moment from 'moment';
+import rp from 'request-promise';
+import { find, pick, orderBy, findIndex } from 'lodash';
+import { Header, Grid, GridColumn, Icon, Dropdown, Image, Checkbox } from 'semantic-ui-react';
 import FlatButton from 'material-ui/FlatButton';
-import { gql, graphql, compose } from 'react-apollo';
+import { gql, graphql } from 'react-apollo';
+import { Icon as Icon2 } from 'antd';
+import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
+import CircleButton from '../../../helpers/CircleButton';
+import Loading from '../../../helpers/Loading';
 var Halogen = require('halogen');
 
-import CircleButton from '../../../helpers/CircleButton';
+const styles = {
+  paperStyle: {
+    borderRadius: 6,
+    zIndex: 99999
+  }
+};
 
 const unassignedTeamMember = {
   user: {
@@ -24,170 +36,197 @@ const User = ({ user }) => (
     <div className="avatar">
       <Image avatar src={user.avatarUrl} />
     </div>
-    <div className="label text-uppercase">
+    <div className="label font18 text-uppercase">
       <b>{user.firstName}</b> {user.lastName}
     </div>
   </div>
 );
 
+const SortableItem = SortableElement(({ history, awardorder, index, historyLen, that }) =>
+  (
+    <Paper style={styles.paperStyle}
+           zDepth={1}
+           key={index}
+           className="content-row shift-history">
+      <Grid>
+        <GridColumn width={2} className="white-space">
+          <text className="innerCircle">{index}</text>
+        </GridColumn>
+        <GridColumn width={4}>
+          <div className="wrapper-element text-left username">
+            <User user={history} />
+          </div>
+        </GridColumn>
+        <GridColumn width={2}>
+          <div className="wrapper-element text-center">
+            <p className="history-text font20">{that.numberFormatter(history.seniority)}</p>
+            <p className="history-text font14 text-uppercase light-gray-text">Seniority</p>
+          </div>
+        </GridColumn>
+        <GridColumn width={2}>
+          <div className="wrapper-element text-center">
+            <p
+              className="history-text font20">{that.numberFormatter(history.ytdOvertimeHours > 0 ? history.ytdOvertimeHours : 0)}</p>
+            <p className="text-uppercase font14 history-text light-gray-text">YTD OT</p>
+          </div>
+        </GridColumn>
+        <GridColumn width={2}>
+          <div className="wrapper-element text-center">
+            <Checkbox checked={history.isChecked} name={history.id} value={history}
+                      onChange={(e, history) => that.toggle(e, history)} />
+            <p className="text-uppercase font14 history-text light-gray-text">INCLUDE</p>
+          </div>
+        </GridColumn>
+        <GridColumn width={1}>
+          <div className="wrapper-element text-center" onClick={() => that.navigateUser(awardorder,"UP", 0)} style={{cursor: "pointer"}}>
+             <Image src="/images/Sidebar/up-arrow.png" className="history-img" size="mini" />
+          </div>
+        </GridColumn>
+        <GridColumn width={2}>
+          <div className="wrapper-element text-center">
+            <p className="history-text font20">{that.numberFormatter(awardorder + 1)}</p>
+            <p className="text-uppercase font14 history-text light-gray-text">AWARD ORDER</p>
+          </div>
+        </GridColumn>
+        <GridColumn width={2} className="down-arrow">
+          <div className="wrapper-element text-center">
+            <div className="wrapper-element text-center" onClick={() => that.navigateUser(awardorder,"DOWN",historyLen - 1)} style={{cursor: "pointer"}}>
+              <Image src="/images/Sidebar/down-arrow.png" className="history-img" size="mini" />
+            </div>
+          </div>
+        </GridColumn>
+        <GridColumn width={1}>
+          <div className="wrapper-element text-right">
+            <Image src="/images/Sidebar/draggable.png" className="history-img" />
+          </div>
+        </GridColumn>
+      </Grid>
+    </Paper>)
+);
+
+const SortableList = SortableContainer(({ historyDetails, that }) => {
+  return (
+    <div>
+      {historyDetails.map((history, index) => <SortableItem index={index} awardorder={index} history={history} historyLen={historyDetails.length}
+                                                            that={that} />)}
+    </div>
+  );
+});
+
 class ShiftHistoryDrawerComponent extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      shiftHistory: [
-        {
-          user: {
-            firstName: 'Eric',
-            otherNames: 'Wise',
-            avatar: 'https://pickaface.net/assets/images/slides/slide2.png'
-          },
-          emailed: true,
-          seniority: '0021',
-          texted: true,
-          called: false,
-          replied: true,
-          accepted: true,
-          showDetails: false,
-          notes: [
-            {
-              title: 'Ashley did not receive this shift because:',
-              points: [
-                'Hourly Limit Exceeded',
-                'Less Siniority'
-              ]
-            }
-          ]
-        },
-        {
-          user: {
-            firstName: 'Steve',
-            otherNames: 'Nice',
-            avatar: 'http://www.shieldnutra.com/wp-content/uploads/2015/02/Shield-Nutra-Steve-e1449597474132-300x300.jpg'
-          },
-          seniority: '0135',
-          emailed: false,
-          texted: true,
-          called: true,
-          replied: false,
-          accepted: false,
-          showDetails: false,
-          notes: [
-            {
-              title: 'Ashley did not receive this shift because:',
-              points: [
-                'Hourly Limit Exceeded',
-                'Less Siniority'
-              ]
-            }
-          ]
-        },
-        {
-          user: {
-            firstName: 'Ashly',
-            otherNames: 'Good',
-            avatar: 'http://images2.fanpop.com/images/photos/4300000/Ashly-ashley-tisdale-4376203-282-229.jpg'
-          },
-          seniority: '0492',
-          emailed: true,
-          texted: true,
-          called: true,
-          replied: true,
-          accepted: -1,
-          showDetails: false,
-          notes: [
-            {
-              title: 'Ashley did not receive this shift because:',
-              points: [
-                'Hourly Limit Exceeded',
-                'Less Siniority'
-              ]
-            }
-          ]
-        },
-        {
-          user: {
-            firstName: 'Lydia',
-            otherNames: 'Watson',
-            avatar: 'https://media.licdn.com/mpr/mpr/shrinknp_200_200/p/7/005/05c/3a5/0c4d159.jpg'
-          },
-          seniority: '0490',
-          emailed: true,
-          texted: true,
-          called: true,
-          replied: true,
-          accepted: true,
-          showDetails: false,
-          notes: [
-            {
-              title: 'Ashley did not receive this shift because:',
-              points: [
-                'Hourly Limit Exceeded',
-                'Less Siniority'
-              ]
-            }
-          ]
-        }
-      ],
+      checked: false,
+      counter: 0,
+      filteredData: [],
+      includedData: []
     }
   }
 
-  getInitialData = ({ allMarkets = [] }) => {
-    const marketsByShiftId = allMarkets.nodes.map((shiftMarket = {}) => {
-      const market = { ...shiftMarket };
-      if (market.workerId) {
-        market.worker = this.getUserById(market.workerId, true);
-      }
-       else {
-        market.worker = unassignedTeamMember;
-      }
-      market.rules = (market.marketRulesByMarketId && market.marketRulesByMarketId.nodes) || [];
-      market.showDetails = false;
-      market.notes = [
-        {
-          title: `${market.worker.firstName} did not receive this shift because:`,
-          points: [
-            'Hourly Limit Exceeded',
-            'Less Siniority'
-          ]
-        }
-      ];
+  componentWillMount() {
+  }
 
-      return market;
-    });
+  componentWillReceiveProps(nextProps) {
+    if (this.state.filteredData.length < 1 || this.props.allEmployees.loading !== nextProps.allEmployees.loading) {
+      console.log(nextProps.allEmployees);
+      const allUsers = nextProps.allEmployees;
+      const usersCropped = this.props.users;
+      var userData = usersCropped.map(function (userId, i) {
+        console.log(userId)
+        let foundWorker = find(allUsers.allEmployees.edges, (user) => user.node.userId === userId);
+        console.log(foundWorker);
+        if (!foundWorker) foundWorker = { node: unassignedTeamMember.user };
+        var newFoundWorker = {
+          ...foundWorker.node.userByUserId,
+          hireDate: foundWorker.node.hireDate,
+          isChecked: true
+        };
+        return pick(newFoundWorker, ['id', 'avatarUrl', 'firstName', 'lastName', 'hireDate', 'ytdOverTimeHours', 'isChecked']);
+      });
 
-    return marketsByShiftId;
-  };
+      allUsers.allEmployees.edges.map
+      let sortedEmployees = orderBy(allUsers.allEmployees.edges,  (user) => user.node.hireDate, ['asc']);
 
-  getUserById = (id) => {
-    const users = this.props.users;
-    let foundWorker = find(users.allUsers.edges, (user) => user.node.id === id);
-    if (!foundWorker) foundWorker = { node: unassignedTeamMember.user };
-    return pick(foundWorker.node, ['id', 'avatarUrl', 'firstName', 'lastName']);
-  };
+      let sortedSeniority = {} 
+
+      sortedEmployees.map((values, index) => {
+        sortedSeniority[values.node.userByUserId.id] = index + 1;
+      });
+
+      let filteredData = userData.map((values, index) => {
+        return { ...values, seniority: sortedSeniority[values.id] };
+      });
+
+      this.setState({ filteredData: filteredData });
+    }
+  }
 
   handleBack = () => {
     this.props.handleHistory();
     this.props.handleBack();
   };
 
-  showDetails = ( historyDetails, i) => {
-    historyDetails[i].showDetails = !historyDetails[i].showDetails;
-    this.setState({ historyDetails });
+  navigateUser = (index, navi, len) => {
+    if(navi === "UP" && index > 0)
+      this.onSortEnd({oldIndex : index, newIndex : index - 1});
+    else if(index < len)
+      this.onSortEnd({oldIndex : index, newIndex : index + 1});
+  };
+
+  onSortEnd = ({ oldIndex, newIndex }) => {
+    this.setState({
+      filteredData: arrayMove(this.state.filteredData, oldIndex, newIndex)
+    });
+    this.filterDataCallBack
+  };
+
+  toggle = (e, history) => {
+    const { filteredData } = this.state;
+    let foundIndex = findIndex(filteredData, { id: history.value.id });
+    filteredData[foundIndex].isChecked = !filteredData[foundIndex].isChecked;
+    this.setState({ filteredData }, this.filterDataCallBack);
+  };
+
+  filterDataCallBack = () => {
+    let array = [];
+    this.state.filteredData.map(obj => {
+      if (obj.isChecked) {
+        array.push(obj.id)
+      }
+    });
+    this.props.phoneTree(array);
+  };
+
+  numberFormatter = (num) => {
+    var str = '' + num;
+    var pad = '0000';
+    return pad.substring(0, pad.length - str.length) + str;
   };
 
   render() {
+    if (this.props.allEmployees.loading) {
+      console.log(this.props.allEmployees);
+      return (<div><Halogen.SyncLoader color='#00A863' /></div>)
+    }
+
+    console.log(this.props.allEmployees);
+
     const {
-      width = 600,
+      width = 750,
       open,
       openSecondary = true,
       docked = false
     } = this.props;
-    console.log(this.props)
-    if (this.props.data.loading) {
-      return (<div><Halogen.SyncLoader color='#00A863'/></div>)
-    }
 
-    let historyDetails = this.getInitialData(this.props.data)
+    const actionTypes = [];
+
+
+    const actions = actionTypes.map((action, index) =>
+      (<CircleButton key={index} type={action.type} title={action.title} handleClick={action.handleClick}
+                     image={action.image} imageSize={action.imageSize} />)
+    );
 
     return (
       <Drawer docked={docked} width={width} openSecondary={openSecondary} onRequestChange={this.handleCloseDrawer}
@@ -198,125 +237,148 @@ class ShiftHistoryDrawerComponent extends Component {
             <FlatButton label="Back" onClick={this.handleBack}
                         icon={<Icon name="chevron left" className="floatLeft" /> } />
             <Header as='h2' textAlign='center'>
-              Shift History
+              Phone Tree
             </Header>
 
           </div>
           <div className="drawer-content history-drawer-content">
-            <Table structured className="history-table">
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell></Table.HeaderCell>
-                  <Table.HeaderCell width={16}></Table.HeaderCell>
-                  <Table.HeaderCell width={6}>Seniority</Table.HeaderCell>
-                  <Table.HeaderCell width={6}>Accepted</Table.HeaderCell>
-                  <Table.HeaderCell width={4}>
-                    <Icon color='gray' name='mail' size='large' />
-                  </Table.HeaderCell>
-                  <Table.HeaderCell width={4}>
-                    <Icon color='gray' name='comment' size='large' />
-                  </Table.HeaderCell>
-                  <Table.HeaderCell width={4}>
-                    <Icon color='gray' name='call' size='large' />
-                  </Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-              {historyDetails && historyDetails.map((history, i) => (
-                <Table.Body key={i}>
-                  <Table.Row onClick={() => this.showDetails( historyDetails, i)}>
-                    <Table.Cell>
-                      <Icon name={history.showDetails ? 'chevron down' : 'chevron up'} />
-                    </Table.Cell>
-                    <Table.Cell width={16} textAlign="left">
-                      <User user={history.worker} />
-                    </Table.Cell>
-                    <Table.Cell width={6}>{history.seniority}</Table.Cell>
-                    <Table.Cell textAlign='center' width={6}>
-                      <Icon
-                        color={history.workerResponse === 'NONE' ? 'black' : history.workerResponse === 'YES' ? 'green' : 'red'}
-                        name={history.workerResponse === 'NONE' ? 'help' : history.workerResponse === 'YES' ? 'checkmark' : 'remove'}
-                        size='large' />
-                    </Table.Cell>
-                    <Table.Cell width={4}>
-                      <Icon
-                        color={history.isEmailed ? 'green' : 'red'}
-                        name={history.isEmailed ? 'checkmark' : 'remove'}
-                        size='large' />
-                    </Table.Cell>
-                    <Table.Cell textAlign='center' width={4}>
-                      <Icon
-                        color={history.isTexted ? 'green' : 'red'}
-                        name={history.isTexted ? 'checkmark' : 'remove'}
-                        size='large' />
-                    </Table.Cell>
-                    <Table.Cell textAlign='center' width={4}>
-                      <Icon
-                        color={history.isCalled ? 'green' : 'red'}
-                        name={history.isCalled ? 'checkmark' : 'remove'}
-                        size='large' />
-                    </Table.Cell>
-                  </Table.Row>
-                  <Table.Row className={(history.showDetails && 'show-details') || 'hide-details'}>
-                    <Table.Cell className="shiftDetailRow" colSpan={8}>
-                      {history.notes.map((note, k) => (
-                        <div key={k}>
-                          <p>{note.title}</p>
-                          <List bulleted>
-                            {note.points.map((p, j) => (
-                              <List.Item key={j}>{p}</List.Item>
-                            ))}
-                          </List>
-                        </div>
-                      ))}
-                    </Table.Cell>
-                  </Table.Row>
-                </Table.Body>)
-              )}
-            </Table>
+            <SortableList historyDetails={this.state.filteredData} that={this} onSortEnd={this.onSortEnd}
+                          pressDelay={200} />
           </div>
         </div>
         <div className="drawer-footer">
           <div className="buttons text-center">
-            <CircleButton type="white" title="GO BACK" handleClick={this.handleBack} />
+            {actions}
           </div>
         </div>
       </Drawer>
     );
-  };
+  }
+
 }
 
-
-const allMarkets = gql`
-query allMarkets($shiftId: Uuid!) {
-    allMarkets(condition: {shiftId: $shiftId }) {
-            nodes {
-              id
-              workerId
-              shiftId
-              shiftExpirationDate
-              isTexted
-              isCalled
-              isBooked
-              isEmailed
-              isPhoneAnswered
-              workerResponse
-              marketRulesByMarketId {
-                nodes {
-                  ruleByRuleId {
-                    ruleName
-                  }
-                }
-              }
-            }
+const allEmployees = gql`
+  query allEmployees($corp: Uuid!) {
+    allEmployees(condition:{corporationId: $corp}){
+      edges {
+        node {
+          hireDate
+          ytdOvertimeHours
+          userId
+          userByUserId {
+            id
+            firstName
+            lastName
+            avatarUrl
           }
+        }
+      }
+    }
   }`;
 
-const ShiftHistoryDrawer = graphql(allMarkets, {
-    options: (ownProps) => ({
-      variables: {
-        shiftId: ownProps.shift && ownProps.shift.id 
-      }
-    }),
-  })(ShiftHistoryDrawerComponent);
+/*
+ <GridColumn width={2}>
+ <Dropdown
+ name="more-options"
+ icon='fa-ellipsis-v'
+ className="dropdown-team">
+ <Dropdown.Menu>
+ <Dropdown.Item>
+ <Dropdown pointing="left" text="CONTACT HISTORY">
+ <Dropdown.Menu>
+ <Dropdown.Item>
+ <div className="called sub-menu">
+ <span className="phn-icon">
+ <i className="fa fa-phone"></i>
+ </span>
+ <span className="tick">
+ <Icon2 type="check"/>
+ </span>
+ <span className="text text-uppercase">
+ Called 12:49 am
+ </span>
+ </div>
+ </Dropdown.Item>
+ <Dropdown.Item>
+ <div className="called sub-menu">
+ <span className="msg-icon">
+ <Icon2 type="message"/>
+ </span>
+ <span className="tick">
+ <Icon2 type="close"/>
+ </span>
+ <span className="text text-uppercase">
+ Text Disabled
+ </span>
+ </div>
+ </Dropdown.Item>
+ <Dropdown.Item>
+ <div className="called sub-menu">
+ <span className="phn-icon">
+ <Icon2 type="mobile"/>
+ </span>
+ <span className="tick">
+ <Icon2 type="check"/>
+ </span>
+ <span className="text text-uppercase">
+ Seen 12:49 am
+ </span>
+ </div>
+ </Dropdown.Item>
+ </Dropdown.Menu>
+ </Dropdown>
+ </Dropdown.Item>
+ <Dropdown.Item>
+ <Dropdown pointing="left" text="JUSTIFICATION">
+ <Dropdown.Menu>
+ <Dropdown.Item>Called</Dropdown.Item>
+ <Dropdown.Item>Texted</Dropdown.Item>
+ <Dropdown.Item>Seen</Dropdown.Item>
+ </Dropdown.Menu>
+ </Dropdown>
+ </Dropdown.Item>
+ </Dropdown.Menu>
+ </Dropdown>
+ <div className="wrapper-element text-center">
+ <p className="history-text font20">{history.seniority || '0001'}</p>
+ <p className="history-text font14 text-uppercase light-gray-text">Seniority</p>
+ </div>
+ </GridColumn>
+ <GridColumn width={2}>
+ <div className="wrapper-element text-center">
+ <p className="history-text font20">{history.ytdot || '0424'}</p>
+ <p className="text-uppercase font14 history-text light-gray-text">YTD OT</p>
+ </div>
+ </GridColumn>
+ <GridColumn width={1}>
+ <div className="wrapper-element">
+ <Image src="/images/Sidebar/tick.png" className="history-img"/>
+ <span className="text-uppercase">Accepted</span>
+ </div>
+ </GridColumn>
+ <GridColumn width={1}>
+ <div className="wrapper-element">
+ <Icon2 type="up-circle-o"/>
+ </div>
+ </GridColumn>
+ <GridColumn width={3}>
+ <div className="wrapper-element text-center">
+ <p className="text-uppercase font20 history-text blue-text">0001</p>
+ <p className="text-uppercase font14">Award Order</p>
+ </div>
+ </GridColumn>
+ <div className="wrapper-element">
+ <Icon2 type="down-circle-o"/>
+ </div>
+ */
 
-export default ShiftHistoryDrawer
+const ShiftHistoryDrawer = graphql(allEmployees, {
+  options: (ownProps) => ({
+    variables: {
+      corp: localStorage.getItem('corporationId'),
+    },
+  }),
+  name: 'allEmployees'
+})
+(ShiftHistoryDrawerComponent);
+export default ShiftHistoryDrawer;

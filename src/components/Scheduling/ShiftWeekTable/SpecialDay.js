@@ -12,12 +12,18 @@ import {
 } from 'material-ui/Table';
 var Halogen = require('halogen');
 
-const styles={
+const styles = {
     paddingLeft:'0',
     paddingRight:'0',
     height:'auto,' ,
-    cursor: 'pointer'
+    cursor: 'pointer',
+
+  tableFooterBorder: {
+    borderBottom: '1px solid #ddd',
+    height:'auto,'
+  }
 };
+
 const initialState = {
   addHoliday:false,
   holidayDate:"",
@@ -99,8 +105,14 @@ class SpecialDayComponent extends Component{
   getSpecialDay = (start,specialDayData) => {
     let specialDay = [];
     for(let i=0;i<=6;i++){
-      let specialDayStyle = specialDayData[moment(start).day(i).format('YYYYMMDD')] ? "spclDay":"special-day-blank";
-      specialDay.push(<TableRowColumn style={styles}><p className={specialDayStyle} onClick={() => this.handleOpen(moment(start).day(i),specialDayData[moment(start).day(i).format('YYYYMMDD')])}>{specialDayData[moment(start).day(i).format('YYYYMMDD')] && specialDayData[moment(start).day(i).format('YYYYMMDD')][0]['holidayName']}</p></TableRowColumn>);
+      // let specialDayStyle = specialDayData[moment(start).day(i).format('YYYYMMDD')] ? "spclDay":"special-day-blank";
+      specialDay.push(
+        <TableRowColumn>
+        <div className="calendar-table-head">
+          <span style={{cursor: 'pointer'}} onClick={() => this.handleOpen(moment(start).day(i),specialDayData[moment(start).day(i).format('YYYYMMDD')])}><i>+</i> {specialDayData[moment(start).day(i).format('YYYYMMDD')] ? specialDayData[moment(start).day(i).format('YYYYMMDD')][0]['holidayName'] : 'Holiday'}</span>
+          <span><i>+</i> ADD SHIFT</span>
+        </div>
+      </TableRowColumn>);
     }
     return specialDay;
   };
@@ -143,19 +155,18 @@ class SpecialDayComponent extends Component{
 
         let groupedData = groupBy(sortedData, 'specialDayData');
         return(
-            <TableRow className="spday" displayBorder={false} style={{height:'auto'}}>
-                <TableRowColumn style={styles} className="headcol">
+            <TableRow className="spday" displayBorder={false} style={styles.tableFooterBorder}>
+                <TableRowColumn>
                   {this.state.addHoliday && <AddHolidayModal isOpen={this.state.addHoliday}
                   addHoliday={this.handleAddHoliday}
                   holidayData={this.state.currentData}
                   handleClose={this.handleModalClose}/>
                   }
                 </TableRowColumn>
-                {
-                  this.getSpecialDay(start,groupedData)
-                }
-            </TableRow>
-        )
+              {
+                this.getSpecialDay(start,groupedData)
+              }
+            </TableRow>)
     }
 }
 

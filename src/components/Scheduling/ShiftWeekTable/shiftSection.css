@@ -1,0 +1,687 @@
+/* Drawers */
+*::placeholder {
+  color: #999999;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-family: 'Roboto-Regular';
+}
+
+.shift-section .drawer-heading {
+  margin: 0 0 10px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f5f5f5;
+  background-color: #2200a1;
+}
+
+.shift-section .drawer-heading button.pull-left {
+  box-shadow: 1px 2px 3px #000;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+}
+
+.shift-section .drawer-heading button.advance-options {
+  background: transparent;
+  border: 2px solid #e33821;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.shift-section .drawer-heading h2 {
+  display: inline-block;
+  margin: 10px 0;
+  color: #FFFFFF;
+}
+
+.shift-section .drawer-section label {
+  color: #666666;
+  font-size: 18px;
+  font-weight: 500;
+  display: block;
+}
+
+.shift-section .drawer-section label.blue-heading {
+  color: #2200a1;
+}
+
+.shift-section .drawer-section .time-wrapper,
+.shift-section .drawer-section .date-wrapper {
+  display: inline-block;
+  width: 50%;
+}
+
+.shift-section .drawer-section .time-wrapper .time-picker {
+  width: auto;
+}
+
+.shift-section .drawer-section .time-wrapper .time-picker .info {
+  display: none;
+}
+
+.shift-section .time-selector-display {
+  width: 95%;
+  position: absolute;
+  z-index: 9;
+  box-shadow: rgba(0, 0, 0, 0.16) 0 3px 10px, rgba(0, 0, 0, 0.23) 0 3px 10px;
+}
+
+.shift-section .time-actions-wrapper {
+  background: #ffffff;
+  padding: 0 10px;
+}
+
+.shift-section .time-wrapper .time-picker-container .columns li:hover:not(.id):not(.disabled) {
+  background-color: rgba(0, 34, 161, 0.75);
+}
+
+.shift-section .time-wrapper .time-picker-container .columns li.active {
+  background-color: rgba(0, 34, 161, 0.9);
+}
+
+.shift-section .time-selector-wrapper .label-wrapper,
+.shift-section .date-selector-wrapper .label-wrapper {
+  border: 1px solid #CCCCCC;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  height: 38px;
+  display: flex;
+  flex-direction: row;
+}
+
+.shift-section .time-selector-wrapper .label-wrapper {
+  margin-bottom: 2px;
+}
+
+.shift-section .time-selector-wrapper .label-wrapper p,
+.shift-section .date-selector-wrapper .label-wrapper p {
+  display: inline-block;
+  margin-bottom: 0;
+  width: 50%;
+}
+
+.shift-section .time-selector-wrapper .label-wrapper p input {
+  border: 0 none;
+  padding: 0;
+  width: 100%;
+}
+
+.shift-section .end-date .choose-btn, .shift-section .end-date .never-btn {
+  padding: 0;
+}
+
+.shift-section .time-selector-wrapper .date-wrapper .start-date {
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
+  padding: 8px 20px 8px 5px;
+  margin-right: 20px;
+  position: relative;
+}
+
+.shift-section .time-selector-wrapper .date-wrapper .start-date:hover {
+  border-color: #49a9ee !important;
+}
+
+.shift-section .time-selector-wrapper .date-wrapper .start-date .clock-font {
+  right: 5px;
+  position: absolute;
+  top: 8px;
+}
+
+.shift-section .time-selector-wrapper .date-wrapper .or-text {
+  padding: 0 35px;
+}
+
+.shift-section .time-selector-wrapper .label-wrapper p:first-child,
+.shift-section .date-selector-wrapper .label-wrapper p:first-child {
+  float: left;
+}
+
+.shift-section .date-selector-wrapper .label-wrapper p:last-child {
+  float: right;
+}
+
+.shift-section .time-selector-wrapper .label-wrapper p:last-child {
+  position: absolute;
+  right: 25px;
+  width: auto;
+}
+
+.shift-section .date-selector-wrapper .label-wrapper p:nth-child(2) {
+  width: 50%;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.shift-section .date-selector-display {
+  background: #ffffff;
+  position: absolute;
+  z-index: 9;
+  box-shadow: 0 3px 10px 0 rgb(128, 128, 128);
+}
+
+.shift-section .date-selector-display.end-date-selector {
+  margin-right: 15px;
+  margin-top: 5px;
+  width: 47.5%;
+  padding: 0 15px;
+}
+
+.shift-section .date-selector-display.end-date-selector .or-btn {
+  position: relative;
+  color: #e33821;
+  margin-bottom: 2px;
+}
+
+.shift-section .date-selector-display.end-date-selector .or-btn:before,
+.shift-section .date-selector-display.end-date-selector .or-btn:after {
+  position: absolute;
+  content: '';
+  height: 1px;
+  width: 40%;
+  background: #cecece;
+  top: 10px;
+}
+
+.shift-section .date-selector-display.end-date-selector .or-btn:before {
+  left: 0;
+}
+
+.shift-section .date-selector-display.end-date-selector .or-btn:after {
+  right: 0;
+}
+
+.shift-section .date-selector-display.end-date-selector .never-icon {
+  font-size: 22px;
+}
+
+.shift-section .time-selector-wrapper .columns .id {
+  display: none;
+}
+
+.shift-section .time-selector-wrapper .time-picker-container .columns li {
+  text-align: left;
+}
+
+.edit-drawer-section .edit-drawer-content .two.wide.column {
+  display: table !important;
+}
+
+.edit-drawer-section .edit-drawer-content img.ui {
+  margin: 0 auto;
+}
+
+.edit-drawer-section .ui .column .dropdown.disabled {
+  background: rgb(229, 229, 229);
+}
+
+.edit-drawer-section .ui .column .dropdown.disabled .default.text {
+  color: rgba(0,0,0,1);
+}
+
+/* Spacing between day selector buttons */
+.edit-drawer-section .edit-drawer-content .shift-modal-day-cell .shift-modal-day-cell-button {
+  margin: 0 5px;
+}
+
+.edit-drawer-section .edit-drawer-content .day-selector {
+  padding-bottom: 5px;
+}
+
+.edit-drawer-section .edit-drawer-content .ui.input.extra-min {
+  display: inline-block;
+  width: 60px;
+  height: 50px;
+  margin-top: 5px;
+  margin-left: 10px !important;
+  vertical-align: top;
+}
+
+.edit-drawer-section .edit-drawer-content .ui.input.extra-min input {
+  text-align: center;
+  font-size: 15px !important;
+  font-family: 'Lato-Regular';
+  margin-left: 5px;
+  margin-top: -3px;
+  width: 60px !important;
+}
+
+/*.edit-drawer-section .edit-drawer-content .ui.input.extra-min input {
+    margin: 0;
+    max-width: 100%;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 0 auto;
+    flex: 1 0 auto;
+    outline: 0;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    text-align: left;
+    line-height: 1.21428571em;
+    font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+    padding: .67857143em 1em;
+    background: #fff;
+    border: 1px solid rgba(34,36,38,.15);
+    color: rgba(0,0,0,.87);
+    border-radius: .28571429rem;
+    transition: box-shadow .1s ease,border-color .1s ease;
+    box-shadow: none;
+}*/
+
+.edit-drawer-section .edit-drawer-content .alert-danger {
+  background: rgba(255, 118, 118, 0.4);
+  color: #e33238;
+  border-bottom: 2px solid #ff7676 !important;
+  padding: 10px;
+  border: 0 none;
+}
+
+.edit-drawer-content .tag-dropdown .ui.label {
+  background: #e33821;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.edit-drawer-content .tag-dropdown .ui.label > .close.icon,
+.edit-drawer-content .tag-dropdown .ui.label > .delete.icon {
+  opacity: 1;
+}
+
+.edit-drawer-content .tag-dropdown .ui.multiple.search.dropdown > input {
+  text-transform: uppercase;
+}
+
+.instance-following {
+  display: inline-table;
+  margin-bottom: 5px;
+}
+
+.instance-following button {
+  display: table-cell;
+  padding: 5px 8px;
+}
+
+.confirm-popup-body .instance-following p {
+  display: table-cell;
+  font-size: 16px;
+  padding-left: 8px;
+}
+
+/* New Design */
+.calendar-top-heading {
+  float: left;
+  width: 100%;
+  padding: 15px 0;
+}
+
+.calendar-schedule-title li span {
+  color: rgb(0, 34, 161);
+  font-family: "Roboto Condensed";
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: bolder;
+  text-transform: uppercase;
+}
+
+.calendar-schedule-title li {
+  display: inline-block;
+  position: relative;
+  margin-right: 17px;
+  vertical-align: middle;
+}
+
+.calendar-schedule-title li:after {
+  content: '';
+  width: 1px;
+  height: 100%;
+  position: absolute;
+  right: -10px;
+  background: #0022A1;
+}
+
+.calendar-schedule-title li img {
+  width: 22px;
+  margin-right: 8px;
+}
+
+.calendar-schedule-title li:last-child {
+  margin-right: 0;
+}
+
+.calendar-schedule-title li:last-child:after {
+  display: none;
+}
+
+.btn-action-calendar .div-ui-action .raise-btn {
+  display: inline-block;
+  width: 180px;
+  margin-right: 15px;
+}
+
+.btn-action-calendar .div-ui-action .raise-btn > div {
+  width: 100%;
+}
+
+.btn-action-calendar .div-ui-action .ui.basic.button.action-btn {
+  border: 1px solid #0022A1;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  color: #0022A1 !important;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 10px;
+  margin-right: 0;
+}
+
+.btn-action-calendar .div-ui-action .ui.basic.button.action-btn:hover {
+  background: #0022A1 !important;
+  color: #fff !important;
+}
+
+.calendar-search-tags .search-tags-input input {
+  border: 1px solid #D9D9D9;
+  width: 100%;
+  background-color: #FFFFFF;
+  padding: 10px;
+  color: #999999;
+  font-size: 14px;
+  text-transform: inherit;
+  border-radius: 4px;
+}
+
+.calendar-search-tags .search-filters li {
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.calendar-search-tags .search-filters li span {
+  color: #999999;
+  font-size: 12px;
+  font-family: Lato;
+}
+
+.calendar-search-tags .search-filters li a {
+  color: #0000EE;
+  font-size: 12px;
+  font-family: Lato;
+  text-transform: uppercase;
+}
+
+.calendar-search-tags .search-filters li a:hover {
+  text-decoration: underline;
+}
+
+.calendar-search-tags .search-filters li:last-child {
+  margin-right: 0;
+}
+
+.calendar-search-tags .search-filters {
+  margin-top: 10px;
+}
+
+.spend-book-total h5 {
+  font-size: 16px;
+  color: #000000;
+  text-transform: uppercase;
+  font-family: "Roboto Condensed";
+}
+
+.spend-book-total .calendar-book-hours span {
+  font-size: 14px;
+  font-weight: 300;
+  color: #4A4A4A;
+  font-family: "Roboto Condensed";
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.calendar-excel-print .calendar-excel-btn {
+  display: inline-block;
+}
+
+.calendar-emp-job-btn {
+  display: inline-block;
+  border: 1px solid #4A4A4A;
+  border-radius: 5px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+.calendar-emp-job-btn .cal-emp-btn {
+  border: 0 none;
+  color: #4A4A4A;
+  font-family: "Roboto Condensed";
+  font-size: 16px;
+  line-height: 16px;
+  text-align: center;
+  padding: 5px 10px;
+  background: transparent;
+  text-transform: uppercase;
+  width: 108px;
+}
+
+.calendar-emp-job-btn .cal-emp-btn.active {
+  color:#fff;
+  background-color: #000000;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12);
+}
+
+.calendar-info-right span.cale-sub-info {
+  color: rgb(0, 0, 0);
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  line-height: 1;
+}
+
+.calendar-info-right span.cale-info {
+  color: rgb(74, 74, 74);
+  font-family: Lato;
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.rbc-calendar .table-responsive table td.dayname .weekDate {
+  font-size: 22px;
+  font-family: "Roboto Condensed";
+  letter-spacing: 3px;
+  line-height: 28px;
+  height: auto;
+  font-weight: 300;
+  color: #4A4A4A;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.rbc-calendar .table-responsive table td.dayname .weekDate strong {
+  color: #0022A1;
+  font-weight: bold;
+}
+
+.calendar-print-btn, .calendar-next-btn {
+  display: inline-table;
+  flex-direction: column;
+  cursor: pointer;
+  margin: 4px 4px 0;
+}
+
+.calendar-print-btn img, .calendar-next-btn img {
+  display: inline-block;
+  margin: 0 auto 0px;
+  vertical-align: middle;
+}
+
+.calendar-print-btn span, .calendar-next-btn span {
+  display: inline-block;
+  width: 42px;
+  margin: 0 auto;
+  vertical-align: middle;
+  color: #999999;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.2;
+  font-family: "Roboto Condensed";
+}
+
+.weekname {
+  text-align: center;
+}
+
+.weekname h4 {
+  color: #0022A1;
+  font-family: "Roboto Condensed";
+  font-size: 30px;
+  line-height: 30px;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+
+.weekname span {
+  color: #999999;
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.cal-next-pre {
+  text-align: center;
+}
+
+.weekly-budget-booked .weekly-budget {
+  width: 50%;
+  display: inline-table;
+  text-align: center;
+}
+
+.weekly-budget-booked .weekly-budget .weekly-budget-title h5 {
+  color: #4A4A4A;
+  font-family: "Roboto Condensed";
+  font-size: 36px;
+  line-height: 36px;
+  margin-bottom: 9px;
+  font-weight: normal;
+}
+
+.weekly-budget-booked .weekly-budget .weekly-budget-title span {
+  color: #999999;
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  line-height: 18px;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+.weekly-budget-booked .weekly-budget .weekly-budget-trainee {
+  margin-top: 8px;
+}
+.weekly-budget-booked .weekly-budget .weekly-budget-trainee span {
+  color: #4A4A4A;
+  font-family: "Roboto Condensed";
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 23px;
+  text-transform: uppercase;
+  display: block;
+}
+
+.btn-action-calendar .div-ui-action .raise-btn { width: 47%; margin-right: 12px;}
+.adayblue-button { width: 47% !important; padding: .78571429em 0.5em .78571429em !important; font-size: 14px !important;}
+
+  /* Table */
+table td {
+  border-right: 1px solid rgb(221, 221, 221);
+}
+
+.spday td {
+  border-bottom: 1px solid rgb(221, 221, 221);
+}
+
+table .user_profile {
+  padding-top: 10px;
+}
+
+table td:first-child {
+  width: 240px;
+}
+
+.emp_view_table thead tr td {
+  border-top: 1px solid rgb(221, 221, 221) !important;
+}
+
+.table-responsive table td .user_profile .user_img { width: 60px;}
+.table-responsive .atable .penalheading { width: 140px;}
+
+.long-start { text-align: center;}
+.long-start span { color: #000000; font-family: Lato; font-size: 14px; letter-spacing: 1px; line-height: 17px;}
+.long-start p { color: #999999; font-family: Lato; font-size: 14px; letter-spacing: 1px; line-height: 17px; padding-bottom: 10px;}
+
+.calendar-table-head span { display: block; text-align: center; color: #999999;	font-family: Lato; font-size: 14px; letter-spacing: 1px; line-height: 20px; text-transform: uppercase;}
+.calendar-table-head span i { font-style: normal;}
+
+/* Delete Shift Popup */
+.delete-shift-popup {
+  text-align: center;
+}
+
+.delete-shift-popup .delete-popup {
+  width: 260px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0px 3px 6px #333333;
+  text-align: center;
+  margin: 0 10px 20px;
+  padding: 45px 0px 20px;
+  display: inline-block;
+}
+
+.delete-shift-popup .delete-popup h5 {
+  color: #0022A1;
+  font-family: "Roboto Condensed";
+  font-size: 20px;
+  line-height: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: normal;
+  text-transform: uppercase;
+  margin-top: 15px;
+}
+
+.delete-shift-popup .delete-popup p {
+  color: #4A4A4A;
+  font-family: Lato;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 0 20px;
+}
+
+
+@media screen and (max-width: 1800px) and (min-width: 1600px) {
+  .heading-left-right { width: 125px; padding: 0 15px 0 0;}
+  .heading-center-spesh { width: 18%;}
+  .calendar-schedule-title li span { font-size: 20px;}
+
+}
+
+@media screen and (max-width: 1799px) and (min-width: 1300px) {
+  .heading-left-right { width: 125px; padding: 0 15px 0 0;}
+  .heading-center-spesh { width: 5%;}
+  .calendar-schedule-title li span { font-size: 15px;}
+  .btn-action-calendar .div-ui-action .raise-btn { width: 47%; margin-right: 12px;}
+  .adayblue-button { width: 47% !important; padding: .78571429em 0.5em .78571429em !important; font-size: 14px !important;}
+  .calendar-info-right span.cale-sub-info { font-size: 18px;}
+  .weekly-budget-booked .weekly-budget .weekly-budget-title h5 { font-size: 28px;}
+  .weekly-budget-booked .weekly-budget .weekly-budget-title span { font-size: 13px;}
+  .weekly-budget-booked .weekly-budget .weekly-budget-trainee span { font-size: 11px; line-height: 12px;}
+  .weekname h4 { font-size: 22px;}
+  .weekname span { font-size: 14px;}
+  .calendar-info-left { width: 295px; padding-right: 0;}
+  .calendar-print-btn span, .calendar-next-btn span { width: 36px;}
+}
+
+@media screen and (max-width: 1299px) and (min-width: 1200px) {
+  .heading-left-right { width: 125px; padding: 0 15px 0 0;}
+  .heading-center-spesh { width: 3%;}
+  .calendar-schedule-title li span { font-size: 13px;}
+  .btn-action-calendar .div-ui-action .raise-btn { width: 138px; margin-right: 12px;}
+  .adayblue-button { width: 138px !important; padding: .78571429em 0.2em .78571429em !important; font-size: 12px !important;margin-right: 0 !important;}
+  .calendar-info-right span.cale-sub-info { font-size: 14px;}
+  .btn-action-calendar .div-ui-action .raise-btn span { font-size: 12px !important;}
+}

@@ -13,11 +13,12 @@ export default class WorkplacePhotos extends Component {
           slidesToShow: 3,
           speed: 500,
           adaptiveHeight: true,
+          adaptiveWidth: true,
           autoplay: true,
           pauseOnHover: true,
         };
       return (
-        <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
           <Slider {...settings}>
             <div><Image src="https://s3.us-east-2.amazonaws.com/aday-website/workplace-pictures/chao-center900x900.png"    size="massive" /></div>
             <div><Image src="https://s3.us-east-2.amazonaws.com/aday-website/workplace-pictures/spanger-dining1593x1593.jpg"  size="massive" /></div>

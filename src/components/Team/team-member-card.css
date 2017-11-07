@@ -1,13 +1,13 @@
 ._first-name {
     color: #2F2F2F !important;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 24px;
     font-weight: bold !important;
 }
 
 ._last-name {
     color: #2F2F2F !important;
-    font-family: "Roboto Condensed";
+    font-family: 'RobotoCondensed-Regular';
     font-size: 24px;
     font-weight: 100 !important;
 }
@@ -15,7 +15,7 @@
 .card_body{
 	color: #000000;
 	font-weight: 400;
-	font-family: 'lato';
+	font-family: 'Lato-Regular';
 }
 
 .profile-card{

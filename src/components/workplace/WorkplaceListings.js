@@ -5,24 +5,14 @@ import './MyWorkplace.css';
 import WorkplaceMap from '../maps/Workplace'
 import WorkingHours from './WorkingHours'
 import WorkplaceReviews from './WorkplaceReviews'
-import { gql, graphql} from 'react-apollo';
 import { Truncate } from 'rebass'
 
-class WorkplaceListingsComponent extends Component {
+export default class WorkplaceListingsComponent extends Component {
 	render() {
-		if (this.props.data.loading) {
-			return (<div>Loading...</div>);
-		}
-		if (this.props.data.error) {
-			if (localStorage.getItem("workplaceId") != "") {
-				return (<div>An Unexpected Error Occurred</div>);
-			}
-		}
-
 		const ListingCard = (props) => {
 			 return (
 				 <div className="workplace-card-spacing">
-					 <Card className="workplace-listing-card" onClick="www.google.com">
+					 <Card className="workplace-listing-card" href={"listing/"+props.workplaceId+"/"+props.opportunityId}>
 					   <Card.Content style={{margin:-15}}>
 						   <div className="workplace-listing-upper">
 							   <div className="workplace-listing-head">
@@ -45,73 +35,69 @@ class WorkplaceListingsComponent extends Component {
 				 </div>
 			 )
 	  };
-
+		//console.log(this.props);
 		return (
 			<div>
 				<label className="workplace-subheader">POSITIONS ACCEPTING APPLICATIONS</label>
+					{/* actual opportunities */}
+					<div className="workplace-card-group" style={{marginBottom: 20}}>
+						<Card.Group itemsPerRow={2}>
+							{this.props.opportunities.map((opportunity, i) =>
+								<ListingCard key={i}
+									brandIcon={this.props.brandIcon}
+									jobTitle={opportunity.positionByPositionId.positionName}
+									workplaceId={localStorage.getItem("workplaceId")}
+									opportunityId={opportunity.id}
+									location="Harvard Business School, Restaurant Associates"
+									travelTime="125 Batten Way, Boston • 0 miles away"
+								/>
+								)
+							}
+						</Card.Group>
+					</div>
+					{/* hard-coded opportunities
 					<div className="workplace-card-group">
 	    				<Card.Group itemsPerRow={2}>
 							<ListingCard
-								brandIcon={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
+								brandIcon={this.props.brandIcon}
 								jobTitle="Short Order Cook"
 								location="Harvard Business School, Restaurant Associates"
 								travelTime="125 Batten Way, Boston • 0 miles away"
 							/>
 							<ListingCard
-								brandIcon={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
+								brandIcon={this.props.brandIcon}
 								jobTitle="Second Cook"
 								location="Harvard Business School, Restaurant Associates"
 								travelTime="125 Batten Way, Boston • 0 miles away"
 							/>
 							<ListingCard
-								brandIcon={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
+								brandIcon={this.props.brandIcon}
 								jobTitle="Pastry Cook"
 								location="Harvard Business School, Restaurant Associates"
 								travelTime="125 Batten Way, Boston • 0 miles away"
 							/>
 							<ListingCard
-								brandIcon={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
+								brandIcon={this.props.brandIcon}
 								jobTitle="Storekeeper"
 								location="Harvard Business School, Restaurant Associates"
 								travelTime="125 Batten Way, Boston • 0 miles away"
 							/>
 							<ListingCard
-								brandIcon={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
+								brandIcon={this.props.brandIcon}
 								jobTitle="General Server"
 								location="Harvard Business School, Restaurant Associates"
 								travelTime="125 Batten Way, Boston • 0 miles away"
 							/>
 							<ListingCard
-								brandIcon={this.props.data.workplaceById.brandByBrandId.brandIconUrl}
+								brandIcon={this.props.brandIcon}
 								jobTitle="Sushi Chef"
 								location="Harvard Business School, Restaurant Associates"
 								travelTime="125 Batten Way, Boston • 0 miles away"
 							/>
 						</Card.Group>
 				</div>
+				*/}
             </div>
         )
     }
 }
-
-const WorkplaceListings = gql`
-	query($workplaceId: Uuid!){
-		workplaceById(id:$workplaceId){
-			workplaceName
-			brandByBrandId{
-				brandName
-				brandIconUrl
-			}
-			address
-			workplaceImageUrl
-		}
-	}
-`
-
-export default graphql(WorkplaceListings, {
-	options: (ownProps) => ({
-		variables: {
-			workplaceId: localStorage.getItem('workplaceId') ,
-		}
-	}),
-})(WorkplaceListingsComponent);

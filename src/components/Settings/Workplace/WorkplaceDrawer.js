@@ -6,10 +6,11 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { cloneDeep, map } from 'lodash';
 import Dropzone from 'react-dropzone';
 
+import { BASE_API } from '../../../constants';
 import CircleButton from '../../helpers/CircleButton';
 import { stateOptions } from '../../helpers/common/states';
 import { closeButton, colors } from '../../styles';
-
+import SuperAgent from 'superagent';
 import './workplace-drawer.css';
 
 const initialState = {
@@ -61,14 +62,27 @@ class DrawerHelper extends Component {
   };
 
   handleImageUpload = (files) => {
-    // handle image upload code here.
-    console.log('Image upload code goes here');
-    const workplace = Object.assign(this.state.workplace, { image: files[0] });
-    this.setState({ workplace, blob: files[0] });
+    console.log(files);
+    SuperAgent.post(`${BASE_API}/api/uploadImage`)
+    .field('keyword', 'workplace')
+    .field('id', this.state.workplace.id)
+    .attach("theseNamesMustMatch", files[0])
+    .end((err, res) => {
+      if (err) {
+        console.log(err);
+        alert('Error Uploading File');
+      } else {
+        const workplace = Object.assign(this.state.workplace, { workplaceImageUrl : res.text });
+        this.setState({workplace: workplace});
+        alert('File uploaded!');
+        this.setState({ blob: files[0] });
+      }
+    })
   };
 
   handleNewImageUpload = (files) => {
     files[0].preview = window.URL.createObjectURL(files[0]);
+    this.setState({ blob: files[0] });
     this.handleImageUpload(files);
   };
 
@@ -104,7 +118,7 @@ class DrawerHelper extends Component {
             </IconButton>
             <h2 className="text-center text-uppercase">{messages.title}</h2>
           </div>
-          {!DrawerWorkplace.workplaceImageUrl && !this.state.blob &&
+          {!DrawerWorkplace.workplaceImageUrl && !this.state.blob && this.state.workplace.id &&
           <div className="upload-wrapper col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 text-center">
             <Dropzone
               multiple={false}
@@ -125,7 +139,8 @@ class DrawerHelper extends Component {
             </Dropzone>
           </div>}
           {DrawerWorkplace.workplaceImageUrl && !this.state.blob &&
-          <Image className="uploaded-image" src={DrawerWorkplace.workplaceImageUrl} size="large" />
+          <Image className="uploaded-image" src={DrawerWorkplace.workplaceImageUrl + "?" + new Date().getTime()} alt={workplace.name}
+           size="large" />
           }
           {this.state.blob &&
           <Image className="uploaded-image" src={this.state.blob.preview} size="large" />
@@ -162,7 +177,7 @@ class DrawerHelper extends Component {
               <label className="text-uppercase">Address Line1</label>
               <input name="address"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.address}
+                     value={DrawerWorkplace.address || ''}
                      id="address-line1"
                      type="text"
                      className="form-control" />
@@ -171,7 +186,7 @@ class DrawerHelper extends Component {
               <label className="text-uppercase">Address Line2</label>
               <input name="address2"
                      onChange={this.handleChange}
-                     value={DrawerWorkplace.address2}
+                     value={DrawerWorkplace.address2 || ''}
                      id="address-line2"
                      type="text"
                      className="form-control" />
@@ -181,7 +196,7 @@ class DrawerHelper extends Component {
                 <label htmlFor="city" className="text-uppercase">City</label>
                 <input name="city"
                        onChange={this.handleChange}
-                       value={DrawerWorkplace.city}
+                       value={DrawerWorkplace.city || ''}
                        type="text"
                        className="form-control"
                        id="city" />
@@ -199,7 +214,7 @@ class DrawerHelper extends Component {
                 <label htmlFor="zip" className="text-uppercase">Zip Code:</label>
                 <input name="zip"
                        onChange={this.handleChange}
-                       value={DrawerWorkplace.zip}
+                       value={DrawerWorkplace.zip || ''}
                        type="text"
                        className="form-control"
                        id="zip" />
